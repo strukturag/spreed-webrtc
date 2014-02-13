@@ -1,0 +1,14 @@
+<div class="roombar form-horizontal" ng-class="{notvisible: hideRoomBar}">
+	<a class="roombarbutton" ng-model="hideRoomBar" btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Change room')}}"><i class="fa fa-th"></i></a>
+	<form name="roombarform" class="roombarcontent form-group">
+		<div class="roomlabelinput">
+			<label class="col-xs-2 control-label hidden-xs">{{_('Room')}}</label> 
+			<div class="col-xs-8">
+				<div class="input-group">
+					<input class="form-control" ng-model="newroomid" ng-keyup="hitEnter($event)" type="text" placeholder="{{_('Main')}}"></input><span ng-if="roomid && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-eraser"></i></a></span><span ng-if="!roomid || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default" title="{{_('Change room')}}" ng-click="save()"><i class="fa fa-arrow-right"></i></a></span>
+				</div>
+			</div>
+		</div>
+	</form>
+	<label class="control-label roomlabellabel" title="{{_('Current room')}}">{{roomid}}</label>
+</div>

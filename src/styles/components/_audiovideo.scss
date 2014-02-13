@@ -1,0 +1,59 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#audiovideo {
+position:absolute;
+left:0px;
+top:44px;
+bottom:0px;
+right:260px;
+boder-top:1px solid $bordercolor;
+}
+#audiovideo.fullscreen {
+top:0px;
+right:0px;
+bottom:0px;
+left:0px;
+background:black;
+}
+#audiovideo.fullscreen .remoteVideo .peeractions {
+display:none;
+}
+#audiovideo.leftsided {
+width:150px
+}
+#audiovideo.leftsided .remoteVideo .peerlabel {
+font-size:12px;
+font-weight:bold;
+}
+#audiovideo.leftsided .remoteVideo .peeractions i {
+font-size:1em;
+}
+@media only screen and (max-width: 630px) {
+	#audiovideo.leftsided {
+		display:none;
+	}
+}
+@media only screen and (max-width:590px) {
+	#audiovideo {
+		right:0px;
+		z-index:12;
+	}
+}

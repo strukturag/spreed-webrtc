@@ -1,0 +1,157 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#buddylist {
+position: fixed;
+top: 44px;
+right: 0px;
+bottom: 0px;
+width:260px;
+border-top: 1px solid $bordercolor;
+z-index:5;
+pointer-events:none;
+}
+.buddylist {
+position:absolute;
+left:0px;
+right:0px;
+top:0px;
+bottom:0px;
+overflow-x: hidden;
+overflow-y: auto;
+}
+.buddylist .buddycontainer {
+-webkit-user-select: none;
+position: relative;
+pointer-events:auto;
+}
+.buddylist .buddylistloading, .buddylist .buddylistempty {
+padding:.4em;
+background: $sidepanebg;
+font-size:0.8em;
+text-align:center;
+display:none;
+}
+.buddylist.loading .buddylistloading {
+display:block;
+}
+.buddylist.empty .buddylistempty {
+display:block;
+}
+.buddy {
+overflow: hidden;
+height: 66px;
+display: block;
+border-bottom: 1px solid $bordercolor;
+position: relative;
+cursor: pointer;
+text-align: left;
+width: 100%;
+font-size: 13px;
+background: $sidepanebg;
+-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.buddy:hover {
+background: $componentbg;
+}
+.buddy > .buddyimage {
+float:left;
+height: 46px;
+width: 46px;
+overflow: hidden;
+margin: 10px;
+position: relative;
+border-radius: 2px;
+background: $actioncolor1;
+text-align:center;
+}
+.buddy > .buddyimage > i {
+line-height:46px;
+color:$actioncolor2;
+}
+.buddy > .buddyimage > img {
+position: absolute;
+left:0px;
+right:0px;
+bottom:0px;
+top:0px;
+display:block;
+}
+.buddy > .buddy1 {
+position: absolute;
+left: 65px;
+white-space: nowrap;
+overflow: hidden;
+right: 4px;
+height: 28px;
+color: $componentfg1;
+font-weight:bold;
+font-size:14px;
+top: 24px;
+text-overflow: ellipsis;
+}
+.buddy.withSubline > .buddy1 {
+top: 15px;
+}
+.buddy > .buddy2 {
+position: absolute;
+left: 65px;
+white-space: nowrap;
+overflow: hidden;
+right: 0px;
+color: $componentfg2;
+top: 33px;
+}
+.buddy .buddyactions {
+position:absolute;
+right:-125px;
+top:0px;
+bottom:0px;
+background:rgba(255,255,255,0.5);
+z-index:5;
+line-height:66px;
+padding:0 10px;
+/*width:110px;*/
+transition-property: right;
+-webkit-transition-property: right;
+transition-duration: .3s;
+-webkit-transition-duration: .3s;
+white-space:nowrap;
+text-align:right;
+}
+.buddy .buddyactions i {
+font-size:2em;
+}
+.buddy.hovered .buddyactions {
+right:0px;
+}
+
+@media only screen and (max-width: 400px) {
+	#buddylist {
+		left:0px;
+		width:auto;
+		margin-bottom:26px;
+	}
+	.buddylist .buddylistempty {
+		background: transparent;
+		color:#ccc;
+		padding-top:14px;
+	}
+}

@@ -1,0 +1,150 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ .file-info {
+	text-align:center;
+	border: 1px solid #ddd;
+	padding: 1em;
+	background: #fff;
+	border-radius: 4px;
+	padding: 1em;
+	position: relative;
+}
+
+.file-info > div {
+	z-index: 3;
+	position: relative;
+}
+
+.file-info div.file-info-bg {
+	position:absolute;
+	left:41px;
+	top:-17px;
+	right:0px;
+	bottom:0px;
+	z-index:2;
+	overflow:hidden;
+}
+
+.file-info-bg i {
+	font-size: 20em;
+	color: #eee;
+}
+
+.file-info-name {
+	font-size: 1.1em;
+	padding: 0 .2em;
+	margin:0.2em 0;
+	min-width:140px;
+}
+
+.file-info-size {
+	font-size: 0.8em;
+	position:relative;
+	height: 20px;
+}
+
+.file-info.downloader .file-info-size {
+	margin-bottom: 10px;
+}
+
+.file-info.downloading .file-info-size{
+	border-color: #ddd;
+}
+
+.file-info-size > span {
+	padding: 4px;
+	z-index:5;
+	display:block;
+	position:relative;
+	text-shadow: 1px 1px 1px white;
+	position: absolute;
+	margin: 0 auto;
+	top:1px;
+	right:0px;
+	left:0px;
+}
+
+.file-info-size > div {
+	z-index:0;
+	width:0%;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	position: absolute;
+	left:0px;
+	bottom:0px;
+	top:0px;
+}
+
+.file-info-size > div.progress-bar {
+	opacity: 0.5;
+}
+
+.file-info-size > div.progress-bar.download {
+	z-index:1;
+	opacity: 1;
+}
+
+div.file-info-speed {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 8px;
+	text-align: center;
+	font-size: 0.8em;
+}
+.file-info.uploader div.file-info-speed {
+	bottom: 6px;
+}
+
+.file-info.downloader .anim {
+	margin-left: -40px;
+}
+
+.file-info.uploader .anim {
+	margin-left: 0px;
+}
+.file-info.uploader .hovercontrol:hover .anim {
+	margin-left: -50px;
+}
+
+.file-info.uploader .hovercontrol > div {
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out
+}
+
+.file-info .actions {
+	position: absolute;
+	top: 14px;
+	left: 50%;
+	margin-left: 10px;
+	text-align: left;
+}
+
+.file-info.uploader .actions {
+	margin-left:30px;
+	opacity:0;
+}
+.file-info.uploader .hovercontrol:hover .actions {
+	margin-left:0px;
+	opacity:1;
+}

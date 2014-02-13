@@ -1,0 +1,46 @@
+/*! HiDPI v2.0.1 | MIT License | git.io/hidpi */
+
+// Force HiDPI graphics on regular displays
+$hidpi-debug: false !default;
+
+// Change default filename postfix
+// default: imagename_x2.png
+$hidpi-postfix: '_x2' !default;
+
+// Default pixel ratio: 1.3 to support Nexus 7
+// Depending on your target, you may want to set a
+// more suitable minimum pixel ratio here:
+// http://bjango.com/articles/min-device-pixel-ratio/
+$hidpi-min-pixel-ratio: 1.3 !default;
+
+@mixin hidpi-abstract($image, $extension, $postfix: $hidpi-postfix) {
+  $image-fullname: '#{$image}.#{$extension}';
+  $image-hidpi-fullname: '#{$image}#{$postfix}.#{$extension}';
+
+  background-image: image-url($image-hidpi-fullname);
+  background-size: image-width($image-fullname) image-height($image-fullname);
+}
+
+@mixin hidpi($image: false, $extension: png, $postfix: $hidpi-postfix) {
+  @if $hidpi-debug {
+    @if $image {
+      @include hidpi-abstract($image, $extension, $postfix);
+    } @else {
+      @content;
+    }
+  } @else {
+    @if $image {
+      background-image: image-url('#{$image}.#{$extension}');
+    }
+    // Inspired by:
+    // http://www.brettjankord.com/2012/11/28/cross-browser-retinahigh-resolution-media-queries/
+    @media (-webkit-min-device-pixel-ratio: $hidpi-min-pixel-ratio),
+           (min-resolution: $hidpi-min-pixel-ratio * 1dppx) {
+      @if $image {
+        @include hidpi-abstract($image, $extension, $postfix);
+      } @else {
+        @content;
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html class="no-js" lang="<% index .Languages 0%>" itemscope="itemscope" itemtype="http://schema.org/WebPage">
+<head>
+    <title>Spreed Speak Freely</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <base href="/">
+    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/main.min.css">
+    <script id="globalcontext" type="application/json"><%$%></script>
+</head>
+<body ng-controller="MediastreamController">
+<div id="background"></div>
+<div id="loader"><div><i class="fa fa-spinner fa-spin"></i></div></div>
+<div class="ng-cloak" id="help">
+    <usability/>
+</div>
+<div id="bar">
+    <div class="left">
+        <a target="_blank" href="https://github.com/strukturag/spreed-speakfreely" class="logo" title="Spreed Speak Freely" style="background-image: url('<%.Cfg.S%>/img/logo-small.png')"><span>Speak Freely</span></a>
+    </div>
+    <status-message ng-controller="StatusmessageController"></status-message>
+    <div class="ng-cloak right">
+        <button title="{{_('Share your screen')}}" class="btn aenablebtn" ng-show="master.settings.screensharingMedia && (status=='connected' || status=='conference' || enabledScreenshare)" ng-model="enableScreenshare" btn-checkbox><i class="fa fa-desktop"></i></button>
+        <button title="{{_('Mute microphone')}}" class="btn amutebtn" ng-model="microphoneMute" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><i class="fa fa-microphone-slash"></i></button>
+        <button title="{{_('Turn camera off')}}" class="btn amutebtn" ng-model="cameraMute" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><i class="fa fa-eye-slash"></i></button>
+        <button title="{{_('Settings')}}" class="btn" ng-model="showSettings" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0"><i class="fa fa-cog"></i></button>
+    </div>
+</div>
+<div id="roombar" class="ng-cloak">
+    <room-bar/>
+</div>
+<div id="audiolevel" class="ng-cloak">
+    <div class="audio-level" title="{{_('Your audio level')}}"></div>
+</div>
+<div id="audiovideo" class="ng-cloak" ng-show="peer" ng-class="{'leftsided': mainview}">
+    <div id="container">
+        <audio-video/>
+    </div>
+</div>
+<div id="screenshare" class="ng-cloak mainview" ng-show="mainview=='screenshare'">
+    <screenshare/>
+</div>
+<div class="ng-cloak" id="buddylist"><buddy-list/></div>
+<div class="ng-cloak" id="settings" ng-class="{show: showSettings}"><settings/></div>
+<div class="ng-cloak" id="chat"><chat/></div>
+<script data-main="<%.Cfg.S%>/js/<%.App%>" src="<%.Cfg.S%>/js/libs/require/require.js"></script>
+<div class="ng-cloak" id="details">{{id}}</div>
+<%extraHTML%>
+</body>
+</html>

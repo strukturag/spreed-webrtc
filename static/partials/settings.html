@@ -1,0 +1,159 @@
+<div class="settings nicescroll">
+  <div class="version">{{version}}</div>
+  <form class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
+    <fieldset>
+
+      <legend>{{_('Settings')}}</legend>
+      <div class="form-group">
+        <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+        <div class="col-xs-8">
+          <label style="padding-top:5px">
+            <div style="margin-bottom:5px">
+              <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
+            </div>
+            <div class="collapse" collapse="!showTakePicture">
+              <video autoplay="autoplay" width="200"></video>
+              <canvas style="display:none" width="46" height="46"></canvas>
+            </div>
+            <a class="btn btn-small btn-success" ng-disabled="!showTakePictureReady" ng-click="takePicture($event.target)"> {{_('Take picture')}}</a> <span ng-show="!showTakePictureReady"><i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}</span><a class="btn btn-small btn-default" ng-show="showTakePicture" ng-click="takePicture($event.target, true)"> {{_('Cancel')}}</a>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-xs-4 control-label">{{_('Your name')}}</label>
+        <div class="col-xs-8">
+          <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
+          <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
+        </div>
+      </div>
+      <hr/>
+      <div ng-show="mediaSources.supported" class="form-group">
+        <label class="col-xs-4 control-label">{{_('Microphone')}}</label>
+        <div class="col-xs-8">
+          <select class="form-control" ng-model="user.settings.microphoneId" ng-options="mic.id as mic.label for mic in mediaSources.audio"></select>
+        </div>
+      </div>
+      <div ng-show="mediaSources.supported" class="form-group">
+        <label class="col-xs-4 control-label">{{_('Camera')}}</label>
+        <div class="col-xs-8">
+          <select class="form-control" ng-model="user.settings.cameraId" ng-options="vid.id as vid.label for vid in mediaSources.video"></select>
+        </div>
+      </div>
+      <div class="form-group" ng-show="isChrome">
+        <label class="col-xs-4 control-label">{{_('Video quality')}}</label>
+        <div class="col-xs-8">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'low'">{{_('Low')}}</button>
+            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'high'">{{_('High')}}</button>
+            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('720p')}}</button>
+            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'fullhd'">{{_('1080p')}}</button>
+          </div>
+        </div>
+      </div>
+      <hr/>
+      <div class="form-group">
+        <label class="col-xs-4 control-label">{{_('Language')}}</label>
+        <div class="col-xs-8">
+          <select class="form-control" ng-model="user.settings.language">
+            <option value="">{{_('Use browser language')}}</option>
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+          </select>
+          <span class="help-block">{{_('Language changes become active on reload.')}}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-xs-4 control-label">{{_('Default room')}}</label>
+        <div class="col-xs-8">
+          <input type="text" class="form-control" ng-model="user.settings.defaultRoom" placeholder="{{_('Main')}}" />
+          <span class="help-block">{{_('Set alternative room to join at start.')}}</span>
+        </div>
+      </div>
+      <div class="form-group" ng-show="desktopNotify.supported">
+        <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
+        <div class="col-xs-8">
+          <label style="padding-top:5px" ng-switch="desktopNotify.level">
+            <a ng-switch-when="default" class="btn btn-small btn-success" ng-click="requestDesktopNotifyPermission()">{{_('Enable')}}</a>
+            <span class="text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</span>
+            <span class="text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="collapse" collapse="showAdvancedSettings" style="padding-top:15px">
+
+        <legend>{{_('Advanced settings')}}</legend>
+
+        <div>
+
+          <div class="form-group">
+            <label class="col-xs-4 control-label">{{_('Stereo audio')}}</label>
+            <div class="col-xs-8">
+              <div class="checkbox">
+              	<label>
+                	<input type="checkbox" ng-model="user.settings.stereo"/>
+            	</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" ng-show="isChrome">
+            <label class="col-xs-4 control-label">{{_('Max video frame rate')}}</label>
+            <div class="col-xs-8">
+              <div class="btn-group">
+                <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="12">12</button>
+                <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="20">20</button>
+                <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="30">30</button>
+                <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="'auto'">{{_('auto')}}</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" ng-show="isChrome && webrtcDetectedVersion >= 32">
+            <label class="col-xs-4 control-label">{{_('Media screen sharing')}}</label>
+            <div class="col-xs-8">
+              <div class="checkbox">
+              	<label>
+                	<input type="checkbox" ng-model="user.settings.screensharingMedia"/>
+            	</label>
+              </div>
+              <span class="help-block">{{_('Chrome usermedia screen capture feature is required.')}} (chrome://flags/#enable-usermedia-screen-capture)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!--<div ng-show="isChrome">
+
+          <legend>{{_('Experimental settings')}}</legend>
+
+          <div></div>
+
+        </div>-->
+
+      </div>
+
+      <div class="form-group">
+      	<div class="col-xs-4 control-label"></div>
+        <div class="col-xs-8">
+          <a ng-click="showAdvancedSettings = !showAdvancedSettings"><span ng-show="showAdvancedSettings">{{_('Show advanced settings')}}</span><span ng-hide="showAdvancedSettings">{{_('Hide advanced settings')}}</span></a>
+        </div>
+      </div>
+
+      <hr/>
+
+      <div class="form-group">
+      	<div class="col-xs-4 control-label"></div>
+      	<div class="col-xs-8">
+          <div class="checkbox" style="padding-bottom:1em">
+          	<label>
+            	<input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
+        	</label>
+          </div>
+          <a ng-click="saveSettings(user)" class="btn btn-primary">{{_('Apply')}}</a> <a ng-click="cancelSettings()" class="btn btn-default">{{_('Cancel')}}</a>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

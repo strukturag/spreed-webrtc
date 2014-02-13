@@ -1,0 +1,198 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#container {
+position: absolute;
+/*margin: 0px auto;*/
+perspective: 1000;
+-webkit-perspective: 1000;
+top:0px;
+left:0px;
+bottom:0px;
+right:0px;
+}
+#container .visible {
+opacity:1 !important;
+}
+#card {
+position:relative;
+width:100%;
+height:100%;
+transition-property: transform;
+-webkit-transition-property: -webkit-transform;
+transition-duration: 2s;
+-webkit-transition-duration: 2s;
+transform: rotateY(0deg);
+-webkit-transform: rotateY(0deg);
+}
+#card.active {
+transform: rotateY(180deg);
+-webkit-transform: rotateY(180deg);
+}
+#local {
+position: absolute;
+left:0px;
+right:0px;
+top:0px;
+bottom:0px;
+transform: scale(-1, 1);
+-webkit-transform: scale(-1, 1);
+pointer-events:none;
+}
+#remote {
+position: absolute;
+left:0px;
+right:0px;
+top:0px;
+bottom:0px;
+transform: rotateY(180deg);
+-webkit-transform: rotateY(180deg);
+}
+#mini {
+position: absolute;
+height: 20%;
+bottom: 4px;
+right: 2px;
+transform: scale(-1, 1);
+-webkit-transform: scale(-1, 1);
+opacity: 0;
+transition-property: opacity;
+-webkit-transition-property: opacity;
+transition-duration: 0.5s;
+-webkit-transition-duration: 0.5s;
+}
+#localVideo {
+width: 100%;
+height: 100%;
+opacity: 0;
+transition-property: opacity;
+-webkit-transition-property: opacity;
+transition-duration: 2s;
+-webkit-transition-duration: 2s;
+/*background: red;*/
+}
+#remoteVideos {
+position:absolute;
+left:0px;
+right:0px;
+bottom:0px;
+top:0px;
+opacity: 0;
+transition-property: opacity;
+-webkit-transition-property: opacity;
+transition-duration: 2s;
+-webkit-transition-duration: 2s;
+/*background: blue;*/
+}
+#remoteVideos video {
+width:100%;
+height:100%;
+}
+#miniVideo {
+height: 100%;
+}
+.indicator {
+position: absolute;
+z-index: 5;
+right: 5px;
+top: 2px;
+color: #9dd53a;
+opacity: 0;
+-webkit-transition: opacity .2s ease-in-out;
+-moz-transition: opacity .2s ease-in-out;
+-ms-transition: opacity .2s ease-in-out;
+-o-transition: opacity .2s ease-in-out;
+transition: opacity .2s ease-in-out;
+text-shadow: 0px 0px 6px black;
+}
+.talking .indicator {
+opacity: 0.8;
+}
+#remoteVideos .indicator {
+left: 5%;
+top: 5%;
+right: auto;
+font-size:2em;
+}
+.remoteVideo {
+display: inline-block;
+width:100%;
+height:100%;
+vertical-align:bottom;
+position:relative;
+visibility:hidden;
+}
+.remoteVideo.withvideo {
+visibility:visible;
+}
+.remoteVideo.onlyaudio {
+visibility:visible;
+background: #666;
+}
+.remoteVideo .onlyaudio {
+display:none;
+position:absolute;
+left:0px;
+top:45%;
+right:0px;
+color:rgba(255,255,255,0.3);
+text-align:center;
+font-size:80px;
+margin-top:-40px;
+}
+.remoteVideo.onlyaudio video {
+display:none;
+}
+.remoteVideo.onlyaudio .onlyaudio {
+display:block;
+}
+.remoteVideo .peeractions {
+position: absolute;
+z-index: 10;
+left:0px;
+right:0px;
+bottom:5%;
+text-align:center;
+opacity:.0;
+transition-property: opacity;
+-webkit-transition-property: opacity;
+transition-duration: 0.2s;
+-webkit-transition-duration: 0.2s;
+}
+.remoteVideo .peeractions i {
+font-size:3vw;
+}
+.remoteVideo:hover .peeractions {
+opacity:.5;
+}
+.remoteVideo .peerlabel {
+position: absolute;
+z-index:8;
+left:5%;
+bottom:5%;
+font-size:2.5vw;
+color:white;
+opacity:.7;
+text-shadow: 0px 0px 10px rgb(0, 0, 0);
+max-width:30%;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+}

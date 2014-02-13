@@ -1,0 +1,64 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#help {
+position:absolute;
+top:120px;
+bottom:120px;
+left:15%;
+right:0px;
+width:400px;
+font-size:1.4em;
+font-style:italic;
+color:#aaa;
+font-family: Garamond, Baskerville, "Baskerville Old Face", "Hoefler Text", "Times New Roman", serif;
+}
+#help > div {
+}
+#help i {
+float:right;
+}
+#help li {
+padding:0 0 20px 0;
+}
+#help .help-subline {
+padding:20px 0;
+color:#666;
+}
+#help .fadetogglecontainer > div {
+width:400px;
+}
+@media only screen and (max-width: 800px) and (min-width: 400px) {
+    #help, #help .fadetogglecontainer > div {
+    width:200px;
+    }
+    #help {
+    font-size:1em;
+    }
+    #help > div {
+    margin-left:0px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+	#help {
+		display:none;
+	}
+}

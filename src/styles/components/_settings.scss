@@ -1,0 +1,82 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#settings {
+position:fixed;
+top:44px;
+right:-460px;
+bottom:0px;
+width:440px;
+z-index: 50;
+-webkit-transition-property: right;
+-webkit-transition-duration: 0.2s;
+padding-right: 20px;
+border-top:1px solid $bordercolor;
+}
+#settings.show {
+right:0px;
+}
+.settings {
+position:absolute;
+left:0px;
+right:0px;
+top:0px;
+bottom:0px;
+background: $sidepanebg;
+overflow-x: hidden;
+overflow-y: auto;
+padding:10px;
+}
+.settings .version {
+position:absolute;
+top:10px;
+right:10px;
+font-size:10px;
+color:#ccc;
+}
+@media only screen and (max-width: 630px) {
+	.settings .form-horizontal .controls {
+		margin-left:110px;
+	}
+	.settings .form-horizontal .control-label {
+		width:100px;
+		word-wrap:break-word;
+	}
+	.settings {
+		padding-bottom:10px;
+	}
+	#settings.show {
+ 		width:auto;
+ 		left:0px;
+ 		background:white;
+	}
+	#settings.show .form-actions {
+		position: fixed;
+		bottom: 0px;
+		left:0px;
+		right:0px;
+		margin-bottom:0px;
+		padding-bottom:0px;
+		height:60px;
+		padding-left:120px;
+		padding-top:6px;
+		padding-bottom:6px;
+	}
+}

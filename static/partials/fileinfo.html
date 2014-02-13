@@ -1,0 +1,31 @@
+<div class="file-info" ng-class="{'downloading': downloading, 'uploader': uploader, 'downloader': downloader}">
+	<div class="file-info-bg"><i class="fa" ng-class="{'fa-arrow-circle-o-down':downloader, 'fa-arrow-circle-o-up':uploader}"></i></div>
+	<div class="hovercontrol">
+		<div class="anim">
+			<div ng-show="downloader">
+				<i title="{{_('File sharing')}}" class="fa fa-file-o fa-4x"></i>
+			</div>
+			<div ng-show="uploader"><i title="{{_('File sharing')}}" class="fa fa-file-o fa-4x"></i></div>
+			<div ng-show="!uploader && !downloader">
+				<i title="{{_('File is no longer available')}}" class="fa fa-ban-circle fa-4x text-error"></i>
+			</div>
+		</div>
+		<div class="actions" ng-show="uploader || downloader">
+			<a ng-hide="downloading || uploader || error" class="btn btn-small btn-primary" ng-click="download()">{{_('Download')}}</a>
+			<a href="{{url}}" download="{{info.name}}" ng-show="complete" class="btn btn-small btn-success">{{_('Open')}}</a>
+			<a ng-show="downloading && !complete && !error" class="btn btn-small btn-danger" ng-click="cancel()">{{_('Cancel')}}</a>
+			<a ng-show="uploader" class="btn btn-small btn-danger" ng-click="cancel()">{{_('Unshare')}}</a>
+			<a ng-show="error" class="btn btn-small btn-danger" ng-click="download()">{{_('Retry')}}</a>
+		</div>
+	</div>
+	<div class="file-info-name">{{info.name}}</div>
+	<div class="file-info-size" ng-class="{'progress': downloader}">
+		<span>{{info.size|humanizeFilesize}} <span ng-show="downloading">/ {{progress}}%</span></span>
+		<div class="progress-bar progress-bar-success download"></div>
+		<div class="progress-bar progress-bar-success"></div>
+	</div>
+	<div ng-show="downloadspeed || error" class="file-info-speed" ng-class="{'text-error': error}">
+		<span ng-show="downloadspeed">{{bytesPerSecond|humanizeFilesize}}/s<span ng-show="eta"> <span class="fa fa-flag-checkered"></span> {{eta}}</span></span>
+		<span ng-show="error">{{_("Download failed.")}}</span>
+	</div>
+</div>

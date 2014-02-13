@@ -1,0 +1,393 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+$chatwidth: 260px;
+$chatheight: 312px;
+#chat {
+position: fixed;
+left:8px;
+bottom:0px;
+right:8px;
+height:$chatheight;
+max-height:100%;
+pointer-events: none;
+z-index:45;
+}
+.chatpane {
+height:100%;
+position:relative;
+overflow-x:auto;
+overflow-y:hidden;
+}
+.chat {
+position:absolute;
+pointer-events: auto;
+left:0px;
+bottom:( -1* $chatheight - 30);
+width:$chatwidth;
+background: #e7e7e7;;
+min-width:$chatwidth;
+overflow:hidden;
+max-width:100%;
+height:100%;
+display:none;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-top-right-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-topright: 4px;
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+}
+.chat.visible {
+display:block;
+bottom:0px;
+}
+.chat.visible.minimized {
+	background:transparent;
+	border:none;
+	pointer-events:none;
+	.chatheader {
+		position:absolute;
+		bottom:0px;
+		left:0px;
+		right:0px;
+		pointer-events:auto;
+	}
+	.outputbox, .typinghint, .inputbox {
+		display:none;
+	}
+}
+.chat.visible.maximized {
+bottom:0px;
+top:0px;
+left:0px;
+right:0px;
+position:fixed;
+width:100%;
+z-index:20;
+background-image: url("../img/wild_oliva.png");
+background-repeat: repeat;
+	@include hidpi {
+		background-image: url("../img/wild_oliva_x2.png");
+		background-size: 192px 200px;
+	}
+}
+.chat.visible.maximized .output {
+margin:4px;
+}
+
+.chat .chatheader {
+background: $componentbg;
+padding:6px 4px 4px 8px;
+border: 1px solid $bordercolor;
+font-size:0.8em;
+font-weight:bold;
+height:30px;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-top-right-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-topright: 4px;
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+}
+.chat .chatheader .ctrl {
+position:absolute;
+top:4px;
+right:1px;
+}
+.chat .chatheader span {
+display: inline-block;
+max-width:60%;
+text-overflow:ellipsis;
+white-space:nowrap;
+overflow:hidden;
+pointer-events: none;
+vertical-align: middle;
+}
+.chat .chatheader .ctrl i {
+padding:6px;
+cursor: pointer;
+}
+.chat .outputbox {
+position:absolute;
+left:0px;
+right:0px;
+top:34px;
+bottom:74px;
+max-width:600px;
+margin:0 auto;
+}
+.chat .output {
+overflow-x: hidden;
+overflow-y: auto;
+padding: 0.4em 0;
+height:100%;
+}
+.chat .output > i {
+font-size:0.8em;
+color: #aaa;
+display:block;
+padding:6px 0;
+text-align:center;
+clear:both;
+}
+.chat .output > i.p2p {
+padding:6px 0;
+font-weight: bold;
+}
+.chat .output .message {
+background: #fff;
+border: 1px solid #e5e5ef;
+border-radius: 6px;
+margin-bottom: 2px;
+position: relative;
+word-wrap: break-word;
+padding:8px;
+margin-left:20px;
+margin-right:4px;
+clear:both;
+display:block;
+}
+
+.chat .output .message .timestamp {
+font-size:0.8em;
+color: #aaa;
+text-align:right;
+position:absolute;
+top:8px;
+right:8px;
+}
+
+.chat .output .message.is_self .timestamp {
+right:58px;
+}
+
+.chat .output .message > ul {
+list-style-type: none;
+margin:0;
+padding-left:0;
+}
+
+.chat .output .message > ul > li {
+line-height:1.1em;
+margin:4px 0;
+padding-left:1.2em;
+position:relative;
+}
+
+.chat .message li:before {
+font-family: 'FontAwesome';
+content: '\f075';
+color:#ccc;
+position:absolute;
+left:0px;
+}
+
+.chat .message.is_self li:before {
+moz-transform: scale(-1, 1);
+-webkit-transform: scale(-1, 1);
+transform: scale(-1, 1);
+color:#ccc;
+}
+
+.chat .message li.unread:before {
+color: #FE9A2E;
+}
+
+.chat .message li.sending:before {
+content: '\f0e5';
+}
+
+.chat .message li.sent:before {
+content: '\f0e5';
+color:#5882FA;
+}
+
+.chat .message li.delivered:before {
+color:#5882FA;
+}
+
+.chat .message li.received:before {
+color:#84b819;
+}
+
+.chat .message li.read:before {
+color:#ccc;
+}
+
+.chat .output .message .buddyimage {
+position: absolute;
+top: 4px;
+width:46px;
+height:46px;
+left: 4px;
+overflow: hidden;
+border-radius: 2px;
+background: $actioncolor1;
+text-align:center;
+}
+.chat .output .message.is_self .buddyimage {
+right: 4px;
+left: auto;
+}
+.chat .output .message .buddyimage > i {
+line-height:46px;
+color:$actioncolor2;
+}
+.chat .output .message .buddyimage > img {
+position: absolute;
+left:0px;
+right:0px;
+bottom:0px;
+top:0px;
+display:block;
+}
+
+.chat .output .message.is_remote {
+padding-left: 58px;
+}
+
+.chat .output .message:before, .chat .output .message:after {
+content:"";
+position:absolute;
+border-style: solid;
+width:0;
+display:block;
+}
+.chat .output .message.is_remote:before {
+top:4px;
+bottom:auto;
+left:-16px;
+border-width: 10px 17px 10px 0;
+border-color: transparent #fff;
+}
+.chat .output .message.is_remote:after {
+top:5px;
+bottom:auto;
+left:-15px;
+border-width: 9px 15px 9px 0;
+border-color: transparent #fff;
+}
+.chat .output .message.is_self:before {
+top:4px;
+bottom:auto;
+right:-16px;
+border-width: 10px 0 10px 17px;
+border-color: transparent #fff;
+}
+.chat .output .message.is_self:after {
+top:5px;
+bottom:auto;
+right:-15px;
+border-width: 9px 0 9px 15px;
+border-color: transparent #fff;
+}
+
+.chat .output .message.with_name {
+}
+
+.chat .output .message.is_self {
+background: #fff;
+margin-right:20px;
+margin-left:4px;
+padding-right:54px;
+}
+.chat .output .message strong {
+display:block;
+padding-bottom:2px;
+margin-right:40px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.chat .typinghint {
+position:absolute;
+left:6px;
+right:6px;
+bottom:60px;
+font-size:.8em;
+color: #aaa;
+max-width:500px;
+margin:0 auto;
+}
+.chat .inputbox {
+position:absolute;
+left:0px;
+bottom:0px;
+right:0px;
+height:60px;
+max-width:500px;
+margin:0 auto;
+}
+.chat .inputbox .btn {
+position:absolute;
+right:6px;
+top:4px;
+padding: 0.5em 1em;
+}
+.chat .inputbox > div {
+margin: 4px 54px 0px 4px;
+}
+.chat .input {
+display:block;
+resize: none;
+width:100%;
+height:54px;
+max-height:54px; /* FF hack */
+margin-bottom: 4px;
+}
+@for $i from 0 through 10 {
+    .chat.room-#{$i} {
+        left: ($chatwidth+8)*$i;
+    }
+}
+@keyframes newmessage {
+	0% {background-color: rgba(132,184,25,1.0);}
+	50% {background-color: $componentbg;}
+	100% {background-color: rgba(132,184,25,1.0);}
+}
+@-webkit-keyframes newmessage {
+	0% {background-color: rgba(132,184,25,1.0);}
+	50% {background-color: $componentbg;}
+	100% {background-color: rgba(132,184,25,1.0);}
+}
+.chat.newmessage .chatheader {
+animation: newmessage 1s ease -0.3s infinite;
+-webkit-animation: newmessage 1s ease -0.3s infinite;
+}
+.chat.newmessage .chatheader span:after {
+content: "***";
+position:absolute;
+top:0px;
+line-height:32px;
+right:70px;
+}
+
+@media all and (max-height: 150px) {
+	.chat .inputbox {
+		height: auto;
+	}
+	.chat .input {
+		max-height: 2.5em;
+	}
+	.chat .outputbox {
+		bottom:45px;
+	}
+}

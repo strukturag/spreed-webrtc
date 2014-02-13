@@ -1,0 +1,19 @@
+# Spreed Speak Freely server example configuration
+
+[http]
+listen = 127.0.0.1:8080
+#root = /usr/share/spreed-speakfreely-server/www
+#readtimeout = 10
+#writetimeout = 10
+
+[app]
+#ver = 1234 # version string to use for static resource
+#stunURIs = stun.l.google.com:19302
+#turnURIs = turn:turnserver:port?transport=udp turn:anotherturnserver:port?transport=tcp turns:turnserver:443?transport=tcp
+#turnSecret = the-default-turn-shared-secret-do-not-keep
+sessionSecret = the-default-secret-do-not-keep
+#tokenFile = tokens.txt # If set, everyone needs to give one of the tokens to launch the web client. One token per line in the file.
+#extraHTML = <div>Rendered directly before closing body tag.</div>
+
+[log]
+#logfile = /var/log/spreed-speakfreely-server.log

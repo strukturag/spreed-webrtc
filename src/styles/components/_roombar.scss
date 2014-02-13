@@ -1,0 +1,66 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#roombar {
+	position: absolute;
+	left:3px;
+	top:46px;
+	right:3px;
+	height:32px;
+	color:#ccc;
+	z-index:4;
+}
+#roombar .roombar {
+	position: absolute;
+	left:0px;
+	bottom:0px;
+	top:0px;
+	padding:4px 4px 4px 30px;
+	vertical-align:middle;
+}
+.roombarbutton {
+	font-size:20px;
+	vertical-align:middle;
+	position:absolute;
+	left: 0px;
+	top: 0px;
+	padding:7px;
+	display:block;
+	color:#ccc;
+	z-index:15;
+	opacity:0.7;
+}
+.roombarcontent {
+	display:inline-block;
+	max-width:300px;
+}
+.roombar .roomlabellabel {
+	display:none;
+	opacity: 0.7;
+	text-align:left;
+}
+#roombar .roombar.notvisible {
+	.roombarcontent {
+		display: none;
+	}
+	.roomlabellabel {
+		display:block;
+	}
+}

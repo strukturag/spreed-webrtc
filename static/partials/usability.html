@@ -1,0 +1,24 @@
+<div class="fadetogglecontainer" ng-hide="peer">
+    <div class="animate-show" ng-hide="showSettings">
+        <div ng-switch="usabilityInfo">
+          <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
+          <div ng-switch-when="complete">
+            <i class="fa fa-hand-o-right fa-4x pull-right"></i>
+            <p>{{_("Select one of the users from the online list to start a video call.")}}</p>
+            <p>{{_("Hover over users in the list for more actions.")}}</p>
+            <p>{{_("Double click on video for fullscreen when in a call.")}}</p>
+            <p>{{_("Drag files into a chat window to share files with this room or person.")}}</p>
+          </div>
+          <div ng-switch-when="usermedia"><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</div>
+          <div ng-switch-when="denied"><i class="fa fa-exclamation-triangle fa-4x pull-right"></i>{{_("Camera / microphone access required.")}}</div>
+        </div>
+        <div ng-show="usabilityInfo=='denied'" class="help-subline">
+            <p>{{_("Please check your browser settings and allow camera and microphone access for this site.")}}</p>
+            <p><a ng-click="testMediaAccess()" class="btn btn-primary"><span class="fa fa-refresh"></span> {{_("Retry")}}</a> <a ng-click="continueConnect(true)" class="btn">{{_("Skip check")}}</a></p>
+            <p style="font-size:0.7em" ng-show="isChrome"><a rel="external" target="_blank" href="https://support.google.com/chrome/answer/2693767">{{_("Click here for help (Google Chrome).")}}</a></p>
+        </div>
+    </div>
+    <div class="animate-show" ng-show="showSettings">
+        <i style="padding-right:140px">{{_("Please set your user details and settings.")}}<p class="help-subline">{{_("Please note that some settings require you to reload or to make a new call to become effective.")}}</p></i>
+    </div>
+</div>
