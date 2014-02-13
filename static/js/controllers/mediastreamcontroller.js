@@ -35,7 +35,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter', 'webrtc.ice'], fu
             if (manualUnload && !$scope.peer) {
                 return;
             }
-			return translation._("Quit from Spreed Me?");
+			return translation._("Quit from Spreed Speak Freely?");
         });
 
         // Enable app full screen listener.
