@@ -25,15 +25,16 @@ import (
 )
 
 type Config struct {
-	ver      string   // Version (not exported to Javascript)
-	S        string   // Static URL prefix with version
-	StunURIs []string // STUN server URIs
-	TurnURIs []string // TURN server URIs
-	Tokens   bool     // True when we got a tokens file
-	Version  string   // Server version number
+	ver          string   // Version (not exported to Javascript)
+	S            string   // Static URL prefix with version
+	StunURIs     []string // STUN server URIs
+	TurnURIs     []string // TURN server URIs
+	Tokens       bool     // True when we got a tokens file
+	Version      string   // Server version number
+	globalRoomid string   // Id of the global room (not exported to Javascript)
 }
 
-func NewConfig(ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool) *Config {
+func NewConfig(ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool, globalRoomid string) *Config {
 	sv := fmt.Sprintf("static/ver=%s", ver)
-	return &Config{ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion}
+	return &Config{ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid}
 }

@@ -13,6 +13,7 @@ listen = 127.0.0.1:8080
 #turnSecret = the-default-turn-shared-secret-do-not-keep
 sessionSecret = the-default-secret-do-not-keep
 #tokenFile = tokens.txt # If set, everyone needs to give one of the tokens to launch the web client. One token per line in the file.
+#globalRoom = global # Enables a global room. Users in that room are in all rooms.
 #extraHTML = <div>Rendered directly before closing body tag.</div>
 
 [log]

@@ -199,6 +199,12 @@ func runner(runtime phoenix.Runtime) error {
 		extraHTMLString = ""
 	}
 
+	globalRoomid, err := runtime.GetString("app", "globalRoom")
+	if err != nil {
+		// Global room is disabled.
+		globalRoomid = ""
+	}
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
@@ -207,7 +213,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil)
+	config = NewConfig(ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid)
 
 	// Load templates.
 	tt := template.New("")

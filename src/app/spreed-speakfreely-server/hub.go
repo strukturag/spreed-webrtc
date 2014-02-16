@@ -33,7 +33,6 @@ import (
 )
 
 const (
-	globalRoomId          = "global"
 	turnTTL               = 3600 // XXX(longsleep): Add to config file.
 	maxBroadcastPerSecond = 1000
 	maxUsersLength        = 5000
@@ -139,6 +138,12 @@ func (h *Hub) GetRoom(id string) *RoomWorker {
 
 }
 
+func (h *Hub) isGlobalRoomid(id string) bool {
+
+	return id != "" && (id == h.config.globalRoomid)
+
+}
+
 func (h *Hub) registerHandler(c *Connection) {
 
 	h.mutex.Lock()
@@ -193,8 +198,9 @@ func (h *Hub) broadcastHandler(m *MessageRequest) {
 	roomid := m.Id
 	users := make([]string, len(h.userTable))
 	i := 0
+	// TODO(longsleep): Keep a userTable per room to avoid looping all users every time.
 	for id, u := range h.userTable {
-		if id == m.From || (u.Roomid != roomid && roomid != globalRoomId) {
+		if id == m.From || (u.Roomid != roomid && !h.isGlobalRoomid(roomid)) {
 			// Skip self and users not in the correct room.
 			continue
 		}
@@ -224,7 +230,7 @@ func (h *Hub) broadcastHandler(m *MessageRequest) {
 			//fmt.Println("in h.broadcast id", id, m.From, userRoomid, roomid)
 			//fmt.Println("broadcasting to", id, ec.Idx, userRoomid, roomid)
 			h.mutex.RUnlock()
-			if userRoomid != roomid && roomid != globalRoomId {
+			if userRoomid != roomid && !h.isGlobalRoomid(roomid) {
 				// Skip other rooms.
 				continue
 			}
@@ -262,8 +268,9 @@ func (h *Hub) usersHandler(c *Connection) {
 	users := &DataUsers{Type: "Users", Index: 0, Batch: 0}
 	usersList := users.Users
 	roomid := c.User.Roomid
+	// TODO(longsleep): Keep per room userTable to avoid looping all users.
 	for id, u := range h.userTable {
-		if u.Roomid == roomid || u.Roomid == globalRoomId {
+		if u.Roomid == roomid || h.isGlobalRoomid(u.Roomid) {
 			user := &DataUser{Type: "Online", Id: id, Ua: u.Ua, Status: u.Status, Rev: u.UpdateRev}
 			usersList = append(usersList, user)
 			if len(usersList) >= maxUsersLength {
