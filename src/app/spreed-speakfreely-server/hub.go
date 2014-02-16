@@ -144,6 +144,11 @@ func (h *Hub) isGlobalRoomid(id string) bool {
 
 }
 
+func (h *Hub) isDefaultRoomid(id string) bool {
+
+	return id == ""
+}
+
 func (h *Hub) registerHandler(c *Connection) {
 
 	h.mutex.Lock()

@@ -75,8 +75,12 @@ func (s *Server) OnText(c *Connection, b []byte) {
 			s.Broadcast(c, &DataUser{Type: "Left", Id: c.Id, Status: "soft"})
 		}
 		c.Roomid = msg.Hello.Id
-		c.Hello = true
-		s.Broadcast(c, &DataUser{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
+		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+			c.Hello = true
+			s.Broadcast(c, &DataUser{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
+		} else {
+			c.Hello = false
+		}
 	case "Offer":
 		// TODO(longsleep): Validate offer
 		s.Unicast(c, msg.Offer.To, msg.Offer)
@@ -87,13 +91,17 @@ func (s *Server) OnText(c *Connection, b []byte) {
 		// TODO(longsleep): Validate Answer
 		s.Unicast(c, msg.Answer.To, msg.Answer)
 	case "Users":
-		s.Users(c)
+		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+			s.Users(c)
+		}
 	case "Bye":
 		s.Unicast(c, msg.Bye.To, msg.Bye)
 	case "Status":
 		//log.Println("Status", msg.Status)
 		rev := s.UpdateUser(c, &UserUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
-		s.Broadcast(c, &DataUser{Type: "Status", Id: c.Id, Status: msg.Status.Status, Rev: rev})
+		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+			s.Broadcast(c, &DataUser{Type: "Status", Id: c.Id, Status: msg.Status.Status, Rev: rev})
+		}
 	case "Chat":
 		// TODO(longsleep): Limit sent chat messages per incoming connection.
 		if !msg.Chat.Chat.NoEcho {
@@ -102,7 +110,9 @@ func (s *Server) OnText(c *Connection, b []byte) {
 		msg.Chat.Chat.Time = time.Now().Format(time.RFC3339)
 		if msg.Chat.To == "" {
 			// TODO(longsleep): Check if chat broadcast is allowed.
-			s.Broadcast(c, msg.Chat)
+			if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+				s.Broadcast(c, msg.Chat)
+			}
 		} else {
 			s.Unicast(c, msg.Chat.To, msg.Chat)
 			if msg.Chat.Chat.Mid != "" {

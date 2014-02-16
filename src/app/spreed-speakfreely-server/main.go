@@ -221,8 +221,10 @@ func runner(runtime phoenix.Runtime) error {
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
 
+	defaultRoomEnabled := false
+
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, plugin)
+	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)
 
 	// Load templates.
 	tt := template.New("")
