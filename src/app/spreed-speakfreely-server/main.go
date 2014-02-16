@@ -155,6 +155,11 @@ func runner(runtime phoenix.Runtime) error {
 		}
 	}
 
+	title, err := runtime.GetString("app", "title")
+	if err != nil {
+		title = "Spreed Speak Freely"
+	}
+
 	ver, err := runtime.GetString("app", "ver")
 	if err != nil {
 		ver = ""
@@ -208,7 +213,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid)
+	config = NewConfig(title, ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid)
 
 	// Load templates.
 	tt := template.New("")
@@ -221,7 +226,7 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Load extra templates folder
 	extraFolder, err := runtime.GetString("app", "extra")
-	if err == nil {	
+	if err == nil {
 		if !httputils.HasDirPath(extraFolder) {
 			return fmt.Errorf("Configured extra '%s' is not a directory.", extraFolder)
 		}
@@ -229,7 +234,7 @@ func runner(runtime phoenix.Runtime) error {
 		if err != nil {
 			return fmt.Errorf("Failed to load extra templates: %s", err)
 		} else {
-			log.Printf("Loaded extra templates from: %s", extraFolder);
+			log.Printf("Loaded extra templates from: %s", extraFolder)
 		}
 	}
 

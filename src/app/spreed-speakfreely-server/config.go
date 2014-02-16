@@ -25,6 +25,7 @@ import (
 )
 
 type Config struct {
+	Title        string   // Title
 	ver          string   // Version (not exported to Javascript)
 	S            string   // Static URL prefix with version
 	StunURIs     []string // STUN server URIs
@@ -34,7 +35,7 @@ type Config struct {
 	globalRoomid string   // Id of the global room (not exported to Javascript)
 }
 
-func NewConfig(ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool, globalRoomid string) *Config {
+func NewConfig(title, ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool, globalRoomid string) *Config {
 	sv := fmt.Sprintf("static/ver=%s", ver)
-	return &Config{ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid}
+	return &Config{Title: title, ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid}
 }

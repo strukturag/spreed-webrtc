@@ -7,6 +7,7 @@ listen = 127.0.0.1:8080
 #writetimeout = 10
 
 [app]
+#title = Spreed Speak Freely
 #ver = 1234 # version string to use for static resource
 #stunURIs = stun.l.google.com:19302
 #turnURIs = turn:turnserver:port?transport=udp turn:anotherturnserver:port?transport=tcp turns:turnserver:443?transport=tcp
