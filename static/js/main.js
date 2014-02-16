@@ -140,10 +140,22 @@ define([
     'base'
 ], function ($, _, angular, require) {
 
-    require(['app'], function(App) {
-
-        App.initialize();
-
+    // Dynamic app loader with plugin support.
+    var load = ['app'];
+    _.each(document.getElementsByTagName('script'), function(script) {
+        var dataPlugin = script.getAttribute('data-plugin');
+        if (dataPlugin) {
+            load.push(dataPlugin);
+        }
+    });
+    require(load, function(App) {
+        var app = App.initialize();
+        var args = Array.prototype.slice.call(arguments, 1);
+        _.each(args, function(plugin) {
+            if (plugin && plugin.initialize) {
+                plugin.initialize(app)
+            }
+        })
     });
 
 });

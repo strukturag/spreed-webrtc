@@ -16,6 +16,7 @@ sessionSecret = the-default-secret-do-not-keep
 #tokenFile = tokens.txt # If set, everyone needs to give one of the tokens to launch the web client. One token per line in the file.
 #globalRoom = global # Enables a global room. Users in that room are in all rooms.
 #extra = /usr/share/spreed-speakfreely-server/extra # Extra templates directory. Add .html files to define extra-* template slots here.
+#plugin = plugins/example1 # Plugin support.
 
 [log]
 #logfile = /var/log/spreed-speakfreely-server.log

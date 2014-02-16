@@ -143,6 +143,8 @@ define([
 
         });
 
+        return app;
+
     };
 
     return {

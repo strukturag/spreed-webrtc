@@ -33,9 +33,10 @@ type Config struct {
 	Tokens       bool     // True when we got a tokens file
 	Version      string   // Server version number
 	globalRoomid string   // Id of the global room (not exported to Javascript)
+	Plugin       string   // Plugin to load
 }
 
-func NewConfig(title, ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool, globalRoomid string) *Config {
+func NewConfig(title, ver, runtimeVersion string, stunURIs, turnURIs []string, tokens bool, globalRoomid, plugin string) *Config {
 	sv := fmt.Sprintf("static/ver=%s", ver)
-	return &Config{Title: title, ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid}
+	return &Config{Title: title, ver: ver, S: sv, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid, Plugin: plugin}
 }

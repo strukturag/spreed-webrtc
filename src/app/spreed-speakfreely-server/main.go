@@ -205,6 +205,11 @@ func runner(runtime phoenix.Runtime) error {
 		globalRoomid = ""
 	}
 
+	plugin, err := runtime.GetString("app", "plugin")
+	if err != nil {
+		plugin = ""
+	}
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
@@ -213,7 +218,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid)
+	config = NewConfig(title, ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, plugin)
 
 	// Load templates.
 	tt := template.New("")
