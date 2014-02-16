@@ -112,7 +112,7 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	context := &Context{Cfg: config, App: htmlApp, Host: r.Host, Ssl: ssl, Languages: langs}
 
 	// Render the template.
-	err := templates.ExecuteTemplate(w, "main.html", context)
+	err := templates.ExecuteTemplate(w, "mainPage", &context)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -194,11 +194,6 @@ func runner(runtime phoenix.Runtime) error {
 	stunURIs := strings.Split(stunURIsString, " ")
 	trimAndRemoveDuplicates(&stunURIs)
 
-	extraHTMLString, err := runtime.GetString("app", "extraHTML")
-	if err != nil {
-		extraHTMLString = ""
-	}
-
 	globalRoomid, err := runtime.GetString("app", "globalRoom")
 	if err != nil {
 		// Global room is disabled.
@@ -219,15 +214,23 @@ func runner(runtime phoenix.Runtime) error {
 	tt := template.New("")
 	tt.Delims("<%", "%>")
 
-	// Add some functions.
-	extraHTML := template.HTML(extraHTMLString)
-	tt.Funcs(template.FuncMap{"extraHTML": func() template.HTML {
-		return extraHTML
-	}})
-
-	templates, err = tt.ParseFiles(path.Join(rootFolder, "html", "main.html"))
+	templates, err = tt.ParseGlob(path.Join(rootFolder, "html", "*.html"))
 	if err != nil {
 		return fmt.Errorf("Failed to load templates: %s", err)
+	}
+
+	// Load extra templates folder
+	extraFolder, err := runtime.GetString("app", "extra")
+	if err == nil {	
+		if !httputils.HasDirPath(extraFolder) {
+			return fmt.Errorf("Configured extra '%s' is not a directory.", extraFolder)
+		}
+		templates, err = templates.ParseGlob(path.Join(extraFolder, "*.html"))
+		if err != nil {
+			return fmt.Errorf("Failed to load extra templates: %s", err)
+		} else {
+			log.Printf("Loaded extra templates from: %s", extraFolder);
+		}
 	}
 
 	// Create our hub instance.

@@ -56,6 +56,7 @@ width:106px;
 height:32px;
 background-size:106px 32px;
 background-repeat:no-repeat;
+background-image:url(../img/logo-small.png);
 display: inline-block;
 text-align:left;
 }
@@ -64,6 +65,9 @@ position: relative;
 left: 38px;
 top: 26px;
 font-style: italic;
+}
+#bar .logo > span a {
+color:#222;
 }
 #bar > .right {
 position: absolute;

@@ -1,16 +1,7 @@
-<!doctype html>
+<%define "mainPage"%><!doctype html>
 <html class="no-js" lang="<% index .Languages 0%>" itemscope="itemscope" itemtype="http://schema.org/WebPage">
 <head>
-    <title>Spreed Speak Freely</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <base href="/">
-    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="<%.Cfg.S%>/css/main.min.css">
-    <script id="globalcontext" type="application/json"><%$%></script>
+<%template "head" .%>
 </head>
 <body ng-controller="MediastreamController">
 <div id="background"></div>
@@ -20,7 +11,7 @@
 </div>
 <div id="bar">
     <div class="left">
-        <a target="_blank" href="https://github.com/strukturag/spreed-speakfreely" class="logo" title="Spreed Speak Freely" style="background-image: url('<%.Cfg.S%>/img/logo-small.png')"><span>Speak Freely</span></a>
+    	<%template "logo" .%>
     </div>
     <status-message ng-controller="StatusmessageController"></status-message>
     <div class="ng-cloak right">
@@ -49,6 +40,6 @@
 <div class="ng-cloak" id="chat"><chat/></div>
 <script data-main="<%.Cfg.S%>/js/<%.App%>" src="<%.Cfg.S%>/js/libs/require/require.js"></script>
 <div class="ng-cloak" id="details">{{id}}</div>
-<%extraHTML%>
+<%template "extra-body" .%>
 </body>
-</html>
+</html><%end%>
