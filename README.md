@@ -19,6 +19,8 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 
 ## Building
 
+  [![Build Status](https://travis-ci.org/strukturag/spreed-speakfreely.png?branch=master)](https://travis-ci.org/strukturag/spreed-speakfreely)
+
   Go, Sass and NodeJS need to be in your $PATH.
 
   ```bash
