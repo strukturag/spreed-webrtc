@@ -38,6 +38,13 @@ DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
 
+NODEJS_BIN_EXISTS := $(shell [ -x /usr/bin/nodejs ] && echo 1 || echo 0)
+ifeq ($(NODEJS_BIN_EXISTS), 1)
+		NODEJS_BIN := /usr/bin/nodejs
+else
+		NODEJS_BIN := /usr/bin/node
+endif
+
 build: get binary styles javascript
 
 gopath:
@@ -65,7 +72,7 @@ styles:
 
 javascript:
 		mkdir -p $(OUTPUT_JS)
-		nodejs $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
+		$(NODEJS_BIN) $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
 
 release: GOPATH = "$(DIST):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
