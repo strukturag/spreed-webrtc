@@ -1,0 +1,25 @@
+# stats available at
+# https://travis-ci.org/strukturag/spreed-speakfreely/
+language: go
+
+go:
+  - 1.1
+  - 1.2
+  - tip
+
+before_install:
+  - sudo apt-get update
+
+install:
+  - sudo apt-get -y install nodejs npm ruby-sass ruby-compass python-babel
+    # 'npm config set ca ""' required only for node 0.6
+    # which is installed on Travis CI
+    # see https://github.com/npm/npm/issues/4379#issuecomment-31590254
+  - sudo npm config set ca ""
+  - sudo npm install -g po2json
+
+script:
+  - make get
+  - make styles
+  - make javascript
+  - make binary
