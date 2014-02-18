@@ -10,7 +10,7 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 
   - [Go](http://golang.org) >= 1.1.0
   - [NodeJS](http://nodejs.org/)
-  - [Sass](http://sass-lang.com/)
+  - [Sass](http://sass-lang.com/) >= 3.2.0
   - [Compass](http://compass-style.org/)
   - [Babel](http://babel.pocoo.org/)
   - [po2json](https://github.com/mikeedwards/po2json)
