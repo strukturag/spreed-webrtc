@@ -38,6 +38,15 @@ DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
 
+NODEJS_BIN := $(shell which nodejs)
+ifeq ("$(NODEJS_BIN)", "")
+	NODEJS_BIN := $(shell which node)
+endif
+NODEJS_BIN_EXISTS := $(shell [ -x "$(NODEJS_BIN)" ] && echo 1 || echo 0)
+ifneq ($(NODEJS_BIN_EXISTS), 1)
+    $(error "Can't find node.js runtime, please install / check your PATH")
+endif
+
 build: get binary styles javascript
 
 gopath:
@@ -65,7 +74,7 @@ styles:
 
 javascript:
 		mkdir -p $(OUTPUT_JS)
-		nodejs $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
+		$(NODEJS_BIN) $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
 
 release: GOPATH = "$(DIST):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
