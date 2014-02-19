@@ -38,11 +38,13 @@ DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
 
-NODEJS_BIN_EXISTS := $(shell [ -x /usr/bin/nodejs ] && echo 1 || echo 0)
-ifeq ($(NODEJS_BIN_EXISTS), 1)
-		NODEJS_BIN := /usr/bin/nodejs
-else
-		NODEJS_BIN := /usr/bin/node
+NODEJS_BIN := $(shell which nodejs)
+ifeq ("$(NODEJS_BIN)", "")
+	NODEJS_BIN := $(shell which node)
+endif
+NODEJS_BIN_EXISTS := $(shell [ -x "$(NODEJS_BIN)" ] && echo 1 || echo 0)
+ifneq ($(NODEJS_BIN_EXISTS), 1)
+    $(error "Can't find node.js runtime, please install / check your PATH")
 endif
 
 build: get binary styles javascript
