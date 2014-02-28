@@ -67,7 +67,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						});
 					},
 					closed: function(peerscreenshare) {
-						console.log("PeerScreenshare closed". peerscreenshare);
+						console.log("PeerScreenshare closed", peerscreenshare);
 						safeApply($scope, function(scope) {
 							scope.removeRemoteStream(null, peerscreenshare);
 							scope.connected = false;
