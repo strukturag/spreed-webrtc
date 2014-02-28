@@ -143,6 +143,17 @@ func runner(runtime phoenix.Runtime) error {
 		return fmt.Errorf("Unable to find client. Path correct and compiled css?")
 	}
 
+	// Read base path from config and make sure it ends with a slash.
+	basePath, err := runtime.GetString("http", "basePath")
+	if err != nil {
+		basePath = "/"
+	} else {
+		if !strings.HasSuffix(basePath, "/") {
+			basePath = fmt.Sprintf("%s/", basePath)
+		}
+		log.Printf("Using '%s' base base path.", basePath)
+	}
+
 	sessionSecret, err := runtime.GetString("app", "sessionSecret")
 	if err != nil {
 		return fmt.Errorf("No sessionSecret in config file.")
@@ -218,7 +229,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, plugin)
+	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, plugin)
 
 	// Load templates.
 	tt := template.New("")
@@ -262,11 +273,12 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create router.
-	r := mux.NewRouter()
+	router := mux.NewRouter()
+	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
-	r.Handle("/static/{path:.*}", httputils.FileStaticServer(http.Dir(rootFolder)))
-	r.Handle("/robots.txt", http.FileServer(http.Dir(path.Join(rootFolder, "static"))))
-	r.Handle("/favicon.ico", http.FileServer(http.Dir(path.Join(rootFolder, "static", "img"))))
+	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
+	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
+	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWsHubHandler(hub))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 	makeApiHandler(r, tokenProvider)

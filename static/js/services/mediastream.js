@@ -32,7 +32,7 @@ define([
 
         var globalcontext = $("#globalcontext").text();
         var context = JSON.parse(globalcontext);
-        var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + "/ws";
+        var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
         var version = context.Cfg.Version || "unknown";
         console.log("Service version: "+version);
         console.log("Ws URL: "+ url);
