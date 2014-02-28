@@ -143,10 +143,11 @@ define([
                                 }
                             }, prompt);
                         };
+                        var url = (context.Cfg.B || "/") + "api/v1/tokens";
                         var check = function(code) {
                             $http({
                                 method: "POST",
-                                url: "/api/v1/tokens",
+                                url: url,
                                 data: $.param({
                                     a: code
                                 }),
