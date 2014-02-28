@@ -46,7 +46,6 @@ var defaultConfig = "./server.conf"
 
 var templates *template.Template
 var config *Config
-var htmlApp string
 
 // Helper to retrieve languages from request.
 func getRequestLanguages(r *http.Request, supported_languages []string) []string {
@@ -109,7 +108,7 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare context to deliver to Javascript.
-	context := &Context{Cfg: config, App: htmlApp, Host: r.Host, Ssl: ssl, Languages: langs}
+	context := &Context{Cfg: config, App: "main", Host: r.Host, Ssl: ssl, Languages: langs}
 
 	// Render the template.
 	err := templates.ExecuteTemplate(w, "mainPage", &context)
@@ -131,12 +130,6 @@ func runner(runtime phoenix.Runtime) error {
 
 	if !httputils.HasDirPath(rootFolder) {
 		return fmt.Errorf("Configured root '%s' is not a directory.", rootFolder)
-	}
-
-	htmlApp = "main"
-	if httputils.HasFilePath(path.Join(rootFolder, "static", "js", "main.min.js")) {
-		runtime.Print("Using minimized javascript application.")
-		htmlApp = "main.un"
 	}
 
 	if !httputils.HasFilePath(path.Join(rootFolder, "static", "css", "main.min.css")) {
