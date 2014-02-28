@@ -57,12 +57,12 @@ left:0px;
 right:0px;
 top:0px;
 bottom:0px;
-background-image: url("../img/wild_oliva.png");
+background-image: url("../img/bg-tiles.png");
 background-repeat: repeat;
 z-index:0;
 	@include hidpi {
-		background-image: url("../img/wild_oliva_x2.png");
-		background-size: 192px 200px;
+		background-image: url("../img/bg-tiles_x2.png");
+		background-size: 198px 200px;
 	}
 }
 #loader {
