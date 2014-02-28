@@ -190,6 +190,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 }
                 return scope.doCall(id);
             };
+            scope.$on("$destroy", function() {
+                scope.element = null;
+                scope.killed = true;
+            });
 
         };
 
@@ -220,10 +224,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
             // Cleanup lefts.
             var lefts = this.lefts;
             if (!_.isEmpty(lefts)) {
-                _.each(lefts, function(v, k) {
-                    if (v.element) {
-                        v.element.remove();
-                        v.element = null;
+                _.each(lefts, function(element, k) {
+                    if (element) {
+                        element.remove();
                     }
                 });
                 this.lefts = {};
@@ -367,7 +370,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
             //console.log("Left", user);
             var id = user.Id;
             this.tree.remove(id);
-            var scope = buddyData.del(id);
+            var scope = buddyData.get(id);
             if (!scope) {
                 //console.warn("Trying to remove buddy with no registered scope", user);
                 return;
@@ -375,11 +378,11 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
             if (buddyCount>0) {
                 buddyCount--;
             }
-            scope.killed = true;
             if (scope.element) {
-                this.lefts[id] = scope;
+                this.lefts[id] = scope.element;
                 this.playSoundLeft = true;
             }
+            buddyData.del(id);
             delete this.actionElements[id];
 
         };

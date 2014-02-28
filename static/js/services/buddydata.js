@@ -61,7 +61,7 @@ define(['underscore'], function(underscore) {
             get: function(id, createInParent, afterCreateCallback) {
                 if (scopes.hasOwnProperty(id)) {
                     return scopes[id];
-                } else if (pushed.hasOwnProperty(id)) {
+                } else if (!createInParent && pushed.hasOwnProperty(id)) {
                     return pushed[id].scope;
                 } else {
                     if (createInParent) {
@@ -69,6 +69,10 @@ define(['underscore'], function(underscore) {
                         var scope = scopes[id] = createInParent.$new();
                         scope.buddyIndex = ++count;
                         scope.buddyIndexSortable = ("0000000" + scope.buddyIndex).slice(-7);
+                        if (pushed.hasOwnProperty(id)) {
+                            // Refresh pushed scope reference.
+                            pushed[id].scope = scope;
+                        }
                         if (afterCreateCallback) {
                             afterCreateCallback(scope);
                         }
