@@ -28,6 +28,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
             //console.log("BuddylistController", $buddylist, $element, $scope);
+            $scope.enabled = false;
 
             $scope.doCall = function(id) {
 
@@ -63,17 +64,20 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                 }
             });
             mediaStream.api.e.on("received.users", function(event, data) {
+                $scope.enabled = true;
                 var selfId = $scope.id;
                 _.each(data, function(p) {
                     if (p.Id !== selfId) {
                         onJoined(p);
                     }
                 });
+                $scope.$apply();
             });
             mediaStream.api.e.on("received.status", function(event, data) {
                 onStatus(data);
             });
             mediaStream.connector.e.on("closed error", function() {
+                $scope.enabled = false;
                 buddylist.onClosed();
             });
 
