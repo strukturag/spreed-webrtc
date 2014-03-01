@@ -38,7 +38,7 @@ type Config struct {
 	Plugin             string   // Plugin to load
 }
 
-func NewConfig(title, ver, runtimeVersion, basePath string, stunURIs, turnURIs []string, tokens bool, globalRoomid, string, defaultRoomEnabled bool, plugin string) *Config {
+func NewConfig(title, ver, runtimeVersion, basePath string, stunURIs, turnURIs []string, tokens bool, globalRoomid string, defaultRoomEnabled bool, plugin string) *Config {
 	sv := fmt.Sprintf("static/ver=%s", ver)
 	return &Config{Title: title, ver: ver, S: sv, B: basePath, StunURIs: stunURIs, TurnURIs: turnURIs, Tokens: tokens, Version: runtimeVersion, globalRoomid: globalRoomid, defaultRoomEnabled: defaultRoomEnabled, Plugin: plugin}
 }
