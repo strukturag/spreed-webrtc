@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-02-13 18:05+0100\n"
-"PO-Revision-Date: 2014-02-13 18:05+0100\n"
+"POT-Creation-Date: 2014-03-02 23:34+0100\n"
+"PO-Revision-Date: 2014-03-02 23:37+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -273,6 +273,29 @@ msgid "Drag files into a chat window to share files with this room or person."
 msgstr ""
 "Ziehen Sie Dateien in ein Chat-Fenster, um Dateien mit diesem Raum oder "
 "einer Person zu teilen."
+
+msgid "Create your room"
+msgstr "Erstellen Sie Ihren Raum"
+
+msgid "This is your room link:"
+msgstr "Ihre Raum-Addresse:"
+
+msgid "Creating room link ..."
+msgstr "Raum-Link wird erstellt ..."
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Just click start"
+msgstr "Klicken Sie auf Start"
+
+msgid "Share this URL with the people you want to meet."
+msgstr ""
+"Teilen Sie diese Adresse mit Ihren den Kontakten mit denen Sie meeten "
+"wollen."
+
+msgid "You can use and re-use this room as many times as you want."
+msgstr "Sie konnen diesen Raum so oft wieder benutzen wie Sie möchten."
 
 msgid "Please allow access to your camera and microphone."
 msgstr "Bitte gestatten Sie den Zugriff auf Ihre Kamera und Mikrofon."

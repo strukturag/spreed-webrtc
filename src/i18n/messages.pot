@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-02-13 18:05+0100\n"
+"POT-Creation-Date: 2014-03-02 23:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -268,6 +268,27 @@ msgid "Double click on video for fullscreen when in a call."
 msgstr ""
 
 msgid "Drag files into a chat window to share files with this room or person."
+msgstr ""
+
+msgid "Create your room"
+msgstr ""
+
+msgid "This is your room link:"
+msgstr ""
+
+msgid "Creating room link ..."
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Just click start"
+msgstr ""
+
+msgid "Share this URL with the people you want to meet."
+msgstr ""
+
+msgid "You can use and re-use this room as many times as you want."
 msgstr ""
 
 msgid "Please allow access to your camera and microphone."
