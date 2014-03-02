@@ -214,14 +214,18 @@ func runner(runtime phoenix.Runtime) error {
 		plugin = ""
 	}
 
+	defaultRoomEnabled := true
+	defaultRoomEnabledString, err := runtime.GetString("app", "defaultRoomEnabled")
+	if err == nil {
+		defaultRoomEnabled = defaultRoomEnabledString == "true"
+	}
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
 		log.Printf("Using token authorization from %s\n", tokenFile)
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
-
-	defaultRoomEnabled := false
 
 	// Create configuration data structure.
 	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)

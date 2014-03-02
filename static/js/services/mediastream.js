@@ -111,7 +111,7 @@ define([
                         $location.path("/"+defaultRoom).replace();
                         return
                     }
-                    console.info("Room is:", [room]);
+                    console.info("Selected room is:", [room]);
                     if (!ready || !cont) {
                         ready = true;
                         connector.roomid = room;

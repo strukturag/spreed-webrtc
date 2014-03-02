@@ -23,15 +23,15 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
     // roomBar
     return ["$window", "$rootScope", "$location", function($window, $rootScope, $location) {
 
-        var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+        var link = function($scope) {
 
+            //console.log("roomBar directive link", arguments);
             $scope.newroomid = $rootScope.roomid;
             $scope.hideRoomBar = true;
 
             $scope.save = function() {
-                var roomid = $window.encodeURIComponent($scope.newroomid);
+                var roomid = $scope.changeRoomToId($scope.newroomid);
                 if (roomid !== $rootScope.roomid) {
-                    $location.path("/"+roomid).replace();
                     $scope.roombarform.$setPristine();
                 }
                 $scope.hideRoomBar = true;
@@ -61,12 +61,6 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
                 }
             });
 
-        }];
-
-        var link = function(scope, iElement, iAttrs, controller) {
-
-            //console.log("roomBar directive link", arguments);
-
         };
 
         return {
@@ -74,7 +68,7 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
             replace: true,
             scope: true,
             template: template,
-            controller: controller,
+            controller: "RoomchangeController",
             link: link
         }
 

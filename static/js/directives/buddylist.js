@@ -50,6 +50,13 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
             };
 
+            $scope.setRoomStatus = function(status) {
+                if (status !== $scope.enabled) {
+                    $scope.enabled = status;
+                    $scope.$emit("roomStatus", status);
+                }
+            };
+
             window.doAudioConference = $scope.doAudioConference;
 
             var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
@@ -64,7 +71,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                 }
             });
             mediaStream.api.e.on("received.users", function(event, data) {
-                $scope.enabled = true;
+                $scope.setRoomStatus(true);
                 var selfId = $scope.id;
                 _.each(data, function(p) {
                     if (p.Id !== selfId) {
@@ -77,7 +84,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                 onStatus(data);
             });
             mediaStream.connector.e.on("closed error", function() {
-                $scope.enabled = false;
+                $scope.setRoomStatus(false);
                 buddylist.onClosed();
             });
 

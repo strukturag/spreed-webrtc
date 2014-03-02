@@ -24,9 +24,14 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
   return ["mediaStream", function(mediaStream) {
 
-    var controller = ['$scope', "mediaStream", "safeApply", function($scope, mediaStream, safeApply) {
+    var controller = ['$scope', "mediaStream", "safeApply", "$rootScope", "$timeout", function($scope, mediaStream, safeApply, $rootScope, $timeout) {
+
+      $scope.roomdata = {};
 
       var pending = true;
+      var complete = false;
+
+      var initalizer = null;
 
       var ctrl = this;
       ctrl.setInfo = function(info) {
@@ -40,10 +45,13 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
           if (status) {
             localStorage.setItem("mediastream-mediacheck", MEDIA_CHECK)
             $scope.connect()
-            ctrl.setInfo("complete");
+            ctrl.setInfo("initializing");
+            initializer = $timeout(function() {
+              ctrl.setInfo("noroom");
+            }, 1000);
+            complete = true;
           } else {
             ctrl.setInfo("denied");
-            $scope.mediaAccessDenied = true;
           }
           // Check if we should show settings per default.
           $scope.showSettings = $scope.loadedUser ? 0 : 1;
@@ -84,9 +92,21 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
           }
       });
 
+      $rootScope.$on("roomStatus", function(event, status) {
+        //console.log("roomStatus", status);
+        if (complete) {
+          if (initializer !== null) {
+            $timeout.cancel(initializer);
+            initializer = null;
+          }
+          ctrl.setInfo(status ? "room" : "noroom");
+        }
+      });
+
     }];
 
     return {
+      scope: true,
       restrict: 'E',
       replace: true,
       template: template,

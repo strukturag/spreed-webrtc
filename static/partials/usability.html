@@ -2,12 +2,28 @@
     <div class="animate-show" ng-hide="showSettings">
         <div ng-switch="usabilityInfo">
           <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
-          <div ng-switch-when="complete">
+          <div ng-switch-when="room">
             <i class="fa fa-hand-o-right fa-4x pull-right"></i>
             <p>{{_("Select one of the users from the online list to start a video call.")}}</p>
             <p>{{_("Hover over users in the list for more actions.")}}</p>
             <p>{{_("Double click on video for fullscreen when in a call.")}}</p>
             <p>{{_("Drag files into a chat window to share files with this room or person.")}}</p>
+          </div>
+          <div ng-switch-when="noroom" ng-controller="RoomchangeController">
+            <h3 style="margin-top:0px">Create your room</h3>
+            <p><i>Just click start</i></p>
+            <p>
+              <div class="input-group input-group-lg">
+                <input type="text" class="form-control" ng-model="roomdata.link" placeholder="Creating room link ..." disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">Start</button>
+                </span>
+              </div>
+            </p>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-files-o"></i>Share this URL with the people you want to meet.</li>
+              <li><i class="fa-li fa fa-clipboard"></i>You can use and re-use this room as many times as you want.</li>
+            </ul>
           </div>
           <div ng-switch-when="usermedia"><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</div>
           <div ng-switch-when="denied"><i class="fa fa-exclamation-triangle fa-4x pull-right"></i>{{_("Camera / microphone access required.")}}</div>
