@@ -20,7 +20,7 @@
  */
 define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function(_, templateChat, templateChatroom) {
 
-    return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData) {
+    return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "$timeout", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, $timeout) {
 
         var displayName = safeDisplayName;
         var group_chat_id = "";
@@ -272,7 +272,11 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                                 controller.visibleRooms.push(id);
                                 subscope.index = index;
                                 subscope.visible = true;
-                                subscope.minimized = false;
+                                if (options.minimized) {
+                                    subscope.minimized = true;
+                                } else {
+                                    subscope.minimized = false;
+                                }
                             }
                         }
                         if (options.autofocus && subscope.visible) {
@@ -309,10 +313,19 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         return;
                     }
                     delete controller.rooms[id];
-                    subscope.$destroy();
+                    $timeout(function() {
+                        subscope.$destroy();
+                    }, 0);
                 };
-                // Show default room.
-                scope.showRoom(group_chat_id, {title: translation._("Group chat")});
+
+                scope.$on("room", function(event, room) {
+                    if (room) {
+                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, minimized: true});
+                    } else {
+                        scope.hideRoom(group_chat_id);
+                    }
+                });
+                
             };
 
         };

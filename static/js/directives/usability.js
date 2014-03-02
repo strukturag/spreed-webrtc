@@ -24,7 +24,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
   return ["mediaStream", function(mediaStream) {
 
-    var controller = ['$scope', "mediaStream", "safeApply", "$rootScope", "$timeout", function($scope, mediaStream, safeApply, $rootScope, $timeout) {
+    var controller = ['$scope', "mediaStream", "safeApply", "$timeout", function($scope, mediaStream, safeApply, $timeout) {
 
       $scope.roomdata = {};
 
@@ -81,7 +81,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
           if ($scope.connect) {
               console.log("Connecting ...");
               ctrl.setInfo("checking");
-              setTimeout(function() {
+              $timeout(function() {
                   if (pending) {
                     safeApply($scope, function() {
                       ctrl.setInfo("usermedia");
@@ -92,14 +92,14 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
           }
       });
 
-      $rootScope.$on("roomStatus", function(event, status) {
+      $scope.$on("room", function(event, room) {
         //console.log("roomStatus", status);
         if (complete) {
           if (initializer !== null) {
             $timeout.cancel(initializer);
             initializer = null;
           }
-          ctrl.setInfo(status ? "room" : "noroom");
+          ctrl.setInfo(room ? "room" : "noroom");
         }
       });
 

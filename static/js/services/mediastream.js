@@ -70,6 +70,8 @@ define([
                 var ready = false;
 
                 $rootScope.version = version;
+                $rootScope.roomid = null;
+                $rootScope.roomstatus = false; 
 
                 connector.e.on("closed error", _.bind(function(event, options) {
                     var opts = $.extend({}, options);
@@ -120,6 +122,12 @@ define([
                         connector.room(room);
                     }
                     $rootScope.roomid = room;
+                });
+
+                $rootScope.$on("roomStatus", function(event, status) {
+                    $rootScope.roomstatus = status ? true : false;
+                    var room = status ? $rootScope.roomid : null;
+                    $rootScope.$broadcast("room", room);
                 });
 
                 visibility.afterPrerendering(function() {
