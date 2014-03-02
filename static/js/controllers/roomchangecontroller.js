@@ -25,11 +25,11 @@ define([], function() {
 
         console.log("Room change controller", $element, $scope.roomdata);
 
-        var baseurl = $window.location.protocol+'//'+$window.location.host+mediaStream.config.B;
-        var url = (mediaStream.config.B || "/") + "api/v1/rooms";
+        var url = mediaStream.url.api("rooms");
 
         var ctrl = this;
         ctrl.enabled = true;
+
         ctrl.getRoom = function(cb) {
             $http({
                 method: "POST",
@@ -65,10 +65,10 @@ define([], function() {
                     ctrl.getRoom(function(roomdata) {
                         console.info("Retrieved room data", roomdata);
                         $scope.roomdata = roomdata;
-                        roomdata.link = baseurl + encodeURI(roomdata.name);
+                        roomdata.link = mediaStream.url.room(roomdata.name);
                     });
                 }
-            }, 500);
+            }, 100);
         }
 
     }];

@@ -44,19 +44,19 @@ define([
         var td = null;
         $window.testDisconnect = function() {
             if (td) {
-                window.clearInterval(td);
+                $window.clearInterval(td);
                 td = null;
                 console.info("Stopped disconnector.");
                 return;
             }
-            td = window.setInterval(function() {
+            td = $window.setInterval(function() {
                 console.info("Test disconnect!");
                 connector.conn.close();
             }, 10000);
             console.info("Started disconnector.");
         };
 
-        return {
+        var mediaStream = {
             version: version,
             url: url,
             config: context.Cfg,
@@ -64,6 +64,15 @@ define([
             connector: connector,
             api: api,
             tokens: tokens,
+            url: {
+                room: function(id) {
+                    id = $window.encodeURIComponent(id);
+                    return $window.location.protocol+'//'+$window.location.host+context.Cfg.B+id;
+                },
+                api: function(path) {
+                    return (context.Cfg.B || "/") + "api/v1/" + path;
+                }
+            },
             initialize: function($rootScope, translation) {
 
                 var cont = false;
@@ -151,7 +160,7 @@ define([
                                 }
                             }, prompt);
                         };
-                        var url = (context.Cfg.B || "/") + "api/v1/tokens";
+                        var url = mediaStream.url.api("tokens");
                         var check = function(code) {
                             $http({
                                 method: "POST",
@@ -191,7 +200,9 @@ define([
                 });
 
             }
-        }
+        };
+
+        return mediaStream;
 
     }];
 
