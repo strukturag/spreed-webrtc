@@ -93,13 +93,13 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
       });
 
       $scope.$on("room", function(event, room) {
-        //console.log("roomStatus", status);
+        console.log("roomStatus", room !== null ? true : false);
         if (complete) {
           if (initializer !== null) {
             $timeout.cancel(initializer);
             initializer = null;
           }
-          ctrl.setInfo(room ? "room" : "noroom");
+          ctrl.setInfo(room !== null ? "room" : "noroom");
         }
       });
 

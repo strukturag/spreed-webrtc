@@ -319,7 +319,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 };
 
                 scope.$on("room", function(event, room) {
-                    if (room) {
+                    if (room !== null) {
                         scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, minimized: true});
                     } else {
                         scope.hideRoom(group_chat_id);
