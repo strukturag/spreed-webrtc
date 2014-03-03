@@ -20,7 +20,7 @@
  */
 define(["jquery", "underscore"], function($, _) {
 
-	return ["fileData", "fileTransfer", "$window", "mediaStream", "safeApply", function(fileData, fileTransfer, $window, mediaStream, safeApply) {
+	return ["fileData", "fileTransfer", "$window", "mediaStream", "safeApply", "$timeout", function(fileData, fileTransfer, $window, mediaStream, safeApply, $timeout) {
 
 		var downloads = 0;
 
@@ -57,9 +57,14 @@ define(["jquery", "underscore"], function($, _) {
 			$window.clearInterval(this.interval);
 			this.interval = null;
 
-			// close all known xfers.
+			// Close all known xfers.
 			_.each(this.xfer_all, function(xfer) {
-				xfer.cancel();
+				// Implement own clean up message.
+				// NOTE(longsleep): See https://code.google.com/p/webrtc/issues/detail?id=1676 for reason.
+				xfer.send({m: "bye"});
+				$timeout(function() {
+					xfer.cancel();
+				}, 0);
 			});
 			_.each(this.jobs, function(job) {
 				job.stop = true;

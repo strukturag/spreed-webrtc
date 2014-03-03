@@ -681,11 +681,22 @@ File sharing data channel protocol
         m is the mode. Currently only "r" is known to request chunks.
         i is the chunk sequence number to request (integer).
 
-      Whenever you want the peer to send a chunk, request it by sending a
-      JSON chunk request over the data channel with the sequence which
-      should be transmitted. The current web implementation requests chunks
-      sequentially, and waiting for each chunk to be complete before
-      sending the request for the next one.
+        Whenever you want the peer to send a chunk, request it by sending a
+        JSON chunk request over the data channel with the sequence which
+        should be transmitted. The current web implementation requests chunks
+        sequentially, and waiting for each chunk to be complete before
+        sending the request for the next one.
+
+      JSON bye request
+
+        {
+            "m": "bye"
+        }
+
+        This is used to clean up connections when the downloader is finished
+        or has manually aborted downloading. The downloader sends this message
+        to the connected peer which then may close the connection where this
+        message was received.
 
 
 End of Channeling API.

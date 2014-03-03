@@ -48,21 +48,14 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens', 'w
 		};
 		this.sdpConstraints = {};
 		// SCTP is supported from Chrome M31.
-        // No need to pass DTLS constraint as it is on by default in Chrome M31.
-        // For SCTP, reliable and ordered is true by default.
+		// No need to pass DTLS constraint as it is on by default in Chrome M31.
+		// For SCTP, reliable and ordered is true by default.
 		this.pcConstraints = {};
 
 		// Inject token into sessiondescription and ice candidate data.
 		this.e.on("sessiondescription icecandidate", _.bind(function(event, data) {
 			data._token = this.token;
 			data._id = this.id;
-		}, this));
-
-		this.e.on("connectionStateChange", _.bind(function(event, iceConnectionState) {
-			if (iceConnectionState === "disconnected") {
-				// Auto cleanup stuff when we get disconnected.
-				this.close();
-			}
 		}, this));
 
 	};
@@ -78,7 +71,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens', 'w
 	PeerXfer.prototype.cancel = function() {
 		this.e.triggerHandler("cancel", [this]);
 		this.close();
-	}
+	};
 
 	PeerXfer.prototype.onMessage = function(event) {
 		// Our own datachannel event.

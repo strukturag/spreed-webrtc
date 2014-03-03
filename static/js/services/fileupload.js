@@ -112,6 +112,10 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 					});
 				}, this));
 				break;
+			case "bye":
+				// Close this xfer.
+				xfer.cancel();
+				break;
 			default:
 				console.log("Unknown xfer control request", msg.m, msg);
 				break;
