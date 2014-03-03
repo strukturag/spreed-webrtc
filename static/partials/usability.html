@@ -18,6 +18,7 @@
                   <li><i class="fa-li fa fa-repeat"></i>{{_("You can use and re-use this room as many times as you want.")}}</li>
                 </ul>
               </small>
+              <social-share/>
             </div>
           </div>
           <div ng-switch-when="noroom" ng-controller="RoomchangeController">
@@ -38,6 +39,7 @@
                 <li><i class="fa-li fa fa-repeat"></i>{{_("You can use and re-use this room as many times as you want.")}}</li>
               </ul>
             </small>
+            <social-share/>
           </div>
           <div ng-switch-when="usermedia"><i><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</i></div>
           <div ng-switch-when="denied"><i><i class="fa fa-exclamation-triangle fa-4x pull-right"></i>{{_("Camera / microphone access required.")}}</i></div>

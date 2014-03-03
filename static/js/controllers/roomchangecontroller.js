@@ -66,7 +66,7 @@ define([], function() {
                     ctrl.getRoom(function(roomdata) {
                         console.info("Retrieved room data", roomdata);
                         $scope.roomdata = roomdata;
-                        roomdata.link = mediaStream.url.room(roomdata.name);
+                        roomdata.link = $scope.roomlink = mediaStream.url.room(roomdata.name);
                     });
                 }
             }, 100);

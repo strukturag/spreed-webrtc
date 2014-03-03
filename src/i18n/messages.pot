@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-03 15:01+0100\n"
+"POT-Creation-Date: 2014-03-03 19:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -210,6 +210,21 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
+msgid "Share by Email"
+msgstr ""
+
+msgid "Share on Facebook"
+msgstr ""
+
+msgid "Share on Twitter"
+msgstr ""
+
+msgid "Share on Google Plus"
+msgstr ""
+
+msgid "Share on XING"
+msgstr ""
+
 msgid "Initializing"
 msgstr ""
 
@@ -380,6 +395,9 @@ msgid "Group chat"
 msgstr ""
 
 msgid "Your browser does not support file transfer."
+msgstr ""
+
+msgid "Meet with me here:"
 msgstr ""
 
 msgid "Error"

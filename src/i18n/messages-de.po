@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-03 15:01+0100\n"
-"PO-Revision-Date: 2014-03-03 15:03+0100\n"
+"POT-Creation-Date: 2014-03-03 19:00+0100\n"
+"PO-Revision-Date: 2014-03-03 19:00+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -210,6 +210,21 @@ msgstr "Einstellungen merken"
 msgid "Apply"
 msgstr "Übernehmen"
 
+msgid "Share by Email"
+msgstr "Per E-Mail teilen"
+
+msgid "Share on Facebook"
+msgstr "Auf Facebook teilen"
+
+msgid "Share on Twitter"
+msgstr "Auf Twitter teilen"
+
+msgid "Share on Google Plus"
+msgstr "Auf Google Plus teilen"
+
+msgid "Share on XING"
+msgstr "Auf XING teilen"
+
 msgid "Initializing"
 msgstr "Initialisiere"
 
@@ -387,6 +402,9 @@ msgstr "Gruppen-Chat"
 
 msgid "Your browser does not support file transfer."
 msgstr "Mit Ihrem Browser können keine Dateien übertragen werden."
+
+msgid "Meet with me here:"
+msgstr "Meeting:"
 
 msgid "Error"
 msgstr "Fehler"

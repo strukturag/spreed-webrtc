@@ -301,9 +301,17 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter', 'webrtc.ice'], fu
 
         };
 
-        $scope.manualReloadApp = function() {
+        $scope.manualReloadApp = function(url) {
             manualUnload = true;
-            $window.location.reload(true);
+            if (url) {
+                $window.location.href = url;
+                $timeout(function() {
+                    manualUnload = false;
+                }, 0);
+            } else {
+                $window.location.reload(true);
+            }
+
         };
 
         $scope.$watch("cameraMute", function(cameraMute) {

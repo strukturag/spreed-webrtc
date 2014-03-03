@@ -35,6 +35,10 @@
 	padding:4px 4px 4px 30px;
 	vertical-align:middle;
 }
+#roombar .roombarcontent {
+	display:inline-block;
+	margin-left:.5em;
+}
 .roombarbutton {
 	font-size:20px;
 	vertical-align:middle;
@@ -47,14 +51,17 @@
 	z-index:15;
 	opacity:0.7;
 }
-.roombarcontent {
-	display:inline-block;
-	max-width:300px;
+.roombarcontent .input-group {
+	max-width:160px;
+}
+.roombarcontent > * {
+	padding-right:.5em;
 }
 .roombar .roomlabellabel {
 	display:none;
 	opacity: 0.7;
 	text-align:left;
+	margin-left:0.5em;
 }
 #roombar .roombar.notvisible {
 	.roombarcontent {

@@ -132,7 +132,7 @@ define([
                         connector.room(room);
                     }
                     $rootScope.roomid = room;
-                    $rootScope.roomlink = mediaStream.url.room(room);
+                    $rootScope.roomlink = room ? mediaStream.url.room(room) : null;
                 });
 
                 $rootScope.$on("roomStatus", function(event, status) {

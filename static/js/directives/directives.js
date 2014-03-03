@@ -32,8 +32,9 @@ define([
   'directives/audiolevel',
   'directives/fileinfo',
   'directives/screenshare',
-  'directives/roombar'
-], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar) {
+  'directives/roombar',
+  'directives/socialshare'
+], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare) {
 
   var directives = {
     onEnter: onEnter,
@@ -47,7 +48,8 @@ define([
     audioLevel: audioLevel,
     fileInfo: fileInfo,
     screenshare: screenshare,
-    roomBar: roomBar
+    roomBar: roomBar,
+    socialShare: socialShare
   };
 
   var initialize = function (angModule) {
