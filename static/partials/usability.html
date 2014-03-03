@@ -1,13 +1,24 @@
 <div class="fadetogglecontainer" ng-hide="peer">
     <div class="animate-show" ng-hide="showSettings">
-        <div ng-switch="usabilityInfo">
+        <div class="fadetogglecontainer" ng-switch="usabilityInfo">
           <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
           <div ng-switch-when="room">
-            <i class="fa fa-hand-o-right fa-4x pull-right"></i>
-            <p><i>{{_("Select one of the users from the online list to start a video call.")}}</i></p>
-            <p><i>{{_("Hover over users in the list for more actions.")}}</i></p>
-            <p><i>{{_("Double click on video for fullscreen when in a call.")}}</i></p>
-            <p><i>{{_("Drag files into a chat window to share files with this room or person.")}}</i></p>
+            <div ng-show="roomlink">
+              <h3 style="margin-top:0px">{{_("Room")}} {{roomid}}</h3>
+              <p><i>{{_("Link:")}}</i></p>
+              <p>
+                <div class="input-group-lg">
+                  <input type="text" class="form-control" ng-model="roomlink" disabled>
+                </div>
+              </p>
+              <p><i>{{_("You are in this room.")}}</i></p>
+              <small>
+                <ul class="fa-ul">
+                  <li><i class="fa-li fa fa-share-square"></i>{{_("Share this URL with the people you want to meet.")}}</li>
+                  <li><i class="fa-li fa fa-repeat"></i>{{_("You can use and re-use this room as many times as you want.")}}</li>
+                </ul>
+              </small>
+            </div>
           </div>
           <div ng-switch-when="noroom" ng-controller="RoomchangeController">
             <h3 style="margin-top:0px">{{_("Create your room")}}</h3>

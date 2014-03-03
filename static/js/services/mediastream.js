@@ -80,7 +80,8 @@ define([
 
                 $rootScope.version = version;
                 $rootScope.roomid = null;
-                $rootScope.roomstatus = false; 
+                $rootScope.roomlink = null;
+                $rootScope.roomstatus = false;
 
                 connector.e.on("closed error", _.bind(function(event, options) {
                     var opts = $.extend({}, options);
@@ -131,6 +132,7 @@ define([
                         connector.room(room);
                     }
                     $rootScope.roomid = room;
+                    $rootScope.roomlink = mediaStream.url.room(room);
                 });
 
                 $rootScope.$on("roomStatus", function(event, status) {
