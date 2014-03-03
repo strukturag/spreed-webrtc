@@ -58,7 +58,8 @@ define([], function() {
             ctrl.enabled = false;
         });
 
-        if (typeof $scope.roomdata !== "undefined") {
+        var roomDataLinkInput = $element.find(".roomdata-link-input");
+        if (roomDataLinkInput.length) {
             $scope.roomdata = {};
             $timeout(function() {
                 if (ctrl.enabled) {

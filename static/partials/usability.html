@@ -14,13 +14,13 @@
             <p><i>{{_("This is your room link:")}}</i></p>
             <p>
               <div class="input-group input-group-lg">
-                <input type="text" class="form-control" ng-model="roomdata.link" placeholder="{{_('Creating room link ...')}}" disabled>
+                <input type="text" class="form-control roomdata-link-input" ng-model="roomdata.link" placeholder="{{_('Creating room link ...')}}" disabled>
                 <span class="input-group-btn">
                   <button class="btn btn-primary" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">{{_("Start")}}</button>
                 </span>
               </div>
             </p>
-            <p><i>{{_("Just click start")}}</i></p>            
+            <p><i>{{_("Just click start")}}</i></p>
             <small>
               <ul class="fa-ul">
                 <li><i class="fa-li fa fa-share-square"></i>{{_("Share this URL with the people you want to meet.")}}</li>

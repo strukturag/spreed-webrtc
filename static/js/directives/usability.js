@@ -26,8 +26,6 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
     var controller = ['$scope', "mediaStream", "safeApply", "$timeout", function($scope, mediaStream, safeApply, $timeout) {
 
-      $scope.roomdata = {};
-
       var pending = true;
       var complete = false;
 
@@ -106,7 +104,6 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
     }];
 
     return {
-      scope: true,
       restrict: 'E',
       replace: true,
       template: template,
