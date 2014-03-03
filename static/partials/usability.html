@@ -20,6 +20,10 @@
               </small>
               <social-share/>
             </div>
+            <div ng-show="!roomlink">
+              <p>{{_("You are in the general room.")}}</p>
+              <p>{{_('Break out into a seperate room at any time by clicking on the icon in the top left corner.')}}</p>
+            </div>
           </div>
           <div ng-switch-when="noroom" ng-controller="RoomchangeController">
             <h3 style="margin-top:0px">{{_("Create your room")}}</h3>
