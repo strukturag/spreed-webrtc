@@ -1,5 +1,5 @@
 
-               Spreed Speak Freely Channeling API v1.1.4
+               Spreed Speak Freely Channeling API v1.2.0
             =================================================
                         (c)2014 struktur AG
 
