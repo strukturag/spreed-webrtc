@@ -73,8 +73,8 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
       pc.onsignalingstatechange = function(event) {
         // XXX(longsleep): Remove this or handle it in a real function.
         // XXX(longsleep): Firefox 25 does send event as a string (like stable).
-        console.debug("Signaling state changed", event);
-      }
+        console.debug("Signaling state changed", pc.signalingState);
+      };
       // NOTE(longsleep):
       // Support old callback too (https://groups.google.com/forum/?fromgroups=#!topic/discuss-webrtc/glukq0OWwVM)
       // Chrome < 27 and Firefox < 24 need this.
