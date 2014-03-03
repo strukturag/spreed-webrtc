@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	dict = "abcdefghijklmnopqrstuvwxyz0123456789"
+	dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW0123456789"
 )
 
 func RandomString(length int) string {
