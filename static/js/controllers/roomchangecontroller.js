@@ -42,8 +42,8 @@ define([], function() {
                 cb(data);
             }).
             error(function() {
-                console.log("Failed to retrieve room link", arguments);
-                cb(data);
+                console.error("Failed to retrieve room link.");
+                cb({});
             });
         };
 
