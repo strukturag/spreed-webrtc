@@ -23,10 +23,12 @@ EXENAME := spreed-speakfreely-server
 CONFIG_FILE := spreed-speakfreely-server.conf
 CONFIG_PATH := /etc
 
-GOPATH = "$(CURDIR)/vendor:$(CURDIR)"
+VENDOR = "$(CURDIR)/vendor"
+GOPATH = "$(VENDOR):$(CURDIR)"
 SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
+VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: //p')
 
 DESTDIR ?= /
 BIN := $(DESTDIR)/usr/sbin
@@ -76,12 +78,12 @@ javascript:
 		mkdir -p $(OUTPUT_JS)
 		$(NODEJS_BIN) $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
 
-release: GOPATH = "$(DIST):$(CURDIR)"
+release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
 release: dist_gopath $(DIST_BIN) binary styles javascript
 
-releasetest: GOPATH = "$(DIST):$(CURDIR)"
+releasetest: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 releasetest: dist_gopath test
 
 install:
@@ -129,7 +131,6 @@ dist_gopath: $(DIST_SRC)
 		find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
 				-exec ln -sf {} $(DIST_SRC) \;
 
-tarball: VERSION = $(shell dpkg-parsechangelog | sed -n 's/^Version: //p')
 tarball: PACKAGE_NAME = $(EXENAME)-$(VERSION)
 tarball: TARPATH = $(DIST)/$(PACKAGE_NAME)
 tarball: BIN = $(TARPATH)/loader
