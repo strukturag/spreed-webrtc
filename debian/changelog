@@ -2,8 +2,10 @@ spreed-speakfreely-server (0.15.1) precise; urgency=low
 
   * Changed Makefile to allow tarball and release builds with
     local third party sources in ./vendor too.
+  * Added configration for maxfd and automatically use the 
+    numer of cpus for GOMAXPROCS per default. 
 
- -- Simon Eisenmann <simon@struktur.de>  Tue, 04 Mar 2014 11:10:31 +0100
+ -- Simon Eisenmann <longsleep@redemption.intranet.struktur.de>  Tue, 04 Mar 2014 11:45:29 +0100
 
 spreed-speakfreely-server (0.15.0) precise; urgency=low
 

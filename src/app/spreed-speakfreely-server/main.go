@@ -32,13 +32,10 @@ import (
 	"net/http"
 	"os"
 	"path"
+	goruntime "runtime"
 	"strings"
 	"syscall"
 	"time"
-)
-
-const (
-	RLIMIT_NO_FILE = 32768
 )
 
 var version = "unreleased"
@@ -256,19 +253,33 @@ func runner(runtime phoenix.Runtime) error {
 	// Create our hub instance.
 	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
 
-	// Try to increase number of file open files. This only works as root.
+	// Set number of go routines if it is 1
+	if goruntime.GOMAXPROCS(0) == 1 {
+		nCPU := goruntime.NumCPU()
+		goruntime.GOMAXPROCS(nCPU)
+		log.Printf("Using the number of CPU's (%d) as GOMAXPROCS\n", nCPU)
+	}
+
+	// Get current number of max open files.
 	var rLimit syscall.Rlimit
 	err = syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rLimit)
 	if err != nil {
-		log.Println("Error getting rlimit numer of files", err)
-	}
-	rLimit.Max = RLIMIT_NO_FILE
-	rLimit.Cur = RLIMIT_NO_FILE
-	err = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit)
-	if err != nil {
-		log.Println("Error setting rlimit", err)
+		log.Println("Error getting max numer of open files", err)
 	} else {
-		log.Printf("Set rlimit successfully to %d\n", RLIMIT_NO_FILE)
+		log.Printf("Max open files are %d\n", rLimit.Max)
+	}
+
+	// Try to increase number of file open files. This only works as root.
+	maxfd, err := runtime.GetInt("http", "maxfd")
+	if err == nil {
+		rLimit.Max = uint64(maxfd)
+		rLimit.Cur = uint64(maxfd)
+		err = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit)
+		if err != nil {
+			log.Println("Error setting max open files", err)
+		} else {
+			log.Printf("Set max open files successfully to %d\n", uint64(maxfd))
+		}
 	}
 
 	// Create router.

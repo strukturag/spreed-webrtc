@@ -1,2 +1,2 @@
 #!/bin/bash
-GOMAXPROCS=8 exec ./bin/spreed-speakfreely-server $*
+exec ./bin/spreed-speakfreely-server $*
