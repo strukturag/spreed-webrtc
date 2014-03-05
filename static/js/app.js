@@ -41,9 +41,16 @@ define([
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers) {
 
-    var initialize = function() {
+    var initialize = function(ms) {
 
-        var app = angular.module('app', ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs']);
+        var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs'];
+        if (ms && ms.length) {
+            _.each(ms, function(module) {
+                modules.push(module);
+            });
+        }
+
+        var app = angular.module('app', modules);
         services.initialize(app);
         directives.initialize(app);
         filters.initialize(app);

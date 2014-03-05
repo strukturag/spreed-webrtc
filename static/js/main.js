@@ -149,13 +149,22 @@ define([
         }
     });
     require(load, function(App) {
-        var app = App.initialize();
         var args = Array.prototype.slice.call(arguments, 1);
+        // Add Angular modules from plugins.
+        var modules = [];
+        _.each(args, function(plugin) {
+            if (plugin && plugin.module) {
+                plugin.module(modules);
+            }
+        });
+        // Init Angular app.
+        var app = App.initialize(modules);
+        // Init plugins.
         _.each(args, function(plugin) {
             if (plugin && plugin.initialize) {
-                plugin.initialize(app)
+                plugin.initialize(app);
             }
-        })
+        });
     });
 
 });

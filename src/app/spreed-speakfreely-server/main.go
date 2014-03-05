@@ -292,6 +292,16 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/ws", makeWsHubHandler(hub))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 	makeApiHandler(r, tokenProvider)
+
+	// Add extra/static support if configured and exists.
+	if extraFolder != "" {
+		extraFolderStatic := path.Join(extraFolder, "static")
+		if _, err = os.Stat(extraFolderStatic); err == nil {
+			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", basePath), httputils.FileStaticServer(http.Dir(extraFolder))))
+			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
+		}
+	}
+
 	runtime.DefaultHTTPHandler(r)
 
 	return runtime.Start()
