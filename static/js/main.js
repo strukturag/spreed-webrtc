@@ -27,7 +27,6 @@ require.config({
     "underscore": 'libs/lodash.min', // alternative to underscore
     "modernizr": 'libs/modernizr',
     'webrtc.adapter': 'libs/webrtc.adapter',
-    'webrtc.ice': 'libs/webrtc.ice',
     'angular': 'libs/angular/angular.min',
     'ui-bootstrap': 'libs/angular/ui-bootstrap-tpls.min',
     'ua-parser': 'libs/ua-parser',

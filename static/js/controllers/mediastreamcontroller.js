@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter', 'webrtc.ice'], function(_, BigScreen, moment) {
+define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigScreen, moment) {
 
     return ["$scope", "$rootScope", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
 
