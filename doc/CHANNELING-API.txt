@@ -538,10 +538,15 @@ Data channel only messages
 
     {
         "Type": "Screenshare",
+        "Id": "",
         "Screenshare": {
             "id": "screenshare_token"
         }
     }
+
+    The Id field is the peer where this screen sharing token is valid. Essentially
+    it defines the user which started screensharing. It will be empty string when
+    received in peer to peer data channel mode.
 
     The id is the token to be used to establish a token peer connection
     to the user which sent the Screenshare document.
