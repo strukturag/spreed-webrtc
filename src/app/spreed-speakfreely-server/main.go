@@ -116,6 +116,9 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 }
 
 func runner(runtime phoenix.Runtime) error {
+
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
 	rootFolder, err := runtime.GetString("http", "root")
 	if err != nil {
 		cwd, err2 := os.Getwd()
@@ -324,7 +327,7 @@ func boot() error {
 		return nil
 	}
 
-	return phoenix.NewServer("mediastream-connector", "").
+	return phoenix.NewServer("server", "").
 		Config(configPath).
 		Log(logPath).
 		CpuProfile(cpuprofile).

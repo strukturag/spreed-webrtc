@@ -143,6 +143,7 @@ func (c *Connection) readPump() {
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
 	c.ws.SetPongHandler(func(string) error {
+		log.Println("Received pong", c.Idx)
 		c.ws.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
@@ -234,18 +235,28 @@ func (c *Connection) writePump() {
 		for len(c.queue) > 0 {
 			message := c.queue[0]
 			c.queue = c.queue[1:]
-			c.mutex.Unlock()
+			if ping {
+				// Send ping.
+				ping = false
+				c.mutex.Unlock()
+				if err := c.ping(); err != nil {
+					log.Println("Error while sending ping", c.Idx, err)
+					return
+				}
+			} else {
+				c.mutex.Unlock()
+			}
 			if err := c.write(websocket.TextMessage, message); err != nil {
 				log.Println("Error while writing", c.Idx, err)
 				return
 			}
 			c.mutex.Lock()
 		}
-		// Send pings.
 		if ping {
+			// Send ping.
 			ping = false
 			c.mutex.Unlock()
-			if err := c.write(websocket.PingMessage, []byte{}); err != nil {
+			if err := c.ping(); err != nil {
 				log.Println("Error while sending ping", c.Idx, err)
 				return
 			}
@@ -255,6 +266,15 @@ func (c *Connection) writePump() {
 		}
 
 	}
+}
+
+// Write ping message
+func (c *Connection) ping() error {
+	log.Println("Sending ping", c.Idx)
+	defer func() {
+		log.Println("Sent ping", c.Idx)
+	}()
+	return c.write(websocket.PingMessage, []byte{})
 }
 
 // Write writes a message with the given opCode and payload.
