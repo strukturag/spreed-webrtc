@@ -227,7 +227,7 @@ func (h *Hub) broadcastHandler(m *MessageRequest) {
 			}
 			ec, ok := h.connectionTable[id]
 			if !ok {
-				// Connection gone
+				// Connection gone.
 				h.mutex.RUnlock()
 				continue
 			}

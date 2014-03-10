@@ -268,7 +268,7 @@ func (c *Connection) writePump() {
 	}
 }
 
-// Write ping message
+// Write ping message.
 func (c *Connection) ping() error {
 	log.Println("Sending ping", c.Idx)
 	defer func() {
