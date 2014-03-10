@@ -45,6 +45,16 @@ type MessageRequest struct {
 	Id      string
 }
 
+type HubStat struct {
+	Rooms       int                  `json:"rooms"`
+	Connections int                  `json:"connections"`
+	Users       int                  `json:"users"`
+	Count       uint64               `json:"count"`
+	IdsInRoom  map[string][]string  `json:"idsinroom,omitempty"`
+	UsersById   map[string]*DataUser `json:"usersbyid,omitempty"`
+	ConnectionsByIdx map[string]string `json:"connectionsbyidx,omitempty"`
+}
+
 type Hub struct {
 	server          *Server
 	connectionTable map[string]*Connection
@@ -74,6 +84,39 @@ func NewHub(version string, config *Config, sessionSecret string, turnSecret str
 	h.tickets = securecookie.New(h.sessionSecret, nil)
 	return h
 
+}
+
+func (h *Hub) Stat(details bool) *HubStat {
+	h.mutex.RLock()
+	defer h.mutex.RUnlock()
+	stat := &HubStat{
+		Rooms:       len(h.roomTable),
+		Connections: len(h.connectionTable),
+		Users:       len(h.userTable),
+		Count:       h.count,
+	}
+	if details {
+		rooms := make(map[string][]string)
+		for roomid, room := range h.roomTable {
+			users := make([]string, 0, len(room.connections))
+			for id, _ := range room.connections {
+				users = append(users, id)
+			}
+			rooms[roomid] = users
+		}
+		stat.IdsInRoom = rooms
+		users := make(map[string]*DataUser)
+		for userid, user := range h.userTable {
+			users[userid] = user.Data()
+		}
+		stat.UsersById = users
+		connections := make(map[string]string)
+		for id, connection := range h.connectionTable {
+			connections[fmt.Sprintf("%d", connection.Idx)]=id
+		}
+		stat.ConnectionsByIdx = connections
+	}
+	return stat
 }
 
 func (h *Hub) CreateTurnData(id string) *DataTurn {

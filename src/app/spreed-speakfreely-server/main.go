@@ -21,6 +21,7 @@
 package main
 
 import (
+	"app/spreed-speakfreely-server/sleepy"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -145,6 +146,11 @@ func runner(runtime phoenix.Runtime) error {
 			basePath = fmt.Sprintf("%s/", basePath)
 		}
 		log.Printf("Using '%s' base base path.", basePath)
+	}
+
+	statsEnabled, err := runtime.GetBool("http", "stats")
+	if err != nil {
+		statsEnabled = false
 	}
 
 	sessionSecret, err := runtime.GetString("app", "sessionSecret")
@@ -294,7 +300,15 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWsHubHandler(hub))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
-	makeApiHandler(r, tokenProvider)
+
+	// Add API end points.
+	api := sleepy.NewAPI(r.PathPrefix("/api/v1/").Subrouter())
+	api.AddResource(&Rooms{}, "/rooms")
+	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+	if statsEnabled {
+		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")
+		log.Println("Stats are enabled!")
+	}
 
 	// Add extra/static support if configured and exists.
 	if extraFolder != "" {

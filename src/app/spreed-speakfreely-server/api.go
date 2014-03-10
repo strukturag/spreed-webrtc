@@ -20,11 +20,7 @@
  */
 package main
 
-import (
-	"app/spreed-speakfreely-server/sleepy"
-	"github.com/gorilla/mux"
-	"github.com/strukturag/httputils"
-)
+import ()
 
 type ApiError struct {
 	Id      string `json:"code"`
@@ -34,17 +30,4 @@ type ApiError struct {
 
 func NewApiError(id, message string) *ApiError {
 	return &ApiError{id, message, false}
-}
-
-func makeApiHandler(r *mux.Router, tokenProvider TokenProvider) {
-
-	a := r.PathPrefix("/api/v1/").Subrouter()
-	api := sleepy.NewAPI(a)
-
-	rooms := &Rooms{}
-	api.AddResource(rooms, "/rooms")
-
-	tokens := &Tokens{tokenProvider}
-	api.AddResourceWithWrapper(tokens, httputils.MakeGzipHandler, "/tokens")
-
 }

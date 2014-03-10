@@ -33,7 +33,7 @@ type Room struct {
 type Rooms struct {
 }
 
-func (rooms Rooms) Post(r *http.Request) (int, interface{}) {
+func (rooms *Rooms) Post(r *http.Request) (int, interface{}) {
 
 	name := RandomString(11)
 	return 200, &Room{name, fmt.Sprintf("/%s", name)}

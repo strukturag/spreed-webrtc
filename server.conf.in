@@ -7,6 +7,7 @@ listen = 127.0.0.1:8080
 #writetimeout = 10
 #basePath = /some/sub/path/ # Set this when running behind a web server under a sub path.
 #maxfd = 32768 # Try to set max open files limit on start (works only when run as root).
+#stats = true # Provide stats API at /api/v1/stats (do not enable this in production or unprotected!).
 
 [app]
 #title = Spreed Speak Freely
