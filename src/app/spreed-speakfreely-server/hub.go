@@ -46,13 +46,13 @@ type MessageRequest struct {
 }
 
 type HubStat struct {
-	Rooms       int                  `json:"rooms"`
-	Connections int                  `json:"connections"`
-	Users       int                  `json:"users"`
-	Count       uint64               `json:"count"`
-	IdsInRoom  map[string][]string  `json:"idsinroom,omitempty"`
-	UsersById   map[string]*DataUser `json:"usersbyid,omitempty"`
-	ConnectionsByIdx map[string]string `json:"connectionsbyidx,omitempty"`
+	Rooms            int                  `json:"rooms"`
+	Connections      int                  `json:"connections"`
+	Users            int                  `json:"users"`
+	Count            uint64               `json:"count"`
+	IdsInRoom        map[string][]string  `json:"idsinroom,omitempty"`
+	UsersById        map[string]*DataUser `json:"usersbyid,omitempty"`
+	ConnectionsByIdx map[string]string    `json:"connectionsbyidx,omitempty"`
 }
 
 type Hub struct {
@@ -112,7 +112,7 @@ func (h *Hub) Stat(details bool) *HubStat {
 		stat.UsersById = users
 		connections := make(map[string]string)
 		for id, connection := range h.connectionTable {
-			connections[fmt.Sprintf("%d", connection.Idx)]=id
+			connections[fmt.Sprintf("%d", connection.Idx)] = id
 		}
 		stat.ConnectionsByIdx = connections
 	}
