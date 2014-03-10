@@ -63,7 +63,7 @@ type Connection struct {
 
 	// Metadata.
 	Id           string
-	Roomid       string
+	Roomid       string // Keep Roomid here for quick acess without locking c.User.
 	Idx          uint64
 	User         *User
 	IsRegistered bool
