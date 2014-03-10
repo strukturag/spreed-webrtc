@@ -138,6 +138,32 @@ func (h *Hub) GetRoom(id string) *RoomWorker {
 
 }
 
+func (h *Hub) GetGlobalConnections() []*Connection {
+
+	if h.config.globalRoomid == "" {
+		return make([]*Connection, 0)
+	}
+	h.mutex.RLock()
+	if room, ok := h.roomTable[h.config.globalRoomid]; ok {
+		h.mutex.RUnlock()
+		return room.GetConnections()
+	} else {
+		h.mutex.RUnlock()
+	}
+	return make([]*Connection, 0)
+
+}
+
+func (h *Hub) RunForAllRooms(f func(room *RoomWorker)) {
+
+	h.mutex.RLock()
+	for _, room := range h.roomTable {
+		f(room)
+	}
+	h.mutex.RUnlock()
+
+}
+
 func (h *Hub) isGlobalRoomid(id string) bool {
 
 	return id != "" && (id == h.config.globalRoomid)
@@ -195,65 +221,6 @@ func (h *Hub) unregisterHandler(c *Connection) {
 
 }
 
-func (h *Hub) broadcastHandler(m *MessageRequest) {
-
-	h.mutex.RLock()
-
-	//fmt.Println("in h.broadcast", h.userTable, h.connectionTable)
-	roomid := m.Id
-	users := make([]string, len(h.userTable))
-	i := 0
-	// TODO(longsleep): Keep a userTable per room to avoid looping all users every time.
-	for id, u := range h.userTable {
-		if id == m.From || (u.Roomid != roomid && !h.isGlobalRoomid(roomid)) {
-			// Skip self and users not in the correct room.
-			continue
-		}
-		users[i] = id
-		i++
-	}
-	h.mutex.RUnlock()
-
-	room := h.GetRoom(roomid)
-	worker := func() {
-
-		for _, id := range users {
-			h.mutex.RLock()
-			u, ok := h.userTable[id]
-			if !ok {
-				// User gone.
-				h.mutex.RUnlock()
-				continue
-			}
-			ec, ok := h.connectionTable[id]
-			if !ok {
-				// Connection gone.
-				h.mutex.RUnlock()
-				continue
-			}
-			userRoomid := u.Roomid
-			//fmt.Println("in h.broadcast id", id, m.From, userRoomid, roomid)
-			//fmt.Println("broadcasting to", id, ec.Idx, userRoomid, roomid)
-			h.mutex.RUnlock()
-			if userRoomid != roomid && !h.isGlobalRoomid(roomid) {
-				// Skip other rooms.
-				continue
-			}
-			//fmt.Printf("%s\n", m.Message)
-			ec.send(m.Message)
-		}
-
-	}
-
-	// Run worker in room.
-	if !room.Run(worker) {
-		// This handles the case that the room was cleaned up while we retrieved.
-		room = h.GetRoom(roomid)
-		room.Run(worker)
-	}
-
-}
-
 func (h *Hub) unicastHandler(m *MessageRequest) {
 
 	h.mutex.RLock()
@@ -264,34 +231,6 @@ func (h *Hub) unicastHandler(m *MessageRequest) {
 		return
 	}
 	out.send(m.Message)
-
-}
-
-func (h *Hub) usersHandler(c *Connection) {
-
-	h.mutex.RLock()
-	users := &DataUsers{Type: "Users", Index: 0, Batch: 0}
-	usersList := users.Users
-	roomid := c.User.Roomid
-	// TODO(longsleep): Keep per room userTable to avoid looping all users.
-	for id, u := range h.userTable {
-		if u.Roomid == roomid || h.isGlobalRoomid(u.Roomid) {
-			user := &DataUser{Type: "Online", Id: id, Ua: u.Ua, Status: u.Status, Rev: u.UpdateRev}
-			usersList = append(usersList, user)
-			if len(usersList) >= maxUsersLength {
-				log.Println("Limiting users response length in channel", roomid)
-				break
-			}
-		}
-	}
-	h.mutex.RUnlock()
-	users.Users = usersList
-	usersJson, err := json.Marshal(&DataOutgoing{From: c.Id, Data: users})
-	if err != nil {
-		log.Println("Users error while encoding JSON", err)
-		return
-	}
-	c.send(usersJson)
 
 }
 
@@ -314,9 +253,7 @@ func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
 	h.mutex.RUnlock()
 	var rev uint64
 	if ok {
-		h.mutex.Lock()
 		rev = user.Update(u)
-		h.mutex.Unlock()
 	} else {
 		log.Printf("Update data for unknown user %s\n", u.Id)
 	}

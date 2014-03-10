@@ -20,7 +20,9 @@
  */
 package main
 
-import ()
+import (
+	"sync"
+)
 
 type User struct {
 	Id        string
@@ -28,11 +30,14 @@ type User struct {
 	Ua        string
 	UpdateRev uint64
 	Status    interface{}
+	mutex     sync.RWMutex
 }
 
 func (u *User) Update(update *UserUpdate) uint64 {
 
 	//user := reflect.ValueOf(&u).Elem()
+	u.mutex.Lock()
+	defer u.mutex.Unlock()
 
 	for _, key := range update.Types {
 
@@ -50,6 +55,20 @@ func (u *User) Update(update *UserUpdate) uint64 {
 
 	u.UpdateRev++
 	return u.UpdateRev
+
+}
+
+func (u *User) Data() *DataUser {
+
+	u.mutex.RLock()
+	defer u.mutex.RUnlock()
+
+	return &DataUser{
+		Id:     u.Id,
+		Ua:     u.Ua,
+		Status: u.Status,
+		Rev:    u.UpdateRev,
+	}
 
 }
 

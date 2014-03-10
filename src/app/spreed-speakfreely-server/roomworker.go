@@ -21,7 +21,9 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -30,14 +32,23 @@ const (
 	roomExpiryDuration = 60 * time.Second
 )
 
+type RoomConnectionUpdate struct {
+	Id         string
+	Userid     string
+	Status     bool
+	Connection *Connection
+}
+
 type RoomWorker struct {
 	// References.
 	h *Hub
 
 	// Data handling.
-	workers chan (func())
-	expired chan (bool)
-	timer   *time.Timer
+	workers     chan (func())
+	expired     chan (bool)
+	connections map[string]*Connection
+	timer       *time.Timer
+	mutex       sync.RWMutex
 
 	// Metadata.
 	Id string
@@ -53,10 +64,10 @@ func NewRoomWorker(h *Hub, id string) *RoomWorker {
 	}
 	r.workers = make(chan func(), roomMaxWorkers)
 	r.expired = make(chan bool)
+	r.connections = make(map[string]*Connection)
 
 	// Create expire timer.
 	r.timer = time.AfterFunc(roomExpiryDuration, func() {
-		log.Printf("Room worker not in use - cleaning up '%s'\n", r.Id)
 		r.expired <- true
 	})
 
@@ -69,23 +80,41 @@ func (r *RoomWorker) Start() {
 	// Main blocking worker.
 L:
 	for {
-
 		r.timer.Reset(roomExpiryDuration)
-
 		select {
-		case <-r.expired:
-			//fmt.Println("Work room expired", r.Id)
-			break L
 		case w := <-r.workers:
 			//fmt.Println("Running worker", r.Id, w)
 			w()
+		case <-r.expired:
+			//fmt.Println("Work room expired", r.Id)
+			//fmt.Println("Work room expired", r.Id, len(r.connections))
+			r.mutex.RLock()
+			if len(r.connections) == 0 {
+				// Cleanup room when it is empty.
+				r.mutex.RUnlock()
+				log.Printf("Room worker not in use - cleaning up '%s'\n", r.Id)
+				break L
+			} else {
+				r.mutex.RUnlock()
+			}
 		}
-
 	}
 
 	r.timer.Stop()
 	close(r.workers)
 	//fmt.Println("Exit worker", r.Id)
+
+}
+
+func (r *RoomWorker) GetConnections() []*Connection {
+
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+	connections := make([]*Connection, 0, len(r.connections))
+	for _, connection := range r.connections {
+		connections = append(connections, connection)
+	}
+	return connections
 
 }
 
@@ -98,5 +127,85 @@ func (r *RoomWorker) Run(f func()) bool {
 		log.Printf("Room worker channel full or closed '%s'\n", r.Id)
 		return false
 	}
+
+}
+
+func (r *RoomWorker) usersHandler(c *Connection) {
+
+	worker := func() {
+		users := &DataUsers{Type: "Users"}
+		ul := users.Users
+		appender := func(ec *Connection) bool {
+			user := ec.User.Data()
+			user.Type = "Online"
+			ul = append(ul, user)
+			if len(ul) > maxUsersLength {
+				log.Println("Limiting users response length in channel", r.Id)
+				return false
+			}
+			return true
+		}
+		r.mutex.RLock()
+		// Include connections in this room.
+		for _, ec := range r.connections {
+			if !appender(ec) {
+				break
+			}
+		}
+		r.mutex.RUnlock()
+		// Include connections to global room.
+		for _, ec := range c.h.GetGlobalConnections() {
+			if !appender(ec) {
+				break
+			}
+		}
+		users.Users = ul
+		usersJson, err := json.Marshal(&DataOutgoing{From: c.Id, Data: users})
+		if err != nil {
+			log.Println("Users error while encoding JSON", err)
+			return
+		}
+		c.send(usersJson)
+
+	}
+
+	r.Run(worker)
+
+}
+
+func (r *RoomWorker) broadcastHandler(m *MessageRequest) {
+
+	worker := func() {
+		r.mutex.RLock()
+		defer r.mutex.RUnlock()
+		for id, ec := range r.connections {
+			if id == m.From {
+				// Skip broadcast to self.
+				continue
+			}
+			//fmt.Printf("%s\n", m.Message)
+			ec.send(m.Message)
+		}
+	}
+
+	r.Run(worker)
+
+}
+
+func (r *RoomWorker) connectionHandler(rcu *RoomConnectionUpdate) {
+
+	worker := func() {
+		r.mutex.Lock()
+		defer r.mutex.Unlock()
+		if rcu.Status {
+			r.connections[rcu.Userid] = rcu.Connection
+		} else {
+			if _, ok := r.connections[rcu.Userid]; ok {
+				delete(r.connections, rcu.Userid)
+			}
+		}
+	}
+
+	r.Run(worker)
 
 }

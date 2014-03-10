@@ -46,6 +46,7 @@ func (s *Server) OnRegister(c *Connection) {
 func (s *Server) OnUnregister(c *Connection) {
 	//log.Println("OnUnregister", c.id)
 	if c.Hello {
+		s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
 		s.Broadcast(c, &DataUser{Type: "Left", Id: c.Id, Status: "hard"})
 	} else {
 		//log.Println("Ingoring OnUnregister because of no Hello", c.Idx)
@@ -72,11 +73,13 @@ func (s *Server) OnText(c *Connection, b []byte) {
 		s.UpdateUser(c, &UserUpdate{Types: []string{"Roomid", "Ua"}, Roomid: msg.Hello.Id, Ua: msg.Hello.Ua})
 		if c.Hello && c.Roomid != msg.Hello.Id {
 			// Room changed.
+			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
 			s.Broadcast(c, &DataUser{Type: "Left", Id: c.Id, Status: "soft"})
 		}
 		c.Roomid = msg.Hello.Id
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
 			c.Hello = true
+			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid, Status: true})
 			s.Broadcast(c, &DataUser{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
 		} else {
 			c.Hello = false
@@ -155,25 +158,6 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
 }
 
-func (s *Server) Broadcast(c *Connection, m interface{}) {
-
-	b, err := json.Marshal(&DataOutgoing{From: c.Id, Data: m})
-	if err != nil {
-		log.Println("Broadcast error while encoding JSON", err)
-		return
-	}
-
-	var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
-	c.h.broadcastHandler(msg)
-
-}
-
-func (s *Server) Users(c *Connection) {
-
-	c.h.usersHandler(c)
-
-}
-
 func (s *Server) Alive(c *Connection, alive *DataAlive) {
 
 	c.h.aliveHandler(c, alive)
@@ -184,5 +168,42 @@ func (s *Server) UpdateUser(c *Connection, userupdate *UserUpdate) uint64 {
 
 	userupdate.Id = c.Id
 	return c.h.userupdateHandler(userupdate)
+
+}
+
+func (s *Server) Broadcast(c *Connection, m interface{}) {
+
+	b, err := json.Marshal(&DataOutgoing{From: c.Id, Data: m})
+	if err != nil {
+		log.Println("Broadcast error while encoding JSON", err)
+		return
+	}
+
+	if c.h.isGlobalRoomid(c.Roomid) {
+		c.h.RunForAllRooms(func(room *RoomWorker) {
+			var msg = &MessageRequest{From: c.Id, Message: b, Id: room.Id}
+			room.broadcastHandler(msg)
+		})
+	} else {
+		var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
+		room := c.h.GetRoom(c.Roomid)
+		room.broadcastHandler(msg)
+	}
+
+}
+
+func (s *Server) Users(c *Connection) {
+
+	room := c.h.GetRoom(c.Roomid)
+	room.usersHandler(c)
+
+}
+
+func (s *Server) UpdateRoomConnection(c *Connection, rcu *RoomConnectionUpdate) {
+
+	rcu.Userid = c.Id
+	rcu.Connection = c
+	room := c.h.GetRoom(c.Roomid)
+	room.connectionHandler(rcu)
 
 }
