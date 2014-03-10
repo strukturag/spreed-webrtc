@@ -15,7 +15,6 @@ before_install:
 
 install:
   - sudo apt-get -y install nodejs npm rubygems python-babel
-  - sudo gem install sass
   - sudo gem install compass
     # 'npm config set ca ""' required only for node 0.6
     # which is installed on Travis CI
