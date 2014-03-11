@@ -22,6 +22,7 @@ package main
 
 import (
 	"github.com/gorilla/websocket"
+	"io"
 	"io/ioutil"
 	"log"
 	"sync"
@@ -150,7 +151,10 @@ func (c *Connection) readPump() {
 		//fmt.Println("readPump wait nextReader", c.Idx)
 		op, r, err := c.ws.NextReader()
 		if err != nil {
-			log.Println("Error while reading", c.Idx, err)
+			if err == io.EOF {
+			} else {
+				log.Println("Error while reading", c.Idx, err)
+			}
 			break
 		}
 		switch op {
