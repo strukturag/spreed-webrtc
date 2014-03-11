@@ -237,12 +237,12 @@ func (h *Hub) registerHandler(c *Connection) {
 		ec.close()
 		h.connectionTable[c.Id] = c
 		h.mutex.Unlock()
-		log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.RemoteAddr, c.Id)
+		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.RemoteAddr, c.Id)
 	} else {
 		h.connectionTable[c.Id] = c
 		//fmt.Println("registered", c.Id)
 		h.mutex.Unlock()
-		log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
+		//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 		h.server.OnRegister(c)
 	}
 
@@ -259,7 +259,7 @@ func (h *Hub) unregisterHandler(c *Connection) {
 	delete(h.connectionTable, c.Id)
 	delete(h.userTable, c.Id)
 	h.mutex.Unlock()
-	log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
+	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
 
 }
