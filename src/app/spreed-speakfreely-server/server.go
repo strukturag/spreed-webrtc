@@ -146,15 +146,19 @@ func (s *Server) OnText(c *Connection, b []byte) {
 
 func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
-	b, err := json.Marshal(&DataOutgoing{From: c.Id, To: to, Data: m})
+	b := c.h.buffers.Pop()
+	encoder := json.NewEncoder(b)
+	err := encoder.Encode(&DataOutgoing{From: c.Id, To: to, Data: m})
 
 	if err != nil {
+		c.h.buffers.Push(b)
 		log.Println("Unicast error while encoding JSON", err)
 		return
 	}
 
-	var msg = &MessageRequest{From: c.Id, To: to, Message: b}
+	var msg = &MessageRequest{From: c.Id, To: to, Message: b.Bytes()}
 	c.h.unicastHandler(msg)
+	c.h.buffers.Push(b)
 
 }
 

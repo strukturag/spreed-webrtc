@@ -21,9 +21,9 @@
 package main
 
 import (
+	"bytes"
 	"github.com/gorilla/websocket"
 	"io"
-	"io/ioutil"
 	"log"
 	"sync"
 	"time"
@@ -131,6 +131,25 @@ func (c *Connection) unregister() {
 	c.h.unregisterHandler(c)
 }
 
+func (c *Connection) readAll(dest *bytes.Buffer, r io.Reader) error {
+	var err error
+	defer func() {
+		e := recover()
+		if e == nil {
+			return
+		}
+		if panicErr, ok := e.(error); ok && panicErr == bytes.ErrTooLarge {
+			err = panicErr
+		} else {
+			panic(e)
+		}
+	}()
+
+	dest.Reset()
+	_, err = dest.ReadFrom(r)
+	return err
+}
+
 // readPump pumps messages from the websocket connection to the hub.
 func (c *Connection) readPump() {
 
@@ -159,12 +178,15 @@ func (c *Connection) readPump() {
 		}
 		switch op {
 		case websocket.TextMessage:
-			message, err := ioutil.ReadAll(r)
+			message := c.h.buffers.Pop()
+			err = c.readAll(message, r)
 			if err != nil {
+				c.h.buffers.Push(message)
 				break
 			}
 			<-ticker.C
-			c.h.server.OnText(c, message)
+			c.h.server.OnText(c, message.Bytes())
+			c.h.buffers.Push(message)
 		}
 	}
 }
