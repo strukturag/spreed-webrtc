@@ -20,47 +20,10 @@
  */
 define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'injectCSS', 'webrtc.adapter', 'rAF'], function($, _, template, templatePeer, BigScreen) {
 
-    return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData) {
+    return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter) {
 
         var requestAnimationFrame = $window.requestAnimationFrame;
         var peerTemplate = $compile(templatePeer);
-
-        var waitForVideo = function(video, stream, cb, err_cb) {
-            var Waiter = function() {
-                this.stop = false;
-                this.count = 0;
-                this.retries = 100;
-                _.defer(_.bind(this.start, this), this);
-            };
-            Waiter.prototype.start = function() {
-                if (this.stop) {
-                    if (err_cb) {
-                        err_cb(video, stream);
-                    }
-                    return;
-                }
-                var videoTracks = stream.getVideoTracks();
-                //console.log("wait for video", videoTracks.length, video.currentTime, video)
-                if (videoTracks.length === 0) {
-                    cb(false, video, stream);
-                } else if (video.currentTime > 0 && video.videoHeight > 0) {
-                    cb(true, video, stream);
-                } else {
-                    this.count++;
-                    if (this.count < this.retries) {
-                        $window.setTimeout(_.bind(this.start, this), 100);
-                    } else {
-                        if (err_cb) {
-                            err_cb(video, stream);
-                        }
-                    }
-                }
-            };
-            Waiter.prototype.stop = function() {
-                this.stop = true;
-            };
-            return new Waiter();
-        };
 
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -109,7 +72,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     var video = clonedElement.find("video").get(0);
                     $window.attachMediaStream(video, stream);
                     // Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
-                    waitForVideo(video, stream, function(withvideo) {
+                    videoWaiter.wait(video, stream, function(withvideo) {
                         peers[peerid] = scope;
                         if (withvideo) {
                             scope.$apply(function($scope) {

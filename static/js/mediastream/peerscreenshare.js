@@ -93,6 +93,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 	        	optional: []
 	      	}
 		}
+		console.log("Setting screen sharing media constraints", mandatoryVideoConstraints);
 		return mediaConstraints;
 
 	};

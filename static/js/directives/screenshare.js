@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", function($window, mediaStream, $compile, safeApply) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", function($window, mediaStream, $compile, safeApply, videoWaiter) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -91,6 +91,11 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					scope.element = clonedElement;
 					var video = clonedElement.find("video").get(0);
 					$window.attachMediaStream(video, stream);
+					videoWaiter.wait(video, stream, function() {
+						console.log("Screensharing size: ", video.videoWidth, video.videoHeight);
+					}, function() {
+						console.warn("We did not receive screen sharing video data", currentscreenshare, stream, video);
+					});
 					screens[peerid] = scope;
 				});
 
