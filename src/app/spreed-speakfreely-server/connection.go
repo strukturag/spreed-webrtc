@@ -81,7 +81,7 @@ func NewConnection(h *Hub, ws *websocket.Conn, remoteAddr string) *Connection {
 		RemoteAddr: remoteAddr,
 	}
 	c.condition = sync.NewCond(&c.mutex)
-	c.queue = make([][]byte, 0, queueSize)
+	c.queue = make([][]byte, 0)
 
 	return c
 
