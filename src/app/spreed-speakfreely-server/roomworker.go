@@ -137,7 +137,7 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 		var ul []*DataUser
 		appender := func(ec *Connection) bool {
 			ecuser := ec.User
-			if (ecuser != nil) {
+			if ecuser != nil {
 				user := ecuser.Data()
 				user.Type = "Online"
 				ul = append(ul, user)
