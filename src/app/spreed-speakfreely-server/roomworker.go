@@ -134,18 +134,22 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 
 	worker := func() {
 		users := &DataUsers{Type: "Users"}
-		ul := users.Users
+		var ul []*DataUser
 		appender := func(ec *Connection) bool {
-			user := ec.User.Data()
-			user.Type = "Online"
-			ul = append(ul, user)
-			if len(ul) > maxUsersLength {
-				log.Println("Limiting users response length in channel", r.Id)
-				return false
+			ecuser := ec.User
+			if (ecuser != nil) {
+				user := ecuser.Data()
+				user.Type = "Online"
+				ul = append(ul, user)
+				if len(ul) > maxUsersLength {
+					log.Println("Limiting users response length in channel", r.Id)
+					return false
+				}
 			}
 			return true
 		}
 		r.mutex.RLock()
+		ul = make([]*DataUser, 0, len(r.connections))
 		// Include connections in this room.
 		for _, ec := range r.connections {
 			if !appender(ec) {
