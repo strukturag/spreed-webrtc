@@ -175,7 +175,7 @@ top:8px;
 right:8px;
 }
 
-.chat .output .message.is_self .timestamp {
+.chat.with_pictures .output .message.is_self .timestamp {
 right:58px;
 }
 
@@ -260,7 +260,7 @@ top:0px;
 display:block;
 }
 
-.chat .output .message.is_remote {
+.chat.with_pictures .output .message.is_remote {
 padding-left: 58px;
 }
 
@@ -307,8 +307,12 @@ border-color: transparent #fff;
 background: #fff;
 margin-right:20px;
 margin-left:4px;
+padding-right:0px;
+}
+.chat.with_pictures .output .message.is_self {
 padding-right:54px;
 }
+
 .chat .output .message strong {
 display:block;
 padding-bottom:2px;

@@ -289,16 +289,17 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
             var picture = null;
 
             if (is_new_message) {
-                var buddyScope;
-                title = $("<strong>");
-                title.html(displayName(from, true));
                 lastSender = from;
-                extra_css += "with_name ";
                 $scope.showdate(timestamp);
-                var imgSrc = buddyImageSrc(from);
-                picture = $('<div class="buddyimage"><i class="fa fa-user fa-3x"/><img/></div>');
-                if (imgSrc) {
-                    picture.find("img").attr("src", imgSrc);
+                if ($scope.isgroupchat) {
+                    title = $("<strong>");
+                    title.html(displayName(from, true));
+                    extra_css += "with_name ";
+                    var imgSrc = buddyImageSrc(from);
+                    picture = $('<div class="buddyimage"><i class="fa fa-user fa-3x"/><img/></div>');
+                    if (imgSrc) {
+                        picture.find("img").attr("src", imgSrc);
+                    }
                 }
             }
 
