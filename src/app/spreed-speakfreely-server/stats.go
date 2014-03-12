@@ -43,13 +43,13 @@ func NewStat(details bool, h *Hub) *Stat {
 }
 
 type RuntimeStat struct {
-	Goroutines float64 `json:"goroutines"`
-	Alloc      float64 `json:"alloc"`
-	Mallocs    float64 `json:"mallocs"`
-	Frees      float64 `json:"frees"`
-	Pauses     float64 `json:"pauses"`
-	Heap       float64 `json:"heap"`
-	Stack      float64 `json:"stack"`
+	Goroutines uint64 `json:"goroutines"`
+	Alloc      uint64 `json:"alloc"`
+	Mallocs    uint64 `json:"mallocs"`
+	Frees      uint64 `json:"frees"`
+	Pauses     uint64 `json:"pauses"`
+	Heap       uint64 `json:"heap"`
+	Stack      uint64 `json:"stack"`
 }
 
 func (stat *RuntimeStat) Read() {
@@ -57,13 +57,13 @@ func (stat *RuntimeStat) Read() {
 	memStats := &runtime.MemStats{}
 	runtime.ReadMemStats(memStats)
 
-	stat.Goroutines = float64(runtime.NumGoroutine())
-	stat.Alloc = float64(memStats.Alloc)
-	stat.Mallocs = float64(memStats.Mallocs)
-	stat.Frees = float64(memStats.Frees)
-	stat.Pauses = float64(memStats.PauseTotalNs) / float64(time.Millisecond)
-	stat.Heap = float64(memStats.HeapAlloc)
-	stat.Stack = float64(memStats.StackInuse)
+	stat.Goroutines = uint64(runtime.NumGoroutine())
+	stat.Alloc = uint64(memStats.Alloc)
+	stat.Mallocs = uint64(memStats.Mallocs)
+	stat.Frees = uint64(memStats.Frees)
+	stat.Pauses = uint64(memStats.PauseTotalNs) / uint64(time.Millisecond)
+	stat.Heap = uint64(memStats.HeapAlloc)
+	stat.Stack = uint64(memStats.StackInuse)
 
 }
 
