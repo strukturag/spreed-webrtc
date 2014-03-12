@@ -208,11 +208,12 @@ color:#ccc;
 }
 
 .chat .message li.unread:before {
+content: '\f0e0';
 color: #FE9A2E;
 }
 
 .chat .message li.sending:before {
-content: '\f0e5';
+content: '\f0ec';
 }
 
 .chat .message li.sent:before {
@@ -221,14 +222,17 @@ color:#5882FA;
 }
 
 .chat .message li.delivered:before {
+content: '\f0e0';
 color:#5882FA;
 }
 
 .chat .message li.received:before {
+content: '\f06e';
 color:#84b819;
 }
 
 .chat .message li.read:before {
+content: '\f06e';
 color:#ccc;
 }
 
