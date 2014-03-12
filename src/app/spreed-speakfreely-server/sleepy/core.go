@@ -42,6 +42,12 @@ type DeleteSupported interface {
 	Delete(*http.Request) (int, interface{})
 }
 
+// HandleSupported is the interface that provides a general
+// use method to support custom request processing.
+type HandleSupported interface {
+	Handle(http.ResponseWriter, *http.Request) (int, []byte)
+}
+
 // An API manages a group of resources by routing requests
 // to the correct method on a matching resource and marshalling
 // the returned data to JSON for the HTTP response.
@@ -59,39 +65,54 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 
 		request.ParseForm()
 
-		var handler func(*http.Request) (int, interface{})
+		var code int
+		var content []byte
+		var err error
 
-		switch request.Method {
-		case GET:
-			if resource, ok := resource.(GetSupported); ok {
-				handler = resource.Get
-			}
-		case POST:
-			if resource, ok := resource.(PostSupported); ok {
-				handler = resource.Post
-			}
-		case PUT:
-			if resource, ok := resource.(PutSupported); ok {
-				handler = resource.Put
-			}
-		case DELETE:
-			if resource, ok := resource.(DeleteSupported); ok {
-				handler = resource.Delete
-			}
-		}
+		if resource, ok := resource.(HandleSupported); ok {
 
-		if handler == nil {
-			rw.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
+			var handle func(http.ResponseWriter, *http.Request) (int, []byte)
+			handle = resource.Handle
+			code, content = handle(rw, request)
 
-		code, data := handler(request)
-		rw.Header().Set("Content-Type", "application/json; charset=utf-8")
+		} else {
 
-		content, err := json.MarshalIndent(data, "", "\t")
-		if err != nil {
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
+			var handler func(*http.Request) (int, interface{})
+			var data interface{}
+
+			switch request.Method {
+			case GET:
+				if resource, ok := resource.(GetSupported); ok {
+					handler = resource.Get
+				}
+			case POST:
+				if resource, ok := resource.(PostSupported); ok {
+					handler = resource.Post
+				}
+			case PUT:
+				if resource, ok := resource.(PutSupported); ok {
+					handler = resource.Put
+				}
+			case DELETE:
+				if resource, ok := resource.(DeleteSupported); ok {
+					handler = resource.Delete
+				}
+			}
+
+			if handler == nil {
+				rw.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+
+			code, data = handler(request)
+			rw.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+			content, err = json.MarshalIndent(data, "", "\t")
+			if err != nil {
+				rw.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
 		}
 
 		rw.WriteHeader(code)
