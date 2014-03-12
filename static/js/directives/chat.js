@@ -172,24 +172,28 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             if (peercall && peercall.peerconnection.datachannelReady) {
                                 subscope.p2p(true);
                                 // Send out stuff through data channel.
-                                mediaStream.api.apply("sendChat", {
-                                    send: function(type, data) {
-                                        // We also send to self, to display our own stuff.
-                                        if (!noloop) {
-                                            mediaStream.api.received({Type: data.Type, Data: data, From: mediaStream.api.id, To: peercall.id});
+                                _.delay(function() {
+                                    mediaStream.api.apply("sendChat", {
+                                        send: function(type, data) {
+                                            // We also send to self, to display our own stuff.
+                                            if (!noloop) {
+                                                mediaStream.api.received({Type: data.Type, Data: data, From: mediaStream.api.id, To: peercall.id});
+                                            }
+                                            return peercall.peerconnection.send(data);
                                         }
-                                        return peercall.peerconnection.send(data);
-                                    }
-                                })(to, message, status, mid);
+                                    })(to, message, status, mid);
+                                }, 100);
 
                             } else {
                                 subscope.p2p(false);
-                                mediaStream.api.send2("sendChat", function(type, data) {
-                                    if (!noloop) {
-                                        //console.log("looped to self", type, data);
-                                        mediaStream.api.received({Type: data.Type, Data: data, From: mediaStream.api.id, To: to});
-                                    }
-                                })(to, message, status, mid);
+                                _.delay(function() {
+                                    mediaStream.api.send2("sendChat", function(type, data) {
+                                        if (!noloop) {
+                                            //console.log("looped to self", type, data);
+                                            mediaStream.api.received({Type: data.Type, Data: data, From: mediaStream.api.id, To: to});
+                                        }
+                                    })(to, message, status, mid);
+                                }, 100);
                             }
                             return mid;
                         };
@@ -325,7 +329,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         scope.hideRoom(group_chat_id);
                     }
                 });
-                
+
             };
 
         };
