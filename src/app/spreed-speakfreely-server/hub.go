@@ -21,6 +21,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/base64"
@@ -67,6 +68,7 @@ type Hub struct {
 	tickets         *securecookie.SecureCookie
 	count           uint64
 	mutex           sync.RWMutex
+	buffers         BufferCache
 }
 
 func NewHub(version string, config *Config, sessionSecret string, turnSecret string) *Hub {
@@ -82,6 +84,7 @@ func NewHub(version string, config *Config, sessionSecret string, turnSecret str
 	}
 
 	h.tickets = securecookie.New(h.sessionSecret, nil)
+	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	return h
 
 }
