@@ -82,11 +82,11 @@ right:0px;
 position:fixed;
 width:100%;
 z-index:20;
-background-image: url("../img/wild_oliva.png");
+background-image: url("../img/bg-tiles.png");
 background-repeat: repeat;
 	@include hidpi {
-		background-image: url("../img/wild_oliva_x2.png");
-		background-size: 192px 200px;
+		background-image: url("../img/bg-tiles_x2.png");
+		background-size: 198px 200px;
 	}
 }
 .chat.visible.maximized .output {
@@ -217,12 +217,12 @@ content: '\f0ec';
 }
 
 .chat .message li.sent:before {
-content: '\f0e5';
+content: '\f003';
 color:#5882FA;
 }
 
 .chat .message li.delivered:before {
-content: '\f0e0';
+content: '\f019';
 color:#5882FA;
 }
 
