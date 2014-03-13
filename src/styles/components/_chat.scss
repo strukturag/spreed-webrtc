@@ -198,6 +198,8 @@ content: '\f075';
 color:#ccc;
 position:absolute;
 left:0px;
+width:12px;
+text-align:center;
 }
 
 .chat .message.is_self li:before {
@@ -208,7 +210,7 @@ color:#ccc;
 }
 
 .chat .message li.unread:before {
-content: '\f0e0';
+content: '\f0eb';
 color: #FE9A2E;
 }
 
@@ -232,7 +234,7 @@ color:#84b819;
 }
 
 .chat .message li.read:before {
-content: '\f06e';
+content: '\f00c';
 color:#ccc;
 }
 
