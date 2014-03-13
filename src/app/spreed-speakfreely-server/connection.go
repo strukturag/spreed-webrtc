@@ -22,6 +22,7 @@ package main
 
 import (
 	"bytes"
+	"container/list"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -152,10 +153,7 @@ func (c *Connection) readAll(dest *bytes.Buffer, r io.Reader) error {
 
 // readPump pumps messages from the websocket connection to the hub.
 func (c *Connection) readPump() {
-
-	ticker := time.NewTicker(time.Second / maxRatePerSecond)
 	defer func() {
-		ticker.Stop()
 		c.unregister()
 		c.ws.Close()
 	}()
@@ -166,6 +164,7 @@ func (c *Connection) readPump() {
 		c.ws.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
+	times := list.New()
 	for {
 		//fmt.Println("readPump wait nextReader", c.Idx)
 		op, r, err := c.ws.NextReader()
@@ -184,7 +183,17 @@ func (c *Connection) readPump() {
 				c.h.buffers.Push(message)
 				break
 			}
-			<-ticker.C
+			now := time.Now()
+			if times.Len() == maxRatePerSecond {
+				front := times.Front()
+				times.Remove(front)
+				delta := time.Second - now.Sub(front.Value.(time.Time))
+				if delta > 0 {
+					// client is sending messages too fast, delay him
+					time.Sleep(delta)
+				}
+			}
+			times.PushBack(now)
 			c.h.server.OnText(c, message.Bytes())
 			c.h.buffers.Push(message)
 		}
