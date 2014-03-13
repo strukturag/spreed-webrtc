@@ -164,18 +164,25 @@ func (h *Hub) GetRoom(id string) *RoomWorker {
 	if !ok {
 		h.mutex.RUnlock()
 		h.mutex.Lock()
-		room = NewRoomWorker(h, id)
-		h.roomTable[id] = room
-		h.mutex.Unlock()
-		go func() {
-			// Start room, this blocks until room expired.
-			room.Start()
-			// Cleanup room when we are done.
-			h.mutex.Lock()
-			defer h.mutex.Unlock()
-			delete(h.roomTable, id)
-			log.Printf("Cleaned up room '%s'\n", id)
-		}()
+		// need to re-check, another thread might have created the room
+		// while we waited for the lock
+		room, ok = h.roomTable[id]
+		if !ok {
+			room = NewRoomWorker(h, id)
+			h.roomTable[id] = room
+			h.mutex.Unlock()
+			go func() {
+				// Start room, this blocks until room expired.
+				room.Start()
+				// Cleanup room when we are done.
+				h.mutex.Lock()
+				defer h.mutex.Unlock()
+				delete(h.roomTable, id)
+				log.Printf("Cleaned up room '%s'\n", id)
+			}()
+		} else {
+			h.mutex.Unlock()
+		}
 	} else {
 		h.mutex.RUnlock()
 	}
