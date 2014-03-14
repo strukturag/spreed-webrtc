@@ -53,11 +53,11 @@ func (s *Server) OnUnregister(c *Connection) {
 	}
 }
 
-func (s *Server) OnText(c *Connection, b []byte) {
+func (s *Server) OnText(c *Connection, b Buffer) {
 
 	//log.Printf("OnText from %d: %s\n", c.id, b)
 	var msg DataIncoming
-	err := json.Unmarshal(b, &msg)
+	err := json.Unmarshal(b.Bytes(), &msg)
 	if err != nil {
 		log.Println("OnText error while decoding JSON", err)
 		log.Printf("JSON:\n%s\n", b)
@@ -146,20 +146,18 @@ func (s *Server) OnText(c *Connection, b []byte) {
 
 func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
-	b := c.h.buffers.Pop()
+	b := c.h.buffers.New()
 	encoder := json.NewEncoder(b)
 	err := encoder.Encode(&DataOutgoing{From: c.Id, To: to, Data: m})
-
 	if err != nil {
-		c.h.buffers.Push(b)
+		b.Decref()
 		log.Println("Unicast error while encoding JSON", err)
 		return
 	}
 
-	var msg = &MessageRequest{From: c.Id, To: to, Message: b.Bytes()}
+	var msg = &MessageRequest{From: c.Id, To: to, Message: b}
 	c.h.unicastHandler(msg)
-	c.h.buffers.Push(b)
-
+	b.Decref()
 }
 
 func (s *Server) Alive(c *Connection, alive *DataAlive) {
@@ -183,16 +181,18 @@ func (s *Server) Broadcast(c *Connection, m interface{}) {
 		return
 	}
 
+	buffer := c.h.buffers.Wrap(b)
 	if c.h.isGlobalRoomid(c.Roomid) {
 		c.h.RunForAllRooms(func(room *RoomWorker) {
-			var msg = &MessageRequest{From: c.Id, Message: b, Id: room.Id}
+			var msg = &MessageRequest{From: c.Id, Message: buffer, Id: room.Id}
 			room.broadcastHandler(msg)
 		})
 	} else {
-		var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
+		var msg = &MessageRequest{From: c.Id, Message: buffer, Id: c.Roomid}
 		room := c.h.GetRoom(c.Roomid)
 		room.broadcastHandler(msg)
 	}
+	buffer.Decref()
 
 }
 

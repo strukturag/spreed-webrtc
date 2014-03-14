@@ -164,12 +164,16 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 			}
 		}
 		users.Users = ul
-		usersJson, err := json.Marshal(&DataOutgoing{From: c.Id, Data: users})
+		usersJson := c.h.buffers.New()
+		encoder := json.NewEncoder(usersJson)
+		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: users})
 		if err != nil {
 			log.Println("Users error while encoding JSON", err)
+			usersJson.Decref()
 			return
 		}
 		c.send(usersJson)
+		usersJson.Decref()
 
 	}
 
@@ -189,9 +193,11 @@ func (r *RoomWorker) broadcastHandler(m *MessageRequest) {
 			}
 			//fmt.Printf("%s\n", m.Message)
 			ec.send(m.Message)
+			m.Message.Decref()
 		}
 	}
 
+	m.Message.Incref()
 	r.Run(worker)
 
 }

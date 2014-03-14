@@ -42,7 +42,7 @@ const (
 type MessageRequest struct {
 	From    string
 	To      string
-	Message []byte
+	Message Buffer
 	Id      string
 }
 
@@ -289,12 +289,16 @@ func (h *Hub) unicastHandler(m *MessageRequest) {
 
 func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
 
-	aliveJson, err := json.Marshal(&DataOutgoing{From: c.Id, Data: alive})
+	aliveJson := h.buffers.New()
+	encoder := json.NewEncoder(aliveJson)
+	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: alive})
 	if err != nil {
 		log.Println("Alive error while encoding JSON", err)
+		aliveJson.Decref()
 		return
 	}
 	c.send(aliveJson)
+	aliveJson.Decref()
 
 }
 
