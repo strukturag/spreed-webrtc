@@ -193,8 +193,8 @@ func (r *RoomWorker) broadcastHandler(m *MessageRequest) {
 			}
 			//fmt.Printf("%s\n", m.Message)
 			ec.send(m.Message)
-			m.Message.Decref()
 		}
+		m.Message.Decref()
 	}
 
 	m.Message.Incref()
