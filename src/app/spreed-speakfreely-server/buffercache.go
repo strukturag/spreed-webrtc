@@ -22,24 +22,100 @@ package main
 
 import (
 	"bytes"
+	"io"
+	"sync/atomic"
 )
 
-type BufferCache interface {
-	Push(buffer *bytes.Buffer)
+type Buffer interface {
+	// bytes.Buffer
+	Reset()
+	Bytes() []byte
+	ReadFrom(r io.Reader) (n int64, err error)
+	// io.Writer
+	Write(p []byte) (n int, err error)
+	// provide direct access
+	GetBuffer() *bytes.Buffer
+	// refcounting
+	Incref()
+	Decref()
+}
 
-	Pop() *bytes.Buffer
+type BufferCache interface {
+	New() Buffer
+
+	Wrap(data []byte) Buffer
+}
+
+type cachedBuffer struct {
+	bytes.Buffer
+	refcnt int32
+	cache  *bufferCache
+}
+
+func (b *cachedBuffer) GetBuffer() *bytes.Buffer {
+	return &b.Buffer
+}
+
+func (b *cachedBuffer) Incref() {
+	atomic.AddInt32(&b.refcnt, 1)
+}
+
+func (b *cachedBuffer) Decref() {
+	if atomic.AddInt32(&b.refcnt, -1) == 0 {
+		b.cache.push(b)
+	}
+}
+
+type directBuffer struct {
+	buf    *bytes.Buffer
+	refcnt int32
+	cache  *bufferCache
+}
+
+func (b *directBuffer) Reset() {
+	b.buf.Reset()
+}
+
+func (b *directBuffer) Bytes() []byte {
+	return b.buf.Bytes()
+}
+
+func (b *directBuffer) ReadFrom(r io.Reader) (n int64, err error) {
+	return b.buf.ReadFrom(r)
+}
+
+func (b *directBuffer) Write(p []byte) (n int, err error) {
+	return b.buf.Write(p)
+}
+
+func (b *directBuffer) GetBuffer() *bytes.Buffer {
+	return b.buf
+}
+
+func (b *directBuffer) Incref() {
+	atomic.AddInt32(&b.refcnt, 1)
+}
+
+func (b *directBuffer) Decref() {
+	if atomic.AddInt32(&b.refcnt, -1) == 0 {
+		b.cache.push(b)
+	}
 }
 
 type bufferCache struct {
-	buffers     chan *bytes.Buffer
+	buffers     chan Buffer
 	initialSize int
 }
 
 func NewBufferCache(count int, initialSize int) BufferCache {
-	return &bufferCache{buffers: make(chan *bytes.Buffer, count), initialSize: initialSize}
+	return &bufferCache{buffers: make(chan Buffer, count), initialSize: initialSize}
 }
 
-func (cache *bufferCache) Push(buffer *bytes.Buffer) {
+func (cache *bufferCache) push(buffer Buffer) {
+	if buffer, ok := buffer.(*directBuffer); ok {
+		buffer.Reset()
+		return
+	}
 	buffer.Reset()
 	select {
 	case cache.buffers <- buffer:
@@ -51,15 +127,21 @@ func (cache *bufferCache) Push(buffer *bytes.Buffer) {
 	}
 }
 
-func (cache *bufferCache) Pop() *bytes.Buffer {
-	var buffer *bytes.Buffer
+func (cache *bufferCache) New() Buffer {
+	var buffer Buffer
 	select {
 	case buffer = <-cache.buffers:
 		// reuse existing buffer
+		buffer.Incref()
 		break
 	default:
-		buffer = bytes.NewBuffer(make([]byte, 0, cache.initialSize))
+		buffer = &cachedBuffer{refcnt: 1, cache: cache}
+		buffer.GetBuffer().Grow(cache.initialSize)
 		break
 	}
 	return buffer
+}
+
+func (cache *bufferCache) Wrap(data []byte) Buffer {
+	return &directBuffer{refcnt: 1, cache: cache, buf: bytes.NewBuffer(data)}
 }
