@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-03 19:16+0100\n"
-"PO-Revision-Date: 2014-03-03 19:18+0100\n"
+"POT-Creation-Date: 2014-03-14 18:56+0100\n"
+"PO-Revision-Date: 2014-03-14 18:57+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -20,6 +20,9 @@ msgstr ""
 
 msgid "Share your screen"
 msgstr "Bildschirm freigeben"
+
+msgid "Chat"
+msgstr "Chat"
 
 msgid "Mute microphone"
 msgstr "Mikrofon abschalten"
@@ -47,15 +50,6 @@ msgstr "Niemand sonst online"
 
 msgid "Peer to peer"
 msgstr "Peer-to-peer"
-
-msgid "Maximize"
-msgstr "Maximieren"
-
-msgid "Normal size"
-msgstr "Normale Größe"
-
-msgid "Minimize"
-msgstr "Minimieren"
 
 msgid "Close chat"
 msgstr "Chat schließen"

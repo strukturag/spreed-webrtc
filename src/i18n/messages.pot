@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-03 19:16+0100\n"
+"POT-Creation-Date: 2014-03-14 18:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,9 @@ msgstr ""
 "Generated-By: Babel 0.9.6\n"
 
 msgid "Share your screen"
+msgstr ""
+
+msgid "Chat"
 msgstr ""
 
 msgid "Mute microphone"
@@ -46,15 +49,6 @@ msgid "No other users online"
 msgstr ""
 
 msgid "Peer to peer"
-msgstr ""
-
-msgid "Maximize"
-msgstr ""
-
-msgid "Normal size"
-msgstr ""
-
-msgid "Minimize"
 msgstr ""
 
 msgid "Close chat"

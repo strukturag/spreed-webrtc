@@ -21,12 +21,15 @@
 #settings {
 position:fixed;
 top:44px;
-right:-460px;
+right:-520px;
 bottom:0px;
-width:440px;
+width:520px;
 z-index: 50;
--webkit-transition-property: right;
--webkit-transition-duration: 0.2s;
+-webkit-transition: right 200ms ease-in-out;
+-moz-transition: right 200ms ease-in-out;
+-ms-transition: right 200ms ease-in-out;
+-o-transition: right 200ms ease-in-out;
+transition: right 200ms ease-in-out;
 padding-right: 20px;
 border-top:1px solid $bordercolor;
 }

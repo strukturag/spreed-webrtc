@@ -138,7 +138,9 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         $scope.incoming = null;
         $scope.microphoneMute = false;
         $scope.cameraMute = false;
+        $scope.chatEnabled = false;
         $scope.autoAccept = null;
+        $scope.showBuddylist = true;
         $scope.master = {
             displayName: null,
             buddyPicture: null,
@@ -526,6 +528,11 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             } else {
                 $scope.setStatus('connected');
             }
+            $timeout(function() {
+                if ($scope.peer) {
+                    $scope.showBuddylist = false;
+                }
+            }, 1000);
 
         });
 
@@ -549,6 +556,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             if (mediaStream.connector.connected) {
                 $scope.setStatus("waiting");
             }
+            $scope.showBuddylist = true;
         });
 
         mediaStream.webrtc.e.on("busy", function(event, from) {

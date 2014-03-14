@@ -1,0 +1,25 @@
+#rightslide {
+position: absolute;
+top: 44px;
+right: 0px;
+bottom: 0px;
+left: 0px;
+z-index:5;
+-webkit-transition: right 200ms ease-in-out;
+-moz-transition: right 200ms ease-in-out;
+-ms-transition: right 200ms ease-in-out;
+-o-transition: right 200ms ease-in-out;
+transition: right 200ms ease-in-out;
+pointer-events:none;
+overflow-x: auto;
+overflow-y: hidden;
+}
+#rightslide.slideright {
+right:-260px;
+}
+#rightslide .rightslidepane {
+position:relative;
+width:100%;
+height:100%;
+min-width:520px;
+}

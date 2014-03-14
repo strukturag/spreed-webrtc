@@ -19,23 +19,22 @@
  *
  */
 #buddylist {
-position: fixed;
-top: 44px;
+position: absolute;
+top: 0px;
 right: 0px;
 bottom: 0px;
-width:260px;
-z-index:5;
-pointer-events:none;
+width:285px;
 }
 .buddylist {
 position:absolute;
-left:0px;
+left:25px;
 right:0px;
 top:0px;
 bottom:0px;
 overflow-x: hidden;
 overflow-y: auto;
 border-top: 1px solid $bordercolor;
+background: $componentbg;
 }
 .buddylist .buddycontainer {
 -webkit-user-select: none;
@@ -44,7 +43,6 @@ pointer-events:auto;
 }
 .buddylist .buddylistloading, .buddylist .buddylistempty {
 padding:.4em;
-background: $sidepanebg;
 font-size:0.8em;
 text-align:center;
 display:none;

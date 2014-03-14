@@ -22,11 +22,15 @@
 position:absolute;
 top:120px;
 bottom:120px;
-left:15%;
+left:0px;
 right:0px;
-width:400px;
+width:350px;
 font-size:1.1em;
 color:#aaa;
+margin: 0 auto;
+}
+#help > div {
+margin-left:-55%;
 }
 #help .help-subline {
 padding:20px 0;
@@ -34,13 +38,10 @@ color:#666;
 }
 @media only screen and (max-width: 800px) and (min-width: 400px) {
     #help {
-    width:200px;
+    width:250px;
     }
     #help {
     font-size:1em;
-    }
-    #help > div {
-    margin-left:0px;
     }
 }
 

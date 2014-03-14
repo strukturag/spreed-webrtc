@@ -105,6 +105,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
             var chat = $compile(templateChatroom);
             return function(scope, iElement, iAttrs, controller) {
+                scope.currentRoom = null;
                 scope.showRoom = function(id, settings, options) {
                     var options = $.extend({}, options);
                     var subscope = controller.rooms[id];
@@ -122,8 +123,6 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         subscope.newmessage = false;
                         subscope.enabled = true;
                         subscope.peerIsTyping = "no";
-                        subscope.minimized = id === group_chat_id ? true : false;
-                        subscope.maximized = false;
                         subscope.firstmessage = true;
                         subscope.p2pstate = false;
                         if (!subscope.isgroupchat) {
@@ -138,23 +137,6 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                                 buddyData.pop(id);
                             }
                             scope.killRoom(id);
-                        };
-                        subscope.toggleMin = function() {
-                            subscope.maximized = false;
-                            if (subscope.minimized) {
-                                subscope.minimized = false;
-                            } else {
-                                subscope.minimized = true;
-                                subscope.firstmessage = true;
-                            }
-                        };
-                        subscope.toggleMax = function() {
-                            subscope.minimized = false;
-                            if (subscope.maximized) {
-                                subscope.maximized = false;
-                            } else {
-                                subscope.maximized = true;
-                            }
                         };
                         subscope.seen = function() {
                             if (subscope.newmessage) {
@@ -276,18 +258,23 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                                 controller.visibleRooms.push(id);
                                 subscope.index = index;
                                 subscope.visible = true;
-                                if (options.minimized) {
-                                    subscope.minimized = true;
-                                } else {
-                                    subscope.minimized = false;
-                                }
                             }
                         }
                         if (options.autofocus && subscope.visible) {
                             subscope.$broadcast("focus");
-                            subscope.minimized = false;
                         }
                     }
+                    if (scope.currentRoom !== subscope && scope.currentRoom) {
+                        scope.currentRoom.hide();
+                    }
+
+                    if (options.restore && !options.noenable) {
+                        if (!scope.chatEnabled) {
+                            scope.$parent.chatEnabled = true;
+                        }
+                    }
+
+                    scope.currentRoom = subscope;
                     safeApply(subscope);
                     return subscope;
                 };
@@ -301,7 +288,6 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     var index = subscope.index;
                     controller.visibleRooms.splice(index, 1);
                     subscope.visible=false;
-                    subscope.maximized=false;
                     subscope.firstmessage=true;
                     // Refresh index of the rest of the rooms.
                     _.each(controller.visibleRooms, function(id, idx) {
@@ -309,6 +295,12 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         //console.log("updated idx", idx, s.index);
                         s.index = idx;
                     });
+                    if (scope.currentRoom === subscope) {
+                        scope.currentRoom = null;
+                    }
+                    if (!controller.visibleRooms.length) {
+                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true});
+                    }
                 };
                 scope.killRoom = function(id) {
                     scope.hideRoom(id);
@@ -324,7 +316,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
                 scope.$on("room", function(event, room) {
                     if (room !== null) {
-                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, minimized: true});
+                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
                     } else {
                         scope.hideRoom(group_chat_id);
                     }

@@ -18,94 +18,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-$chatwidth: 260px;
-$chatheight: 312px;
 #chat {
-position: fixed;
-left:8px;
+position: absolute;
 bottom:0px;
-right:8px;
-height:$chatheight;
-max-height:100%;
+right:260px;
+width:260px;
+top:0px;
 pointer-events: none;
 z-index:45;
+overflow:hidden;
 }
 .chatpane {
 height:100%;
-position:relative;
-overflow-x:auto;
-overflow-y:hidden;
+position:absolute;
+top:0px;
+left:0px;
+bottom:0px;
+width:260px;
+-webkit-transition: left 200ms ease-in-out;
+-moz-transition: left 200ms ease-in-out;
+-ms-transition: left 200ms ease-in-out;
+-o-transition: left 200ms ease-in-out;
+transition: left 200ms ease-in-out;
+}
+.chatpane.slideright {
+left:260px;
 }
 .chat {
 position:absolute;
 pointer-events: auto;
+top:0px;
+bottom:0px;
+right:0px;
 left:0px;
-bottom:( -1* $chatheight - 30);
-width:$chatwidth;
-background: #e7e7e7;;
-min-width:$chatwidth;
+background: #e7e7e7;
+border-right:1px solid $bordercolor;
 overflow:hidden;
-max-width:100%;
-height:100%;
 display:none;
--webkit-border-top-left-radius: 4px;
--webkit-border-top-right-radius: 4px;
--moz-border-radius-topleft: 4px;
--moz-border-radius-topright: 4px;
-border-top-left-radius: 4px;
-border-top-right-radius: 4px;
 }
 .chat.visible {
 display:block;
-bottom:0px;
 }
-.chat.visible.minimized {
-	background:transparent;
-	border:none;
-	pointer-events:none;
-	.chatheader {
-		position:absolute;
-		bottom:0px;
-		left:0px;
-		right:0px;
-		pointer-events:auto;
-	}
-	.outputbox, .typinghint, .inputbox {
-		display:none;
-	}
-}
-.chat.visible.maximized {
-bottom:0px;
-top:0px;
-left:0px;
-right:0px;
-position:fixed;
-width:100%;
-z-index:20;
-background-image: url("../img/bg-tiles.png");
-background-repeat: repeat;
-	@include hidpi {
-		background-image: url("../img/bg-tiles_x2.png");
-		background-size: 198px 200px;
-	}
-}
-.chat.visible.maximized .output {
-margin:4px;
-}
-
 .chat .chatheader {
 background: $componentbg;
 padding:6px 4px 4px 8px;
-border: 1px solid $bordercolor;
+border-top: 1px solid $bordercolor;
+border-bottom: 1px solid $bordercolor;
 font-size:0.8em;
 font-weight:bold;
 height:30px;
--webkit-border-top-left-radius: 4px;
--webkit-border-top-right-radius: 4px;
--moz-border-radius-topleft: 4px;
--moz-border-radius-topright: 4px;
-border-top-left-radius: 4px;
-border-top-right-radius: 4px;
 }
 .chat .chatheader .ctrl {
 position:absolute;
@@ -131,7 +92,7 @@ left:0px;
 right:0px;
 top:34px;
 bottom:74px;
-max-width:600px;
+//max-width:600px;
 margin:0 auto;
 }
 .chat .output {
@@ -343,7 +304,7 @@ left:0px;
 bottom:0px;
 right:0px;
 height:60px;
-max-width:500px;
+//max-width:500px;
 margin:0 auto;
 }
 .chat .inputbox .btn {
@@ -363,25 +324,24 @@ height:54px;
 max-height:54px; /* FF hack */
 margin-bottom: 4px;
 }
-@for $i from 0 through 10 {
-    .chat.room-#{$i} {
-        left: ($chatwidth+8)*$i;
-    }
-}
+
 @keyframes newmessage {
 	0% {background-color: rgba(132,184,25,1.0);}
 	50% {background-color: $componentbg;}
 	100% {background-color: rgba(132,184,25,1.0);}
 }
+
 @-webkit-keyframes newmessage {
 	0% {background-color: rgba(132,184,25,1.0);}
 	50% {background-color: $componentbg;}
 	100% {background-color: rgba(132,184,25,1.0);}
 }
+
 .chat.newmessage .chatheader {
 animation: newmessage 1s ease -0.3s infinite;
 -webkit-animation: newmessage 1s ease -0.3s infinite;
 }
+
 .chat.newmessage .chatheader span:after {
 content: "***";
 position:absolute;
