@@ -69,10 +69,10 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 		var content []byte
 		var err error
 
-		if resource, ok := resource.(HandleSupported); ok {
+		if hresource, ok := resource.(HandleSupported); ok {
 
 			var handle func(http.ResponseWriter, *http.Request) (int, []byte)
-			handle = resource.Handle
+			handle = hresource.Handle
 			code, content = handle(rw, request)
 
 		} else {
