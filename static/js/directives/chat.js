@@ -145,6 +145,9 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             }
 
                         };
+                        subscope.toggleMax = function() {
+                            scope.toggleMax();
+                        };
                         subscope.sendChat = function(to, message, status, mid, noloop) {
                             //console.log("send chat", to, scope.peer);
                             var peercall = mediaStream.webrtc.findTargetCall(to);
@@ -312,6 +315,10 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     $timeout(function() {
                         subscope.$destroy();
                     }, 0);
+                };
+                scope.toggleMax = function() {
+                    //TODO(longsleep): Angularize this.
+                    iElement.parent().toggleClass("maximized");
                 };
 
                 scope.$on("room", function(event, room) {
