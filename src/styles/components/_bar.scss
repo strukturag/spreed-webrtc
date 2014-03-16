@@ -129,6 +129,7 @@ background-color: $componentbg;
 display:inline-block;
 padding:0 1em;
 position:relative;
+min-height: 44px;
 }
 
 @media all and (max-width: 700px) {
@@ -154,7 +155,7 @@ position:relative;
     }
     #bar > .middle {
         display:block;
-        max-width:50%;
+        max-width:40%;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
