@@ -299,7 +299,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         scope.currentRoom = null;
                     }
                     if (!controller.visibleRooms.length) {
-                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true});
+                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
                     }
                 };
                 scope.killRoom = function(id) {
