@@ -38,7 +38,7 @@
 </div>
 <div class="ng-cloak nicescroll" id="rightslide" ng-show="roomstatus">
     <div class="rightslidepane">
-        <div id="buddylist"><buddy-list/></div>
+        <div id="buddylist" ng-mouseenter="toggleBuddylist(true)" ng-mouseleave="toggleBuddylist(false)"><buddy-list/></div>
         <div id="chat"><chat/></div>
     </div>
 </div>

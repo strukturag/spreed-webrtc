@@ -24,6 +24,26 @@ top: 0px;
 right: 0px;
 bottom: 0px;
 width:285px;
+pointer-events:auto;
+}
+#buddylist:before {
+position:absolute;
+width:25px;
+height:25px;
+margin: auto;
+left: 0px;
+top:0px;
+bottom:0px;
+content:"\f100";
+font-family: 'FontAwesome';
+color:#ccc;
+font-size:1.8em;
+text-align:center;
+cursor:pointer;
+text-shadow: 0 0 5px black;
+}
+.withBuddylist #buddylist:before {
+display:none;
 }
 .buddylist {
 position:absolute;
@@ -126,7 +146,6 @@ background:rgba(255,255,255,0.5);
 z-index:5;
 line-height:66px;
 padding:0 10px;
-/*width:110px;*/
 transition-property: right;
 -webkit-transition-property: right;
 transition-duration: .3s;
@@ -139,17 +158,4 @@ font-size:2em;
 }
 .buddy.hovered .buddyactions {
 right:0px;
-}
-
-@media only screen and (max-width: 400px) {
-	#buddylist {
-		left:0px;
-		width:auto;
-		margin-bottom:26px;
-	}
-	.buddylist .buddylistempty {
-		background: transparent;
-		color:#ccc;
-		padding-top:14px;
-	}
 }

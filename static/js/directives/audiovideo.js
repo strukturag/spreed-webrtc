@@ -343,7 +343,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 $($window).on("resize", scope.resize);
                 scope.$on("mainresize", function() {
-                    console.log("mainResize called");
                     _.defer(scope.resize);
                 });
                 scope.resize();

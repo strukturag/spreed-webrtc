@@ -316,6 +316,18 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
 
         };
 
+        $scope.toggleBuddylist = (function() {
+            var oldState = null;
+            return function(status, force) {
+                if (status || force) {
+                    oldState = $scope.showBuddylist;
+                    $scope.showBuddylist = !!status;
+                } else {
+                    $scope.showBuddylist = oldState;
+                }
+            }
+        }());
+
         $scope.$watch("cameraMute", function(cameraMute) {
             mediaStream.webrtc.setVideoMute(cameraMute);
         });
