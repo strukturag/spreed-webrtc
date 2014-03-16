@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigScreen, moment) {
 
-    return ["$scope", "$rootScope", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
+    return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
 
         /*console.log("route", $route, $routeParams, $location);*/
 
@@ -550,6 +550,12 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             if (changed) {
                 $scope.$broadcast("mainresize");
             }
+        });
+
+        $scope.$watch(function() {
+            return $element.attr("class");
+        }, function() {
+            $scope.$broadcast("mainresize");
         });
 
         mediaStream.webrtc.e.on("done", function() {

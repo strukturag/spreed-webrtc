@@ -33,6 +33,12 @@ bottom:0px;
 left:0px;
 background:black;
 }
+.withChat #audiovideo, .withBuddylist #audiovideo {
+right:260px;
+}
+.withBuddylist.withChat #audiovideo {
+right:520px;
+}
 #audiovideo.fullscreen .remoteVideo .peeractions {
 display:none;
 }

@@ -1,7 +1,7 @@
 #rightslide {
 position: absolute;
 top: 44px;
-right: 0px;
+right: -260px;
 bottom: 0px;
 left: 0px;
 z-index:5;
@@ -14,8 +14,8 @@ pointer-events:none;
 overflow-x: auto;
 overflow-y: hidden;
 }
-#rightslide.slideright {
-right:-260px;
+.withBuddylist #rightslide {
+right:0px;
 }
 #rightslide .rightslidepane {
 position:relative;

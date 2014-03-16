@@ -3,7 +3,7 @@
 <head>
 <%template "head" .%>
 </head>
-<body ng-controller="MediastreamController">
+<body ng-controller="MediastreamController" ng-class="{withBuddylist: showBuddylist, withChat: chatEnabled, withSettings: showSettings, slideright: !showBuddylist}">
 <div id="background"></div>
 <div id="loader"><div><i class="fa fa-spinner fa-spin"></i></div></div>
 <div class="ng-cloak" id="help">
@@ -36,7 +36,7 @@
 <div id="screenshare" class="ng-cloak mainview" ng-show="mainview=='screenshare'">
     <screenshare/>
 </div>
-<div class="ng-cloak nicescroll" id="rightslide" ng-show="roomstatus" ng-class="{slideright: !showBuddylist}">
+<div class="ng-cloak nicescroll" id="rightslide" ng-show="roomstatus">
     <div class="rightslidepane">
         <div id="buddylist"><buddy-list/></div>
         <div id="chat"><chat/></div>

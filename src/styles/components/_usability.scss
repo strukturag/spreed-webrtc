@@ -28,6 +28,14 @@ width:350px;
 font-size:1.1em;
 color:#aaa;
 margin: 0 auto;
+-webkit-transition: left 200ms ease-in-out;
+-moz-transition: left 200ms ease-in-out;
+-ms-transition: left 200ms ease-in-out;
+-o-transition: left 200ms ease-in-out;
+transition: left 200ms ease-in-out;
+}
+.withSettings #help, .withChat.withBuddylist #help {
+left:-22%;
 }
 #help > div {
 margin-left:-55%;
