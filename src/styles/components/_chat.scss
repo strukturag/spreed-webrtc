@@ -31,6 +31,9 @@ overflow:hidden;
 #chat.maximized {
 left:0px;
 width:auto;
+	.chatpane {
+		width:auto;
+	}
 }
 .chatpane {
 height:100%;
@@ -39,6 +42,7 @@ top:0px;
 left:0px;
 bottom:0px;
 right:0px;
+width:260px;
 -webkit-transition: left 200ms ease-in-out;
 -moz-transition: left 200ms ease-in-out;
 -ms-transition: left 200ms ease-in-out;
