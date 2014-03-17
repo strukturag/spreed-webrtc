@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"log"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -74,6 +75,7 @@ type Hub struct {
 	buffers               BufferCache
 	broadcastChatMessages uint64
 	unicastChatMessages   uint64
+	buddyImages           ImageCache
 }
 
 func NewHub(version string, config *Config, sessionSecret string, turnSecret string) *Hub {
@@ -90,6 +92,7 @@ func NewHub(version string, config *Config, sessionSecret string, turnSecret str
 
 	h.tickets = securecookie.New(h.sessionSecret, nil)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
+	h.buddyImages = NewImageCache()
 	return h
 
 }
@@ -318,6 +321,18 @@ func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
 	var rev uint64
 	if ok {
 		rev = user.Update(u)
+		if u.Status != nil {
+			status, ok := u.Status.(map[string]interface{})
+			if ok && status["buddyPicture"] != nil {
+				pic := status["buddyPicture"].(string)
+				if strings.HasPrefix(pic, "data:") {
+					imageId := h.buddyImages.Update(u.Id, pic[5:])
+					if imageId != "" {
+						status["buddyPicture"] = "img:" + imageId
+					}
+				}
+			}
+		}
 	} else {
 		log.Printf("Update data for unknown user %s\n", u.Id)
 	}

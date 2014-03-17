@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
+define(['underscore', 'modernizr', 'jquery', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, $, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
 
     var BuddyTree = function() {
 
@@ -121,6 +121,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
         //console.log("$buddylist $get");
         var doc = $window.document;
         var buddyCount = 0;
+
+        var globalcontext = $("#globalcontext").text();
+        var context = JSON.parse(globalcontext);
 
         var Buddylist = function($element, $scope, opts) {
 
@@ -317,6 +320,20 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
         };
 
+        Buddylist.prototype.updateBuddyPicture = function(url) {
+
+            if (url.indexOf("data:") === 0) {
+                // can use data: urls directly
+                return url;
+            } else if (url.indexOf("img:") === 0) {
+                return context.Cfg.B + "img/buddy/"+url.substr(4);
+            }
+
+            console.log("Unknown buddy picture url", url);
+            return url;
+
+        };
+
         Buddylist.prototype.onStatus = function(status) {
 
             //console.log("onStatus", status);
@@ -326,6 +343,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 console.warn("Received old status update in status", status.Rev, scope.status.Rev);
             } else {
                 scope.status = status.Status;
+                if (scope.status.buddyPicture) {
+                    scope.status.buddyPicture = this.updateBuddyPicture(scope.status.buddyPicture);
+                }
                 var displayName = scope.displayName;
                 if (scope.status.displayName) {
                   scope.displayName = scope.status.displayName;
@@ -354,6 +374,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 } else {
                     scope.status = user.Status;
                     scope.displayName = scope.status.displayName;
+                    if (scope.status.buddyPicture) {
+                        scope.status.buddyPicture = this.updateBuddyPicture(scope.status.buddyPicture);
+                    }
                 }
             }
             //console.log("Joined scope", scope, scope.element);

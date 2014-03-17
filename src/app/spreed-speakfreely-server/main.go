@@ -34,6 +34,7 @@ import (
 	"os"
 	"path"
 	goruntime "runtime"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -82,6 +83,29 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	handleRoomView(vars["room"], w, r)
+
+}
+
+func makeImageHandler(hub *Hub, expires time.Duration) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		image := hub.buddyImages.Get(vars["imageid"])
+		if image == nil {
+			http.Error(w, "Unknown image", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", image.mimetype)
+		w.Header().Set("Content-Length", strconv.Itoa(len(image.data)))
+		w.Header().Set("Date", time.Now().Format(time.RFC822))
+		if expires >= time.Second {
+			w.Header().Set("Expires", time.Now().Add(expires).Format(time.RFC1123))
+			w.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(expires.Seconds())))
+		}
+		w.Write(image.data)
+	}
 
 }
 
@@ -300,6 +324,7 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWsHubHandler(hub))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
+	r.Handle("/img/buddy/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Hour)))
 
 	// Add API end points.
 	api := sleepy.NewAPI(r.PathPrefix("/api/v1/").Subrouter())

@@ -1,0 +1,99 @@
+package main
+
+import (
+	"crypto/rand"
+	"encoding/base64"
+	"log"
+	"strconv"
+	"strings"
+	"sync"
+)
+
+type Image struct {
+	updateIdx int
+	userid    string
+	mimetype  string
+	data      []byte
+}
+
+type ImageCache interface {
+	Update(userId string, image string) string
+
+	Get(imageId string) *Image
+}
+
+type imageCache struct {
+	images     map[string]*Image
+	userImages map[string]string
+	mutex      sync.RWMutex
+}
+
+func NewImageCache() ImageCache {
+	result := &imageCache{}
+	result.images = make(map[string]*Image)
+	result.userImages = make(map[string]string)
+	return result
+}
+
+func (self *imageCache) Update(userId string, image string) string {
+	var mimetype string = "image/x-unknown"
+	pos := strings.Index(image, ";")
+	if pos != -1 {
+		mimetype = image[:pos]
+		image = image[pos+1:]
+	}
+	pos = strings.Index(image, ",")
+	var decoded []byte
+	var err error
+	if pos != -1 {
+		encoding := image[:pos]
+		switch encoding {
+		case "base64":
+			decoded, err = base64.StdEncoding.DecodeString(image[pos+1:])
+			if err != nil {
+				return ""
+			}
+		default:
+			log.Println("Unknown encoding", encoding)
+			return ""
+		}
+	} else {
+		decoded = []byte(image[pos+1:])
+	}
+	var img *Image
+	self.mutex.RLock()
+	result, ok := self.userImages[userId]
+	if !ok {
+		self.mutex.RUnlock()
+		imageId := make([]byte, 16, 16)
+		if _, err = rand.Read(imageId); err != nil {
+			return ""
+		}
+		result = base64.URLEncoding.EncodeToString(imageId)
+		img = &Image{userid: userId}
+		self.mutex.Lock()
+		resultTmp, ok := self.userImages[userId]
+		if !ok {
+			self.userImages[userId] = result
+			self.images[result] = img
+		} else {
+			result = resultTmp
+			img = self.images[result]
+		}
+		self.mutex.Unlock()
+	} else {
+		img = self.images[result]
+		self.mutex.RUnlock()
+	}
+	img.updateIdx++
+	img.mimetype = mimetype
+	img.data = decoded
+	return result + "/" + strconv.Itoa(img.updateIdx)
+}
+
+func (self *imageCache) Get(imageId string) *Image {
+	self.mutex.RLock()
+	image := self.images[imageId]
+	self.mutex.RUnlock()
+	return image
+}
