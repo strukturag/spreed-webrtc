@@ -139,11 +139,11 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             scope.killRoom(id);
                         };
                         subscope.seen = function() {
+                            scope.$emit("chatseen");
                             if (subscope.newmessage) {
                                 subscope.newmessage = false;
                                 subscope.$broadcast("seen");
                             }
-
                         };
                         subscope.toggleMax = function() {
                             scope.toggleMax();
@@ -217,6 +217,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             safeApply(subscope);
                         });
                         subscope.$on("incoming", function(event, message, from, userid) {
+                            scope.$emit("chatincoming");
                             if (subscope.firstmessage || !desktopNotify.windowHasFocus) {
                                 var room = event.targetScope.id;
                                 // Make sure we are not in group chat or the message is from ourselves

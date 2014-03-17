@@ -139,6 +139,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         $scope.microphoneMute = false;
         $scope.cameraMute = false;
         $scope.chatEnabled = false;
+        $scope.chatMessagesUnseen = 0;
         $scope.autoAccept = null;
         $scope.showBuddylist = true;
         $scope.master = {
@@ -659,6 +660,14 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                 $scope.enableScreenshare = !!status;
             }
 
+        });
+
+        $scope.$on("chatincoming", function() {
+            $scope.chatMessagesUnseen++;
+        });
+
+        $scope.$on("chatseen", function() {
+            $scope.chatMessagesUnseen=0;
         });
 
         _.defer(function() {
