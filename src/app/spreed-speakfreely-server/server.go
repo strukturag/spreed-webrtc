@@ -175,24 +175,26 @@ func (s *Server) UpdateUser(c *Connection, userupdate *UserUpdate) uint64 {
 
 func (s *Server) Broadcast(c *Connection, m interface{}) {
 
-	b, err := json.Marshal(&DataOutgoing{From: c.Id, Data: m})
+	b := c.h.buffers.New()
+	encoder := json.NewEncoder(b)
+	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: m})
 	if err != nil {
+		b.Decref()
 		log.Println("Broadcast error while encoding JSON", err)
 		return
 	}
 
-	buffer := c.h.buffers.Wrap(b)
 	if c.h.isGlobalRoomid(c.Roomid) {
 		c.h.RunForAllRooms(func(room *RoomWorker) {
-			var msg = &MessageRequest{From: c.Id, Message: buffer, Id: room.Id}
+			var msg = &MessageRequest{From: c.Id, Message: b, Id: room.Id}
 			room.broadcastHandler(msg)
 		})
 	} else {
-		var msg = &MessageRequest{From: c.Id, Message: buffer, Id: c.Roomid}
+		var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
 		room := c.h.GetRoom(c.Roomid)
 		room.broadcastHandler(msg)
 	}
-	buffer.Decref()
+	b.Decref()
 
 }
 
