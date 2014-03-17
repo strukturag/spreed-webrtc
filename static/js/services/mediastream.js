@@ -28,7 +28,7 @@ define([
 
 ], function($, _, Connector, Api, WebRTC, tokens) {
 
-    return ["$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", function($route, $location, $window, visibility, alertify, $http, safeApply) {
+    return ["$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", function($route, $location, $window, visibility, alertify, $http, safeApply, $timeout) {
 
         var globalcontext = $("#globalcontext").text();
         var context = JSON.parse(globalcontext);
@@ -135,10 +135,23 @@ define([
                     $rootScope.roomlink = room ? mediaStream.url.room(room) : null;
                 });
 
+                // Cache events, to avoid ui flicker during quick room changes.
+                var roomStatusCache = $rootScope.roomStatus;
+                var roomCache = null;
+                var roomCache2 = null;
                 $rootScope.$on("roomStatus", function(event, status) {
-                    $rootScope.roomstatus = status ? true : false;
-                    var room = status ? $rootScope.roomid : null;
-                    $rootScope.$broadcast("room", room);
+                    roomStatusCache = status ? true : false;
+                    roomCache = status ? $rootScope.roomid : null;
+                    $timeout(function() {
+                        if ($rootScope.roomstatus !== roomStatusCache) {
+                            $rootScope.roomstatus = roomStatusCache;
+                            console.log("set roomstsatus", roomStatusCache);
+                        }
+                        if (roomCache !== roomCache2) {
+                            $rootScope.$broadcast("room", roomCache);
+                            roomCache2 = roomCache;
+                        }
+                    }, 100);
                 });
 
                 visibility.afterPrerendering(function() {
