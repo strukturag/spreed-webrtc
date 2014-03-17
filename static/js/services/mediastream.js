@@ -145,7 +145,6 @@ define([
                     $timeout(function() {
                         if ($rootScope.roomstatus !== roomStatusCache) {
                             $rootScope.roomstatus = roomStatusCache;
-                            console.log("set roomstsatus", roomStatusCache);
                         }
                         if (roomCache !== roomCache2) {
                             $rootScope.$broadcast("room", roomCache);
