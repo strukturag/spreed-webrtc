@@ -1,20 +1,17 @@
 spreed-speakfreely-server (0.16.0) precise; urgency=low
 
   * Chat UI improvements.
+  * Screen sharing is now a scroll pane and no longer scaled down.
   * Buddy list now auto hides when in a call.
   * Server optimizations to handle large amounts of connections better.
   * Server code was reviewed and fixed where required.
-
- -- Simon Eisenmann <simon@struktur.de>  Mon, 17 Mar 2014 18:35:08 +0100
-
-spreed-speakfreely-server (0.15.1) precise; urgency=low
-
   * Changed Makefile to allow tarball and release builds with
     local third party sources in ./vendor too.
   * Added configration for maxfd and automatically use the 
     numer of cpus for GOMAXPROCS per default. 
+  * Added server helper for stats and profiling.
 
- -- Simon Eisenmann <simon@struktur.de>  Tue, 04 Mar 2014 11:45:29 +0100
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 17 Mar 2014 18:35:08 +0100
 
 spreed-speakfreely-server (0.15.0) precise; urgency=low
 
