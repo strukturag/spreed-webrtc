@@ -30,6 +30,7 @@ import (
 	"github.com/gorilla/securecookie"
 	"log"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -47,28 +48,32 @@ type MessageRequest struct {
 }
 
 type HubStat struct {
-	Rooms            int                  `json:"rooms"`
-	Connections      int                  `json:"connections"`
-	Users            int                  `json:"users"`
-	Count            uint64               `json:"count"`
-	IdsInRoom        map[string][]string  `json:"idsinroom,omitempty"`
-	UsersById        map[string]*DataUser `json:"usersbyid,omitempty"`
-	ConnectionsByIdx map[string]string    `json:"connectionsbyidx,omitempty"`
+	Rooms                 int                  `json:"rooms"`
+	Connections           int                  `json:"connections"`
+	Users                 int                  `json:"users"`
+	Count                 uint64               `json:"count"`
+	BroadcastChatMessages uint64               `json:"broadcastchatmessages"`
+	UnicastChatMessages   uint64               `json:"unicastchatmessages"`
+	IdsInRoom             map[string][]string  `json:"idsinroom,omitempty"`
+	UsersById             map[string]*DataUser `json:"usersbyid,omitempty"`
+	ConnectionsByIdx      map[string]string    `json:"connectionsbyidx,omitempty"`
 }
 
 type Hub struct {
-	server          *Server
-	connectionTable map[string]*Connection
-	userTable       map[string]*User
-	roomTable       map[string]*RoomWorker
-	version         string
-	config          *Config
-	sessionSecret   []byte
-	turnSecret      []byte
-	tickets         *securecookie.SecureCookie
-	count           uint64
-	mutex           sync.RWMutex
-	buffers         BufferCache
+	server                *Server
+	connectionTable       map[string]*Connection
+	userTable             map[string]*User
+	roomTable             map[string]*RoomWorker
+	version               string
+	config                *Config
+	sessionSecret         []byte
+	turnSecret            []byte
+	tickets               *securecookie.SecureCookie
+	count                 uint64
+	mutex                 sync.RWMutex
+	buffers               BufferCache
+	broadcastChatMessages uint64
+	unicastChatMessages   uint64
 }
 
 func NewHub(version string, config *Config, sessionSecret string, turnSecret string) *Hub {
@@ -97,6 +102,8 @@ func (h *Hub) Stat(details bool) *HubStat {
 		Connections: len(h.connectionTable),
 		Users:       len(h.userTable),
 		Count:       h.count,
+		BroadcastChatMessages: atomic.LoadUint64(&h.broadcastChatMessages),
+		UnicastChatMessages:   atomic.LoadUint64(&h.unicastChatMessages),
 	}
 	if details {
 		rooms := make(map[string][]string)
