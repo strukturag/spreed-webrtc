@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-14 18:56+0100\n"
+"POT-Creation-Date: 2014-03-17 11:54+0100\n"
 "PO-Revision-Date: 2014-03-14 18:57+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -266,43 +266,6 @@ msgstr "Warte auf Kamera/Mikrofon Freigabe"
 
 msgid "Checking camera and microphone access."
 msgstr "Prüfe Zugriff auf Kamera und Mikrofon."
-
-msgid "Link:"
-msgstr "Adresse:"
-
-msgid "You are in this room."
-msgstr "Sie befinden sich in diesem Raum."
-
-msgid "Share this URL with the people you want to meet."
-msgstr "Teilen Sie die Raum-Adresse mit anderen Kontakten."
-
-msgid "You can use and re-use this room as many times as you want."
-msgstr "Sie können diesen Raum so oft wieder benutzen wie Sie möchten."
-
-msgid "You are in the general room."
-msgstr "Sie befinden sich im allgemeinen Raum."
-
-msgid ""
-"Break out into a seperate room at any time by clicking on the icon in the"
-" top left corner."
-msgstr ""
-"Sie können jederzeit in einen eigenen Raum wechseln. Klicken Sie dazu auf"
-" das Symbol in der Ecke oben links."
-
-msgid "Create your room"
-msgstr "Erstellen Sie Ihren Raum"
-
-msgid "This is your room link:"
-msgstr "Ihre Raum-Addresse:"
-
-msgid "Creating room link ..."
-msgstr "Raum-Link wird erstellt ..."
-
-msgid "Start"
-msgstr "Start"
-
-msgid "Just click start"
-msgstr "Klicken Sie auf Start"
 
 msgid "Please allow access to your camera and microphone."
 msgstr "Bitte gestatten Sie den Zugriff auf Ihre Kamera und Mikrofon."

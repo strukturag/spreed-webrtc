@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-14 18:56+0100\n"
+"POT-Creation-Date: 2014-03-17 11:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -265,41 +265,6 @@ msgid "Waiting for camera/microphone access"
 msgstr ""
 
 msgid "Checking camera and microphone access."
-msgstr ""
-
-msgid "Link:"
-msgstr ""
-
-msgid "You are in this room."
-msgstr ""
-
-msgid "Share this URL with the people you want to meet."
-msgstr ""
-
-msgid "You can use and re-use this room as many times as you want."
-msgstr ""
-
-msgid "You are in the general room."
-msgstr ""
-
-msgid ""
-"Break out into a seperate room at any time by clicking on the icon in the"
-" top left corner."
-msgstr ""
-
-msgid "Create your room"
-msgstr ""
-
-msgid "This is your room link:"
-msgstr ""
-
-msgid "Creating room link ..."
-msgstr ""
-
-msgid "Start"
-msgstr ""
-
-msgid "Just click start"
 msgstr ""
 
 msgid "Please allow access to your camera and microphone."
