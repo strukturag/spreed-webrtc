@@ -31,6 +31,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"path"
 	goruntime "runtime"
@@ -151,6 +152,14 @@ func runner(runtime phoenix.Runtime) error {
 	statsEnabled, err := runtime.GetBool("http", "stats")
 	if err != nil {
 		statsEnabled = false
+	}
+
+	pprofListen, err := runtime.GetString("http", "pprofListen")
+	if err == nil && pprofListen != "" {
+		log.Printf("Starting pprof HTTP server on %s", pprofListen)
+		go func() {
+			log.Println(http.ListenAndServe(pprofListen, nil))
+		}()
 	}
 
 	sessionSecret, err := runtime.GetString("app", "sessionSecret")
