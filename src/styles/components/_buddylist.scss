@@ -24,27 +24,37 @@ top: 0px;
 right: 0px;
 bottom: 0px;
 width:285px;
-pointer-events:auto;
 z-index:50;
 }
 #buddylist:before {
 position:absolute;
 width:25px;
-height:25px;
+height:55px;
+line-height:55px;
 margin: auto;
 left: 0px;
 top:0px;
 bottom:0px;
 content:"\f100";
 font-family: 'FontAwesome';
-color:#ccc;
+color:rgba(0,0,0,0.3);
 font-size:1.8em;
 text-align:center;
 cursor:pointer;
-text-shadow: 0 0 5px black;
+pointer-events:auto;
+background:$componentbg;
+border-left:1px solid $bordercolor;
+border-top:1px solid $bordercolor;
+border-bottom:1px solid $bordercolor;
+-webkit-border-top-left-radius: 6px;
+-webkit-border-bottom-left-radius: 6px;
+-moz-border-radius-topleft: 6px;
+-moz-border-radius-bottomleft: 6px;
+border-top-left-radius: 6px;
+border-bottom-left-radius: 6px;
 }
 .withBuddylist #buddylist:before {
-display:none;
+content:"\f101";
 }
 .buddylist {
 position:absolute;
@@ -56,6 +66,7 @@ overflow-x: hidden;
 overflow-y: auto;
 border-top: 1px solid $bordercolor;
 background: $componentbg;
+pointer-events:auto;
 }
 .buddylist .buddycontainer {
 -webkit-user-select: none;
