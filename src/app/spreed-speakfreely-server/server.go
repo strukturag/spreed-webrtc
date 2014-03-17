@@ -23,6 +23,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"sync/atomic"
 	"time"
 )
 
@@ -114,9 +115,11 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		if msg.Chat.To == "" {
 			// TODO(longsleep): Check if chat broadcast is allowed.
 			if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+				atomic.AddUint64(&c.h.broadcastChatMessages, 1)
 				s.Broadcast(c, msg.Chat)
 			}
 		} else {
+			atomic.AddUint64(&c.h.unicastChatMessages, 1)
 			s.Unicast(c, msg.Chat.To, msg.Chat)
 			if msg.Chat.Chat.Mid != "" {
 				// Send out delivery confirmation status chat message.
