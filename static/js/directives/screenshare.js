@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", function($window, mediaStream, $compile, safeApply, videoWaiter) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -31,6 +31,45 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			$scope.usermedia = null;
 			$scope.connected = false;
+			$scope.screenshare = null;
+
+			var handleRequest = function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
+
+				console.log("Screen share answer message", currenttoken, data, type);
+
+				if (typeof data === "string") {
+
+					if (data.charCodeAt(0) === 2) {
+						// Ignore whatever shit is sent us by Firefox.
+						return;
+					}
+					// Control data request.
+					try {
+						var msg = JSON.parse(data);
+					} catch(e) {
+						// Invalid JSON.
+						console.warn("Invalid JSON received from screen share channel.", data);
+						peerscreenshare.close()
+					}
+
+					switch (msg.m) {
+					case "bye":
+						// Close this screen share.
+						peerscreenshare.close();
+						break;
+					default:
+						console.log("Unknown screen share control request", msg.m, msg);
+						break;
+					}
+
+				} else {
+
+					console.warn("Unkown data type received -> ignored", typeof data, [data]);
+					peerscreenshare.close();
+
+				}
+
+			};
 
 			mediaStream.api.e.on("received.screenshare", function(event, id, from, data, p2p) {
 
@@ -42,9 +81,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				var token = data.id;
 
 				// Bind token.
-				var handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
-					console.log("Screen share answer message", currenttoken, data, type);
-				}, "screenshare");
+				var handler = mediaStream.tokens.on(token, handleRequest, "screenshare");
 
 				// Subscribe to peers screensharing.
 				mediaStream.webrtc.doSubscribeScreenshare(from, token, {
@@ -158,8 +195,8 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						};
 						handler = mediaStream.tokens.create(token, function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
 							//console.log("Screen share create", currenttoken, data, type, peerscreenshare);
+							$scope.screenshare = peerscreenshare;
 							usermedia.e.one("stopped", function() {
-								peerscreenshare.close()
 								mediaStream.tokens.off(token, handler);
 								mediaStream.webrtc.e.off("statechange", updater);
 								handler = null;
@@ -189,6 +226,16 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 			};
 
 			$scope.stopScreenshare = function() {
+
+				if ($scope.screenshare) {
+					$scope.screenshare.send({m: "bye"});
+					(function(screenshare) {
+						$timeout(function() {
+							screenshare.close();
+						}, 0);
+					}($scope.screenshare));
+					$scope.screenshare = null;
+				}
 
 				if ($scope.usermedia) {
 					$scope.usermedia.stop()
