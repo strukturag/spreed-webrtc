@@ -34,7 +34,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
       var ctrl = this;
       ctrl.setInfo = function(info) {
         $scope.usabilityInfo = info;
-      }
+      };
       ctrl.setInfo("waiting");
 
       $scope.continueConnect = function(status) {
@@ -45,14 +45,15 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
             $scope.connect()
             ctrl.setInfo("initializing");
             initializer = $timeout(function() {
-              ctrl.setInfo("noroom");
+              ctrl.setInfo("ok");
+              $scope.$emit("welcome");
             }, 1000);
             complete = true;
           } else {
             ctrl.setInfo("denied");
           }
           // Check if we should show settings per default.
-          $scope.showSettings = $scope.loadedUser ? 0 : 1;
+          $scope.$parent.showSettings = $scope.loadedUser ? 0 : 1;
         });
       };
 
@@ -91,13 +92,13 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
       });
 
       $scope.$on("room", function(event, room) {
-        console.log("roomStatus", room !== null ? true : false);
+        //console.log("roomStatus", room !== null ? true : false);
         if (complete) {
           if (initializer !== null) {
             $timeout.cancel(initializer);
             initializer = null;
           }
-          ctrl.setInfo(room !== null ? "room" : "noroom");
+          ctrl.setInfo("ok");
         }
       });
 

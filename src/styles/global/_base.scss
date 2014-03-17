@@ -101,3 +101,16 @@ z-index:0;
 #loader.done {
 	opacity:0;
 }
+#page {
+	position:absolute;
+	top:44px;
+	bottom:0px;
+	left:0px;
+	right:0px;
+}
+.welcome {
+	color:#aaa;
+	text-shadow: 0 0 5px black;
+	font-size:1.1em;
+	margin-top:80px;
+}
