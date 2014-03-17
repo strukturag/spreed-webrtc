@@ -116,8 +116,16 @@ background-color: #84b819;
 border-color: #84b819;
 color: white;
 }
+#bar .btn {
+position:relative;
+}
 #bar .badge {
 background-color: #84b819;
+font-size:.3em;
+height:12px;
+position:absolute;
+right:0px;
+top:2px;
 }
 #bar .userpicture {
 margin:-5px 0.5em 0px 0.5em;
