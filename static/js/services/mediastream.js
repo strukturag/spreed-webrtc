@@ -136,7 +136,7 @@ define([
                 });
 
                 // Cache events, to avoid ui flicker during quick room changes.
-                var roomStatusCache = $rootScope.roomStatus;
+                var roomStatusCache = $rootScope.roomstatus;
                 var roomCache = null;
                 var roomCache2 = null;
                 $rootScope.$on("roomStatus", function(event, status) {
