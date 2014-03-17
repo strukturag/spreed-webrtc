@@ -75,9 +75,17 @@ pointer-events:auto;
 }
 .buddylist .buddylistloading, .buddylist .buddylistempty {
 padding:.4em;
-font-size:0.8em;
+font-size:1.4em;
 text-align:center;
 display:none;
+position:absolute;
+left:0px;
+right:0px;
+bottom:0px;
+top:0px;
+margin:auto;
+height:2em;
+color:rgba(0,0,0,0.3);
 }
 .buddylist.loading .buddylistloading {
 display:block;
