@@ -23,7 +23,6 @@
 	left:3px;
 	top:46px;
 	right:3px;
-	height:32px;
 	color:#ccc;
 	text-shadow: 0 0 5px black;
 	z-index:4;
@@ -31,14 +30,22 @@
 #roombar .roombar {
 	position: absolute;
 	left:0px;
-	bottom:0px;
 	top:0px;
 	padding:4px 4px 4px 30px;
 	vertical-align:middle;
+	background: rgba(0,0,0,0.2);
+	min-height:45px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+#roombar .roombar.notvisible {
+	background:transparent;
 }
 #roombar .roombarcontent {
 	display:inline-block;
 	margin-left:.5em;
+	margin-bottom:0px;
 }
 #roombar .btn.btn-default {
 	text-shadow: none;
@@ -48,7 +55,7 @@
 	vertical-align:middle;
 	position:absolute;
 	left: 0px;
-	top: 0px;
+	top: 4px;
 	padding:7px;
 	display:block;
 	color:#ccc;
@@ -61,11 +68,15 @@
 .roombarcontent > * {
 	padding-right:.5em;
 }
+.roombar label {
+	padding-top:11px !important;
+}
 .roombar .roomlabellabel {
 	display:none;
 	opacity: 0.7;
 	text-align:left;
 	margin-left:0.5em;
+	padding-top:4px;
 }
 #roombar .roombar.notvisible {
 	.roombarcontent {
