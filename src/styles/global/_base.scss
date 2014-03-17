@@ -48,8 +48,14 @@ display:none;
 position:absolute;
 left:150px;
 top:45px;
-right:260px;
+right:0px;
 bottom:0px
+}
+.withChat .mainview, .withBuddylist .mainview {
+right:260px;
+}
+.withBuddylist.withChat .mainview {
+right:520px;
 }
 #background {
 position:fixed;
