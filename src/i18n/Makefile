@@ -16,6 +16,7 @@ extract:
 		-o messages.pot \
 		$(ROOT)/html \
 		$(ROOT)/static/partials \
+		$(ROOT)/static/partials/page \
 		$(ROOT)/static/js/ \
 		$(ROOT)/static/js/controllers \
 		$(ROOT)/static/js/directives \
