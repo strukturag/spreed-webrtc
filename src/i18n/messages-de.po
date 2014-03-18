@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-17 13:05+0100\n"
-"PO-Revision-Date: 2014-03-14 18:57+0100\n"
+"POT-Creation-Date: 2014-03-18 14:40+0100\n"
+"PO-Revision-Date: 2014-03-18 14:41+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -387,6 +387,10 @@ msgstr "Nachricht von "
 
 msgid "Group chat"
 msgstr "Gruppen-Chat"
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "Sie sind nun im Raum %s ..."
 
 msgid "Your browser does not support file transfer."
 msgstr "Mit Ihrem Browser können keine Dateien übertragen werden."

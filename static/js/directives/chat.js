@@ -98,7 +98,10 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
             // Shared data;
             return {
                 rooms: rooms,
-                visibleRooms: []
+                visibleRooms: [],
+                get: function(id) {
+                    return rooms[id];
+                }
             }
 
 
@@ -328,10 +331,15 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 };
 
                 scope.$on("room", function(event, room) {
-                    if (room !== null) {
-                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
-                    } else {
+                    if (room == null) {
                         scope.hideRoom(group_chat_id);
+                    } else {
+                        if (!controller.visibleRooms.length) {
+                            scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
+                        }
+                        var subscope = controller.get(group_chat_id);
+                        var msg = translation._("You are now in room %s ...", room);
+                        subscope.$broadcast("display", null, $("<i><span>"+msg+"</span></i>"));
                     }
                 });
 

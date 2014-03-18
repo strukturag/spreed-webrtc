@@ -212,6 +212,10 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 
         };
 
+        $scope.$on("display", function(event, s, nodes) {
+            $scope.display(s, nodes);
+        });
+
         $scope.append = function(s, nodes) {
 
             if (!lastMessageContainer) {
