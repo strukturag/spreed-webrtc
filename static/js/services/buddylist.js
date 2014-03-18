@@ -323,7 +323,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 // can use data: urls directly
                 return url;
             } else if (url.indexOf("img:") === 0) {
-                return mediaStream.config.B + "img/buddy/"+url.substr(4);
+                return mediaStream.config.B + "static/img/buddy/"+url.substr(4);
             }
 
             console.log("Unknown buddy picture url", url);

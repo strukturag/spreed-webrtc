@@ -319,12 +319,12 @@ func runner(runtime phoenix.Runtime) error {
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
+	r.Handle("/static/img/buddy/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWsHubHandler(hub))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
-	r.Handle("/img/buddy/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Hour)))
 
 	// Add API end points.
 	api := sleepy.NewAPI(r.PathPrefix("/api/v1/").Subrouter())
