@@ -9,6 +9,8 @@ import (
 	"sync"
 )
 
+var imageFilenames map[string]string
+
 type Image struct {
 	updateIdx int
 	userid    string
@@ -34,6 +36,13 @@ func NewImageCache() ImageCache {
 	result := &imageCache{}
 	result.images = make(map[string]*Image)
 	result.userImages = make(map[string]string)
+	if imageFilenames == nil {
+		imageFilenames = map[string]string{
+			"image/png":  "picture.png",
+			"image/jpeg": "picture.jpg",
+			"image/gif":  "picture.gif",
+		}
+	}
 	return result
 }
 
@@ -90,7 +99,12 @@ func (self *imageCache) Update(userId string, image string) string {
 	img.updateIdx++
 	img.mimetype = mimetype
 	img.data = decoded
-	return result + "/" + strconv.Itoa(img.updateIdx)
+	result += "/" + strconv.Itoa(img.updateIdx)
+	filename, ok := imageFilenames[mimetype]
+	if ok {
+		result += "/" + filename
+	}
+	return result
 }
 
 func (self *imageCache) Get(imageId string) *Image {
