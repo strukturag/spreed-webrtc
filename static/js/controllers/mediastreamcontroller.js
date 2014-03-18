@@ -544,6 +544,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             $timeout(function() {
                 if ($scope.peer) {
                     $scope.layout.buddylist = false;
+                    $scope.layout.buddylistAutoHide = true;
                 }
             }, 1000);
 
@@ -599,6 +600,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                 $scope.setStatus("waiting");
             }
             $scope.layout.buddylist = true;
+            $scope.layout.buddylistAutoHide = false;
         });
 
         mediaStream.webrtc.e.on("busy", function(event, from) {

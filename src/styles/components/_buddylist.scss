@@ -52,9 +52,13 @@ border-bottom:1px solid $bordercolor;
 -moz-border-radius-bottomleft: 6px;
 border-top-left-radius: 6px;
 border-bottom-left-radius: 6px;
+display:none;
 }
 .withBuddylist #buddylist:before {
 content:"\f101";
+}
+.withBuddylistAutoHide #buddylist:before {
+display:block;
 }
 .buddylist {
 position:absolute;
