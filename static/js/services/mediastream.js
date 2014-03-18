@@ -58,7 +58,7 @@ define([
 
         var mediaStream = {
             version: version,
-            url: url,
+            ws: url,
             config: context.Cfg,
             webrtc: webrtc,
             connector: connector,
