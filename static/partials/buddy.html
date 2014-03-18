@@ -1,5 +1,5 @@
 <div class="buddy withSubline" ng-click="doDefault(user.Id)">
-    <div class="buddyimage"><i class="fa fa-user fa-3x"/><img ng-show="status.buddyPicture" alt="" ng-src="{{status.buddyPicture}}" width="{{status.buddyPictureWidth}}" height="{{status.buddyPictureHeight}}"/></div>
+    <div class="buddyimage"><i class="fa fa-user fa-3x"/><img ng-show="status.buddyPicture" alt="{{user.Id|displayName}}" ng-src="{{status.buddyPicture}}" width="{{status.buddyPictureWidth}}" height="{{status.buddyPictureHeight}}"/></div>
     <div class="buddy1">{{user.Id|displayName}}</div>
     <div class="buddy2">{{user.Ua}}</div>
 </div>
