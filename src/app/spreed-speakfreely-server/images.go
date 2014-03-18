@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"log"
@@ -96,9 +97,11 @@ func (self *imageCache) Update(userId string, image string) string {
 		img = self.images[result]
 		self.mutex.RUnlock()
 	}
-	img.updateIdx++
-	img.mimetype = mimetype
-	img.data = decoded
+	if mimetype != img.mimetype || !bytes.Equal(img.data, decoded) {
+		img.updateIdx++
+		img.mimetype = mimetype
+		img.data = decoded
+	}
 	result += "/" + strconv.Itoa(img.updateIdx)
 	filename, ok := imageFilenames[mimetype]
 	if ok {
