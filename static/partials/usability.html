@@ -1,6 +1,7 @@
 <div class="fadetogglecontainer" ng-hide="peer">
     <div class="animate-show" ng-hide="layout.settings">
         <div class="fadetogglecontainer" ng-switch="usabilityInfo">
+          <div ng-switch-when="initializing"><h1 style="text-align:center">{{_("Please wait")}} <i class="fa fa-spinner fa-spin"></i></h1></div>
           <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
           <div ng-switch-when="usermedia"><i><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</i></div>
           <div ng-switch-when="denied"><i><i class="fa fa-exclamation-triangle fa-4x pull-right"></i>{{_("Camera / microphone access required.")}}</i></div>

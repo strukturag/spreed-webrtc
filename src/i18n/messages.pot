@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-18 14:40+0100\n"
+"POT-Creation-Date: 2014-03-18 18:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -262,6 +262,9 @@ msgid "Reject"
 msgstr ""
 
 msgid "Waiting for camera/microphone access"
+msgstr ""
+
+msgid "Please wait"
 msgstr ""
 
 msgid "Checking camera and microphone access."
