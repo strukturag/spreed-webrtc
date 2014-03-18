@@ -29,6 +29,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 			var screenCount = 0;
 			var screens = {};
 
+			$scope.layout.screenshare = false;
 			$scope.usermedia = null;
 			$scope.connected = false;
 			$scope.screenshare = null;
@@ -157,7 +158,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			$scope.doScreenshare = function() {
 
-				$scope.$emit("screenshare", true);
+				$scope.layout.screenshare = true;
 
 				// Create userMedia with screen share type.
 				var usermedia = mediaStream.webrtc.doScreenshare();
@@ -243,7 +244,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					console.log("Screen share stopped.");
 				}
 
-				$scope.$emit("screenshare", false);
+				$scope.layout.screenshare = false;
 
 			};
 
@@ -259,7 +260,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			};
 
-	        $scope.$watch("enableScreenshare", function(newval, oldval) {
+	        $scope.$watch("layout.screenshare", function(newval, oldval) {
 	            if (newval && !oldval) {
 	                $scope.doScreenshare();
 	            } else if(!newval && oldval) {

@@ -27,6 +27,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
+            $scope.layout.chat = false;
+
             var rooms = {};
 
             mediaStream.api.e.on("received.chat", function(event, id, from, data, p2p) {
@@ -273,8 +275,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     }
 
                     if (options.restore && !options.noenable) {
-                        if (!scope.chatEnabled) {
-                            scope.$parent.chatEnabled = true;
+                        if (!scope.layout.chat) {
+                            scope.layout.chat = true;
                         }
                     }
 

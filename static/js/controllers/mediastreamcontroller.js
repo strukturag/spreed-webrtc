@@ -131,17 +131,17 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         $scope.status = "initializing";
         $scope.id = null;
         $scope.peer = null;
-        $scope.mainView = null;
         $scope.dialing = null;
         $scope.conference = null;
         $scope.conferencePeers = [];
         $scope.incoming = null;
         $scope.microphoneMute = false;
         $scope.cameraMute = false;
-        $scope.chatEnabled = false;
+        $scope.layout = {
+            main: null
+        };
         $scope.chatMessagesUnseen = 0;
         $scope.autoAccept = null;
-        $scope.showBuddylist = true;
         $scope.master = {
             displayName: null,
             buddyPicture: null,
@@ -321,10 +321,10 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             var oldState = null;
             return function(status, force) {
                 if (status || force) {
-                    oldState = $scope.showBuddylist;
-                    $scope.showBuddylist = !!status;
+                    oldState = $scope.layout.buddylist;
+                    $scope.layout.buddylist = !!status;
                 } else {
-                    $scope.showBuddylist = oldState;
+                    $scope.layout.buddylist = oldState;
                 }
             }
         }());
@@ -543,7 +543,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             }
             $timeout(function() {
                 if ($scope.peer) {
-                    $scope.showBuddylist = false;
+                    $scope.layout.buddylist = false;
                 }
             }, 1000);
 
@@ -552,12 +552,12 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         $scope.$on("mainview", function(event, mainview, state) {
             console.info("Main view update", mainview, state);
             var changed = false;
-            if ($scope.mainview === mainview && !state) {
-                $scope.mainview = null;
+            var layout = $scope.layout;
+            if (layout.main === mainview && !state) {
+                layout.main = null;
                 changed = true;
-
             } else if (state) {
-                $scope.mainview = mainview;
+                layout.main = mainview;
                 changed = true;
             }
             if (changed) {
@@ -565,17 +565,40 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             }
         });
 
-        $scope.$watch(function() {
-            return $element.attr("class");
-        }, function() {
-            $scope.$broadcast("mainresize");
-        });
+        // Apply all layout stuff as classes to our element.
+        $scope.$watch("layout", (function() {
+            var makeName = function(prefix, n) {
+                return prefix+n.substr(0, 1).toUpperCase()+n.substr(1);
+            };
+            return function(layout, old) {
+                _.each(layout, function(v, k) {
+                    if (k === "main") {
+                        return;
+                    }
+                    var n = makeName("with", k);
+                    if (v) {
+                        $element.addClass(n);
+                    } else {
+                        $element.removeClass(n);
+                    }
+                });
+                if (old.main !== layout.main) {
+                    if (old.main) {
+                        $element.removeClass(makeName("main", old.main));
+                    }
+                    if (layout.main) {
+                        $element.addClass(makeName("main", layout.main));
+                    }
+                }
+                $scope.$broadcast("mainresize");
+            }}()
+        ), true);
 
         mediaStream.webrtc.e.on("done", function() {
             if (mediaStream.connector.connected) {
                 $scope.setStatus("waiting");
             }
-            $scope.showBuddylist = true;
+            $scope.layout.buddylist = true;
         });
 
         mediaStream.webrtc.e.on("busy", function(event, from) {
@@ -650,15 +673,6 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
 
             var scope = event.targetScope;
             fileDownload.startDownload(scope, from, token);
-
-        });
-
-        $scope.$on("screenshare", function(event, status) {
-
-            //console.log("AAAAAAAAAAA screenshare", status, $scope.enableScreenshare);
-            if ($scope.enableScreenshare !== status) {
-                $scope.enableScreenshare = !!status;
-            }
 
         });
 

@@ -33,27 +33,29 @@ bottom:0px;
 left:0px;
 background:black;
 }
+#audiovideo.fullscreen .remoteVideo .peeractions {
+display:none;
+}
 .withChat #audiovideo, .withBuddylist #audiovideo {
 right:260px;
 }
 .withBuddylist.withChat #audiovideo {
 right:520px;
 }
-#audiovideo.fullscreen .remoteVideo .peeractions {
-display:none;
-}
-#audiovideo.leftsided {
-width:150px
-}
-#audiovideo.leftsided .remoteVideo .peerlabel {
-font-size:12px;
-font-weight:bold;
-}
-#audiovideo.leftsided .remoteVideo .peeractions i {
-font-size:1em;
+.mainScreenshare {
+	#audiovideo {
+		width:150px;
+		.remoteVideo .peerlabel {
+			font-size:12px;
+			font-weight:bold;
+		}
+		.remoteVideo .peeractions i {
+			font-size:1em;
+		}
+	}
 }
 @media only screen and (max-width: 630px) {
-	#audiovideo.leftsided {
+	.mainScreenshare #audiovideo {
 		display:none;
 	}
 }

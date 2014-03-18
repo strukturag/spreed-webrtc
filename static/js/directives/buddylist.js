@@ -27,7 +27,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-            //console.log("BuddylistController", $buddylist, $element, $scope);
+            $scope.layout.buddylist = true;
             $scope.enabled = false;
 
             $scope.doCall = function(id) {
@@ -57,6 +57,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                 }
             };
 
+            //XXX(longsleep): Debug leftover ?? Remove this.
             window.doAudioConference = $scope.doAudioConference;
 
             var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});

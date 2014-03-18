@@ -1,5 +1,5 @@
 <div class="fadetogglecontainer" ng-hide="peer">
-    <div class="animate-show" ng-hide="showSettings">
+    <div class="animate-show" ng-hide="layout.settings">
         <div class="fadetogglecontainer" ng-switch="usabilityInfo">
           <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
           <div ng-switch-when="usermedia"><i><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</i></div>
@@ -11,7 +11,7 @@
             <p style="font-size:0.7em" ng-show="isChrome"><i><a rel="external" target="_blank" href="https://support.google.com/chrome/answer/2693767">{{_("Click here for help (Google Chrome).")}}</a></i></p>
         </div>
     </div>
-    <div class="animate-show" ng-show="showSettings">
+    <div class="animate-show" ng-show="layout.settings">
         <i style="padding-right:140px">{{_("Please set your user details and settings.")}}<p class="help-subline">{{_("Please note that some settings require you to reload or to make a new call to become effective.")}}</p></i>
     </div>
 </div>
