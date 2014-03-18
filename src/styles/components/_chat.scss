@@ -28,7 +28,10 @@ pointer-events: none;
 z-index:45;
 overflow:hidden;
 }
-#chat.maximized {
+.withChat #chat .chatpane {
+left:0px;
+}
+.withChat.withChatMaximized #chat {
 left:0px;
 width:auto;
 	.chatpane {
@@ -39,7 +42,7 @@ width:auto;
 height:100%;
 position:absolute;
 top:0px;
-left:0px;
+left:260px;
 bottom:0px;
 right:0px;
 width:260px;
@@ -48,9 +51,6 @@ width:260px;
 -ms-transition: left 200ms ease-in-out;
 -o-transition: left 200ms ease-in-out;
 transition: left 200ms ease-in-out;
-}
-.chatpane.slideright {
-left:260px;
 }
 .chat {
 position:absolute;
@@ -69,7 +69,7 @@ display:block;
 }
 .chat .chatheader {
 background: $componentbg;
-padding:6px 4px 4px 8px;
+padding:8px 4px 0px 8px;
 border-top: 1px solid $bordercolor;
 border-bottom: 1px solid $bordercolor;
 font-size:0.8em;

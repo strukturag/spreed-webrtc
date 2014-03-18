@@ -28,6 +28,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
             $scope.layout.chat = false;
+            $scope.layout.chatMaximized = false;
 
             var rooms = {};
 
@@ -115,7 +116,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     if (!subscope) {
                         console.log("Create new chatroom", id);
                         controller.visibleRooms.push(id);
-                        subscope = controller.rooms[id] = scope.$new(true);
+                        subscope = controller.rooms[id] = scope.$new();
                         translation.inject(subscope);
                         subscope.id = id;
                         subscope.isgroupchat = id === group_chat_id ? true : false;
@@ -147,7 +148,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                                 subscope.$broadcast("seen");
                             }
                         };
-                        subscope.toggleMax = function() {
+                        subscope.toggle = function() {
                             scope.toggleMax();
                         };
                         subscope.sendChat = function(to, message, status, mid, noloop) {
@@ -306,6 +307,9 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     }
                     if (!controller.visibleRooms.length) {
                         scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
+                        if (id === group_chat_id) {
+                            scope.layout.chat = false;
+                        }
                     }
                 };
                 scope.killRoom = function(id) {
@@ -320,8 +324,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     }, 0);
                 };
                 scope.toggleMax = function() {
-                    //TODO(longsleep): Angularize this.
-                    iElement.parent().toggleClass("maximized");
+                    scope.layout.chatMaximized = !scope.layout.chatMaximized;
                 };
 
                 scope.$on("room", function(event, room) {

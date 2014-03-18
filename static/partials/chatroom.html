@@ -1,5 +1,5 @@
 <div ng-controller="ChatroomController" class="chat room-{{index}}" ng-class="{'newmessage': newmessage, 'visible': visible, 'chat-p2p': 'p2pstate', 'with_pictures': isgroupchat}">
-    <div class="chatheader"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{settings.title}} {{id|displayName}}</span> <div class="ctrl"><i ng-click="toggleMax()" class="fa fa-expand"></i><i title="{{_('Close chat')}}" ng-show="id" ng-click="hide()" class="fa fa-times"></i></div></div>
+    <div class="chatheader"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{settings.title}} {{id|displayName}}</span> <div class="ctrl"><i ng-hide="layout.chatMaximized" ng-click="toggle()" class="fa fa-expand"></i><i ng-show="layout.chatMaximized" ng-click="toggle()" class="fa fa-compress"></i><i title="{{_('Close chat')}}" ng-click="hide()" class="fa fa-times"></i></div></div>
     <div class="outputbox">
         <div class="output nicescroll"></div>
     </div>
