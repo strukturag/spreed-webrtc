@@ -20,6 +20,8 @@ type ImageCache interface {
 	Update(userId string, image string) string
 
 	Get(imageId string) *Image
+
+	DeleteUserImage(userId string)
 }
 
 type imageCache struct {
@@ -96,4 +98,14 @@ func (self *imageCache) Get(imageId string) *Image {
 	image := self.images[imageId]
 	self.mutex.RUnlock()
 	return image
+}
+
+func (self *imageCache) DeleteUserImage(userId string) {
+	self.mutex.Lock()
+	imageId, ok := self.userImages[userId]
+	if ok {
+		delete(self.userImages, userId)
+		delete(self.images, imageId)
+	}
+	self.mutex.Unlock()
 }

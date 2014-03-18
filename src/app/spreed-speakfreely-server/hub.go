@@ -275,10 +275,14 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		h.mutex.Unlock()
 		return
 	}
+	user := c.User
 	c.close()
 	delete(h.connectionTable, c.Id)
 	delete(h.userTable, c.Id)
 	h.mutex.Unlock()
+	if user != nil {
+		h.buddyImages.DeleteUserImage(user.Id)
+	}
 	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
 
