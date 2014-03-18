@@ -326,8 +326,6 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
             if (url.indexOf("img:") === 0) {
                 url = url.substr(4);
-                // NOTE: buddy image size currently is hardcoded
-                status.buddyPictureWidth = status.buddyPictureHeight = 46;
                 status.buddyPicture = mediaStream.config.B + "static/img/buddy/s46/"+url;
             }
 
