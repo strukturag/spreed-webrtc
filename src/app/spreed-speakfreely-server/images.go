@@ -80,7 +80,7 @@ func (self *imageCache) Update(userId string, image string) string {
 	result, ok := self.userImages[userId]
 	if !ok {
 		self.mutex.RUnlock()
-		imageId := make([]byte, 16, 16)
+		imageId := make([]byte, 15, 15)
 		if _, err = rand.Read(imageId); err != nil {
 			return ""
 		}
