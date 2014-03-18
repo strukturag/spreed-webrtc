@@ -22,6 +22,7 @@ package main
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	pseudoRand "math/rand"
 	"time"
 )
@@ -45,6 +46,20 @@ func RandomString(length int) string {
 		}
 	}
 	return string(buf)
+
+}
+
+func RandomUrlString(length int) string {
+
+	buf := make([]byte, length)
+	_, err := rand.Read(buf)
+	if err != nil {
+		// fallback to pseudo-random
+		for i := 0; i < length; i++ {
+			buf[i] = byte(pseudoRand.Intn(256))
+		}
+	}
+	return base64.URLEncoding.EncodeToString(buf)
 
 }
 
