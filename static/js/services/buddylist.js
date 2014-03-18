@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'modernizr', 'jquery', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, $, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
+define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
 
     var BuddyTree = function() {
 
@@ -110,7 +110,7 @@ define(['underscore', 'modernizr', 'jquery', 'avltree', 'text!partials/buddy.htm
     };
 
     // buddyList
-    return ["$window", "$compile", "playSound", "buddyData", "fastScroll", function ($window, $compile, playSound, buddyData, fastScroll) {
+    return ["$window", "$compile", "playSound", "buddyData", "fastScroll", "mediaStream", function ($window, $compile, playSound, buddyData, fastScroll, mediaStream) {
 
         var requestAnimationFrame = $window.requestAnimationFrame;
 
@@ -121,9 +121,6 @@ define(['underscore', 'modernizr', 'jquery', 'avltree', 'text!partials/buddy.htm
         //console.log("$buddylist $get");
         var doc = $window.document;
         var buddyCount = 0;
-
-        var globalcontext = $("#globalcontext").text();
-        var context = JSON.parse(globalcontext);
 
         var Buddylist = function($element, $scope, opts) {
 
@@ -326,7 +323,7 @@ define(['underscore', 'modernizr', 'jquery', 'avltree', 'text!partials/buddy.htm
                 // can use data: urls directly
                 return url;
             } else if (url.indexOf("img:") === 0) {
-                return context.Cfg.B + "img/buddy/"+url.substr(4);
+                return mediaStream.config.B + "img/buddy/"+url.substr(4);
             }
 
             console.log("Unknown buddy picture url", url);
