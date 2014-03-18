@@ -326,7 +326,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
             if (url.indexOf("img:") === 0) {
                 url = url.substr(4);
-                status.buddyPicture = mediaStream.config.B + "static/img/buddy/s46/"+url;
+                status.buddyPicture = status.buddyPictureLocalUrl = mediaStream.config.B + "static/img/buddy/s46/"+url;
             }
 
         };
