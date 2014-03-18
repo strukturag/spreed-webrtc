@@ -309,7 +309,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         scope.currentRoom = null;
                     }
                     if (!controller.visibleRooms.length) {
-                        scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
+                        scope.showRoom(group_chat_id, {title: translation._("Room chat")}, {restore: true, noenable: true});
                         if (id === group_chat_id) {
                             scope.layout.chat = false;
                         }
@@ -335,7 +335,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         scope.hideRoom(group_chat_id);
                     } else {
                         if (!controller.visibleRooms.length) {
-                            scope.showRoom(group_chat_id, {title: translation._("Group chat")}, {restore: true, noenable: true});
+                            scope.showRoom(group_chat_id, {title: translation._("Room chat")}, {restore: true, noenable: true});
                         }
                         var subscope = controller.get(group_chat_id);
                         var msg = translation._("You are now in room %s ...", room);
