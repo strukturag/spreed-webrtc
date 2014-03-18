@@ -317,17 +317,19 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
         };
 
-        Buddylist.prototype.updateBuddyPicture = function(url) {
+        Buddylist.prototype.updateBuddyPicture = function(status) {
 
-            if (url.indexOf("data:") === 0) {
-                // can use data: urls directly
-                return url;
-            } else if (url.indexOf("img:") === 0) {
-                return mediaStream.config.B + "static/img/buddy/"+url.substr(4);
+            url = status.buddyPicture
+            if (!url) {
+                return;
             }
 
-            console.log("Unknown buddy picture url", url);
-            return url;
+            if (url.indexOf("img:") === 0) {
+                url = url.substr(4);
+                // NOTE: buddy image size currently is hardcoded
+                status.buddyPictureWidth = status.buddyPictureHeight = 46;
+                status.buddyPicture = mediaStream.config.B + "static/img/buddy/s46/"+url;
+            }
 
         };
 
@@ -340,9 +342,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 console.warn("Received old status update in status", status.Rev, scope.status.Rev);
             } else {
                 scope.status = status.Status;
-                if (scope.status.buddyPicture) {
-                    scope.status.buddyPicture = this.updateBuddyPicture(scope.status.buddyPicture);
-                }
+                this.updateBuddyPicture(scope.status);
                 var displayName = scope.displayName;
                 if (scope.status.displayName) {
                   scope.displayName = scope.status.displayName;
@@ -371,9 +371,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 } else {
                     scope.status = user.Status;
                     scope.displayName = scope.status.displayName;
-                    if (scope.status.buddyPicture) {
-                        scope.status.buddyPicture = this.updateBuddyPicture(scope.status.buddyPicture);
-                    }
+                    this.updateBuddyPicture(scope.status);
                 }
             }
             //console.log("Joined scope", scope, scope.element);
