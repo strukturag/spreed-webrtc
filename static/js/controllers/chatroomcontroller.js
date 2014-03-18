@@ -292,9 +292,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
             var title = null;
             var picture = null;
 
-            if (is_new_message) {
-                lastSender = from;
-                $scope.showdate(timestamp);
+            var showTitleAndPicture = function() {
                 if ($scope.isgroupchat) {
                     title = $("<strong>");
                     title.html(displayName(from, true));
@@ -305,6 +303,12 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                         picture.find("img").attr("src", imgSrc);
                     }
                 }
+            };
+
+            if (is_new_message) {
+                lastSender = from;
+                $scope.showdate(timestamp);
+                showTitleAndPicture()
             }
 
             var message = s.join(" ");
@@ -314,6 +318,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                 if (element) {
                     return element;
                 }
+                showTitleAndPicture();
             }
 
             if (is_self) {
