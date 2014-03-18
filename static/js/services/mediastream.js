@@ -69,6 +69,9 @@ define([
                     id = $window.encodeURIComponent(id);
                     return $window.location.protocol+'//'+$window.location.host+context.Cfg.B+id;
                 },
+                buddy: function(id) {
+                    return $window.location.protocol+'//'+$window.location.host+context.Cfg.B+"static/img/buddy/s46/"+id;
+                },
                 api: function(path) {
                     return (context.Cfg.B || "/") + "api/v1/" + path;
                 }
