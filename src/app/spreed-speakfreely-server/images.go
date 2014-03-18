@@ -4,19 +4,22 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/binary"
 	"log"
-	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 var imageFilenames map[string]string
 
 type Image struct {
-	updateIdx int
-	userid    string
-	mimetype  string
-	data      []byte
+	updateIdx    int
+	lastChange   time.Time
+	lastChangeId string
+	userid       string
+	mimetype     string
+	data         []byte
 }
 
 type ImageCache interface {
@@ -99,10 +102,14 @@ func (self *imageCache) Update(userId string, image string) string {
 	}
 	if mimetype != img.mimetype || !bytes.Equal(img.data, decoded) {
 		img.updateIdx++
+		img.lastChange = time.Now()
+		tmp := make([]byte, binary.MaxVarintLen64)
+		count := binary.PutUvarint(tmp, uint64(img.lastChange.UnixNano()))
+		img.lastChangeId = base64.URLEncoding.EncodeToString(tmp[:count])
 		img.mimetype = mimetype
 		img.data = decoded
 	}
-	result += "/" + strconv.Itoa(img.updateIdx)
+	result += "/" + img.lastChangeId
 	filename, ok := imageFilenames[mimetype]
 	if ok {
 		result += "/" + filename
