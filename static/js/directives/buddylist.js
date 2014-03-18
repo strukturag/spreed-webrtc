@@ -27,7 +27,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
         var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-            $scope.layout.buddylist = true;
+            $scope.layout.buddylist = false;
             $scope.enabled = false;
 
             $scope.doCall = function(id) {
@@ -54,6 +54,9 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                 if (status !== $scope.enabled) {
                     $scope.enabled = status;
                     $scope.$emit("roomStatus", status);
+                }
+                if (status) {
+                    $scope.layout.buddylist = true
                 }
             };
 
