@@ -319,7 +319,7 @@ func runner(runtime phoenix.Runtime) error {
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
-	r.Handle("/static/img/buddy/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Hour)))
+	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
