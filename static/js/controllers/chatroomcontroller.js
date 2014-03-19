@@ -25,6 +25,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 
         $scope.outputElement = $(".output", $element);
         $scope.inputElement = $(".input", $element);
+        $scope.bodyElement = $(".chatbody", $element);
         var lastSender = null;
         var lastDate = null;
         var lastMessageContainer = null;
@@ -36,7 +37,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
         var scrollAfterInput = false;
 
         // Mark seen on several events.
-        $element.on("mouseover mouseenter touchstart", _.debounce(function(event) {
+        $scope.bodyElement.on("mouseover mouseenter touchstart", _.debounce(function(event) {
             $scope.$parent.seen();
             $scope.$apply();
         }, 100));

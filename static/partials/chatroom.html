@@ -1,16 +1,20 @@
-<div ng-controller="ChatroomController" class="chat room-{{index}}" ng-class="{'newmessage': newmessage, 'visible': visible, 'chat-p2p': 'p2pstate', 'with_pictures': isgroupchat}">
-    <div class="chatheader"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{settings.title}} {{id|displayName}}</span> <div class="ctrl"><i ng-hide="layout.chatMaximized" ng-click="toggle()" class="fa fa-expand"></i><i ng-show="layout.chatMaximized" ng-click="toggle()" class="fa fa-compress"></i><i title="{{_('Close chat')}}" ng-click="hide()" class="fa fa-times"></i></div></div>
-    <div class="outputbox">
-        <div class="output nicescroll"></div>
-    </div>
-    <div class="typinghint" ng-switch on="peerIsTyping">
-        <span ng-switch-when="start"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('is typing...')}}</span>
-        <span ng-switch-when="stop"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('has stopped typing...')}}</span>
-    </div>
-    <div class="inputbox">
-        <div>
-            <textarea class="input nicescroll form-control" ng-disabled="!(enabled)" on-enter="submit()" ng-model="input" placeholder="{{_('Type here to chat...')}}"/>
+<div ng-controller="ChatroomController" class="chat room-{{index}}" ng-class="{'newmessage': newmessage, 'visible': visible, 'chat-p2p': 'p2pstate', 'with_pictures': isgroupchat, 'active': active}">
+    <div class="chatheader"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{settings.title}} {{id|displayName}}</span> <div class="ctrl"><i ng-hide="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-expand"></i><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i><i title="{{_('Close chat')}}" ng-click="hide()" class="fa fa-times"></i></div></div>
+    <div class="chatbody">
+        <div class="outputbox">
+            <div class="output nicescroll"></div>
         </div>
-        <a ng-disabled="!(enabled)" ng-click="submit()" title="{{_('Send')}}" class="btn btn-small btn-info fa fa-play"></a>
+        <div class="chatbodybottom">
+            <div class="typinghint" ng-switch on="peerIsTyping">
+                <span ng-switch-when="start"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('is typing...')}}</span>
+                <span ng-switch-when="stop"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('has stopped typing...')}}</span>
+            </div>
+            <div class="inputbox">
+                <div>
+                    <textarea class="input nicescroll form-control" ng-disabled="!(enabled)" on-enter="submit()" ng-model="input" placeholder="{{_('Type here to chat...')}}"/>
+                </div>
+                <a ng-disabled="!(enabled)" ng-click="submit()" title="{{_('Send')}}" class="btn btn-small btn-info fa fa-play"></a>
+            </div>
+        </div>
     </div>
 </div>

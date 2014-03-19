@@ -27,6 +27,10 @@ top:0px;
 pointer-events: none;
 z-index:45;
 overflow:hidden;
+-webkit-perspective: 1000;
+-moz-perspective: 1000;
+-o-perspective: 1000;
+perspective: 1000;
 }
 .withChat #chat .chatpane {
 left:0px;
@@ -39,42 +43,70 @@ width:auto;
 	}
 }
 .chatpane {
-height:100%;
 position:absolute;
 top:0px;
 left:260px;
 bottom:0px;
 right:0px;
 width:260px;
--webkit-transition: left 200ms ease-in-out;
--moz-transition: left 200ms ease-in-out;
--ms-transition: left 200ms ease-in-out;
--o-transition: left 200ms ease-in-out;
 transition: left 200ms ease-in-out;
+-webkit-transition: 0.2s;
+-webkit-transform-style: preserve-3d;
+-moz-transition: 0.2s;
+-moz-transform-style: preserve-3d;
+-o-transition: 0.2s;
+-o-transform-style: preserve-3d;
+transition: 0.2s;
+transform-style: preserve-3d;
+-webkit-backface-visibility: hidden;
+-moz-backface-visibility: hidden;
+-o-backface-visibility: hidden;
+backface-visibility: hidden;
+}
+.withChat .chatpane.flip {
+-webkit-transform: rotateY(360deg);
+-moz-transform: rotateY(360deg);
+-o-transform: rotateY(360deg);
+transform: rotateY(360deg);
 }
 .chat {
-position:absolute;
 pointer-events: auto;
+position:absolute;
 top:0px;
 bottom:0px;
 right:0px;
 left:0px;
 background: #e7e7e7;
+border-top: 1px solid $bordercolor;
 border-right:1px solid $bordercolor;
 overflow:hidden;
 display:none;
 }
 .chat.visible {
+}
+.chat.visible.active {
 display:block;
 }
+.chat .chatbody {
+position:absolute;
+bottom:0px;
+left:0px;
+right:0px;
+top: 30px;
+}
+.chat.active .chatbody {
+}
 .chat .chatheader {
+position:relative;
 background: $componentbg;
 padding:8px 4px 0px 8px;
-border-top: 1px solid $bordercolor;
 border-bottom: 1px solid $bordercolor;
+border-left: 1px solid $bordercolor;
 font-size:0.8em;
 font-weight:bold;
 height:30px;
+}
+.chat.active .chatheader {
 }
 .chat .chatheader .ctrl {
 position:absolute;
@@ -98,10 +130,8 @@ cursor: pointer;
 position:absolute;
 left:0px;
 right:0px;
-top:34px;
+top:0px;
 bottom:74px;
-//max-width:600px;
-margin:0 auto;
 }
 .chat .output {
 overflow-x: hidden;
@@ -296,29 +326,32 @@ white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis;
 }
+
+.chat .chatbodybottom {
+	background: #e7e7e7;
+	position: absolute;
+	left:0px;
+	bottom:0px;
+	right:0px;
+	height:90px;
+	margin:0 auto;
+}
+
 .chat .typinghint {
-position:absolute;
-left:6px;
-right:6px;
-bottom:60px;
+padding:6px;
+white-space: no-wrap;
+overflow: hidden;
 font-size:.8em;
 color: #aaa;
-max-width:500px;
-margin:0 auto;
+height:22px;
 }
 .chat .inputbox {
-position:absolute;
-left:0px;
-bottom:0px;
-right:0px;
-height:60px;
-//max-width:500px;
-margin:0 auto;
+position:relative;
 }
 .chat .inputbox .btn {
 position:absolute;
 right:6px;
-top:4px;
+top:0px;
 padding: 0.5em 1em;
 }
 .chat .inputbox > div {
