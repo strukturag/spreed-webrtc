@@ -77,8 +77,6 @@ bottom:0px;
 right:0px;
 left:0px;
 background: #e7e7e7;
-border-top: 1px solid $bordercolor;
-border-right:1px solid $bordercolor;
 overflow:hidden;
 display:none;
 }
@@ -93,20 +91,40 @@ bottom:0px;
 left:0px;
 right:0px;
 top: 30px;
+border-right:1px solid $bordercolor;
 }
 .chat.active .chatbody {
 }
 .chat .chatheader {
-position:relative;
+position:absolute;
+left:0px;
+right:0px;
+top:0px;
 background: $componentbg;
 padding:8px 4px 0px 8px;
+border-top: 1px solid $bordercolor;
 border-bottom: 1px solid $bordercolor;
-border-left: 1px solid $bordercolor;
+border-right: 1px solid $bordercolor;
 font-size:0.8em;
 font-weight:bold;
 height:30px;
 }
 .chat.active .chatheader {
+}
+.chat .chatheader .chatstatusicon {
+position:absolute;
+left:0px;
+top:0px;
+font-size:2.1em;
+line-height:30px;
+width:30px;
+height:30px;
+display:block;
+text-align:center;
+}
+.chat .chatheader .chatheadertitle {
+padding-left:20px;
+display:inline;
 }
 .chat .chatheader .ctrl {
 position:absolute;
@@ -367,18 +385,18 @@ margin-bottom: 4px;
 }
 
 @keyframes newmessage {
-	0% {background-color: rgba(132,184,25,1.0);}
-	50% {background-color: $componentbg;}
-	100% {background-color: rgba(132,184,25,1.0);}
+	0% {color: rgba(132,184,25,1.0);}
+	50% {color: $componentbg;}
+	100% {color: rgba(132,184,25,1.0);}
 }
 
 @-webkit-keyframes newmessage {
-	0% {background-color: rgba(132,184,25,1.0);}
-	50% {background-color: $componentbg;}
-	100% {background-color: rgba(132,184,25,1.0);}
+	0% {color: rgba(132,184,25,1.0);}
+	50% {color: $componentbg;}
+	100% {color: rgba(132,184,25,1.0);}
 }
 
-.chat.newmessage .chatheader {
+.chat.newmessage .chatstatusicon, .chatstatusicon.newmessage {
 animation: newmessage 1s ease -0.3s infinite;
 -webkit-animation: newmessage 1s ease -0.3s infinite;
 }
