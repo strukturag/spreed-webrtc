@@ -32,24 +32,67 @@ overflow:hidden;
 -o-perspective: 1000;
 perspective: 1000;
 }
-.withChat #chat .chatpane {
+.withChat #chat .chatcontainer {
 left:0px;
 }
 .withChat.withChatMaximized #chat {
 left:0px;
 width:auto;
-	.chatpane {
+	.chatcontainer {
 		width:auto;
+	}
+}
+.chatcontainer {
+position:absolute;
+top:0px;
+left:260px;
+right:0px;
+bottom:0px;
+width:260px;
+-webkit-transition: left 200ms ease-in-out;
+-moz-transition: left 200ms ease-in-out;
+-ms-transition: left 200ms ease-in-out;
+-o-transition: left 200ms ease-in-out;
+transition: left 200ms ease-in-out;
+}
+.chatlist {
+position:absolute;
+top:0px;
+left:0px;
+bottom:0px;
+right:0px;
+background: #e7e7e7;
+	.list-group {
+		margin-top:-1px;
+		margin-bottom:-1px;
+		max-height:100%;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+	.list-group-item {
+		border-right:none;
+		border-left:none;
+		-webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+	}
+	.list-group-item .fa-lg {
+		display:inline-block;
+		width:18px;
+		text-align:center;
+	}
+	.list-group-item .badge {
+		background: #84b819;
+		border: 1px solid white;
+		font-size:.8em;
 	}
 }
 .chatpane {
 position:absolute;
 top:0px;
-left:260px;
+left:0px;
 bottom:0px;
 right:0px;
-width:260px;
-transition: left 200ms ease-in-out;
 -webkit-transition: 0.3s;
 -webkit-transform-style: preserve-3d;
 -moz-transition: 0.3s;
@@ -87,7 +130,7 @@ display:block;
 }
 .chat .chatbody {
 position:absolute;
-bottom:0px;
+bottom:-1px;
 left:0px;
 right:0px;
 top: 36px;
@@ -121,7 +164,7 @@ display:block;
 text-align:center;
 }
 .chat .chatheader .chatheadertitle {
-padding-left:26px;
+padding-left:28px;
 display:inline;
 }
 .chat .chatheader .ctrl {
@@ -348,7 +391,7 @@ text-overflow:ellipsis;
 	background: #e7e7e7;
 	position: absolute;
 	left:0px;
-	bottom:0px;
+	bottom:1px;
 	right:0px;
 	margin:0 auto;
 }
@@ -405,7 +448,7 @@ border-color:#66afe9;
 	100% {background-color: rgba(132,184,25,1.0);}
 }
 
-.chat.newmessage .chatheader {
+.chat.newmessage .chatheader, .chatlist .list-group-item.newmessage {
 animation: newmessage 1s ease -0.3s infinite;
 -webkit-animation: newmessage 1s ease -0.3s infinite;
 }

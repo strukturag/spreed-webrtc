@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-18 19:10+0100\n"
-"PO-Revision-Date: 2014-03-18 19:10+0100\n"
+"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"PO-Revision-Date: 2014-03-20 18:31+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -47,6 +47,12 @@ msgstr "Audio-Konferenz starten"
 
 msgid "No other users online"
 msgstr "Niemand sonst online"
+
+msgid "Chat sessions"
+msgstr "Chat-Sitzungen"
+
+msgid "Room chat"
+msgstr "Raum-Chat"
 
 msgid "Peer to peer"
 msgstr "Peer-to-peer"
@@ -387,9 +393,6 @@ msgstr "Chat mit"
 
 msgid "Message from "
 msgstr "Nachricht von "
-
-msgid "Room chat"
-msgstr "Raum-Chat"
 
 #, python-format
 msgid "You are now in room %s ..."

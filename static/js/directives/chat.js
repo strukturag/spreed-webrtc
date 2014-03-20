@@ -38,6 +38,23 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 return ctrl.rooms[id];
             }
 
+            $scope.currentRoom = null;
+            $scope.currentRoomActive = false;
+            $scope.getVisibleRooms = function() {
+                var res = [];
+                for (var i=0; i<ctrl.visibleRooms.length; i++) {
+                    var r = rooms[ctrl.visibleRooms[i]];
+                    if (!r || r.id === ctrl.group) {
+                        continue;
+                    }
+                    res.push(r);
+                }
+                return res;
+            };
+            $scope.getGroupRoom = function() {
+                return rooms[ctrl.group];
+            };
+
             mediaStream.api.e.on("received.chat", function(event, id, from, data, p2p) {
 
                 //console.log("received", data, id, from);
@@ -117,11 +134,14 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
             var chat = $compile(templateChatroom);
             return function(scope, iElement, iAttrs, controller) {
+
+                var pane = iElement.find(".chatpane");
+
                 scope.showGroupRoom = function(settings, options) {
                     var stngs = $.extend({title: translation._("Room chat")}, settings);
                     return scope.showRoom(controller.group, stngs, options);
                 };
-                scope.currentRoom = null;
+
                 scope.showRoom = function(id, settings, options) {
                     var options = $.extend({}, options);
                     var subscope = controller.rooms[id];
@@ -142,6 +162,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         subscope.firstmessage = true;
                         subscope.p2pstate = false;
                         subscope.active = false;
+                        subscope.pending = 0;
                         if (!subscope.isgroupchat) {
                             buddyData.push(id);
                         }
@@ -156,11 +177,15 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             scope.killRoom(id);
                         };
                         subscope.seen = function() {
+                            subscope.pending = 0;
                             scope.$emit("chatseen", subscope.id);
                             if (subscope.newmessage) {
                                 subscope.newmessage = false;
                                 subscope.$broadcast("seen");
                             }
+                        };
+                        subscope.deactivate =function() {
+                            scope.deactivateRoom();
                         };
                         subscope.toggleMax = function() {
                             scope.toggleMax();
@@ -235,6 +260,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         });
                         subscope.$on("incoming", function(event, message, from, userid) {
                             if (from !== userid) {
+                                subscope.pending++;
                                 scope.$emit("chatincoming", subscope.id);
                             }
                             if (subscope.firstmessage || !desktopNotify.windowHasFocus) {
@@ -250,7 +276,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         });
                         chat(subscope, function(clonedElement, $scope) {
 
-                            iElement.append(clonedElement);
+                            pane.append(clonedElement);
                             $scope.element=clonedElement;
                             $scope.visible = true;
                             if (options.autofocus) {
@@ -303,6 +329,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     safeApply(subscope);
                     return subscope;
                 };
+
                 scope.hideRoom = function(id) {
                     var subscope = controller.rooms[id];
                     if (!subscope) {
@@ -322,13 +349,15 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     });
                     if (scope.currentRoom === subscope) {
                         scope.currentRoom = null;
+                        scope.currentRoomActive = false;
                     }
                     if (!controller.visibleRooms.length) {
-                        scope.showGroupRoom(null, {restore: true, noenable: true, activate: true});
+                        scope.showGroupRoom(null, {restore: true, noenable: true, noactivate: true});
                         // If last visible room was removed, hide chat.
                         scope.layout.chat = false;
                     }
                 };
+
                 scope.killRoom = function(id) {
                     scope.hideRoom(id);
                     var subscope = controller.rooms[id];
@@ -340,39 +369,50 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         subscope.$destroy();
                     }, 0);
                 };
+
                 scope.toggleMax = function() {
                     scope.layout.chatMaximized = !scope.layout.chatMaximized;
                 };
+
                 scope.activateRoom = function(id, active) {
+                    var subscope = controller.rooms[id];
+                    if (!subscope) {
+                        return;
+                    }
                     var visible = !!scope.layout.chat;
                     var flip = false;
-                    var subscope = controller.rooms[id];
                     //console.log("toggleActive", active, id, scope.currentRoom, scope.currentRoom == subscope, subscope.active);
                     if (scope.currentRoom == subscope) {
                         subscope.active = active;
+                        scope.currentRoomActive = true;
                         if (visible) {
                             flip = true;
                         }
                     } else {
                         if (scope.currentRoom) {
                             scope.currentRoom.active = false;
-                            scope.currentRoom.hide();
+                            //scope.currentRoom.hide();
                             if (visible) {
                                 flip = true;
                             }
                         }
                         if (active) {
                             scope.currentRoom = subscope;
+                            scope.currentRoomActive = true;
                         }
                         subscope.active = active;
                     }
                     if (flip) {
-                        iElement.toggleClass("flip");
+                        pane.toggleClass("flip");
                     }
                 };
 
+                scope.deactivateRoom = function() {
+                    scope.currentRoomActive = false;
+                };
+
                 scope.$watch("layout.chat", function(chat) {
-                    iElement.removeClass("flip");
+                    pane.removeClass("flip");
                 });
 
                 scope.$on("room", function(event, room) {
@@ -381,7 +421,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     } else {
                         var subscope;
                         if (!controller.visibleRooms.length) {
-                            subscope = scope.showGroupRoom(null, {restore: true, noenable: true});
+                            subscope = scope.showGroupRoom(null, {restore: true, noenable: true, noactivate: true});
                         } else {
                             subscope = controller.get(controller.group);
                         }
