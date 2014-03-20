@@ -54,14 +54,20 @@ width:260px;
 -ms-transition: left 200ms ease-in-out;
 -o-transition: left 200ms ease-in-out;
 transition: left 200ms ease-in-out;
+background: #e7e7e7;
 }
 .chatlist {
 position:absolute;
 top:0px;
-left:0px;
+left:100%;
 bottom:0px;
-right:0px;
+width:100%;
 background: #e7e7e7;
+-webkit-transition: left 200ms ease-in-out;
+-moz-transition: left 200ms ease-in-out;
+-ms-transition: left 200ms ease-in-out;
+-o-transition: left 200ms ease-in-out;
+transition: left 200ms ease-in-out;
 	.list-group {
 		margin-top:-1px;
 		margin-bottom:-1px;
@@ -90,9 +96,9 @@ background: #e7e7e7;
 .chatpane {
 position:absolute;
 top:0px;
-left:0px;
-bottom:0px;
 right:0px;
+bottom:0px;
+width:100%;
 -webkit-transition: 0.3s;
 -webkit-transform-style: preserve-3d;
 -moz-transition: 0.3s;
@@ -105,6 +111,12 @@ transform-style: preserve-3d;
 -moz-backface-visibility: hidden;
 -o-backface-visibility: hidden;
 backface-visibility: hidden;
+}
+.showchatlist .chatpane {
+right:100%;
+}
+.showchatlist .chatlist {
+left:0px;
 }
 .withChat .chatpane.flip {
 -webkit-transform: rotateY(360deg);
@@ -149,7 +161,7 @@ border-top: 1px solid $bordercolor;
 border-bottom: 1px solid $bordercolor;
 border-right: 1px solid $bordercolor;
 height:36px;
-line-height:36px;
+line-height:34px;
 }
 .chat.active .chatheader {
 }

@@ -1,6 +1,6 @@
-<div class="chatcontainer">
-	<div class="chatpane" ng-show="currentRoomActive"></div>
-	<div class="chatlist" ng-hide="currentRoomActive">
+<div class="chatcontainer" ng-class="{showchatlist: !currentRoomActive}">
+	<div class="chatpane"></div>
+	<div class="chatlist">
 		<div class="chat visible active">
 			<div class="chatheader"><div class="chatstatusicon" ng-click="activateRoom(currentRoom.id, true)"><i class="fa fa-angle-right"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span>{{_("Chat sessions")}}</span></div></div>
 			<div class="chatbody">
