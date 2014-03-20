@@ -33,10 +33,10 @@
 	left:0px;
 	top:0px;
 	right:0px;
-	padding:4px 8px 0px 30px;
+	padding:3px 8px 0px 30px;
 	vertical-align:middle;
 	background: rgba(0,0,0,0.2);
-	min-height:44px;
+	min-height:36px;
 }
 #roombar .roombar.notvisible {
 	background:transparent;
@@ -55,7 +55,7 @@
 	vertical-align:middle;
 	position:absolute;
 	left: 3px;
-	top: 5px;
+	top: 1px;
 	padding:6px;
 	display:block;
 	color:#ccc;
@@ -69,14 +69,14 @@
 	padding-right:.5em;
 }
 .roombar label {
-	padding-top:10px !important;
+	padding-top:7px !important;
 }
 .roombar .roomlabellabel {
 	display:none;
 	opacity: 0.7;
 	text-align:left;
 	margin-left:0.5em;
-	padding-top:4px;
+	padding-top:2px;
 }
 #roombar .roombar.notvisible {
 	.roombarcontent {

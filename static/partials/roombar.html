@@ -4,7 +4,7 @@
 		<label class="pull-left control-label hidden-xs">{{_('Room')}}</label>
 		<div class="pull-left">
 			<div class="input-group">
-				<input class="form-control" ng-model="newroomid" ng-keyup="hitEnter($event)" type="text" placeholder="{{_('Main')}}"></input><span ng-if="roomid && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-eraser"></i></a></span><span ng-if="!roomid || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default" title="{{_('Change room')}}" ng-click="save()"><i class="fa fa-arrow-right"></i></a></span>
+				<input class="form-control input-sm" ng-model="newroomid" ng-keyup="hitEnter($event)" type="text" placeholder="{{_('Main')}}"></input><span ng-if="roomid && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-eraser"></i></a></span><span ng-if="!roomid || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Change room')}}" ng-click="save()"><i class="fa fa-arrow-right"></i></a></span>
 			</div>
 		</div>
 		<div class="pull-left">
