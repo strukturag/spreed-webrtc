@@ -20,15 +20,16 @@
  */
 define(['text!partials/statusmessage.html'], function(template) {
 
-    // statusMessage
-	return ["$compile", function($compile) {
+	// statusMessage
+	return [function() {
 
-        return {
-            restrict: 'E',
-            replace: true,
-            template: template
-        }
+		return {
+			restrict: 'E',
+			replace: true,
+			template: template,
+			controller: "StatusmessageController"
+		}
 
-    }];
+	}];
 
 });

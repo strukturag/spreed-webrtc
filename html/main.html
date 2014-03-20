@@ -11,7 +11,7 @@
     <div class="left">
     	<%template "logo" .%>
     </div>
-    <status-message ng-controller="StatusmessageController"></status-message>
+    <status-message></status-message>
     <div class="ng-cloak right">
         <button title="{{_('Share your screen')}}" class="btn aenablebtn" ng-show="master.settings.screensharingMedia && (status=='connected' || status=='conference' || enabledScreenshare)" ng-model="layout.screenshare" btn-checkbox><i class="fa fa-desktop"></i></button>
         <button title="{{_('Chat')}}" ng-show="roomstatus" class="btn" ng-class="{messagesunseen: chatMessagesUnseen>0}" ng-model="layout.chat" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><i class="fa fa-comments-o"></i><span class="badge" ng-show="chatMessagesUnseen">{{chatMessagesUnseen}}</span></button>
@@ -42,7 +42,6 @@
 </div>
 <div class="ng-cloak" id="settings" ng-class="{show: layout.settings}"><settings/></div>
 <script data-main="<%.Cfg.S%>/js/<%.App%>" data-plugin="<%.Cfg.Plugin%>" src="<%.Cfg.S%>/js/libs/require/require.js"></script>
-<div class="ng-cloak" id="details">{{id}}</div>
 <%template "extra-body" .%>
 </body>
 </html><%end%>
