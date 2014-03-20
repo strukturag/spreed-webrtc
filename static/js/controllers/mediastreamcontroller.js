@@ -678,12 +678,18 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
 
         });
 
-        $scope.$on("chatincoming", function() {
+        var chatMessagesUnseen = {};
+        $scope.$on("chatincoming", function(event, id) {
+            var count = chatMessagesUnseen[id] || 0;
+            count++;
+            chatMessagesUnseen[id]=count;
             $scope.chatMessagesUnseen++;
         });
 
-        $scope.$on("chatseen", function() {
-            $scope.chatMessagesUnseen=0;
+        $scope.$on("chatseen", function(event, id) {
+            var count = chatMessagesUnseen[id] || 0;
+            delete chatMessagesUnseen[id];
+            $scope.chatMessagesUnseen = $scope.chatMessagesUnseen - count ;
         });
 
         _.defer(function() {

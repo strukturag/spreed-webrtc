@@ -156,7 +156,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             scope.killRoom(id);
                         };
                         subscope.seen = function() {
-                            scope.$emit("chatseen");
+                            scope.$emit("chatseen", subscope.id);
                             if (subscope.newmessage) {
                                 subscope.newmessage = false;
                                 subscope.$broadcast("seen");
@@ -234,7 +234,9 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                             safeApply(subscope);
                         });
                         subscope.$on("incoming", function(event, message, from, userid) {
-                            scope.$emit("chatincoming");
+                            if (from !== userid) {
+                                scope.$emit("chatincoming", subscope.id);
+                            }
                             if (subscope.firstmessage || !desktopNotify.windowHasFocus) {
                                 var room = event.targetScope.id;
                                 // Make sure we are not in group chat or the message is from ourselves
@@ -274,6 +276,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
                         });
                     } else {
+
                         if (options.restore) {
                             if (!subscope.visible) {
                                 controller.visibleRooms.push(id);
@@ -367,6 +370,10 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                         iElement.toggleClass("flip");
                     }
                 };
+
+                scope.$watch("layout.chat", function(chat) {
+                    iElement.removeClass("flip");
+                });
 
                 scope.$on("room", function(event, room) {
                     if (room == null) {
