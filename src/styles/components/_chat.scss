@@ -50,13 +50,13 @@ bottom:0px;
 right:0px;
 width:260px;
 transition: left 200ms ease-in-out;
--webkit-transition: 0.2s;
+-webkit-transition: 0.3s;
 -webkit-transform-style: preserve-3d;
--moz-transition: 0.2s;
+-moz-transition: 0.3s;
 -moz-transform-style: preserve-3d;
--o-transition: 0.2s;
+-o-transition: 0.3s;
 -o-transform-style: preserve-3d;
-transition: 0.2s;
+transition: 0.3s;
 transform-style: preserve-3d;
 -webkit-backface-visibility: hidden;
 -moz-backface-visibility: hidden;
@@ -90,7 +90,7 @@ position:absolute;
 bottom:0px;
 left:0px;
 right:0px;
-top: 30px;
+top: 36px;
 border-right:1px solid $bordercolor;
 }
 .chat.active .chatbody {
@@ -101,13 +101,12 @@ left:0px;
 right:0px;
 top:0px;
 background: $componentbg;
-padding:8px 4px 0px 8px;
+padding:0px 4px 0px 8px;
 border-top: 1px solid $bordercolor;
 border-bottom: 1px solid $bordercolor;
 border-right: 1px solid $bordercolor;
-font-size:0.8em;
-font-weight:bold;
-height:30px;
+height:36px;
+line-height:36px;
 }
 .chat.active .chatheader {
 }
@@ -115,21 +114,21 @@ height:30px;
 position:absolute;
 left:0px;
 top:0px;
-font-size:2.1em;
-line-height:30px;
-width:30px;
-height:30px;
+font-size:1.4em;
+width:36px;
+height:36px;
 display:block;
 text-align:center;
 }
 .chat .chatheader .chatheadertitle {
-padding-left:20px;
+padding-left:26px;
 display:inline;
 }
 .chat .chatheader .ctrl {
 position:absolute;
-top:4px;
+top:0px;
 right:1px;
+color:rgba(0,0,0,0.3);
 }
 .chat .chatheader span {
 display: inline-block;
@@ -149,7 +148,7 @@ position:absolute;
 left:0px;
 right:0px;
 top:0px;
-bottom:74px;
+bottom:80px;
 }
 .chat .output {
 overflow-x: hidden;
@@ -351,17 +350,16 @@ text-overflow:ellipsis;
 	left:0px;
 	bottom:0px;
 	right:0px;
-	height:90px;
 	margin:0 auto;
 }
 
 .chat .typinghint {
-padding:6px;
-white-space: no-wrap;
+padding:2px 6px 0 6px;
+white-space: nowrap;
 overflow: hidden;
 font-size:.8em;
 color: #aaa;
-height:22px;
+height:14px;
 }
 .chat .inputbox {
 position:relative;
@@ -369,11 +367,12 @@ position:relative;
 .chat .inputbox .btn {
 position:absolute;
 right:6px;
-top:0px;
+top:1px;
 padding: 0.5em 1em;
+display:none;
 }
 .chat .inputbox > div {
-margin: 4px 54px 0px 4px;
+border-top:1px solid $bordercolor;
 }
 .chat .input {
 display:block;
@@ -381,22 +380,32 @@ resize: none;
 width:100%;
 height:54px;
 max-height:54px; /* FF hack */
-margin-bottom: 4px;
+margin:0px;
+-webkit-border-radius: 0px;
+-moz-border-radius: 0px;
+border-radius: 0px;
+border-color:transparent;
+-webkit-box-shadow: none;
+-moz-box-shadow: none;
+box-shadow: none;
+}
+.chat .input.active, .chat .input:active, .chat .input:focus {
+border-color:#66afe9;
 }
 
 @keyframes newmessage {
-	0% {color: rgba(132,184,25,1.0);}
-	50% {color: $componentbg;}
-	100% {color: rgba(132,184,25,1.0);}
+	0% {background-color: rgba(132,184,25,1.0);}
+	50% {background-color: $componentbg;}
+	100% {background-color: rgba(132,184,25,1.0);}
 }
 
 @-webkit-keyframes newmessage {
-	0% {color: rgba(132,184,25,1.0);}
-	50% {color: $componentbg;}
-	100% {color: rgba(132,184,25,1.0);}
+	0% {background-color: rgba(132,184,25,1.0);}
+	50% {background-color: $componentbg;}
+	100% {background-color: rgba(132,184,25,1.0);}
 }
 
-.chat.newmessage .chatstatusicon, .chatstatusicon.newmessage {
+.chat.newmessage .chatheader {
 animation: newmessage 1s ease -0.3s infinite;
 -webkit-animation: newmessage 1s ease -0.3s infinite;
 }
@@ -404,12 +413,11 @@ animation: newmessage 1s ease -0.3s infinite;
 .chat.newmessage .chatheader span:after {
 content: "***";
 position:absolute;
-top:0px;
-line-height:32px;
+top:2px;
 right:70px;
 }
 
-@media all and (max-height: 150px) {
+@media all and (max-height: 210px) {
 	.chat .inputbox {
 		height: auto;
 	}
@@ -418,5 +426,18 @@ right:70px;
 	}
 	.chat .outputbox {
 		bottom:45px;
+	}
+	.chat .chatbodybottom {
+		height: auto;
+	}
+	.chat .typinghint {
+		display: none;
+	}
+	.chat .chatheader {
+		display: none;
+	}
+	.chat .chatbody {
+		border-top: 1px solid $bordercolor;
+		top: 0px;
 	}
 }

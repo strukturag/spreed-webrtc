@@ -30,33 +30,44 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
             $scope.layout.chat = false;
             $scope.layout.chatMaximized = false;
 
-            var rooms = {};
-            var visibleRooms = [];
+            var ctrl = this;
+            var rooms = ctrl.rooms = {};
+            ctrl.visibleRooms = [];
+            ctrl.group = group_chat_id;
+            ctrl.get = function(id) {
+                return ctrl.rooms[id];
+            }
 
             mediaStream.api.e.on("received.chat", function(event, id, from, data, p2p) {
 
                 //console.log("received", data, id, from);
 
-                var with_message = !!data.Message;
-
-                if (!with_message && !rooms[from] && !rooms[id]) {
-                    // Ignore empty messages for non existing rooms.
-                    return;
+                var roomid = id;
+                if (roomid === mediaStream.api.id) {
+                    roomid = from;
+                } else {
+                    if (roomid !== ctrl.group && from !== mediaStream.api.id) {
+                        console.log("Received chat message for invalid room", roomid, id, from);
+                        return;
+                    }
                 }
 
-                var room = rooms[id];
+                var with_message = !!data.Message;
+                var room = rooms[roomid];
                 if (!room) {
+                    if (!with_message) {
+                        return;
+                    }
                     // No room with this id, get one with the from id
                     $scope.$emit("startchat", from, {restore: with_message});
                     room = rooms[from];
                 }
 
-                if (with_message && from !== $scope.$parent.id) {
+                if (with_message && from !== mediaStream.api.id) {
                     room.newmessage = true;
                     room.peerIsTyping = "no";
                     room.p2p(!!p2p);
                 }
-                //console.log("room", room);
 
                 room.$broadcast("received", from, data);
                 safeApply(room);
@@ -100,17 +111,6 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
             });
 
-            // Shared data;
-            return {
-                rooms: rooms,
-                visibleRooms: visibleRooms,
-                group: group_chat_id,
-                get: function(id) {
-                    return rooms[id];
-                }
-            }
-
-
         }];
 
         var compile = function(tElement, tAttrs) {
@@ -127,7 +127,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     var subscope = controller.rooms[id];
                     var index = controller.visibleRooms.length;
                     if (!subscope) {
-                        console.log("Create new chatroom", id);
+                        console.log("Create new chatroom", [id]);
                         controller.visibleRooms.push(id);
                         subscope = controller.rooms[id] = scope.$new();
                         translation.inject(subscope);
@@ -287,14 +287,14 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
                     }
 
+                    if (!options.noactivate) {
+                       scope.activateRoom(subscope.id, true);
+                    }
+
                     if (options.restore && !options.noenable) {
                         if (!scope.layout.chat) {
                             scope.layout.chat = true;
                         }
-                    }
-
-                    if (!options.noactivate) {
-                       scope.activateRoom(subscope.id, true);
                     }
 
                     safeApply(subscope);
@@ -341,20 +341,30 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     scope.layout.chatMaximized = !scope.layout.chatMaximized;
                 };
                 scope.activateRoom = function(id, active) {
+                    var visible = !!scope.layout.chat;
+                    var flip = false;
                     var subscope = controller.rooms[id];
                     //console.log("toggleActive", active, id, scope.currentRoom, scope.currentRoom == subscope, subscope.active);
                     if (scope.currentRoom == subscope) {
                         subscope.active = active;
+                        if (visible) {
+                            flip = true;
+                        }
                     } else {
                         if (scope.currentRoom) {
                             scope.currentRoom.active = false;
                             scope.currentRoom.hide();
+                            if (visible) {
+                                flip = true;
+                            }
                         }
                         if (active) {
                             scope.currentRoom = subscope;
-                            iElement.toggleClass("flip");
                         }
                         subscope.active = active;
+                    }
+                    if (flip) {
+                        iElement.toggleClass("flip");
                     }
                 };
 
