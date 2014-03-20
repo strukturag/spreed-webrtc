@@ -162,6 +162,7 @@ width:36px;
 height:36px;
 display:block;
 text-align:center;
+cursor: pointer;
 }
 .chat .chatheader .chatheadertitle {
 padding-left:28px;
@@ -453,11 +454,11 @@ animation: newmessage 1s ease -0.3s infinite;
 -webkit-animation: newmessage 1s ease -0.3s infinite;
 }
 
-.chat.newmessage .chatheader span:after {
+.chat.newmessage .chatheadertitle:after {
 content: "***";
 position:absolute;
 top:2px;
-right:70px;
+right:32px;
 }
 
 @media all and (max-height: 210px) {
