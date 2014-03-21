@@ -81,6 +81,7 @@ transition: left 200ms ease-in-out;
 		-webkit-border-radius: 0px;
         -moz-border-radius: 0px;
         border-radius: 0px;
+        position:relative;
 	}
 	.list-group-item .fa-lg {
 		display:inline-block;
@@ -92,8 +93,15 @@ transition: left 200ms ease-in-out;
 		border: 1px solid white;
 		font-size:.8em;
 	}
+	.list-group-item {
+		padding-right: 30px;
+	}
 	.list-group-item.disabled {
 		color:#aaa;
+	}
+	.list-group-item a {
+		position:absolute;
+		right:4px;
 	}
 }
 .chatpane {
