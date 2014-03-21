@@ -1,3 +1,11 @@
+spreed-speakfreely-server (0.16.1) precise; urgency=low
+
+  * Implemented chat session control UI.
+  * Layout controller refactorization.
+  * Chat UI bugfixes.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 21 Mar 2014 11:46:10 +0100
+
 spreed-speakfreely-server (0.16.0) precise; urgency=low
 
   * Chat UI improvements.
