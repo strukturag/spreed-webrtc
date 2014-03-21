@@ -412,7 +412,10 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 };
 
                 scope.$watch("layout.chat", function(chat) {
-                    pane.removeClass("flip");
+                    if (!chat) {
+                        pane.removeClass("flip");
+                        scope.layout.chatMaximized = false;
+                    }
                 });
 
                 scope.$on("room", function(event, room) {

@@ -2,7 +2,7 @@
 	<div class="chatpane"></div>
 	<div class="chatlist">
 		<div class="chat visible active">
-			<div class="chatheader"><div class="chatstatusicon" ng-click="activateRoom(currentRoom.id, true)"><i class="fa fa-angle-right"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span>{{_("Chat sessions")}}</span></div></div>
+			<div class="chatheader"><div class="chatstatusicon" ng-click="activateRoom(currentRoom.id, true)"><i class="fa fa-angle-right"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span>{{_("Chat sessions")}}</span></div> <div class="ctrl"><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i></div></div>
 			<div class="chatbody">
 				<div class="list-group nicescroll">
 				  <a ng-if="roomstatus" ng-click="activateRoom('', true)" class="list-group-item">
