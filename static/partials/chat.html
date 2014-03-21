@@ -10,7 +10,7 @@
 				    <i class="fa fa-users fa-lg"></i> {{_("Room chat")}} {{roomid}}
 				  </a>
 				  <a ng-repeat="room in getVisibleRooms()" ng-click="activateRoom(room.id, true)" class="list-group-item" ng-class="{newmessage: room.pending, disabled: !room.enabled}">
-				  	<span class="badge" ng-show="room.pending">{{room.pending}}</span><i class="fa fa-user fa-lg"></i> {{room.id|displayName}} <a class="fa fa-trash-o"></a>
+				  	<span class="badge" ng-show="room.pending">{{room.pending}}</span><i class="fa fa-user fa-lg"></i> {{room.id|displayName}} <span ng-click="hideRoom(room.id)" class="item-btn fa fa-trash-o"></span>
 				  </a>
 				</div>
 			</div>

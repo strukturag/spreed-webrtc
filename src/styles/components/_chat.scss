@@ -99,10 +99,16 @@ transition: left 200ms ease-in-out;
 	.list-group-item.disabled {
 		color:#aaa;
 	}
-	.list-group-item a {
+	.list-group-item > .item-btn {
 		position:absolute;
-		right:4px;
+		right:12px;
+		cursor: pointer;
+		display:none;
 	}
+	.list-group-item:hover > .item-btn {
+		display:inline;
+	}
+
 }
 .chatpane {
 position:absolute;
