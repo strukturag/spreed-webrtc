@@ -317,7 +317,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     }
 
                     if (!options.noactivate) {
-                       scope.activateRoom(subscope.id, true);
+                        scope.activateRoom(subscope.id, true);
                     }
 
                     if (options.restore && !options.noenable) {
@@ -414,24 +414,15 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 scope.$watch("layout.chat", function(chat) {
                     if (!chat) {
                         pane.removeClass("flip");
-                        scope.layout.chatMaximized = false;
                     }
+                    scope.layout.chatMaximized = false;
                 });
 
                 scope.$on("room", function(event, room) {
-                    if (room == null) {
-                        scope.hideRoom(controller.group);
-                    } else {
-                        var subscope;
-                        if (!controller.visibleRooms.length) {
-                            subscope = scope.showGroupRoom(null, {restore: true, noenable: true, noactivate: true});
-                        } else {
-                            subscope = controller.get(controller.group);
-                        }
-                        if (room) {
-                            var msg = translation._("You are now in room %s ...", room);
-                            subscope.$broadcast("display", null, $("<i><span>"+msg+"</span></i>"));
-                        }
+                    var subscope = scope.showGroupRoom(null, {restore: true, noenable: true, noactivate: true});
+                    if (room) {
+                        var msg = translation._("You are now in room %s ...", room);
+                        subscope.$broadcast("display", null, $("<i><span>"+msg+"</span></i>"));
                     }
                 });
 

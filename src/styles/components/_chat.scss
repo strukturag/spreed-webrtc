@@ -26,7 +26,6 @@ width:260px;
 top:0px;
 pointer-events: none;
 z-index:45;
-overflow:hidden;
 -webkit-perspective: 1000;
 -moz-perspective: 1000;
 -o-perspective: 1000;
@@ -49,6 +48,7 @@ left:260px;
 right:0px;
 bottom:0px;
 width:260px;
+overflow:hidden;
 -webkit-transition: left 200ms ease-in-out;
 -moz-transition: left 200ms ease-in-out;
 -ms-transition: left 200ms ease-in-out;
@@ -91,6 +91,9 @@ transition: left 200ms ease-in-out;
 		background: #84b819;
 		border: 1px solid white;
 		font-size:.8em;
+	}
+	.list-group-item.disabled {
+		color:#eee;
 	}
 }
 .chatpane {
