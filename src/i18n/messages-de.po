@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
-"PO-Revision-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-03-25 12:57+0100\n"
+"PO-Revision-Date: 2014-03-25 12:58+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -110,6 +110,12 @@ msgstr "Raum verlassen"
 
 msgid "Current room"
 msgstr "Raum"
+
+msgid "Screen sharing options"
+msgstr "Optionen für Bildschirmfreigabe"
+
+msgid "Fit screen."
+msgstr "Bildschirm einpassen."
 
 msgid "Your picture"
 msgstr "Ihr Bild"

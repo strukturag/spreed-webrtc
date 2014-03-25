@@ -28,11 +28,15 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			var screenCount = 0;
 			var screens = {};
+			var pane = $element.find(".screensharepane");
 
 			$scope.layout.screenshare = false;
 			$scope.usermedia = null;
 			$scope.connected = false;
 			$scope.screenshare = null;
+
+			$scope.hideOptionsBar = true;
+			$scope.fitScreen = true;
 
 			var handleRequest = function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
 
@@ -125,7 +129,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				var peerid = subscope.peerid = currentscreenshare.id;
 
 				peerTemplate(subscope, function(clonedElement, scope) {
-					$element.append(clonedElement);
+					pane.append(clonedElement);
 					scope.element = clonedElement;
 					var video = clonedElement.find("video").get(0);
 					$window.attachMediaStream(video, stream);
@@ -254,7 +258,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					if (elem) {
 						BigScreen.toggle(elem);
 					} else {
-						BigScreen.toggle($element.get(0));
+						BigScreen.toggle(pane.get(0));
 					}
                 }
 
@@ -272,7 +276,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).on("dblclick", ".remoteScreen", function(event) {
+				$(iElement).on("dblclick", ".remotescreen", function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
 				});
 			}

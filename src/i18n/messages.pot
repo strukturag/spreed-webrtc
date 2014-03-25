@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-03-25 12:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,6 +109,12 @@ msgid "Leave room"
 msgstr ""
 
 msgid "Current room"
+msgstr ""
+
+msgid "Screen sharing options"
+msgstr ""
+
+msgid "Fit screen."
 msgstr ""
 
 msgid "Your picture"
