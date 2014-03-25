@@ -125,7 +125,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
     }
 
     // Let webrtc handle the rest.
-    this.e.triggerHandler("mediaerror", [this]);
+    this.e.triggerHandler("mediaerror", [this, error]);
 
   };
 

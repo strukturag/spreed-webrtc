@@ -109,18 +109,6 @@
             </div>
           </div>
 
-          <div class="form-group" ng-show="isChrome && webrtcDetectedVersion >= 32">
-            <label class="col-xs-4 control-label">{{_('Media screen sharing')}}</label>
-            <div class="col-xs-8">
-              <div class="checkbox">
-              	<label>
-                	<input type="checkbox" ng-model="user.settings.screensharingMedia"/>
-            	</label>
-              </div>
-              <span class="help-block">{{_('Chrome usermedia screen capture feature is required.')}} (chrome://flags/#enable-usermedia-screen-capture)</span>
-            </div>
-          </div>
-
         </div>
 
         <!--<div ng-show="isChrome">

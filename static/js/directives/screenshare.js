@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -222,10 +222,13 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					});
 				});
 
-				usermedia.e.one("mediaerror", function() {
+				usermedia.e.one("mediaerror", function(event, usermedia, error) {
 					$scope.$apply(function(scope) {
-						scope.usermedia = null;
+						scope.stopScreenshare();
 					});
+					if (error && error.name === "PermissionDeniedError") {
+						alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
+					}
 				});
 
 			};
