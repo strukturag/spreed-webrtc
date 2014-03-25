@@ -26,10 +26,12 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 		var webrtc = mediaStream.webrtc;
 
 		// Consider anyting lower than this % as no audio.
-		var threshhold = 7;
+		var threshhold = 5;
 		// Starting from this value we are considered talking.
-		var activityThreshold = 85;
-		var activityThresholdInactivity = 40;
+		var activityThreshold = 20;
+		var activityThresholdInactivity = 12;
+		var activityMuliplier = 1.4;
+		var activityHistorySize = 4;
 
 		// Talking status history map.
 		var talkingStatus = {};
@@ -58,20 +60,26 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 			this.update();
 
 			// Talking state.
-			this.audioActivityHistory = [0,0,0,0,0,0,0,0,0,0];
+			this.audioActivityHistory = [];
 			this.audioActivityMeter = 0;
-			this.audioActivityCount = 0;
+
 			this.meter = _.bind(function() {
+
  				var talking;
 				if (this.active) {
 					var level = Math.round(100 * webrtc.usermedia.audioLevel);
 					if (level < threshhold) {
 						level = 0;
+					} else {
+						level = level*activityMuliplier;
 					}
-					this.audioActivityMeter = this.audioActivityMeter - this.audioActivityHistory[this.audioActivityCount] + level;
-					this.audioActivityHistory[this.audioActivityCount] = level;
-					this.audioActivityCount += 1;
-	 				this.audioActivityCount = this.audioActivityCount % 10;
+					this.audioActivityHistory.push(level);
+					if (this.audioActivityHistory.length > activityHistorySize) {
+						this.audioActivityHistory.shift();
+					}
+					this.audioActivityMeter = this.audioActivityHistory.reduce(function(a, b) {
+						return a + b;
+					}) / this.audioActivityHistory.length;
 	 				//console.log("audioActivityMeter", this.audioActivityMeter, $scope.talking);
 	 				if (!$scope.talking) {
 	 					talking = this.audioActivityMeter > activityThreshold ? true : false;
@@ -81,13 +89,13 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
  				} else {
  					// Clean up.
  					//console.log("cleaning up");
- 					this.audioActivityHistory = [0,0,0,0,0,0,0,0,0,0];
+ 					this.audioActivityHistory = [];
  					this.audioActivityMeter = 0;
-					this.audioActivityCount = 0;
 					talking = false;
  				}
  				if (talking !== $scope.talking) {
  					// Apply to scope.
+ 					//console.log("talking changed", talking);
  					safeApply($scope, function() {
 						$scope.talking = talking;
  					});

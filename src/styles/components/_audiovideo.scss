@@ -54,6 +54,26 @@ right:520px;
 		}
 	}
 }
+
+.remoteVide .peerlabel {
+	-webkit-transition: color 500ms ease-out;
+	-moz-transition: color 500ms ease-out;
+	-o-transition: color 500ms ease-out;
+	transition: color 500ms ease-out;
+}
+
+.remoteVideo.talking .peerlabel {
+	color: #9dd53a;
+}
+
+.localVideo video {
+	border:1px solid transparent;
+}
+
+.localVideo.talking video {
+	border:1px solid #9dd53a;
+}
+
 @media only screen and (max-width: 630px) {
 	.mainScreenshare #audiovideo {
 		display:none;

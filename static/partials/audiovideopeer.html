@@ -1,7 +1,6 @@
-<div class="remoteVideo" ng-class="{'withvideo': withvideo, 'onlyaudio': onlyaudio}">
+<div class="remoteVideo" ng-class="{'withvideo': withvideo, 'onlyaudio': onlyaudio, 'talking': talking}">
 	<video autoplay="autoplay"></video>
 	<div class="peerlabel">{{peerid|displayName}}</div>
-	<div class="indicator"><i class="fa fa-volume-up"></i></div>
 	<div class="peeractions">
 		<a title="{{_('Start chat')}}" ng-click="doChat()" class="btn btn-default"><i class="fa fa-comments-o"></i></a>
 	</div>
