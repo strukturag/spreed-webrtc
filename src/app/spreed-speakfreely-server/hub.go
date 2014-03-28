@@ -146,12 +146,12 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 	bar.Write([]byte(id))
 	id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
 	foo := hmac.New(sha1.New, h.turnSecret)
-	now := int32(time.Now().Unix())
+	expiration := int32(time.Now().Unix())+turnTTL
 	switch h.turnUsernameFormat {
 	case "time:id":
-		user = fmt.Sprintf("%d:%s", now, id)
+		user = fmt.Sprintf("%d:%s", expiration, id)
 	default:
-		user = fmt.Sprintf("%s:%d", id, now)
+		user = fmt.Sprintf("%s:%d", id, expiration)
 	}
 	foo.Write([]byte(user))
 	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
