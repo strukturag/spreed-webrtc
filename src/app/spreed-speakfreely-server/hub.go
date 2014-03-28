@@ -69,7 +69,6 @@ type Hub struct {
 	config                *Config
 	sessionSecret         []byte
 	turnSecret            []byte
-	turnUsernameFormat    string
 	tickets               *securecookie.SecureCookie
 	count                 uint64
 	mutex                 sync.RWMutex
@@ -78,7 +77,7 @@ type Hub struct {
 	unicastChatMessages   uint64
 }
 
-func NewHub(version string, config *Config, sessionSecret, turnSecret, turnUsernameFormat string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, turnSecret string) *Hub {
 
 	h := &Hub{
 		connectionTable:    make(map[string]*Connection),
@@ -88,7 +87,6 @@ func NewHub(version string, config *Config, sessionSecret, turnSecret, turnUsern
 		config:             config,
 		sessionSecret:      []byte(sessionSecret),
 		turnSecret:         []byte(turnSecret),
-		turnUsernameFormat: turnUsernameFormat,
 	}
 
 	h.tickets = securecookie.New(h.sessionSecret, nil)
@@ -141,18 +139,12 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 	if len(h.turnSecret) == 0 {
 		return &DataTurn{}
 	}
-	var user string
 	bar := sha256.New()
 	bar.Write([]byte(id))
 	id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
 	foo := hmac.New(sha1.New, h.turnSecret)
 	expiration := int32(time.Now().Unix())+turnTTL
-	switch h.turnUsernameFormat {
-	case "time:id":
-		user = fmt.Sprintf("%d:%s", expiration, id)
-	default:
-		user = fmt.Sprintf("%s:%d", id, expiration)
-	}
+	user := fmt.Sprintf("%d:%s", expiration, id)
 	foo.Write([]byte(user))
 	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
 	return &DataTurn{user, password, turnTTL, h.config.TurnURIs}
