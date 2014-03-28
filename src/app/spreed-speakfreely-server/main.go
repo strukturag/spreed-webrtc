@@ -211,6 +211,11 @@ func runner(runtime phoenix.Runtime) error {
 		turnSecret = ""
 	}
 
+	turnUsernameFormat, err := runtime.GetString("app", "turnUsernameFormat")
+	if err != nil {
+		turnUsernameFormat = "id:time"
+	}
+
 	stunURIsString, err := runtime.GetString("app", "stunURIs")
 	if err != nil {
 		stunURIsString = ""
@@ -269,7 +274,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create our hub instance.
-	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
+	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret, turnUsernameFormat)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
