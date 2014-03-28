@@ -80,13 +80,13 @@ type Hub struct {
 func NewHub(version string, config *Config, sessionSecret, turnSecret string) *Hub {
 
 	h := &Hub{
-		connectionTable:    make(map[string]*Connection),
-		userTable:          make(map[string]*User),
-		roomTable:          make(map[string]*RoomWorker),
-		version:            version,
-		config:             config,
-		sessionSecret:      []byte(sessionSecret),
-		turnSecret:         []byte(turnSecret),
+		connectionTable: make(map[string]*Connection),
+		userTable:       make(map[string]*User),
+		roomTable:       make(map[string]*RoomWorker),
+		version:         version,
+		config:          config,
+		sessionSecret:   []byte(sessionSecret),
+		turnSecret:      []byte(turnSecret),
 	}
 
 	h.tickets = securecookie.New(h.sessionSecret, nil)
@@ -143,7 +143,7 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 	bar.Write([]byte(id))
 	id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
 	foo := hmac.New(sha1.New, h.turnSecret)
-	expiration := int32(time.Now().Unix())+turnTTL
+	expiration := int32(time.Now().Unix()) + turnTTL
 	user := fmt.Sprintf("%d:%s", expiration, id)
 	foo.Write([]byte(user))
 	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
