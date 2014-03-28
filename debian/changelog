@@ -1,3 +1,19 @@
+spreed-speakfreely-server (0.17.1) precise; urgency=low
+
+  * TURN user names now use expiration time stamp. This fixes compatibility
+    with latest TURN REST specification and requires a reasonably recent
+    TURN server (eg. rfc5766-turn-server >= 2.5)..
+  * Fixed iceServers response to be an array for Chrome >= 34.
+  * Always make screen sharing availble when browser supports it.
+  * Fixed audio indicator to actually work correctly.
+  * Added support for screen sharing options (fit screen).
+  * HTML fixes.
+  * Added method to generate URL-safe random string.
+  * Use strong random number generator.
+  * Support configuring pprof HTTP server. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 28 Mar 2014 16:48:46 +0100
+
 spreed-speakfreely-server (0.16.1) precise; urgency=low
 
   * Implemented chat session control UI.
