@@ -1,4 +1,4 @@
-spreed-speakfreely-server (0.17.1) precise; urgency=low
+spreed-speakfreely-server (0.17.0) precise; urgency=low
 
   * TURN user names now use expiration time stamp. This fixes compatibility
     with latest TURN REST specification and requires a reasonably recent
