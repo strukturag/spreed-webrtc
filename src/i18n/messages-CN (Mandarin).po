@@ -1,0 +1,432 @@
+# Translations template for Spreed Speak Freely.
+# Copyright (C) 2014 struktur AG
+# This file is distributed under the same license as the Spreed Speak Freely
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"PO-Revision-Date: 2014-03-27 16:45+0100\n"
+"Last-Translator: \n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_Hant\n"
+
+msgid "Share your screen"
+msgstr "Here goes the translated text....."
+
+msgid "Chat"
+msgstr ""
+
+msgid "Mute microphone"
+msgstr ""
+
+msgid "Turn camera off"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Your audio level"
+msgstr ""
+
+msgid "Start chat"
+msgstr ""
+
+msgid "Start video call"
+msgstr ""
+
+msgid "Start audio conference"
+msgstr ""
+
+msgid "No other users online"
+msgstr ""
+
+msgid "Chat sessions"
+msgstr ""
+
+msgid "Room chat"
+msgstr ""
+
+msgid "Peer to peer"
+msgstr ""
+
+msgid "Close chat"
+msgstr ""
+
+msgid "is typing..."
+msgstr ""
+
+msgid "has stopped typing..."
+msgstr ""
+
+msgid "Type here to chat..."
+msgstr ""
+
+msgid "Send"
+msgstr ""
+
+msgid "File sharing"
+msgstr ""
+
+msgid "File is no longer available"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Open"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Unshare"
+msgstr ""
+
+msgid "Retry"
+msgstr ""
+
+msgid "Download failed."
+msgstr ""
+
+msgid "Change room"
+msgstr ""
+
+msgid "Room"
+msgstr ""
+
+msgid "Main"
+msgstr ""
+
+msgid "Leave room"
+msgstr ""
+
+msgid "Current room"
+msgstr ""
+
+msgid "Your picture"
+msgstr ""
+
+msgid "Take picture"
+msgstr ""
+
+msgid "Waiting for camera"
+msgstr ""
+
+msgid "Your name"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Your picture and name are visible to others."
+msgstr ""
+
+msgid "Microphone"
+msgstr ""
+
+msgid "Camera"
+msgstr ""
+
+msgid "Video quality"
+msgstr ""
+
+msgid "Low"
+msgstr ""
+
+msgid "High"
+msgstr ""
+
+msgid "720p"
+msgstr ""
+
+msgid "1080p"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Use browser language"
+msgstr ""
+
+msgid "Language changes become active on reload."
+msgstr ""
+
+msgid "Default room"
+msgstr ""
+
+msgid "Set alternative room to join at start."
+msgstr ""
+
+msgid "Desktop notification"
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Denied - check your browser settings"
+msgstr ""
+
+msgid "Allowed"
+msgstr ""
+
+msgid "Advanced settings"
+msgstr ""
+
+msgid "Stereo audio"
+msgstr ""
+
+msgid "Max video frame rate"
+msgstr ""
+
+msgid "auto"
+msgstr ""
+
+msgid "Media screen sharing"
+msgstr ""
+
+msgid "Chrome usermedia screen capture feature is required."
+msgstr ""
+
+msgid "Experimental settings"
+msgstr ""
+
+msgid "Show advanced settings"
+msgstr ""
+
+msgid "Hide advanced settings"
+msgstr ""
+
+msgid "Remember settings"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Share by Email"
+msgstr ""
+
+msgid "Share on Facebook"
+msgstr ""
+
+msgid "Share on Twitter"
+msgstr ""
+
+msgid "Share on Google Plus"
+msgstr ""
+
+msgid "Share on XING"
+msgstr ""
+
+msgid "Initializing"
+msgstr ""
+
+msgid "Online"
+msgstr ""
+
+msgid "Calling"
+msgstr ""
+
+msgid "Hangup"
+msgstr ""
+
+msgid "In call with"
+msgstr ""
+
+msgid "Conference with"
+msgstr ""
+
+msgid "Your are offline"
+msgstr ""
+
+msgid "Go online"
+msgstr ""
+
+msgid "Connection interrupted"
+msgstr ""
+
+msgid "An error occured"
+msgstr ""
+
+msgid "Incoming call"
+msgstr ""
+
+msgid "from"
+msgstr ""
+
+msgid "Accept call"
+msgstr ""
+
+msgid "Reject"
+msgstr ""
+
+msgid "Waiting for camera/microphone access"
+msgstr ""
+
+msgid "Please wait"
+msgstr ""
+
+msgid "Checking camera and microphone access."
+msgstr ""
+
+msgid "Please allow access to your camera and microphone."
+msgstr ""
+
+msgid "Camera / microphone access required."
+msgstr ""
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access "
+"for this site."
+msgstr ""
+
+msgid "Skip check"
+msgstr ""
+
+msgid "Click here for help (Google Chrome)."
+msgstr ""
+
+msgid "Please set your user details and settings."
+msgstr ""
+
+msgid ""
+"Please note that some settings require you to reload or to make a new call "
+"to become effective."
+msgstr ""
+
+msgid "Create your room"
+msgstr ""
+
+msgid "This is your room link:"
+msgstr ""
+
+msgid "Creating room link ..."
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Just click start"
+msgstr ""
+
+msgid "Share this URL with the people you want to meet."
+msgstr ""
+
+msgid "You can use and re-use this room as many times as you want."
+msgstr ""
+
+msgid "Peer to peer chat active."
+msgstr ""
+
+msgid "Peer to peer chat is now off."
+msgstr ""
+
+msgid " is now offline."
+msgstr ""
+
+msgid " is now online."
+msgstr ""
+
+msgid "You share file:"
+msgstr ""
+
+msgid "Incoming file:"
+msgstr ""
+
+msgid "Quit from Spreed Speak Freely?"
+msgstr ""
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr ""
+
+msgid "Failed to access camera/microphone."
+msgstr ""
+
+msgid "Failed to establish peer connection."
+msgstr ""
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr ""
+
+msgid "Oops"
+msgstr ""
+
+msgid "Peer connection failed. Check your settings."
+msgstr ""
+
+msgid "User hung up because of error."
+msgstr ""
+
+msgid " is busy. Try again later."
+msgstr ""
+
+msgid " rejected your call."
+msgstr ""
+
+msgid " does not pick up."
+msgstr ""
+
+msgid " tried to call you."
+msgstr ""
+
+msgid " called you."
+msgstr ""
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr ""
+
+msgid "Chat with"
+msgstr ""
+
+msgid "Message from "
+msgstr ""
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr ""
+
+msgid "Your browser does not support file transfer."
+msgstr ""
+
+msgid "Meet with me here:"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Hint"
+msgstr ""
+
+msgid "Please confirm"
+msgstr ""
+
+msgid "More information required"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Access code required"
+msgstr ""
+
+msgid "Access denied"
+msgstr ""
+
+msgid "Please provide a valid access code."
+msgstr ""
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try again."
+msgstr ""
