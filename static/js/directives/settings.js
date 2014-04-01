@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['text!partials/settings.html'], function(template) {
+define(['underscore', 'text!partials/settings.html'], function(_, template) {
 
 	return ["$compile", function($compile) {
 
-        var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', function($scope, desktopNotify, mediaSources, safeApply) {
+        var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation) {
 
             $scope.layout.settings = false;
             $scope.showAdvancedSettings = true;
@@ -31,6 +31,18 @@ define(['text!partials/settings.html'], function(template) {
             $scope.rememberSettings = true;
             $scope.desktopNotify = desktopNotify;
             $scope.mediaSources = mediaSources;
+            $scope.availableLanguages = [
+                {
+                    code: "",
+                    name: translation._("Use browser language")
+                }
+            ];
+            _.each(availableLanguages, function(name, code) {
+                $scope.availableLanguages.push({
+                    code: code,
+                    name: name
+                });
+            });
 
             var localStream = null;
 

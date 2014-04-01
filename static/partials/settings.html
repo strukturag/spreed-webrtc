@@ -54,11 +54,7 @@
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Language')}}</label>
         <div class="col-xs-8">
-          <select class="form-control" ng-model="user.settings.language">
-            <option value="">{{_('Use browser language')}}</option>
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-          </select>
+          <select class="form-control" ng-model="user.settings.language" ng-options="l.code as l.name for l in availableLanguages | orderBy:'code'"></select>
           <span class="help-block">{{_('Language changes become active on reload.')}}</span>
         </div>
       </div>
