@@ -3,11 +3,19 @@ PROJECT := "Spreed Speak Freely"
 COPYRIGHT := "struktur AG"
 EMAIL := "simon@struktur.de"
 ROOT := "$(CURDIR)/../.."
+LANGUAGES := $(shell find ./ -iname '*.po' -printf '%f\n' | sed 's/\.po$$//' | sed 's/\messages-//')
 
 # Tools
 NODEJS := nodejs
 PYBABEL := pybabel
 NODE_PATH := /usr/local/lib/node_modules:/usr/lib/node_modules
+PYTHON := python
+
+build: update
+	for lang in $(LANGUAGES) ; do \
+		NODE_PATH=$(NODE_PATH) $(NODEJS) helpers/po2json messages-$$lang.po $(ROOT)/static/translation/messages-$$lang.json ; \
+	done
+	$(PYTHON) helpers/languages.py >$(ROOT)/static/translation/languages.js
 
 extract:
 	$(PYBABEL) extract -F babel.cfg -k _n:1,2 -k _ \
@@ -23,7 +31,7 @@ extract:
 		$(ROOT)/static/js/services
 
 update:
-	$(PYBABEL) update -l de -i messages.pot -o messages-de.po
+	for lang in $(LANGUAGES) ; do \
+		$(PYBABEL) update -l $$lang -i messages.pot -o messages-$$lang.po ; \
+	done
 
-build: update
-	NODE_PATH=$(NODE_PATH) $(NODEJS) helpers/po2json messages-de.po $(ROOT)/static/translation/messages-de.json

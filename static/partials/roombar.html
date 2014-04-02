@@ -1,6 +1,6 @@
-<div class="roombar form-horizontal" ng-class="{notvisible: hideRoomBar}">
-	<a class="roombarbutton" ng-model="hideRoomBar" btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Change room')}}"><i class="fa fa-th-list"></i></a>
-	<form name="roombarform" class="roombarcontent form-group">
+<div class="roombar overlaybar form-horizontal" ng-class="{notvisible: hideRoomBar}">
+	<a class="overlaybarbutton" ng-model="hideRoomBar" btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Change room')}}"><i class="fa fa-th-list"></i></a>
+	<form name="roombarform" class="overlaybarcontent form-group">
 		<label class="pull-left control-label hidden-xs">{{_('Room')}}</label>
 		<div class="pull-left">
 			<div class="input-group">
@@ -11,5 +11,5 @@
 			<social-share/>
 		</div>
 	</form>
-	<label class="control-label roomlabellabel" title="{{_('Current room')}}">{{roomid}}</label>
+	<label class="control-label overlaybaroverlay" title="{{_('Current room')}}">{{roomid}}</label>
 </div>

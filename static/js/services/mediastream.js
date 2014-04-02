@@ -28,10 +28,8 @@ define([
 
 ], function($, _, Connector, Api, WebRTC, tokens) {
 
-    return ["$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", function($route, $location, $window, visibility, alertify, $http, safeApply, $timeout) {
+    return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout) {
 
-        var globalcontext = $("#globalcontext").text();
-        var context = JSON.parse(globalcontext);
         var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
         var version = context.Cfg.Version || "unknown";
         console.log("Service version: "+version);

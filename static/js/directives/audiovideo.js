@@ -51,14 +51,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                 buddyData.push(peerid);
                 subscope.withvideo = false;
                 subscope.onlyaudio = false;
+                subscope.talking = false;
                 subscope.applyTalking = function(talking) {
-                    var element = subscope.element;
-                    var has = element.hasClass("talking");
-                    if (talking && !has) {
-                        element.addClass("talking");
-                    } else if (!talking && has) {
-                        element.removeClass("talking");
-                    }
+                    subscope.talking = !!talking;
+                    safeApply(subscope);
                 };
                 subscope.$on("active", function() {
                     console.log("Stream scope is now active", peerid);

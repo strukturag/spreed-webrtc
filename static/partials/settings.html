@@ -45,8 +45,7 @@
           <div class="btn-group">
             <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'low'">{{_('Low')}}</button>
             <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'high'">{{_('High')}}</button>
-            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('720p')}}</button>
-            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'fullhd'">{{_('1080p')}}</button>
+            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('HD')}}</button>
           </div>
         </div>
       </div>
@@ -54,11 +53,7 @@
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Language')}}</label>
         <div class="col-xs-8">
-          <select class="form-control" ng-model="user.settings.language">
-            <option value="">{{_('Use browser language')}}</option>
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-          </select>
+          <select class="form-control" ng-model="user.settings.language" ng-options="l.code as l.name for l in availableLanguages | orderBy:'code'"></select>
           <span class="help-block">{{_('Language changes become active on reload.')}}</span>
         </div>
       </div>
@@ -106,18 +101,6 @@
                 <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="30">30</button>
                 <button type="button" class="btn btn-default" ng-model="user.settings.maxFrameRate" btn-radio="'auto'">{{_('auto')}}</button>
               </div>
-            </div>
-          </div>
-
-          <div class="form-group" ng-show="isChrome && webrtcDetectedVersion >= 32">
-            <label class="col-xs-4 control-label">{{_('Media screen sharing')}}</label>
-            <div class="col-xs-8">
-              <div class="checkbox">
-              	<label>
-                	<input type="checkbox" ng-model="user.settings.screensharingMedia"/>
-            	</label>
-              </div>
-              <span class="help-block">{{_('Chrome usermedia screen capture feature is required.')}} (chrome://flags/#enable-usermedia-screen-capture)</span>
             </div>
           </div>
 

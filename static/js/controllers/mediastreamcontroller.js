@@ -149,8 +149,8 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                 videoQuality: "high",
                 stereo: true,
                 maxFrameRate: 20,
-                screensharingMedia: false,
-                defaultRoom: ""
+                defaultRoom: "",
+                language: ""
             }
         };
 
