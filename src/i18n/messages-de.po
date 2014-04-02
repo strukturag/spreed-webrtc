@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-25 16:27+0100\n"
-"PO-Revision-Date: 2014-03-25 16:31+0100\n"
+"POT-Creation-Date: 2014-04-02 12:37+0200\n"
+"PO-Revision-Date: 2014-04-02 12:37+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -150,17 +150,11 @@ msgstr "Gering"
 msgid "High"
 msgstr "Hoch"
 
-msgid "720p"
-msgstr "720p"
-
-msgid "1080p"
-msgstr "1080p"
+msgid "HD"
+msgstr "HD"
 
 msgid "Language"
 msgstr "Sprache"
-
-msgid "Use browser language"
-msgstr "Browsereinstellung"
 
 msgid "Language changes become active on reload."
 msgstr "Sie müssen die Seite neu laden, um die Spracheinstellung zu übernehmen."
@@ -194,12 +188,6 @@ msgstr "Max. Bildwiederholrate"
 
 msgid "auto"
 msgstr "auto"
-
-msgid "Media screen sharing"
-msgstr "Media Bildschirmfreigabe"
-
-msgid "Chrome usermedia screen capture feature is required."
-msgstr "Das Chrome Feature Bildschirmaufzeichnung in getUserMedia() wird benötigt."
 
 msgid "Experimental settings"
 msgstr "Experimentelle Einstellungen"
@@ -419,6 +407,9 @@ msgstr ""
 "usermedia-screen-capture und öffnen Sie diese Adresse in Ihrem Browser. "
 "Aktivieren Sie die oberste Einstellung und starten dann den Browser neu. "
 "Anschließend können Sie die Bildschirmfreigabe benutzen."
+
+msgid "Use browser language"
+msgstr "Browsereinstellung"
 
 msgid "Meet with me here:"
 msgstr "Meeting:"
