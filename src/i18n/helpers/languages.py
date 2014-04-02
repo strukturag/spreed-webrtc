@@ -5,6 +5,7 @@
 LANGUAGES = {
 	"en": "English",
 	"de": "Deutsch",
+	"zh-cn": "中文",
 }
 
 def main():
