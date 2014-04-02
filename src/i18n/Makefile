@@ -32,6 +32,10 @@ extract:
 
 update:
 	for lang in $(LANGUAGES) ; do \
-		$(PYBABEL) update -l $$lang -i messages.pot -o messages-$$lang.po ; \
+		l=$$lang ; \
+		if echo $$l | grep -q -; then \
+			l=`echo $$lang | awk '{split($$0,a,"-"); printf "%s_%s", a[1],toupper(a[2])}'` ; \
+		fi ; \
+		$(PYBABEL) update -l $$l -i messages.pot -o messages-$$lang.po ; \
 	done
 
