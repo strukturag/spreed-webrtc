@@ -1,4 +1,4 @@
-# Translations template for Spreed Speak Freely.
+# Korean translations for Spreed Speak Freely.
 # Copyright (C) 2014 struktur AG
 # This file is distributed under the same license as the Spreed Speak Freely
 # project.
@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-04-02 12:37+0200\n"
 "PO-Revision-Date: 2014-03-31 23:28+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"X-Generator: Poedit 1.6.4\n"
-"Language: ko\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Share your screen"
 msgstr "화면 공유하기"
@@ -113,6 +111,13 @@ msgstr "방 이동"
 msgid "Current room"
 msgstr "현재 방"
 
+#, fuzzy
+msgid "Screen sharing options"
+msgstr "미디어 화면 공유"
+
+msgid "Fit screen."
+msgstr ""
+
 msgid "Your picture"
 msgstr "당신 사진"
 
@@ -146,17 +151,11 @@ msgstr "낮음"
 msgid "High"
 msgstr "높음"
 
-msgid "720p"
-msgstr "720p"
-
-msgid "1080p"
-msgstr "1080p"
+msgid "HD"
+msgstr ""
 
 msgid "Language"
 msgstr "언어"
-
-msgid "Use browser language"
-msgstr "브라우저 언어 사용"
 
 msgid "Language changes become active on reload."
 msgstr "언어 변경이 재로드 되고 있습니다"
@@ -190,12 +189,6 @@ msgstr "비디오 프레임비울 최대화"
 
 msgid "auto"
 msgstr "자동"
-
-msgid "Media screen sharing"
-msgstr "미디어 화면 공유"
-
-msgid "Chrome usermedia screen capture feature is required."
-msgstr "크롬의 usermedia screen capture feature 필요함"
 
 msgid "Experimental settings"
 msgstr "실험 설정"
@@ -285,11 +278,9 @@ msgid "Camera / microphone access required."
 msgstr "카메라/마이크 사용이 필요합니다"
 
 msgid ""
-"Please check your browser settings and allow camera and microphone access "
-"for this site."
-msgstr ""
-"이 사이크에 대하여 브라우저의 설정을 확인하고 카메라와 마이크의 사용을 허용 "
-"하세요"
+"Please check your browser settings and allow camera and microphone access"
+" for this site."
+msgstr "이 사이크에 대하여 브라우저의 설정을 확인하고 카메라와 마이크의 사용을 허용 하세요"
 
 msgid "Skip check"
 msgstr "확인 넘어가기"
@@ -301,8 +292,8 @@ msgid "Please set your user details and settings."
 msgstr "사용자의 세부상세와 설정을 지정하세요 "
 
 msgid ""
-"Please note that some settings require you to reload or to make a new call "
-"to become effective."
+"Please note that some settings require you to reload or to make a new "
+"call to become effective."
 msgstr "일부 설정은 다시로드 하거나 새로운 전화가 연결시에 유효할수 있습니다."
 
 msgid "Create your room"
@@ -348,9 +339,7 @@ msgid "Quit from Spreed Speak Freely?"
 msgstr "Spreed Speak Freely사용을 중지 하시겠습니까?"
 
 msgid "Restart required to apply updates. Click ok to restart now."
-msgstr ""
-"업데이트를 적용하려면 재시작이 필요 합니다. 지금 재시작 하려면 ok를 클릭 하십"
-"시오"
+msgstr "업데이트를 적용하려면 재시작이 필요 합니다. 지금 재시작 하려면 ok를 클릭 하십시오"
 
 msgid "Failed to access camera/microphone."
 msgstr "카메라/마이크 사용 실패"
@@ -401,6 +390,16 @@ msgstr "당신은 현재 방%s ...에 있습니다"
 msgid "Your browser does not support file transfer."
 msgstr "당신의 브라우저가 회일전송을 지원하지 않습니다."
 
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+
+msgid "Use browser language"
+msgstr "브라우저 언어 사용"
+
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
 
@@ -432,6 +431,7 @@ msgid "Please provide a valid access code."
 msgstr "유효한 접속코드가 필요합니다."
 
 msgid ""
-"Failed to verify access code. Check your Internet connection and try again."
-msgstr ""
-"접속코드 확인이 실패 했습니다. 인터넷 연결을 확인하고 다시 시도해 주십시오. "
+"Failed to verify access code. Check your Internet connection and try "
+"again."
+msgstr "접속코드 확인이 실패 했습니다. 인터넷 연결을 확인하고 다시 시도해 주십시오. "
+
