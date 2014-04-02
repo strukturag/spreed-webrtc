@@ -100,8 +100,7 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get languages from request.
-	// TODO(longsleep): Added supported and default language to configuration.
-	langs := getRequestLanguages(r, []string{"en", "de"})
+	langs := getRequestLanguages(r, []string{})
 	if len(langs) == 0 {
 		langs = append(langs, "en")
 	}

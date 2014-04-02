@@ -172,9 +172,9 @@ if (navigator.mozGetUserMedia) {
     var iceServers = [];
     if (webrtcDetectedVersion >= 34) {
       // .urls is supported since Chrome M34.
-      iceServers = {'urls': urls,
+      iceServers = [{'urls': urls,
                     'credential': password,
-                    'username': username };
+                    'username': username }];
     } else {
       for (i = 0; i < urls.length; i++) {
         var iceServer = createIceServer(urls[i],

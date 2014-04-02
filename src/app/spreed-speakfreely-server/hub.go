@@ -24,6 +24,7 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -76,7 +77,7 @@ type Hub struct {
 	unicastChatMessages   uint64
 }
 
-func NewHub(version string, config *Config, sessionSecret string, turnSecret string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, turnSecret string) *Hub {
 
 	h := &Hub{
 		connectionTable: make(map[string]*Connection),
@@ -138,8 +139,12 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 	if len(h.turnSecret) == 0 {
 		return &DataTurn{}
 	}
+	bar := sha256.New()
+	bar.Write([]byte(id))
+	id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
 	foo := hmac.New(sha1.New, h.turnSecret)
-	user := fmt.Sprintf("%s:%d", id, int32(time.Now().Unix()))
+	expiration := int32(time.Now().Unix()) + turnTTL
+	user := fmt.Sprintf("%d:%s", expiration, id)
 	foo.Write([]byte(user))
 	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
 	return &DataTurn{user, password, turnTTL, h.config.TurnURIs}

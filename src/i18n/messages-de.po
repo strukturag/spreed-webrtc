@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
-"PO-Revision-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-04-02 12:37+0200\n"
+"PO-Revision-Date: 2014-04-02 12:37+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -111,6 +111,12 @@ msgstr "Raum verlassen"
 msgid "Current room"
 msgstr "Raum"
 
+msgid "Screen sharing options"
+msgstr "Optionen für Bildschirmfreigabe"
+
+msgid "Fit screen."
+msgstr "Bildschirm einpassen."
+
 msgid "Your picture"
 msgstr "Ihr Bild"
 
@@ -144,17 +150,11 @@ msgstr "Gering"
 msgid "High"
 msgstr "Hoch"
 
-msgid "720p"
-msgstr "720p"
-
-msgid "1080p"
-msgstr "1080p"
+msgid "HD"
+msgstr "HD"
 
 msgid "Language"
 msgstr "Sprache"
-
-msgid "Use browser language"
-msgstr "Browsereinstellung"
 
 msgid "Language changes become active on reload."
 msgstr "Sie müssen die Seite neu laden, um die Spracheinstellung zu übernehmen."
@@ -188,12 +188,6 @@ msgstr "Max. Bildwiederholrate"
 
 msgid "auto"
 msgstr "auto"
-
-msgid "Media screen sharing"
-msgstr "Media Bildschirmfreigabe"
-
-msgid "Chrome usermedia screen capture feature is required."
-msgstr "Das Chrome Feature Bildschirmaufzeichnung in getUserMedia() wird benötigt."
 
 msgid "Experimental settings"
 msgstr "Experimentelle Einstellungen"
@@ -400,6 +394,22 @@ msgstr "Sie sind nun im Raum %s ..."
 
 msgid "Your browser does not support file transfer."
 msgstr "Mit Ihrem Browser können keine Dateien übertragen werden."
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+"Die Berechtigung für die Bildschirmaufzeichnung wurde verweigert. Bitte "
+"stellen Sie sicher die Unterstützung für Bildschimaufzeichnung in Ihrem "
+"Browser aktiviert ist. Kopieren Sie dazu chrome://flags/#enable-"
+"usermedia-screen-capture und öffnen Sie diese Adresse in Ihrem Browser. "
+"Aktivieren Sie die oberste Einstellung und starten dann den Browser neu. "
+"Anschließend können Sie die Bildschirmfreigabe benutzen."
+
+msgid "Use browser language"
+msgstr "Browsereinstellung"
 
 msgid "Meet with me here:"
 msgstr "Meeting:"

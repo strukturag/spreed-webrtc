@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-04-02 12:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,6 +111,12 @@ msgstr ""
 msgid "Current room"
 msgstr ""
 
+msgid "Screen sharing options"
+msgstr ""
+
+msgid "Fit screen."
+msgstr ""
+
 msgid "Your picture"
 msgstr ""
 
@@ -144,16 +150,10 @@ msgstr ""
 msgid "High"
 msgstr ""
 
-msgid "720p"
-msgstr ""
-
-msgid "1080p"
+msgid "HD"
 msgstr ""
 
 msgid "Language"
-msgstr ""
-
-msgid "Use browser language"
 msgstr ""
 
 msgid "Language changes become active on reload."
@@ -187,12 +187,6 @@ msgid "Max video frame rate"
 msgstr ""
 
 msgid "auto"
-msgstr ""
-
-msgid "Media screen sharing"
-msgstr ""
-
-msgid "Chrome usermedia screen capture feature is required."
 msgstr ""
 
 msgid "Experimental settings"
@@ -393,6 +387,16 @@ msgid "You are now in room %s ..."
 msgstr ""
 
 msgid "Your browser does not support file transfer."
+msgstr ""
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+
+msgid "Use browser language"
 msgstr ""
 
 msgid "Meet with me here:"

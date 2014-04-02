@@ -1,12 +1,12 @@
 <div id="card">
 	<div id="local">
       <video id="localVideo" autoplay="autoplay" muted="true"></video>
+      <div class="overlaylogo"></div>
     </div>
     <div id="remote">
       <div id="remoteVideos"></div>
-      <div id="mini" ng-class="{talking: talking}">
+      <div id="mini" class="localVideo" ng-class="{talking: talking}">
         <video id="miniVideo" autoplay="autoplay" muted="true"></video>
-        <div class="indicator"><i class="fa fa-volume-up"></i></div>
       </div>
     </div>
 </div>

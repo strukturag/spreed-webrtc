@@ -86,7 +86,8 @@ The latest version of Spreed Speak Freely can be found on GitHub:
   configured with shared secret support.
 
   See https://code.google.com/p/rfc5766-turn-server/ for a free
-  open source TURN server implementation.
+  open source TURN server implementation. Make sure to use a recent
+  version (We recommend 3.2). Versions below 2.5 are not supported.
 
 
 ## Contributing

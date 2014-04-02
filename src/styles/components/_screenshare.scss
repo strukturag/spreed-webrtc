@@ -28,10 +28,30 @@
 	right:0px;
 	top:0px;
 	bottom:0px;
-	overflow:auto;
 }
-.screenshare .remoteScreen {
+.screensharepane {
+	position:absolute;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	top:0px;
+	overflow:auto;
+	background:black;
+}
+.screensharepane .remotescreen {
 	position:relative;
 }
-.screenshare video {
+.screensharepane video {
+	width: 100%;
+	max-height: 100%;
+}
+.remotesize .screensharepane video {
+	width: auto;
+	max-height: none;
+}
+
+.screenshare .overlaybar {
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
 }

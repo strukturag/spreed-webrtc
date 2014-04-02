@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -28,11 +28,15 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			var screenCount = 0;
 			var screens = {};
+			var pane = $element.find(".screensharepane");
 
 			$scope.layout.screenshare = false;
 			$scope.usermedia = null;
 			$scope.connected = false;
 			$scope.screenshare = null;
+
+			$scope.hideOptionsBar = true;
+			$scope.fitScreen = true;
 
 			var handleRequest = function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
 
@@ -125,7 +129,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				var peerid = subscope.peerid = currentscreenshare.id;
 
 				peerTemplate(subscope, function(clonedElement, scope) {
-					$element.append(clonedElement);
+					pane.append(clonedElement);
 					scope.element = clonedElement;
 					var video = clonedElement.find("video").get(0);
 					$window.attachMediaStream(video, stream);
@@ -218,10 +222,13 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					});
 				});
 
-				usermedia.e.one("mediaerror", function() {
+				usermedia.e.one("mediaerror", function(event, usermedia, error) {
 					$scope.$apply(function(scope) {
-						scope.usermedia = null;
+						scope.stopScreenshare();
 					});
+					if (error && error.name === "PermissionDeniedError") {
+						alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
+					}
 				});
 
 			};
@@ -254,7 +261,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					if (elem) {
 						BigScreen.toggle(elem);
 					} else {
-						BigScreen.toggle($element.get(0));
+						BigScreen.toggle(pane.get(0));
 					}
                 }
 
@@ -272,7 +279,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).on("dblclick", ".remoteScreen", function(event) {
+				$(iElement).on("dblclick", ".remotescreen", function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
 				});
 			}

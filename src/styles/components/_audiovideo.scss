@@ -54,6 +54,43 @@ right:520px;
 		}
 	}
 }
+
+.remoteVideo .peerlabel {
+	-webkit-transition: color 500ms ease-out;
+	-moz-transition: color 500ms ease-out;
+	-o-transition: color 500ms ease-out;
+	transition: color 500ms ease-out;
+}
+
+.remoteVideo.talking .peerlabel {
+	color: #9dd53a;
+}
+
+.remoteVideo .overlaylogo {
+	position:absolute;
+	right:4%;
+	top:4%;
+	width:20%;
+	height:20%;
+	max-height:40px;
+	max-width:111px;
+	background-image: url(../img/logo-overlay.png);
+	background-size:100%;
+	background-repeat:no-repeat;
+	background-position:center;
+	opacity:0.5;
+	z-index:2;
+	pointer-events: none;
+}
+
+.localVideo video {
+	border:1px solid transparent;
+}
+
+.localVideo.talking video {
+	border:1px solid #9dd53a;
+}
+
 @media only screen and (max-width: 630px) {
 	.mainScreenshare #audiovideo {
 		display:none;
