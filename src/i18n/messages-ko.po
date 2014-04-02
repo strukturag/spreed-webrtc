@@ -1,0 +1,437 @@
+# Translations template for Spreed Speak Freely.
+# Copyright (C) 2014 struktur AG
+# This file is distributed under the same license as the Spreed Speak Freely
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"PO-Revision-Date: 2014-03-31 23:28+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.6.4\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Share your screen"
+msgstr "화면 공유하기"
+
+msgid "Chat"
+msgstr "대화"
+
+msgid "Mute microphone"
+msgstr "음성제거"
+
+msgid "Turn camera off"
+msgstr "카메라꺼짐"
+
+msgid "Settings"
+msgstr "설정"
+
+msgid "Your audio level"
+msgstr "음성크기"
+
+msgid "Start chat"
+msgstr "대화시작"
+
+msgid "Start video call"
+msgstr "화상회의 시작"
+
+msgid "Start audio conference"
+msgstr "음성회의 시작"
+
+msgid "No other users online"
+msgstr "온라인에 다른 대화상대 없음"
+
+msgid "Chat sessions"
+msgstr "대화 세션"
+
+msgid "Room chat"
+msgstr "대화 방"
+
+msgid "Peer to peer"
+msgstr "일대일"
+
+msgid "Close chat"
+msgstr "대화 종료"
+
+msgid "is typing..."
+msgstr "입력중"
+
+msgid "has stopped typing..."
+msgstr "입력 종료"
+
+msgid "Type here to chat..."
+msgstr "대화 입력"
+
+msgid "Send"
+msgstr "전송"
+
+msgid "File sharing"
+msgstr "회일 공유"
+
+msgid "File is no longer available"
+msgstr "화일이 유효하지 않습니다"
+
+msgid "Download"
+msgstr "다운로드"
+
+msgid "Open"
+msgstr "열기"
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Unshare"
+msgstr "비공유"
+
+msgid "Retry"
+msgstr "재시도"
+
+msgid "Download failed."
+msgstr "다운로드실패"
+
+msgid "Change room"
+msgstr "방 변경"
+
+msgid "Room"
+msgstr "방"
+
+msgid "Main"
+msgstr "메인"
+
+msgid "Leave room"
+msgstr "방 이동"
+
+msgid "Current room"
+msgstr "현재 방"
+
+msgid "Your picture"
+msgstr "당신 사진"
+
+msgid "Take picture"
+msgstr "사진 찍음"
+
+msgid "Waiting for camera"
+msgstr "카메라 대기중"
+
+msgid "Your name"
+msgstr "당신 이름"
+
+msgid "Name"
+msgstr "이름"
+
+msgid "Your picture and name are visible to others."
+msgstr "당신의 사진과 이름이 다른사람에게 보일수 있습니다."
+
+msgid "Microphone"
+msgstr "마이크"
+
+msgid "Camera"
+msgstr "카메라"
+
+msgid "Video quality"
+msgstr "영상 수준"
+
+msgid "Low"
+msgstr "낮음"
+
+msgid "High"
+msgstr "높음"
+
+msgid "720p"
+msgstr "720p"
+
+msgid "1080p"
+msgstr "1080p"
+
+msgid "Language"
+msgstr "언어"
+
+msgid "Use browser language"
+msgstr "브라우저 언어 사용"
+
+msgid "Language changes become active on reload."
+msgstr "언어 변경이 재로드 되고 있습니다"
+
+msgid "Default room"
+msgstr "기본 방"
+
+msgid "Set alternative room to join at start."
+msgstr "시작시에 다른 방에 합류하도록 설정 되고 있습니다"
+
+msgid "Desktop notification"
+msgstr "데스크탑에 통보"
+
+msgid "Enable"
+msgstr "활성화"
+
+msgid "Denied - check your browser settings"
+msgstr "거부됨 - 브라우저 설정을 확인하세요"
+
+msgid "Allowed"
+msgstr "허락됨"
+
+msgid "Advanced settings"
+msgstr "고급 설정"
+
+msgid "Stereo audio"
+msgstr "스테레오 음성"
+
+msgid "Max video frame rate"
+msgstr "비디오 프레임비울 최대화"
+
+msgid "auto"
+msgstr "자동"
+
+msgid "Media screen sharing"
+msgstr "미디어 화면 공유"
+
+msgid "Chrome usermedia screen capture feature is required."
+msgstr "크롬의 usermedia screen capture feature 필요함"
+
+msgid "Experimental settings"
+msgstr "실험 설정"
+
+msgid "Show advanced settings"
+msgstr "고급 설정 보기"
+
+msgid "Hide advanced settings"
+msgstr "고급 설정 감추기"
+
+msgid "Remember settings"
+msgstr "설정 기억"
+
+msgid "Apply"
+msgstr "적용"
+
+msgid "Share by Email"
+msgstr "이메일로 공유"
+
+msgid "Share on Facebook"
+msgstr "Facebook에서 공유"
+
+msgid "Share on Twitter"
+msgstr "Twitter에서 공유"
+
+msgid "Share on Google Plus"
+msgstr "구글 플러스에서 공유"
+
+msgid "Share on XING"
+msgstr "Xing에서 공유"
+
+msgid "Initializing"
+msgstr "초기화"
+
+msgid "Online"
+msgstr "온라인"
+
+msgid "Calling"
+msgstr "전화걸기"
+
+msgid "Hangup"
+msgstr "전화끊기"
+
+msgid "In call with"
+msgstr "전화중"
+
+msgid "Conference with"
+msgstr "회의중"
+
+msgid "Your are offline"
+msgstr "오프라인 입니다"
+
+msgid "Go online"
+msgstr "온라인에 연결하다"
+
+msgid "Connection interrupted"
+msgstr "연결이 중단"
+
+msgid "An error occured"
+msgstr "에러 발생"
+
+msgid "Incoming call"
+msgstr "전화 걸려옴"
+
+msgid "from"
+msgstr "부터"
+
+msgid "Accept call"
+msgstr "전화 받음"
+
+msgid "Reject"
+msgstr "거부"
+
+msgid "Waiting for camera/microphone access"
+msgstr "카메라/마이크 사용을 기다림"
+
+msgid "Please wait"
+msgstr "기다리세요"
+
+msgid "Checking camera and microphone access."
+msgstr "카메라와 마이크의 사용을 확인 하세요"
+
+msgid "Please allow access to your camera and microphone."
+msgstr "카메라와 마이크의 사용을 허용 하세요"
+
+msgid "Camera / microphone access required."
+msgstr "카메라/마이크 사용이 필요합니다"
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access "
+"for this site."
+msgstr ""
+"이 사이크에 대하여 브라우저의 설정을 확인하고 카메라와 마이크의 사용을 허용 "
+"하세요"
+
+msgid "Skip check"
+msgstr "확인 넘어가기"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "도움말을 원하면 여기를 클릭 하세요 (구글 크롬)"
+
+msgid "Please set your user details and settings."
+msgstr "사용자의 세부상세와 설정을 지정하세요 "
+
+msgid ""
+"Please note that some settings require you to reload or to make a new call "
+"to become effective."
+msgstr "일부 설정은 다시로드 하거나 새로운 전화가 연결시에 유효할수 있습니다."
+
+msgid "Create your room"
+msgstr "새로운 방 만들기"
+
+msgid "This is your room link:"
+msgstr "당신의 방 링크:"
+
+msgid "Creating room link ..."
+msgstr "방 링크 만들기..."
+
+msgid "Start"
+msgstr "시작"
+
+msgid "Just click start"
+msgstr "시작하기 클릭"
+
+msgid "Share this URL with the people you want to meet."
+msgstr "이 URL을 만나고 싶은 사람과 공유하기"
+
+msgid "You can use and re-use this room as many times as you want."
+msgstr "당신은 이 방을 원하는 횟수 만큼 사용할 수 있습니다"
+
+msgid "Peer to peer chat active."
+msgstr "일대일 대화 활성화"
+
+msgid "Peer to peer chat is now off."
+msgstr "일대일 대화 꺼짐"
+
+msgid " is now offline."
+msgstr "현재 오프라인 상태"
+
+msgid " is now online."
+msgstr "현재 온라인 상태"
+
+msgid "You share file:"
+msgstr "공유 화일:"
+
+msgid "Incoming file:"
+msgstr "도착하는 화일:"
+
+msgid "Quit from Spreed Speak Freely?"
+msgstr "Spreed Speak Freely사용을 중지 하시겠습니까?"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr ""
+"업데이트를 적용하려면 재시작이 필요 합니다. 지금 재시작 하려면 ok를 클릭 하십"
+"시오"
+
+msgid "Failed to access camera/microphone."
+msgstr "카메라/마이크 사용 실패"
+
+msgid "Failed to establish peer connection."
+msgstr "상대연결 설정이 실패 하였습니다"
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "죄송합니다만 현재 문제가 있습니다."
+
+msgid "Oops"
+msgstr "이런"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "상대연결이 실패 했습니다. 설정을 확인 하십시오"
+
+msgid "User hung up because of error."
+msgstr "에러오 인해 사용자 끊어짐"
+
+msgid " is busy. Try again later."
+msgstr "통화중. 다시 시도 하세요."
+
+msgid " rejected your call."
+msgstr "전화가 거부 되었습니다."
+
+msgid " does not pick up."
+msgstr "전화를 받지 않습니다."
+
+msgid " tried to call you."
+msgstr "연결을 시도 중입니다"
+
+msgid " called you."
+msgstr "전화 드렸습니다."
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "브라우저가 WebRTC를 지원하지 않습니다. 전화걸기가 불가능 합니다."
+
+msgid "Chat with"
+msgstr "대화하기"
+
+msgid "Message from "
+msgstr "로 부터 메시지"
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "당신은 현재 방%s ...에 있습니다"
+
+msgid "Your browser does not support file transfer."
+msgstr "당신의 브라우저가 회일전송을 지원하지 않습니다."
+
+msgid "Meet with me here:"
+msgstr "나를 여기서 만납니다:"
+
+msgid "Error"
+msgstr "에러"
+
+msgid "Hint"
+msgstr "도움말"
+
+msgid "Please confirm"
+msgstr "확인하십시오"
+
+msgid "More information required"
+msgstr "더 많은 정보가 필요함"
+
+msgid "Ok"
+msgstr "오케이"
+
+msgid "Close"
+msgstr "닫음"
+
+msgid "Access code required"
+msgstr "접속코드 필요함"
+
+msgid "Access denied"
+msgstr "접속 거부"
+
+msgid "Please provide a valid access code."
+msgstr "유효한 접속코드가 필요합니다."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try again."
+msgstr ""
+"접속코드 확인이 실패 했습니다. 인터넷 연결을 확인하고 다시 시도해 주십시오. "
