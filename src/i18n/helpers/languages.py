@@ -9,12 +9,14 @@ LANGUAGES = {
 	"ko": "한국어",
 }
 
+import json
+
 def main():
 
 	print """// This file is auto generated, do not modify.
 define([], function() {
-return %r;
-});""" % LANGUAGES
+return %s;
+});""" % json.dumps(LANGUAGES)
 
 if __name__ == "__main__":
 	main()
