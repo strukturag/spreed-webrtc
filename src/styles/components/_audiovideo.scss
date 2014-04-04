@@ -27,11 +27,11 @@ right:0px;
 boder-top:1px solid $bordercolor;
 }
 #audiovideo.fullscreen {
-top:0px;
-right:0px;
-bottom:0px;
-left:0px;
-background:black;
+top:0px !important;
+right:0px !important;
+bottom:0px !important;
+left:0px !important;
+background:black !important;
 }
 #audiovideo.fullscreen .remoteVideo .peeractions {
 display:none;
