@@ -232,15 +232,24 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
   PeerCall.prototype.onMessage = function(event) {
 
-	console.log("Peer to peer channel message", event);
-	if (event.data instanceof Blob) {
-	  console.warn("Blob data received - not implemented.", event.data);
-	} else if (event.data instanceof ArrayBuffer) {
-	  console.warn("ArrayBuffer data received - not implemented.", event.data);
+	//console.log("Peer to peer channel message", event);
+	var data = event.data;
+
+	if (data instanceof Blob) {
+		console.warn("Blob data received - not implemented.", data);
+	} else if (data instanceof ArrayBuffer) {
+		console.warn("ArrayBuffer data received - not implemented.", data);
+	} else if (typeof data === "string") {
+		if (data.charCodeAt(0) === 2) {
+			// Ignore whatever shit is this (sent by Chrome 34 and FireFox). Feel free to
+			// change the comment it you know what this is.
+			return;
+		}
+		//console.log("Datachannel message", [event.data, event.data.length, event.data.charCodeAt(0)]);
+		var msg = JSON.parse(event.data);
+		this.webrtc.api.received({Type: msg.Type, Data: msg, To: this.webrtc.api.id, From: this.id, p2p: true}); //XXX(longsleep): use event for this?
 	} else {
-	  //console.log("Datachannel message", event.data);
-	  var msg = JSON.parse(event.data);
-	  this.webrtc.api.received({Type: msg.Type, Data: msg, To: this.webrtc.api.id, From: this.id, p2p: true}); //XXX(longsleep): use event for this?
+		console.warn("Unknow data type received -> igored", typeof data, [data]);
 	}
 
   };
