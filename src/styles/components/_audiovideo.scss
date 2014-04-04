@@ -25,6 +25,11 @@ top:44px;
 bottom:0px;
 right:0px;
 boder-top:1px solid $bordercolor;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
 }
 #audiovideo.fullscreen {
 top:0px !important;
