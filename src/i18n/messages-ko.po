@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
 "POT-Creation-Date: 2014-04-08 21:20+0200\n"
-"PO-Revision-Date: 2014-04-03 10:43+0900\n"
+"PO-Revision-Date: 2014-04-04 12:40+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -120,7 +120,7 @@ msgid "Fit screen."
 msgstr "화면에 맟춤"
 
 msgid "Your picture"
-msgstr "당신 사진"
+msgstr "사용자 사진"
 
 msgid "Take picture"
 msgstr "사진 찍음"
@@ -129,13 +129,13 @@ msgid "Waiting for camera"
 msgstr "카메라 대기중"
 
 msgid "Your name"
-msgstr "당신 이름"
+msgstr "사용자 이름"
 
 msgid "Name"
 msgstr "이름"
 
 msgid "Your picture and name are visible to others."
-msgstr "당신의 사진과 이름이 다른사람에게 보일수 있습니다."
+msgstr "사용자의 사진과 이름이 다른사람에게 보일수 있습니다."
 
 msgid "Microphone"
 msgstr "마이크"
@@ -165,7 +165,7 @@ msgid "Default room"
 msgstr "기본 방"
 
 msgid "Set alternative room to join at start."
-msgstr "시작시에 다른 방에 합류하도록 설정 되고 있습니다"
+msgstr "시작시에 다른 방에 합류하도록 설정 되었습니다"
 
 msgid "Desktop notification"
 msgstr "데스크탑에 통보"
@@ -186,7 +186,7 @@ msgid "Stereo audio"
 msgstr "스테레오 음성"
 
 msgid "Max video frame rate"
-msgstr "비디오 프레임비울 최대화"
+msgstr "비디오프레임 비율 최대화"
 
 msgid "auto"
 msgstr "자동"
@@ -243,7 +243,7 @@ msgid "Your are offline"
 msgstr "오프라인 입니다"
 
 msgid "Go online"
-msgstr "온라인에 연결하다"
+msgstr "온라인에 연결합니다"
 
 msgid "Connection interrupted"
 msgstr "연결이 중단"
@@ -282,7 +282,7 @@ msgid ""
 "Please check your browser settings and allow camera and microphone access "
 "for this site."
 msgstr ""
-"이 사이크에 대하여 브라우저의 설정을 확인하고 카메라와 마이크의 사용을 허용 "
+"이 사이트에 대하여 브라우저의 설정을 확인하고 카메라와 마이크의 사용을 허용 "
 "하세요"
 
 msgid "Skip check"
@@ -362,7 +362,7 @@ msgid "Peer connection failed. Check your settings."
 msgstr "상대연결이 실패 했습니다. 설정을 확인 하십시오"
 
 msgid "User hung up because of error."
-msgstr "에러오 인해 사용자 끊어짐"
+msgstr "오류로 인해 사용자 끊어짐"
 
 msgid " is busy. Try again later."
 msgstr "통화중. 다시 시도 하세요."
@@ -413,7 +413,7 @@ msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
 
 msgid "Error"
-msgstr "에러"
+msgstr "오류"
 
 msgid "Hint"
 msgstr "도움말"
