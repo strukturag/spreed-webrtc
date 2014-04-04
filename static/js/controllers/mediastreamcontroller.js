@@ -154,8 +154,9 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             }
         };
 
-        // Cache.
+        // Data voids.
         var cache = {};
+        var resurrect = null;
 
         $scope.update = function(user, noRefresh) {
             $scope.master = angular.copy(user);
@@ -169,6 +170,10 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         $scope.setStatus = function(status) {
             // This is the connection status to signaling server.
             $scope.$emit("status", status);
+        };
+
+        $scope.getStatus = function() {
+            return $scope.status;
         };
 
         $scope.updateStatus = (function() {
@@ -387,9 +392,22 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                     mediaStream.api.sendSelf();
                 }, data.Turn.ttl / 100 * 90 * 1000);
             }
+            // Support resurrection shrine.
+            if (resurrect) {
+                var resurrection = resurrect;
+                resurrect = null;
+                $timeout(function() {
+                    if (resurrection.id === $scope.id) {
+                        console.log("Using resurrection shrine", resurrection);
+                        // Valid resurrection.
+                        $scope.setStatus(resurrection.status);
+                    }
+                }, 0);
+            }
         });
 
         mediaStream.webrtc.e.on("peercall", function(event, peercall) {
+
             // Kill timeout.
             $timeout.cancel(pickupTimeout);
             pickupTimeout = null;
@@ -466,6 +484,14 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
 
         var reconnect = function() {
             if (connected && autoreconnect) {
+                if (resurrect == null) {
+                    // Storage data at the resurrection shrine.
+                    resurrect = {
+                        status: $scope.getStatus(),
+                        id: $scope.id
+                    }
+                    console.log("Stored data at the resurrection shrine", resurrect);
+                }
                 reconnecting = false;
                 _.delay(function() {
                     if (autoreconnect && !reconnecting) {

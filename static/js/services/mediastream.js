@@ -81,14 +81,6 @@ define([
                 $rootScope.roomlink = null;
                 $rootScope.roomstatus = false;
 
-                connector.e.on("closed error", _.bind(function(event, options) {
-                    var opts = $.extend({}, options);
-                    if (!opts.soft) {
-                        // Do not hang up when this is a soft event.
-                        webrtc.doHangup();
-                    }
-                }, this));
-
                 var connect = function() {
                     if (ready && cont) {
                         // Inject connector function into scope, so that controllers can pick it up.
