@@ -21,8 +21,8 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
+	"net/url"
 	"runtime"
 	"time"
 )
@@ -72,23 +72,9 @@ type Stats struct {
 	hub *Hub
 }
 
-func (stats *Stats) Handle(rw http.ResponseWriter, r *http.Request) (int, []byte) {
+func (stats *Stats) Get(values url.Values, headers http.Header) (int, interface{}, http.Header) {
 
-	if r.Method != "GET" {
-		return http.StatusMethodNotAllowed, nil
-	}
-
-	details := r.FormValue("details") == "1"
-
-	data := NewStat(details, stats.hub)
-	rw.Header().Set("Access-Control-Allow-Origin", "*")
-	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
-
-	content, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		return http.StatusInternalServerError, nil
-	}
-
-	return 200, content
+	details := values.Get("details") == "1"
+	return 200, NewStat(details, stats.hub), http.Header{"Content-Type": {"application/json; charset=utf-8"}, "Access-Control-Allow-Origin": {"*"}}
 
 }

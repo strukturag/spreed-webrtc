@@ -23,6 +23,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 type Room struct {
@@ -33,9 +34,9 @@ type Room struct {
 type Rooms struct {
 }
 
-func (rooms *Rooms) Post(r *http.Request) (int, interface{}) {
+func (rooms *Rooms) Post(values url.Values, headers http.Header) (int, interface{}, http.Header) {
 
 	name := RandomString(11)
-	return 200, &Room{name, fmt.Sprintf("/%s", name)}
+	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
 
 }

@@ -23,39 +23,37 @@ package main
 import (
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
+
+type Token struct {
+	Token   string `json:"token"`
+	Success bool   `json:"success"`
+}
 
 type Tokens struct {
 	provider TokenProvider
 }
 
-func (tokens Tokens) Post(r *http.Request) (int, interface{}) {
+func (tokens Tokens) Post(values url.Values, headers http.Header) (int, interface{}, http.Header) {
 
-	r.ParseForm()
-	auth := r.FormValue("a")
-
-	remoteAddr := r.RemoteAddr
-	if remoteAddr == "@" || remoteAddr == "127.0.0.1" {
-		if r.Header["X-Forwarded-For"][0] != "" {
-			remoteAddr = r.Header["X-Forwarded-For"][0]
-		}
-	}
+	auth := values.Get("a")
 
 	if len(auth) > 100 {
-		return 413, NewApiError("auth_too_large", "Auth too large")
+		return 413, NewApiError("auth_too_large", "Auth too large"), nil
 	}
 
 	valid := tokens.provider(strings.ToLower(auth))
 	response := &Token{Token: valid}
 
 	if valid != "" {
-		log.Printf("Good incoming token request: %s from %s\n", auth, remoteAddr)
+		log.Printf("Good incoming token request: %s\n", auth)
 		response.Success = true
 	} else {
-		log.Printf("Wrong incoming token request: %s from %s\n", auth, remoteAddr)
+		log.Printf("Wrong incoming token request: %s\n", auth)
 	}
 
-	return 200, response
+	return 200, response, http.Header{"Content-Type": {"application/json"}}
 
 }

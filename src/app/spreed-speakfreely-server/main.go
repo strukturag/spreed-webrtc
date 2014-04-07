@@ -310,7 +310,8 @@ func runner(runtime phoenix.Runtime) error {
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Add API end points.
-	api := sleepy.NewAPI(r.PathPrefix("/api/v1/").Subrouter())
+	api := sleepy.NewAPI()
+	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if statsEnabled {
