@@ -291,8 +291,8 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             if (id) {
                 console.log("Auto accept requested", id);
                 $scope.autoAccept = id;
-                $window.clearTimeout(autoAcceptTimeout);
-                autoAcceptTimeout = window.setTimeout(function() {
+                $timeout.cancel(autoAcceptTimeout);
+                autoAcceptTimeout = $timeout(function() {
                     $scope.autoAccept=null;
                     console.warn("Auto accept expired!")
                     safeApply($scope);
@@ -300,7 +300,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             } else {
                 if ($scope.autoAccept && $scope.autoAccept === from) {
                     $scope.autoAccept = null;
-                    $window.clearTimeout(autoAcceptTimeout);
+                    $timeout.cancel(autoAcceptTimeout);
                     console.log("Auto accept success", from)
                     return from;
                 }
@@ -365,7 +365,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         var reloadDialog = false;
 
         mediaStream.api.e.on("received.self", function(event, data) {
-            $window.clearTimeout(ttlTimeout);
+            $timeout.cancel(ttlTimeout);
             safeApply($scope, function(scope) {
                 scope.id = scope.myid = data.Id;
                 scope.turn = data.Turn;
@@ -387,7 +387,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             }
             // Support to upgrade stuff when ttl was reached.
             if (data.Turn.ttl) {
-                ttlTimeout = $window.setTimeout(function() {
+                ttlTimeout = $timeout(function() {
                     console.log("Ttl reached - sending refresh request.");
                     mediaStream.api.sendSelf();
                 }, data.Turn.ttl / 100 * 90 * 1000);
@@ -508,6 +508,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         mediaStream.connector.e.on("open error close", function(event, options) {
             var t = event.type;
             var opts = $.extend({}, options);
+            $timeout.cancel(ttlTimeout);
             switch (t) {
             case "open":
                 t = "waiting";
