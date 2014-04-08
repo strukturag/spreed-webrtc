@@ -182,7 +182,7 @@ define(["jquery", "underscore"], function($, _) {
 
 			console.log("Job done", job, this.end, this.chunk);
 			var idx = this.jobs.indexOf(job);
-			if (~idx) {
+			if (~idx) { // Yay i love fancy code which is hard to understand!
 				this.jobs.splice(idx, 1);
 			};
 			if (this.chunk >= this.end && this.jobs.length === 0) {
