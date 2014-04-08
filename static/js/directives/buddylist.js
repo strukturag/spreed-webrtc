@@ -55,7 +55,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
                     $scope.enabled = status;
                     $scope.$emit("roomStatus", status);
                 }
-                if (status) {
+                if (status && !$scope.layout.buddylistAutoHide) {
                     $scope.layout.buddylist = true
                 }
             };
