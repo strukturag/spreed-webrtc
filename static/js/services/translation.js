@@ -68,14 +68,14 @@ define(["jed", "underscore"], function(Jed, _) {
                     return r.fetch.apply(r, vars);
                 });
             } else if (context) {
-                return _.bind(function(singular, plural, n, vars) {
+                return _.bind(function(singular, plural) {
                     var vars = Array.prototype.slice.call(arguments, 2);
                     var r = i18n.translate(singular).withContext(context).ifPlural(vars[0], plural);
                     return r.fetch.apply(r, vars);
                 });
             } else {
-                return _.bind(function(singular, plural, n, vars) {
-                    var vars = Array.prototype.slice.call(arguments, 2).ifPlural(vars[0], plural);
+                return _.bind(function(singular, plural) {
+                    var vars = Array.prototype.slice.call(arguments, 2);
                     var r = i18n.translate(singular).ifPlural(vars[0], plural);
                     return r.fetch.apply(r, vars);
                 })
