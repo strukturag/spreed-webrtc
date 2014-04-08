@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-02 12:37+0200\n"
+"POT-Creation-Date: 2014-04-08 21:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -432,5 +432,19 @@ msgstr ""
 msgid ""
 "Failed to verify access code. Check your Internet connection and try "
 "again."
+msgstr ""
+
+msgid "and %2$s"
+msgid_plural "and %1$d others"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "User"
+msgstr ""
+
+msgid "Someone"
+msgstr ""
+
+msgid "Me"
 msgstr ""
 

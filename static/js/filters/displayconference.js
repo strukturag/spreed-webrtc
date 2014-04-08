@@ -18,28 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([
-  'underscore',
+define([], function() {
 
-  'filters/displayname',
-  'filters/buddyimagesrc',
-  'filters/displayconference'
-], function(_, displayName, buddyImageSrc, displayConference) {
-
-  var filters = {
-      displayName: displayName,
-      buddyImageSrc: buddyImageSrc,
-      displayConference: displayConference
-  };
-
-  var initialize = function (angModule) {
-    _.each(filters, function(filter, name) {
-      angModule.filter(name, filter);
-    })
-  }
-
-  return {
-    initialize: initialize
-  };
+    // displayConference
+    return ["safeDisplayName", "translation", function(safeDisplayName, translation) {
+        return function(peers) {
+            if (!peers || peers.length === 0) {
+                return "";
+            }
+            return " " + translation._n("and %2$s", "and %1$d others", peers.length, safeDisplayName(peers[0]));
+        }
+    }];
 
 });

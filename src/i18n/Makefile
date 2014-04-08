@@ -18,7 +18,7 @@ build: update
 	$(PYTHON) helpers/languages.py >$(ROOT)/static/translation/languages.js
 
 extract:
-	$(PYBABEL) extract -F babel.cfg -k _n:1,2 -k _ \
+	$(PYBABEL) extract -F babel.cfg --no-default-keywords -k _n:1,2 -k _ \
 		--no-location --project=$(PROJECT) --version=$(VERSION) \
 		--copyright-holder=$(COPYRIGHT) --msgid-bugs-address=$(EMAIL) \
 		-o messages.pot \
@@ -28,7 +28,8 @@ extract:
 		$(ROOT)/static/js/ \
 		$(ROOT)/static/js/controllers \
 		$(ROOT)/static/js/directives \
-		$(ROOT)/static/js/services
+		$(ROOT)/static/js/services \
+		$(ROOT)/static/js/filters
 
 update:
 	for lang in $(LANGUAGES) ; do \

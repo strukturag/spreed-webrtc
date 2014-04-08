@@ -21,8 +21,14 @@
 define([], function() {
 
     // displayName
-    return ["buddyData", "appData", function(buddyData, appData) {
+    return ["buddyData", "appData", "translation", function(buddyData, appData, translation) {
         var group_chat_id = "";
+        var someones = {
+            count: 1
+        };
+        var user_text = translation._("User");
+        var someone_text = translation._("Someone");
+        var me_text = translation._("Me");
         return function(id, me_ok) {
             if (id === group_chat_id) {
                 return "";
@@ -32,21 +38,26 @@ define([], function() {
                 if (scope.displayName) {
                     return scope.displayName;
                 }
-                return "User " + scope.buddyIndex;
+                return user_text + " " + scope.buddyIndex;
             } else {
                 var data = appData.get();
                 if (data) {
                     if (id === data.id) {
                         if (me_ok) {
-                            return "Me";
+                            return me_text;
                         }
                         if (data.master.displayName) {
                             return data.master.displayName;
                         }
-                        return "Me";
+                        return me_text;
                     }
                 }
-                return "Unknown //"+id;
+                var someone = someones[id];
+                if (!someone) {
+                    someone = someone_text + " " + someones.count++;
+                    someones[id] = someone;
+                }
+                return someone;
             }
         }
     }];
