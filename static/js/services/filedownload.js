@@ -180,12 +180,12 @@ define(["jquery", "underscore"], function($, _) {
 
 		Session.prototype.done = function(job) {
 
-			console.log("Job done", job);
+			console.log("Job done", job, this.end, this.chunk);
 			var idx = this.jobs.indexOf(job);
 			if (~idx) {
 				this.jobs.splice(idx, 1);
 			};
-			if (this.chunk >= this.end) {
+			if (this.chunk >= this.end && this.jobs.length === 0) {
 				//console.log("File done.")
 				safeApply(this.scope, _.bind(function($scope) {
 					$scope.$emit("downloadComplete");
