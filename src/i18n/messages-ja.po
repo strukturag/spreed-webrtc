@@ -1,4 +1,4 @@
-# Translations template for Spreed Speak Freely.
+# Japanese translations for Spreed Speak Freely.
 # Copyright (C) 2014 struktur AG
 # This file is distributed under the same license as the Spreed Speak Freely
 # project.
@@ -8,18 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-04-08 21:20+0200\n"
 "PO-Revision-Date: 2014-04-09 14:43+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"X-Generator: Poedit 1.6.4\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Language: ja\n"
-"X-Poedit-Bookmarks: -1,107,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 msgid "Share your screen"
 msgstr "画面を共有する."
@@ -114,6 +111,13 @@ msgstr "ルームを出る"
 msgid "Current room"
 msgstr "現在のルーム"
 
+#, fuzzy
+msgid "Screen sharing options"
+msgstr "メディアスクリーン共有"
+
+msgid "Fit screen."
+msgstr ""
+
 msgid "Your picture"
 msgstr "あなたの写真"
 
@@ -141,29 +145,17 @@ msgstr "カメラ"
 msgid "Video quality"
 msgstr "ビデオ画質"
 
-# If this is about the video quality,
-# it should be "低画質" instead of "低い".
-# "低い" is just a general translation of "Low"
 msgid "Low"
 msgstr "低い"
 
-# If this is about the video quality,
-# it should be "高画質" instead of "高い".
-# "高い" is just a general translation of "High"
 msgid "High"
 msgstr "高い"
 
-msgid "720p"
-msgstr "720p"
-
-msgid "1080p"
-msgstr "1080p"
+msgid "HD"
+msgstr ""
 
 msgid "Language"
 msgstr "言語"
-
-msgid "Use browser language"
-msgstr "ブラウザの言語を使用"
 
 msgid "Language changes become active on reload."
 msgstr "言語の変更は再読み込み時に適用となります."
@@ -197,12 +189,6 @@ msgstr "ビデオ最高フレームレート"
 
 msgid "auto"
 msgstr "自動"
-
-msgid "Media screen sharing"
-msgstr "メディアスクリーン共有"
-
-msgid "Chrome usermedia screen capture feature is required."
-msgstr "Chromeのユーザーメディア・画面キャプチャ機能が必要です."
 
 msgid "Experimental settings"
 msgstr "試験的に設定"
@@ -246,13 +232,9 @@ msgstr "発信中"
 msgid "Hangup"
 msgstr "切断"
 
-# In Japanese, the person's name comes in the first place in the sentence.
-# '{0}と会話中'
 msgid "In call with"
 msgstr "と会話中"
 
-# In Japanese, the person's name comes in the first place in the sentence.
-# '{0}と会議中'
 msgid "Conference with"
 msgstr "と会議中"
 
@@ -271,8 +253,6 @@ msgstr "エラーが発生しました"
 msgid "Incoming call"
 msgstr "着信中"
 
-# In Japanese, the person's name comes in the first place in the sentence.
-# '{0}から'
 msgid "from"
 msgstr "から"
 
@@ -298,8 +278,8 @@ msgid "Camera / microphone access required."
 msgstr "カメラ・マイクの接続が必要です."
 
 msgid ""
-"Please check your browser settings and allow camera and microphone access "
-"for this site."
+"Please check your browser settings and allow camera and microphone access"
+" for this site."
 msgstr "ブラウザ設定で、このサイトへのカメラ・マイクの接続を許可してください."
 
 msgid "Skip check"
@@ -312,8 +292,8 @@ msgid "Please set your user details and settings."
 msgstr "あなたのユーザー情報とセッティングを設定してください."
 
 msgid ""
-"Please note that some settings require you to reload or to make a new call "
-"to become effective."
+"Please note that some settings require you to reload or to make a new "
+"call to become effective."
 msgstr "いくつかの設定は、再読み込みもしくは次回の発信から有効です."
 
 msgid "Create your room"
@@ -397,13 +377,9 @@ msgstr "から電話がありました."
 msgid "Your browser does not support WebRTC. No calls possible."
 msgstr "ブラウザがWebRTCをサポートしていない為通話はできません."
 
-# The person's name comes first.
-# {0}とチャット
 msgid "Chat with"
 msgstr "とチャットする"
 
-# Name of the sender comes first.
-# {0}からのメッセージ
 msgid "Message from "
 msgstr "からのメッセージ"
 
@@ -413,6 +389,16 @@ msgstr "あなたは%sのルームにいます..."
 
 msgid "Your browser does not support file transfer."
 msgstr "ブラウザがファイル転送をサポートしていません."
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+
+msgid "Use browser language"
+msgstr "ブラウザの言語を使用"
 
 msgid "Meet with me here:"
 msgstr "ここで私と会う:"
@@ -445,7 +431,21 @@ msgid "Please provide a valid access code."
 msgstr "有効なアクセスコードを入力してください."
 
 msgid ""
-"Failed to verify access code. Check your Internet connection and try again."
+"Failed to verify access code. Check your Internet connection and try "
+"again."
+msgstr "アクセスコードの確認に失敗しました.インターネット接続を確認してリトライしてください."
+
+msgid "and %2$s"
+msgid_plural "and %1$d others"
+msgstr[0] ""
+
+msgid "User"
 msgstr ""
-"アクセスコードの確認に失敗しました.インターネット接続を確認してリトライしてく"
-"ださい."
+
+msgid "Someone"
+msgstr ""
+
+#, fuzzy
+msgid "Me"
+msgstr "名前"
+
