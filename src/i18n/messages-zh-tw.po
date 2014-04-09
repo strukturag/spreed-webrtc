@@ -1,4 +1,4 @@
-# Translations template for Spreed Speak Freely.
+# Chinese (Taiwan) translations for Spreed Speak Freely.
 # Copyright (C) 2014 struktur AG
 # This file is distributed under the same license as the Spreed Speak Freely
 # project.
@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"POT-Creation-Date: 2014-04-08 21:20+0200\n"
 "PO-Revision-Date: 2014-04-07 18:09+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"X-Generator: Poedit 1.6.4\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Language: zh_TW\n"
 
 msgid "Share your screen"
 msgstr "共享您的屏幕"
@@ -113,6 +111,13 @@ msgstr "離開房間"
 msgid "Current room"
 msgstr "當前房間"
 
+#, fuzzy
+msgid "Screen sharing options"
+msgstr "媒體屏幕共享"
+
+msgid "Fit screen."
+msgstr ""
+
 msgid "Your picture"
 msgstr "您的圖片"
 
@@ -146,17 +151,11 @@ msgstr "低"
 msgid "High"
 msgstr "高"
 
-msgid "720p"
-msgstr "720p"
-
-msgid "1080p"
-msgstr "1080p"
+msgid "HD"
+msgstr ""
 
 msgid "Language"
 msgstr "語言"
-
-msgid "Use browser language"
-msgstr "使用瀏覽器語言"
 
 msgid "Language changes become active on reload."
 msgstr "轉換語言需要重啟程序"
@@ -190,12 +189,6 @@ msgstr "最大視頻幀速率"
 
 msgid "auto"
 msgstr "自動"
-
-msgid "Media screen sharing"
-msgstr "媒體屏幕共享"
-
-msgid "Chrome usermedia screen capture feature is required."
-msgstr "需啟動Chrome usermedia screen caputure功能"
 
 msgid "Experimental settings"
 msgstr "試驗設置"
@@ -285,8 +278,8 @@ msgid "Camera / microphone access required."
 msgstr "需連接攝像頭/麥克風"
 
 msgid ""
-"Please check your browser settings and allow camera and microphone access "
-"for this site."
+"Please check your browser settings and allow camera and microphone access"
+" for this site."
 msgstr "請檢查瀏覽器設置並允許攝像頭及麥克風連接此網站"
 
 msgid "Skip check"
@@ -299,8 +292,8 @@ msgid "Please set your user details and settings."
 msgstr "請設定您的用戶信息及設置"
 
 msgid ""
-"Please note that some settings require you to reload or to make a new call "
-"to become effective."
+"Please note that some settings require you to reload or to make a new "
+"call to become effective."
 msgstr "請注意，有些設置需要重新加載或開始新的通話後才能生效。"
 
 msgid "Create your room"
@@ -397,6 +390,16 @@ msgstr "您在 %s 房間"
 msgid "Your browser does not support file transfer."
 msgstr "您的遊覽器不支持文件傳輸"
 
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+
+msgid "Use browser language"
+msgstr "使用瀏覽器語言"
+
 msgid "Meet with me here:"
 msgstr "我們這裡見："
 
@@ -428,5 +431,21 @@ msgid "Please provide a valid access code."
 msgstr "請提供有效接入碼"
 
 msgid ""
-"Failed to verify access code. Check your Internet connection and try again."
+"Failed to verify access code. Check your Internet connection and try "
+"again."
 msgstr "接入碼認證錯誤。請檢查您的網絡連接并重試。"
+
+msgid "and %2$s"
+msgid_plural "and %1$d others"
+msgstr[0] ""
+
+msgid "User"
+msgstr ""
+
+msgid "Someone"
+msgstr ""
+
+#, fuzzy
+msgid "Me"
+msgstr "名字"
+
