@@ -1,0 +1,451 @@
+# Translations template for Spreed Speak Freely.
+# Copyright (C) 2014 struktur AG
+# This file is distributed under the same license as the Spreed Speak Freely
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"PO-Revision-Date: 2014-04-09 14:43+0100\n"
+"Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
+"X-Poedit-Bookmarks: -1,107,-1,-1,-1,-1,-1,-1,-1,-1\n"
+
+msgid "Share your screen"
+msgstr "画面を共有する."
+
+msgid "Chat"
+msgstr "チャット"
+
+msgid "Mute microphone"
+msgstr "消音"
+
+msgid "Turn camera off"
+msgstr "カメラをオフにする"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Your audio level"
+msgstr "あなたの音量"
+
+msgid "Start chat"
+msgstr "チャットを始める"
+
+msgid "Start video call"
+msgstr "テレビ電話を始める"
+
+msgid "Start audio conference"
+msgstr "音声会議を始める"
+
+msgid "No other users online"
+msgstr "オンラインのユーザーはいません"
+
+msgid "Chat sessions"
+msgstr "チャットのセッション"
+
+msgid "Room chat"
+msgstr "ルームチャット"
+
+msgid "Peer to peer"
+msgstr "ピア・ツー・ピア"
+
+msgid "Close chat"
+msgstr "チャットを終える"
+
+msgid "is typing..."
+msgstr "は入力中です..."
+
+msgid "has stopped typing..."
+msgstr "は入力を止めました..."
+
+msgid "Type here to chat..."
+msgstr "ここに入力してチャット開始します..."
+
+msgid "Send"
+msgstr "送信"
+
+msgid "File sharing"
+msgstr "ファイル共有"
+
+msgid "File is no longer available"
+msgstr "ファイルは有効ではありません"
+
+msgid "Download"
+msgstr "ダウンロード"
+
+msgid "Open"
+msgstr "開く"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Unshare"
+msgstr "共有取り消し"
+
+msgid "Retry"
+msgstr "リトライ"
+
+msgid "Download failed."
+msgstr "ダウンロード失敗."
+
+msgid "Change room"
+msgstr "ルームチェンジ"
+
+msgid "Room"
+msgstr "ルーム"
+
+msgid "Main"
+msgstr "メイン"
+
+msgid "Leave room"
+msgstr "ルームを出る"
+
+msgid "Current room"
+msgstr "現在のルーム"
+
+msgid "Your picture"
+msgstr "あなたの写真"
+
+msgid "Take picture"
+msgstr "写真を取る"
+
+msgid "Waiting for camera"
+msgstr "カメラ待ち"
+
+msgid "Your name"
+msgstr "あなたの名前"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Your picture and name are visible to others."
+msgstr "あなたの写真と名前は公開されています."
+
+msgid "Microphone"
+msgstr "マイク"
+
+msgid "Camera"
+msgstr "カメラ"
+
+msgid "Video quality"
+msgstr "ビデオ画質"
+
+# If this is about the video quality,
+# it should be "低画質" instead of "低い".
+# "低い" is just a general translation of "Low"
+msgid "Low"
+msgstr "低い"
+
+# If this is about the video quality,
+# it should be "高画質" instead of "高い".
+# "高い" is just a general translation of "High"
+msgid "High"
+msgstr "高い"
+
+msgid "720p"
+msgstr "720p"
+
+msgid "1080p"
+msgstr "1080p"
+
+msgid "Language"
+msgstr "言語"
+
+msgid "Use browser language"
+msgstr "ブラウザの言語を使用"
+
+msgid "Language changes become active on reload."
+msgstr "言語の変更は再読み込み時に適用となります."
+
+msgid "Default room"
+msgstr "デフォルト・ルーム"
+
+msgid "Set alternative room to join at start."
+msgstr "スタート時に別のルームに参加する."
+
+msgid "Desktop notification"
+msgstr "デスクトップ通知"
+
+msgid "Enable"
+msgstr "有効にする"
+
+msgid "Denied - check your browser settings"
+msgstr "拒否 - ブラウザ設定を確認して下さい"
+
+msgid "Allowed"
+msgstr "許可"
+
+msgid "Advanced settings"
+msgstr "詳細設定"
+
+msgid "Stereo audio"
+msgstr "ステレオ・オーディオ"
+
+msgid "Max video frame rate"
+msgstr "ビデオ最高フレームレート"
+
+msgid "auto"
+msgstr "自動"
+
+msgid "Media screen sharing"
+msgstr "メディアスクリーン共有"
+
+msgid "Chrome usermedia screen capture feature is required."
+msgstr "Chromeのユーザーメディア・画面キャプチャ機能が必要です."
+
+msgid "Experimental settings"
+msgstr "試験的に設定"
+
+msgid "Show advanced settings"
+msgstr "詳細設定を表示"
+
+msgid "Hide advanced settings"
+msgstr "詳細設定を隠す"
+
+msgid "Remember settings"
+msgstr "設定を保存"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "Share by Email"
+msgstr "Eメールでシェア"
+
+msgid "Share on Facebook"
+msgstr "フェイスブックでシェア"
+
+msgid "Share on Twitter"
+msgstr "ツィッターでシェア"
+
+msgid "Share on Google Plus"
+msgstr "Google+でシェア"
+
+msgid "Share on XING"
+msgstr "XINGでシェア"
+
+msgid "Initializing"
+msgstr "初期化中"
+
+msgid "Online"
+msgstr "オンライン"
+
+msgid "Calling"
+msgstr "発信中"
+
+msgid "Hangup"
+msgstr "切断"
+
+# In Japanese, the person's name comes in the first place in the sentence.
+# '{0}と会話中'
+msgid "In call with"
+msgstr "と会話中"
+
+# In Japanese, the person's name comes in the first place in the sentence.
+# '{0}と会議中'
+msgid "Conference with"
+msgstr "と会議中"
+
+msgid "Your are offline"
+msgstr "オフラインです"
+
+msgid "Go online"
+msgstr "オンラインにする"
+
+msgid "Connection interrupted"
+msgstr "接続は中断されました"
+
+msgid "An error occured"
+msgstr "エラーが発生しました"
+
+msgid "Incoming call"
+msgstr "着信中"
+
+# In Japanese, the person's name comes in the first place in the sentence.
+# '{0}から'
+msgid "from"
+msgstr "から"
+
+msgid "Accept call"
+msgstr "通話"
+
+msgid "Reject"
+msgstr "拒否"
+
+msgid "Waiting for camera/microphone access"
+msgstr "カメラ・マイクの接続待ち."
+
+msgid "Please wait"
+msgstr "お待ちください"
+
+msgid "Checking camera and microphone access."
+msgstr "カメラ・マイクの接続確認中."
+
+msgid "Please allow access to your camera and microphone."
+msgstr "カメラとマイクの接続を許可してください."
+
+msgid "Camera / microphone access required."
+msgstr "カメラ・マイクの接続が必要です."
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access "
+"for this site."
+msgstr "ブラウザ設定で、このサイトへのカメラ・マイクの接続を許可してください."
+
+msgid "Skip check"
+msgstr "チェックをスキップ"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
+
+msgid "Please set your user details and settings."
+msgstr "あなたのユーザー情報とセッティングを設定してください."
+
+msgid ""
+"Please note that some settings require you to reload or to make a new call "
+"to become effective."
+msgstr "いくつかの設定は、再読み込みもしくは次回の発信から有効です."
+
+msgid "Create your room"
+msgstr "自分のルームを作成する"
+
+msgid "This is your room link:"
+msgstr "あなたのルームへのリンク:"
+
+msgid "Creating room link ..."
+msgstr "ルームへのリンクを作る..."
+
+msgid "Start"
+msgstr "開始"
+
+msgid "Just click start"
+msgstr "クリックして開始"
+
+msgid "Share this URL with the people you want to meet."
+msgstr "会いたい人とURLをシェアする."
+
+msgid "You can use and re-use this room as many times as you want."
+msgstr "ルームは何回でも好きなだけ使えます."
+
+msgid "Peer to peer chat active."
+msgstr "ピア・ツー・ピア・チャットがアクティブです."
+
+msgid "Peer to peer chat is now off."
+msgstr "ピア・ツー・ピア・チャットがオフです."
+
+msgid " is now offline."
+msgstr "は今オフラインです"
+
+msgid " is now online."
+msgstr "は今オンラインです"
+
+msgid "You share file:"
+msgstr "あなたの共有ファイル:"
+
+msgid "Incoming file:"
+msgstr "受信中ファイル:"
+
+msgid "Quit from Spreed Speak Freely?"
+msgstr "Spreed Speak Freelyを終了しますか?"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr "アップデート適用のため再起動してください.ここをクリックして再起動する."
+
+msgid "Failed to access camera/microphone."
+msgstr "カメラ・マイクへの接続に失敗しました."
+
+msgid "Failed to establish peer connection."
+msgstr "ピアとの接続に失敗しました."
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "申し訳ないのですが、不具合が生じました。"
+
+msgid "Oops"
+msgstr "しまった"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "ピア接続に失敗しました.設定を確認してください."
+
+msgid "User hung up because of error."
+msgstr "エラーのため切断しました."
+
+msgid " is busy. Try again later."
+msgstr "は話中です.後で掛けなおしてください."
+
+msgid " rejected your call."
+msgstr "着信拒否されました."
+
+msgid " does not pick up."
+msgstr "は電話にでません."
+
+msgid " tried to call you."
+msgstr ""
+
+msgid " called you."
+msgstr "から電話がありました."
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "ブラウザがWebRTCをサポートしていない為通話はできません."
+
+# The person's name comes first.
+# {0}とチャット
+msgid "Chat with"
+msgstr "とチャットする"
+
+# Name of the sender comes first.
+# {0}からのメッセージ
+msgid "Message from "
+msgstr "からのメッセージ"
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "あなたは%sのルームにいます..."
+
+msgid "Your browser does not support file transfer."
+msgstr "ブラウザがファイル転送をサポートしていません."
+
+msgid "Meet with me here:"
+msgstr "ここで私と会う:"
+
+msgid "Error"
+msgstr "エラー"
+
+msgid "Hint"
+msgstr "ヒント"
+
+msgid "Please confirm"
+msgstr "確認して下さい"
+
+msgid "More information required"
+msgstr "さらなる情報が必要です"
+
+msgid "Ok"
+msgstr "OK"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "Access code required"
+msgstr "アクセスコードが必要です"
+
+msgid "Access denied"
+msgstr "アクセスが拒否されました"
+
+msgid "Please provide a valid access code."
+msgstr "有効なアクセスコードを入力してください."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try again."
+msgstr ""
+"アクセスコードの確認に失敗しました.インターネット接続を確認してリトライしてく"
+"ださい."
