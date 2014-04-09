@@ -7,6 +7,7 @@ LANGUAGES = {
 	"de": "Deutsch",
 	"zh-cn": "中文",
 	"ko": "한국어",
+	"ja": "日本語",
 }
 
 import json
