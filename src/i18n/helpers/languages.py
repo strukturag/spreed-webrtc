@@ -5,7 +5,7 @@
 LANGUAGES = {
 	"en": "English",
 	"de": "Deutsch",
-	"zh-cn": "中文",
+	"zh-cn": "中文（简体）",
 	"ko": "한국어",
 	"ja": "日本語",
 }

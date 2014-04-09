@@ -17,6 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.6.4\n"
+"Language: zh_CN\n"
 
 msgid "Share your screen"
 msgstr "共享您的屏幕"
@@ -61,13 +63,13 @@ msgid "Close chat"
 msgstr "关闭聊天"
 
 msgid "is typing..."
-msgstr "**正在输入"
+msgstr "正在输入..."
 
 msgid "has stopped typing..."
-msgstr "**停止输入"
+msgstr "停止输入..."
 
 msgid "Type here to chat..."
-msgstr "在此输入开始聊天"
+msgstr "在此输入开始聊天..."
 
 msgid "Send"
 msgstr "发送"
@@ -109,7 +111,7 @@ msgid "Leave room"
 msgstr "离开房间"
 
 msgid "Current room"
-msgstr "最近的房间"
+msgstr "當前房间"
 
 #, fuzzy
 msgid "Screen sharing options"
@@ -176,7 +178,7 @@ msgid "Denied - check your browser settings"
 msgstr "被拒绝--请检查浏览器设置"
 
 msgid "Allowed"
-msgstr "被接受"
+msgstr "启用"
 
 msgid "Advanced settings"
 msgstr "高级设置"
@@ -289,7 +291,7 @@ msgid "Click here for help (Google Chrome)."
 msgstr "点击这里获取帮助 (Google Chrome)"
 
 msgid "Please set your user details and settings."
-msgstr "请设置您的用户信息及设置"
+msgstr "请设定您的用户信息及设置"
 
 msgid ""
 "Please note that some settings require you to reload or to make a new "
@@ -324,10 +326,10 @@ msgid "Peer to peer chat is now off."
 msgstr "P2P现在未启动"
 
 msgid " is now offline."
-msgstr "**不在线"
+msgstr " 不在线"
 
 msgid " is now online."
-msgstr "**现在在线"
+msgstr " 现在在线"
 
 msgid "You share file:"
 msgstr "分享文件："
@@ -360,19 +362,19 @@ msgid "User hung up because of error."
 msgstr "用户因错误挂断"
 
 msgid " is busy. Try again later."
-msgstr "**正在通话，请稍后再试。"
+msgstr " 正在通话，请稍后再试。"
 
 msgid " rejected your call."
-msgstr "**拒绝了您的呼叫。"
+msgstr " 拒绝了您的呼叫。"
 
 msgid " does not pick up."
-msgstr "**不接听呼叫。"
+msgstr " 不接听呼叫。"
 
 msgid " tried to call you."
-msgstr "**曾呼叫您。"
+msgstr " 曾呼叫您。"
 
 msgid " called you."
-msgstr "**曾与您通话。"
+msgstr " 曾与您通话。"
 
 msgid "Your browser does not support WebRTC. No calls possible."
 msgstr "您的浏览器不支持WebRTC。不能进行通话。"
