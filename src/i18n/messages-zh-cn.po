@@ -17,8 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"X-Generator: Poedit 1.6.4\n"
-"Language: zh_CN\n"
 
 msgid "Share your screen"
 msgstr "共享您的屏幕"
