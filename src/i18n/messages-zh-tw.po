@@ -1,0 +1,432 @@
+# Translations template for Spreed Speak Freely.
+# Copyright (C) 2014 struktur AG
+# This file is distributed under the same license as the Spreed Speak Freely
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2014-03-20 18:31+0100\n"
+"PO-Revision-Date: 2014-04-07 18:09+0800\n"
+"Last-Translator: Michael P.\n"
+"Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_TW\n"
+
+msgid "Share your screen"
+msgstr "共享您的屏幕"
+
+msgid "Chat"
+msgstr "聊天"
+
+msgid "Mute microphone"
+msgstr "關閉麥克風"
+
+msgid "Turn camera off"
+msgstr "關閉攝像頭"
+
+msgid "Settings"
+msgstr "系統設置"
+
+msgid "Your audio level"
+msgstr "您的通話音量"
+
+msgid "Start chat"
+msgstr "開始聊天"
+
+msgid "Start video call"
+msgstr "開始視頻通話"
+
+msgid "Start audio conference"
+msgstr "開始語音會議"
+
+msgid "No other users online"
+msgstr "無其他聯繫人在線"
+
+msgid "Chat sessions"
+msgstr "會話"
+
+msgid "Room chat"
+msgstr "房間聊天"
+
+msgid "Peer to peer"
+msgstr "P2P"
+
+msgid "Close chat"
+msgstr "關閉聊天"
+
+msgid "is typing..."
+msgstr "正在輸入..."
+
+msgid "has stopped typing..."
+msgstr "停止輸入..."
+
+msgid "Type here to chat..."
+msgstr "在此輸入開始聊天..."
+
+msgid "Send"
+msgstr "發送"
+
+msgid "File sharing"
+msgstr "分享文件"
+
+msgid "File is no longer available"
+msgstr "文件已不存在"
+
+msgid "Download"
+msgstr "下載"
+
+msgid "Open"
+msgstr "打開"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Unshare"
+msgstr "停止分享"
+
+msgid "Retry"
+msgstr "重試"
+
+msgid "Download failed."
+msgstr "下載失敗"
+
+msgid "Change room"
+msgstr "更換房間"
+
+msgid "Room"
+msgstr "房間"
+
+msgid "Main"
+msgstr "住房間"
+
+msgid "Leave room"
+msgstr "離開房間"
+
+msgid "Current room"
+msgstr "當前房間"
+
+msgid "Your picture"
+msgstr "您的圖片"
+
+msgid "Take picture"
+msgstr "拍照"
+
+msgid "Waiting for camera"
+msgstr "等待啟動攝像頭"
+
+msgid "Your name"
+msgstr "您的名字"
+
+msgid "Name"
+msgstr "名字"
+
+msgid "Your picture and name are visible to others."
+msgstr "別人能看到您的圖片及名字"
+
+msgid "Microphone"
+msgstr "麥克風"
+
+msgid "Camera"
+msgstr "攝像頭"
+
+msgid "Video quality"
+msgstr "視頻質量"
+
+msgid "Low"
+msgstr "低"
+
+msgid "High"
+msgstr "高"
+
+msgid "720p"
+msgstr "720p"
+
+msgid "1080p"
+msgstr "1080p"
+
+msgid "Language"
+msgstr "語言"
+
+msgid "Use browser language"
+msgstr "使用瀏覽器語言"
+
+msgid "Language changes become active on reload."
+msgstr "轉換語言需要重啟程序"
+
+msgid "Default room"
+msgstr "系統默認房間"
+
+msgid "Set alternative room to join at start."
+msgstr "重設初始默認房間"
+
+msgid "Desktop notification"
+msgstr "桌面提醒"
+
+msgid "Enable"
+msgstr "開啟"
+
+msgid "Denied - check your browser settings"
+msgstr "被拒絕﹣請檢查瀏覽器設置"
+
+msgid "Allowed"
+msgstr "啟用"
+
+msgid "Advanced settings"
+msgstr "高級設置"
+
+msgid "Stereo audio"
+msgstr "立體聲"
+
+msgid "Max video frame rate"
+msgstr "最大視頻幀速率"
+
+msgid "auto"
+msgstr "自動"
+
+msgid "Media screen sharing"
+msgstr "媒體屏幕共享"
+
+msgid "Chrome usermedia screen capture feature is required."
+msgstr "需啟動Chrome usermedia screen caputure功能"
+
+msgid "Experimental settings"
+msgstr "試驗設置"
+
+msgid "Show advanced settings"
+msgstr "展開高級設置"
+
+msgid "Hide advanced settings"
+msgstr "隐藏高级设置"
+
+msgid "Remember settings"
+msgstr "記住設置"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "Share by Email"
+msgstr "電子郵件共享"
+
+msgid "Share on Facebook"
+msgstr "Facebook共享"
+
+msgid "Share on Twitter"
+msgstr "Twitter共享"
+
+msgid "Share on Google Plus"
+msgstr "Google Plus共享"
+
+msgid "Share on XING"
+msgstr "XING共享"
+
+msgid "Initializing"
+msgstr "初始化"
+
+msgid "Online"
+msgstr "在線"
+
+msgid "Calling"
+msgstr "呼叫中"
+
+msgid "Hangup"
+msgstr "掛斷"
+
+msgid "In call with"
+msgstr "正在和＊＊通電話"
+
+msgid "Conference with"
+msgstr "和＊＊會議通話"
+
+msgid "Your are offline"
+msgstr "您不在線"
+
+msgid "Go online"
+msgstr "上線"
+
+msgid "Connection interrupted"
+msgstr "連接已終端"
+
+msgid "An error occured"
+msgstr "出現錯誤"
+
+msgid "Incoming call"
+msgstr "來電"
+
+msgid "from"
+msgstr "來自"
+
+msgid "Accept call"
+msgstr "接受通話"
+
+msgid "Reject"
+msgstr "拒絕"
+
+msgid "Waiting for camera/microphone access"
+msgstr "等待攝像頭/麥克風連接"
+
+msgid "Please wait"
+msgstr "請等候"
+
+msgid "Checking camera and microphone access."
+msgstr "正在檢查攝像頭及麥克風連接"
+
+msgid "Please allow access to your camera and microphone."
+msgstr "請允許連接您的攝像頭及麥克風"
+
+msgid "Camera / microphone access required."
+msgstr "需連接攝像頭/麥克風"
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access "
+"for this site."
+msgstr "請檢查瀏覽器設置並允許攝像頭及麥克風連接此網站"
+
+msgid "Skip check"
+msgstr "越过检查"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "點擊這裡獲取幫助 (Google Chrome)"
+
+msgid "Please set your user details and settings."
+msgstr "請設定您的用戶信息及設置"
+
+msgid ""
+"Please note that some settings require you to reload or to make a new call "
+"to become effective."
+msgstr "請注意，有些設置需要重新加載或開始新的通話後才能生效。"
+
+msgid "Create your room"
+msgstr "穿件您的房间"
+
+msgid "This is your room link:"
+msgstr "這是您的房間鏈接："
+
+msgid "Creating room link ..."
+msgstr "創建房間連接 ..."
+
+msgid "Start"
+msgstr "開始"
+
+msgid "Just click start"
+msgstr "直接點擊開始"
+
+msgid "Share this URL with the people you want to meet."
+msgstr "請與您需要聯繫的人分享此URL"
+
+msgid "You can use and re-use this room as many times as you want."
+msgstr "您可使用或反復多次使用此房間"
+
+msgid "Peer to peer chat active."
+msgstr "P2P聊天啟動"
+
+msgid "Peer to peer chat is now off."
+msgstr "P2P現在未啟動"
+
+msgid " is now offline."
+msgstr " 不在線"
+
+msgid " is now online."
+msgstr " 現在在線"
+
+msgid "You share file:"
+msgstr "分享文件："
+
+msgid "Incoming file:"
+msgstr "發來文件："
+
+msgid "Quit from Spreed Speak Freely?"
+msgstr "退出 Spreed Speak Freely？"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr "適用更新需重啟，現在點擊Ok重新啟動。"
+
+msgid "Failed to access camera/microphone."
+msgstr "攝像頭/麥克風連接失敗"
+
+msgid "Failed to establish peer connection."
+msgstr "對等連接建立失敗"
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "很抱歉，有序哦嗚發生......"
+
+msgid "Oops"
+msgstr "Oops"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "對等連接失敗，請檢查設置。"
+
+msgid "User hung up because of error."
+msgstr "用戶因錯誤掛斷"
+
+msgid " is busy. Try again later."
+msgstr " 正在通話，請您稍後。"
+
+msgid " rejected your call."
+msgstr " 拒絕了您的呼叫"
+
+msgid " does not pick up."
+msgstr " 不接聽呼叫"
+
+msgid " tried to call you."
+msgstr " 曾呼叫您"
+
+msgid " called you."
+msgstr " 曾與您通話"
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "您的遊覽器不支持WebRTC。不能進行通話。"
+
+msgid "Chat with"
+msgstr "于＊＊聊天"
+
+msgid "Message from "
+msgstr "來自於＊＊的信息"
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "您在 %s 房間"
+
+msgid "Your browser does not support file transfer."
+msgstr "您的遊覽器不支持文件傳輸"
+
+msgid "Meet with me here:"
+msgstr "我們這裡見："
+
+msgid "Error"
+msgstr "錯誤"
+
+msgid "Hint"
+msgstr "提示"
+
+msgid "Please confirm"
+msgstr "請確認"
+
+msgid "More information required"
+msgstr "需要更多信息"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Close"
+msgstr "關閉"
+
+msgid "Access code required"
+msgstr "需要接入碼"
+
+msgid "Access denied"
+msgstr "連接被拒絕"
+
+msgid "Please provide a valid access code."
+msgstr "請提供有效接入碼"
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try again."
+msgstr "接入碼認證錯誤。請檢查您的網絡連接并重試。"
