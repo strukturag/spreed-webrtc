@@ -33,7 +33,6 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 			$scope.layout.screenshare = false;
 			$scope.usermedia = null;
 			$scope.connected = false;
-			$scope.screenshare = null;
 
 			$scope.hideOptionsBar = true;
 			$scope.fitScreen = true;
@@ -162,12 +161,17 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 			$scope.doScreenshare = function() {
 
+				if ($scope.layout.screenshare) {
+					$scope.stopScreenshare();
+				};
+
 				$scope.layout.screenshare = true;
 
 				// Create userMedia with screen share type.
 				var usermedia = mediaStream.webrtc.doScreenshare();
 				var handler;
 				var peers = {};
+				var screenshares = [];
 
 				var connector = function(token, peercall) {
 					if (peers.hasOwnProperty(peercall.id)) {
@@ -185,10 +189,12 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 				usermedia.e.one("mediasuccess", function(event, usermedia) {
 					$scope.$apply(function(scope) {
+
 						scope.usermedia = usermedia;
 						// Create token to register with us and send token out to all peers.
 						// Peers when connect to us with the token and we answer.
 						var token = "screenshare_"+scope.id+"_"+(screenCount++);
+
 						// Updater function to bring in new calls.
 						var updater = function(event, state, currentcall) {
 							switch (state) {
@@ -198,27 +204,42 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 								break;
 							}
 						};
+
+						// Create callbacks are called for each incoming connections.
 						handler = mediaStream.tokens.create(token, function(event, currenttoken, to, data, type, to2, from, peerscreenshare) {
-							//console.log("Screen share create", currenttoken, data, type, peerscreenshare);
-							$scope.screenshare = peerscreenshare;
-							usermedia.e.one("stopped", function() {
-								mediaStream.tokens.off(token, handler);
-								mediaStream.webrtc.e.off("statechange", updater);
-								handler = null;
-								updated = null;
-								peers = {};
-								safeApply(scope, function(scope) {
-									scope.stopScreenshare();
-								});
-							});
+							console.log("Screen share create", currenttoken, data, type, peerscreenshare);
+							screenshares.push(peerscreenshare);
 							usermedia.addToPeerConnection(peerscreenshare.peerconnection);
 						}, "screenshare");
+
 						// Connect all current calls.
 						mediaStream.webrtc.callForEachCall(function(peercall) {
 							connector(token, peercall);
 						});
 						// Catch later calls too.
 						mediaStream.webrtc.e.on("statechange", updater);
+
+						// Cleanup on stop of media.
+						usermedia.e.one("stopped", function() {
+							mediaStream.tokens.off(token, handler);
+							mediaStream.webrtc.e.off("statechange", updater);
+							handler = null;
+							updated = null;
+							// Send by to all connected peers.
+							_.each(screenshares, function(peerscreenshare) {
+								peerscreenshare.send({m: "bye"});
+								$timeout(function() {
+									peerscreenshare.close();
+								}, 0);
+							});
+							peers = {};
+							screenshares = [];
+							// Make sure to clean up.
+							safeApply(scope, function(scope) {
+								scope.stopScreenshare();
+							});
+						});
+
 					});
 				});
 
@@ -234,16 +255,6 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 			};
 
 			$scope.stopScreenshare = function() {
-
-				if ($scope.screenshare) {
-					$scope.screenshare.send({m: "bye"});
-					(function(screenshare) {
-						$timeout(function() {
-							screenshare.close();
-						}, 0);
-					}($scope.screenshare));
-					$scope.screenshare = null;
-				}
 
 				if ($scope.usermedia) {
 					$scope.usermedia.stop()
