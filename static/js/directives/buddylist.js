@@ -101,7 +101,18 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
         var link = function(scope, iElement, iAttrs, controller) {
 
-            //console.log("buddyList directive link", arguments);
+            // Add events to buddy list parent container to show/hide.
+            var parent = iElement.parent();
+            parent.on("mouseenter mouseleave", function(event) {
+                if (event.type === "mouseenter") {
+                    scope.layout.buddylist = true;
+                } else {
+                    if (scope.layout.buddylistAutoHide) {
+                        scope.layout.buddylist = false;
+                    }
+                }
+                scope.$apply();
+            });
 
         };
 
