@@ -152,7 +152,7 @@ define([
                 return;
             }
             console.log("Bye process (started false)");
-            this.doHangup();
+            this.doHangup("receivedbye", from);
             break;
         default:
             this.msgQueue.push([to, data, type, to2, from]);
@@ -174,6 +174,10 @@ define([
               break;
           }
           if (!this.initiator && this.currentcall.from === id) {
+              targetcall = this.currentcall;
+              break;
+          }
+          if (this.currentcall.id === id) {
               targetcall = this.currentcall;
               break;
           }
@@ -280,16 +284,16 @@ define([
             if (newcurrentcall) {
                 this.currentcall = newcurrentcall;
                 targetcall.close()
-                this.api.sendBye(targetcall.id, null);
+                //this.api.sendBye(targetcall.id, null);
                 this.e.triggerHandler("peercall", [newcurrentcall]);
                 this.e.triggerHandler("peerconference", [this.currentconference]);
             } else {
-                this.doHangup();
+                this.doHangup("receivedbye", targetcall.id);
                 this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
             }
         } else {
             targetcall.close();
-            this.api.sendBye(targetcall.id, null);
+            //this.api.sendBye(targetcall.id, null);
         }
         break;
     case "Conference":
@@ -570,7 +574,9 @@ define([
         }
         if (currentcall !== this.currentcall) {
             currentcall.close();
-            this.api.sendBye(id, reason);
+            if (reason !== "receivedbye") {
+              this.api.sendBye(id, reason);
+            }
             if (this.currentcall && currentcall) {
                 this.e.triggerHandler("statechange", ["connected", this.currentcall]);
             } else {
@@ -585,7 +591,9 @@ define([
     }
     this.stop();
     if (id) {
+      if (reason !== "receivedbye") {
         this.api.sendBye(id, reason);
+      }
     }
 
   }

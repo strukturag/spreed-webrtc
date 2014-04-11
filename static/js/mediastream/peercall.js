@@ -271,6 +271,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
   PeerCall.prototype.close = function() {
 
+  	if (this.closed) {
+  		return;
+  	}
+
   	this.closed = true;
 
 	_.each(this.datachannels, function(datachannel) {
