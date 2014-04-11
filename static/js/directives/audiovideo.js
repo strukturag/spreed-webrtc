@@ -147,6 +147,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
             });
 
             $scope.toggleFullscreen = function() {
+                //console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
                 if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
                     $scope.layoutparent.toggleClass("fullscreen");
                     BigScreen.toggle($scope.layoutparent.get(0));
@@ -235,9 +236,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 //console.log("compile", arguments)
 
-                $(scope.card).on("doubletap", function() {
-                    scope.toggleFullscreen();
-                });
+                $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
                 var needsResize = false;
                 scope.resize = function() {

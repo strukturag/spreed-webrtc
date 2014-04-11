@@ -39,11 +39,11 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         });
 
         // Enable app full screen listener.
-        $("#bar .logo").on("doubletap", function() {
+        $("#bar .logo").on("doubletap dblclick", _.debounce(function() {
             if (BigScreen.enabled) {
                 BigScreen.toggle($("body").get(0));
             }
-        });
+        }, 100, true));
 
         // Load default sounds.
         playSound.initialize({

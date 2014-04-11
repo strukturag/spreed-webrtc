@@ -290,9 +290,9 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).on("dblclick", ".remotescreen", function(event) {
+				$(iElement).on("dblclick", ".remotescreen", _.debounce(function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
-				});
+				}, 100, true));
 			}
 		};
 
