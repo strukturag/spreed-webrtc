@@ -33,7 +33,7 @@
     // purports support for touch events even if the underlying hardware
     // does not!
     var agent = navigator.userAgent.toLowerCase(),
-        isChromeDesktop = ((agent.indexOf('chrome') > -1) && ((agent.indexOf('windows') > -1) || (agent.indexOf('macintosh') > -1) || (agent.indexOf('linux') > -1)) && agent.indexOf('chrome') < 0),
+        isChromeDesktop = (agent.indexOf('chrome') > -1 && ((agent.indexOf('windows') > -1) || (agent.indexOf('macintosh') > -1) || (agent.indexOf('linux') > -1)) && agent.indexOf('mobile') < 0),
 
         settings = {
 			tap_pixel_range: 5,
@@ -66,7 +66,7 @@
     // Add Event shortcuts:
     $.each(['tapstart', 'tapend', 'tap', 'singletap', 'doubletap', 'taphold', 'swipe', 'swipeup', 'swiperight', 'swipedown', 'swipeleft', 'swipeend', 'scrollstart', 'scrollend', 'orientationchange'], function (i, name) {
         $.fn[name] = function (fn) {
-            return fn ? this.bind(name, fn) : this.trigger(name);
+            return fn ? this.on(name, fn) : this.trigger(name);
         };
 
         $.attrFn[name] = true;
@@ -78,7 +78,7 @@
             var thisObject = this,
                 $this = $(thisObject);
 
-            $this.bind(settings.startevent, function (e) {
+            $this.on(settings.startevent, function (e) {
                 $this.data('callee', arguments.callee);
                 if (e.which && e.which !== 1) {
                     return false;
@@ -104,9 +104,41 @@
         },
 
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee)
+            $(this).off(settings.startevent, $(this).data.callee);
         }
     };
+	
+	// tapmove Event:
+	$.event.special.tapmove = {
+		setup: function() {
+			var thisObject = this,
+				$this = $(thisObject);
+				
+			$this.on(settings.moveevent, function(e) {
+				$this.data('callee', arguments.callee);
+				
+				var origEvent = e.originalEvent,
+					touchData = {
+                        'position': {
+                            'x': ((settings.touch_capable) ? origEvent.touches[0].screenX : e.screenX),
+                            'y': (settings.touch_capable) ? origEvent.touches[0].screenY : e.screenY,
+                        },
+                        'offset': {
+                            'x': (settings.touch_capable) ? origEvent.touches[0].pageX - origEvent.touches[0].target.offsetLeft : e.offsetX,
+                            'y': (settings.touch_capable) ? origEvent.touches[0].pageY - origEvent.touches[0].target.offsetTop : e.offsetY,
+                        },
+                        'time': new Date().getTime(),
+                        'target': e.target
+                    };
+					
+				triggerCustomEvent(thisObject, 'tapmove', e, touchData);
+				return true;
+			});
+		},
+		remove: function() {
+			$(this).off(settings.moveevent, $(this).data.callee);
+		}
+	}
 
     // tapend Event:
     $.event.special.tapend = {
@@ -114,7 +146,7 @@
             var thisObject = this,
                 $this = $(thisObject);
 
-            $this.bind(settings.endevent, function (e) {
+            $this.on(settings.endevent, function (e) {
                 // Touch event data:
                 $this.data('callee', arguments.callee);
 
@@ -136,7 +168,7 @@
             });
         },
         remove: function () {
-            $(this).unbind(settings.endevent, $(this).data.callee)
+            $(this).off(settings.endevent, $(this).data.callee);
         }
     };
 
@@ -152,7 +184,7 @@
                     y: 0
                 };
 
-            $this.bind(settings.startevent, function (e) {
+            $this.on(settings.startevent, function (e) {
                 if (e.which && e.which !== 1) {
                     return false;
                 } else {
@@ -210,7 +242,7 @@
 
                     return true;
                 }
-            }).bind(settings.endevent, function () {
+            }).on(settings.endevent, function () {
                 $this.data('callee2', arguments.callee);
                 $this.data('tapheld', false);
                 window.clearTimeout(settings.hold_timer);
@@ -218,7 +250,7 @@
         },
 
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee1).unbind(settings.endevent, $(this).data.callee2);
+            $(this).off(settings.startevent, $(this).data.callee1).off(settings.endevent, $(this).data.callee2);
         }
     };
 
@@ -232,7 +264,7 @@
                 firstTap,
                 origEvent;
 
-            $this.bind(settings.startevent, function (e) {
+            $this.on(settings.startevent, function (e) {
                 if (e.which && e.which !== 1) {
                     return false;
                 } else {
@@ -256,7 +288,7 @@
 
                     return true;
                 }
-            }).bind(settings.endevent, function (e) {
+            }).on(settings.endevent, function (e) {
                 var now = new Date().getTime();
                 var lastTouch = $this.data('lastTouch') || now + 1;
                 var delta = now - lastTouch;
@@ -298,7 +330,7 @@
             });
         },
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee1).unbind(settings.endevent, $(this).data.callee2);
+            $(this).off(settings.startevent, $(this).data.callee1).off(settings.endevent, $(this).data.callee2);
         }
     };
 
@@ -315,7 +347,7 @@
                     y: 0
                 };
 
-            $this.bind(settings.startevent, function (e) {
+            $this.on(settings.startevent, function (e) {
                 if (e.which && e.which !== 1) {
                     return false;
                 } else {
@@ -328,7 +360,7 @@
                     start_pos.y = (e.originalEvent.targetTouches) ? e.originalEvent.targetTouches[0].pageY : e.pageY;
                     return true;
                 }
-            }).bind(settings.endevent, function (e) {
+            }).on(settings.endevent, function (e) {
                 $this.data('callee2', arguments.callee);
                 if (e.target == origTarget) {
                     // Get the end point:
@@ -365,7 +397,7 @@
         },
 
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee1).unbind(settings.endevent, $(this).data.callee2);
+            $(this).off(settings.startevent, $(this).data.callee1).off(settings.endevent, $(this).data.callee2);
         }
     };
 
@@ -382,7 +414,7 @@
                     y: 0
                 };
 
-            $this.bind(settings.startevent, function (e) {
+            $this.on(settings.startevent, function (e) {
                 $this.data('callee1', arguments.callee);
 
                 if (e.which && e.which !== 1) {
@@ -395,7 +427,7 @@
                     origTarget = e.target;
                     return true;
                 }
-            }).bind(settings.endevent, function (e) {
+            }).on(settings.endevent, function (e) {
                 $this.data('callee2', arguments.callee);
 
                 // Only trigger if they've started, and the target matches:
@@ -425,7 +457,7 @@
         },
 
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee1).unbind(settings.endevent, $(this).data.callee2);
+            $(this).off(settings.startevent, $(this).data.callee1).off(settings.endevent, $(this).data.callee2);
         }
     };
 
@@ -603,13 +635,13 @@
                 hasSwiped = false;
             }
 
-            $this.bind(settings.startevent, touchStart);
-            $this.bind(settings.moveevent, touchMove);
-            $this.bind(settings.endevent, touchEnd);
+            $this.on(settings.startevent, touchStart);
+            $this.on(settings.moveevent, touchMove);
+            $this.on(settings.endevent, touchEnd);
         },
 
         remove: function () {
-            $(this).unbind(settings.startevent, $(this).data.callee1).unbind(settings.moveevent, $(this).data.callee2).unbind(settings.endevent, $(this).data.callee3);
+            $(this).off(settings.startevent, $(this).data.callee1).off(settings.moveevent, $(this).data.callee2).off(settings.endevent, $(this).data.callee3);
         }
     };
 
@@ -627,7 +659,7 @@
             }
 
             // iPhone triggers scroll after a small delay; use touchmove instead
-            $this.bind(settings.scrollevent, function (event) {
+            $this.on(settings.scrollevent, function (event) {
                 $this.data('callee', arguments.callee);
 
                 if (!scrolling) {
@@ -642,7 +674,7 @@
         },
 
         remove: function () {
-            $(this).unbind(settings.scrollevent, $(this).data.callee);
+            $(this).off(settings.scrollevent, $(this).data.callee);
         }
     };
 
@@ -677,7 +709,7 @@
     $.event.special.orientationchange = special_event = {
         setup: function () {
             // If the event is supported natively, return false so that jQuery
-            // will bind to the event using DOM methods.
+            // will on to the event using DOM methods.
             if (settings.orientation_support) {
                 return false;
             }
@@ -685,7 +717,7 @@
             // Get the current orientation to avoid initial double-triggering.
             last_orientation = get_orientation();
 
-            win.bind('throttledresize', handler);
+            win.on('throttledresize', handler);
             return true;
         },
         teardown: function () {
@@ -693,7 +725,7 @@
                 return false;
             }
 
-            win.unbind('throttledresize', handler);
+            win.off('throttledresize', handler);
             return true;
         },
         add: function (handleObj) {
@@ -737,10 +769,10 @@
     // throttle Handler:
     $.event.special.throttledresize = {
         setup: function () {
-            $(this).bind('resize', throttle_handler);
+            $(this).on('resize', throttle_handler);
         },
         teardown: function () {
-            $(this).unbind('resize', throttle_handler);
+            $(this).off('resize', throttle_handler);
         }
     };
 
@@ -777,7 +809,7 @@
         event.type = originalType;
     }
 
-    // Correctly bind anything we've overloaded:
+    // Correctly on anything we've overloaded:
     $.each({
         scrollend: 'scrollstart',
         swipeup: 'swipe',
@@ -788,7 +820,7 @@
     }, function (e, srcE, touchData) {
         $.event.special[e] = {
             setup: function () {
-                $(this).bind(srcE, $.noop);
+                $(this).on(srcE, $.noop);
             }
         };
     });
