@@ -81,18 +81,9 @@ define(['jquery', 'underscore'], function(jquery, _) {
 		var obj = this.tokens[token];
 		if (!obj) {
 			obj = this.tokens[token] = new Token(handlerKey);
-			/*obj = this.tokens[token] = {
-				e: $({}),
-				count: 0,
-				handlerKey: handlerKey,
-				trigger: null,
-				handler: null
-			}*/
 			console.log("Created token", token, obj);
 		}
 		return obj.on(name, f);
-		/*obj.count++;
-		return obj.e.on(name, f);*/
 	};
 
 	Tokens.prototype.on = function(token, f, handlerKey) {
@@ -129,14 +120,14 @@ define(['jquery', 'underscore'], function(jquery, _) {
 		// Create dynamic trigger function on first request.
 		if (obj && !obj.trigger) {
 			obj.trigger = (function(webrtc, token, to, to2, from) {
-				return _.bind(function(data, currentxfer) {
+				return _.bind(function(data, currentconn) {
 					//console.log("Processing token channel message", data);
-					this.e.triggerHandler("message", [token, to, data, null, to2, from, currentxfer]);
+					this.e.triggerHandler("message", [token, to, data, null, to2, from, currentconn]);
 				}, obj);
 			}(webrtc, token, to, to2, from));
 		}
 
-		// Lookup existing xfer connection.
+		// Lookup existing handler connection.
 		var handler = obj.getHandler(this.makeId(from, id));
 
 		switch (type) {
