@@ -20,7 +20,7 @@
  */
 define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function(_, templateChat, templateChatroom) {
 
-    return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "$timeout", "$sanitize", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, $timeout, $sanitize) {
+    return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "$timeout", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, $timeout) {
 
         var displayName = safeDisplayName;
         var group_chat_id = "";
@@ -421,8 +421,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                 scope.$on("room", function(event, room) {
                     var subscope = scope.showGroupRoom(null, {restore: true, noenable: true, noactivate: true});
                     if (room) {
-                        var msg = translation._("You are now in room %s ...", $sanitize(room));
-                        subscope.$broadcast("display", null, $("<i><span>"+msg+"</span></i>"));
+                        var msg = $("<span>").text(translation._("You are now in room %s ...", room));
+                        subscope.$broadcast("display", null, $("<i>").append(msg));
                     }
                 });
 
