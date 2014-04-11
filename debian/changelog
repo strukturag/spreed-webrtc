@@ -1,3 +1,26 @@
+spreed-speakfreely-server (0.17.2) precise; urgency=low
+
+  * Fixed timeouts when there was a disconnect.
+  * Use sleepy as submodule from external source.
+  * Fixed file download ending prematurely on slow connections.
+  * Fixed buddy list auto hide on room changes.
+  * Fixed German language translation headers.
+  * Added missing translation for conferences.
+  * Added Japanese language.
+  * Added Chinese Traditional language.
+  * Updated Chinese language.
+  * Updated Korean language. 
+  * Fixed screen sharing scrolling. 
+  * Fixed screen sharing hangup in conferences.
+  * Avoid spurious bye ping pong. 
+  * Fixed hangup in conferences.
+  * Fixed double click on Chrome OS.
+  * Fixed buddy list visibility if it should auto hide.
+  * Fixed Javascript code injection with room names.
+  * Show current room name in title.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 11 Apr 2014 19:42:10 +0200
+
 spreed-speakfreely-server (0.17.1) precise; urgency=low
 
   * Added translations for Korean and Chinese.
