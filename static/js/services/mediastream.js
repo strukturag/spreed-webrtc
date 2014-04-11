@@ -28,12 +28,13 @@ define([
 
 ], function($, _, Connector, Api, WebRTC, tokens) {
 
-    return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout) {
+    return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce) {
 
         var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
         var version = context.Cfg.Version || "unknown";
         console.log("Service version: "+version);
         console.log("Ws URL: "+ url);
+        console.log("Secure Contextual Escaping: "+$sce.isEnabled());
 
         var connector = new Connector(version);
         var api = new Api(connector);
@@ -98,6 +99,13 @@ define([
                     });
                 };
 
+                var title = (function(e) {
+                    return {
+                        element: e,
+                        text: e.text()
+                    }
+                }($("title")));
+
                 // Room selector.
                 $rootScope.$on("$locationChangeSuccess", function(event) {
                     //console.log("location change", $route, $rootScope.roomid);
@@ -123,6 +131,13 @@ define([
                     }
                     $rootScope.roomid = room;
                     $rootScope.roomlink = room ? mediaStream.url.room(room) : null;
+
+                    if ($rootScope.roomlink) {
+                        title.element.text(room + " - " + title.text);
+                    } else {
+                        title.element.text(title.text);
+                    }
+
                 });
 
                 // Cache events, to avoid ui flicker during quick room changes.
