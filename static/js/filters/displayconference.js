@@ -26,7 +26,11 @@ define([], function() {
             if (!peers || peers.length === 0) {
                 return "";
             }
-            return " " + translation._n("and %2$s", "and %1$d others", peers.length, safeDisplayName(peers[0]));
+            if (peers.length === 1) {
+            	return " " + translation._("and %s", safeDisplayName(peers[0]))
+            } else {
+            	return " " + translation._("and %d others", peers.length);
+            }
         }
     }];
 

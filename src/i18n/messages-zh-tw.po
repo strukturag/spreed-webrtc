@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-08 21:20+0200\n"
+"POT-Creation-Date: 2014-04-14 16:16+0200\n"
 "PO-Revision-Date: 2014-04-07 18:09+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -435,9 +435,13 @@ msgid ""
 "again."
 msgstr "接入碼認證錯誤。請檢查您的網絡連接并重試。"
 
-msgid "and %2$s"
-msgid_plural "and %1$d others"
-msgstr[0] ""
+#, fuzzy, python-format
+msgid "and %s"
+msgstr ""
+
+#, python-format
+msgid "and %d others"
+msgstr ""
 
 msgid "User"
 msgstr ""
