@@ -449,3 +449,4 @@ msgstr "어떤 사람"
 
 msgid "Me"
 msgstr "나"
+
