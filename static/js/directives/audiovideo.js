@@ -294,7 +294,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         var newVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
                         var newVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
                         container.style.width = newVideoWidth + 'px';
-                        container.style.height = newVideoHeight + 'px';
                         container.style.left = ((innerWidth - newVideoWidth) / 2) + 'px';
                         var extraCSS = {};
                     } else {
@@ -310,7 +309,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                             var tooHigh = (newContainerHeight-innerHeight) / Math.ceil(videos.length / videosPerRow);
                             singleVideoHeight -= tooHigh;
                             singleVideoWidth = singleVideoHeight * aspectRatio;
-                            newContainerHeight = innerHeight;
                         }
                         /*
                         console.log("space", space);
@@ -321,7 +319,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         console.log("singleVideoHeight", singleVideoHeight);
                         */
                         container.style.width = newContainerWidth + "px";
-                        container.style.height = newContainerHeight + "px";
                         container.style.left = ((innerWidth - newContainerWidth) / 2) + 'px';
                         extraCSS = {
                             "#remoteVideos": {
