@@ -90,6 +90,7 @@ font-size:24px;
 padding:0px;
 line-height:40px;
 text-align:center;
+margin-left:-8px;
 }
 #bar > .right .btn:focus {
 border: none;
@@ -142,6 +143,7 @@ padding:0 1em;
 position:relative;
 min-height: 44px;
 vertical-align:middle;
+margin-left:-70px;
 }
 
 @media all and (max-width: 700px) {
@@ -171,6 +173,7 @@ vertical-align:middle;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap;
+        margin-left:0px;
 
         img {
             display:none;
