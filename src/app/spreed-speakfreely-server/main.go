@@ -22,6 +22,7 @@ package main
 
 import (
 	"app/spreed-speakfreely-server/sleepy"
+	"bytes"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -35,6 +36,7 @@ import (
 	"os"
 	"path"
 	goruntime "runtime"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -83,6 +85,32 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	handleRoomView(vars["room"], w, r)
+
+}
+
+func makeImageHandler(hub *Hub, expires time.Duration) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		image := hub.buddyImages.Get(vars["imageid"])
+		if image == nil {
+			http.Error(w, "Unknown image", http.StatusNotFound)
+			return
+		}
+
+		w.Header().Set("Content-Type", image.mimetype)
+		w.Header().Set("ETag", image.lastChangeId)
+		age := time.Now().Sub(image.lastChange)
+		if age >= time.Second {
+			w.Header().Set("Age", strconv.Itoa(int(age.Seconds())))
+		}
+		if expires >= time.Second {
+			w.Header().Set("Expires", time.Now().Add(expires).Format(time.RFC1123))
+			w.Header().Set("Cache-Control", "public, no-transform, max-age="+strconv.Itoa(int(expires.Seconds())))
+		}
+		http.ServeContent(w, r, "", image.lastChange, bytes.NewReader(image.data))
+	}
 
 }
 
@@ -303,6 +331,7 @@ func runner(runtime phoenix.Runtime) error {
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
+	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))

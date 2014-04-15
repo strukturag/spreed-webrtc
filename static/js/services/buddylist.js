@@ -110,7 +110,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
     };
 
     // buddyList
-    return ["$window", "$compile", "playSound", "buddyData", "fastScroll", function ($window, $compile, playSound, buddyData, fastScroll) {
+    return ["$window", "$compile", "playSound", "buddyData", "fastScroll", "mediaStream", function ($window, $compile, playSound, buddyData, fastScroll, mediaStream) {
 
         var requestAnimationFrame = $window.requestAnimationFrame;
 
@@ -317,6 +317,19 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
         };
 
+        Buddylist.prototype.updateBuddyPicture = function(status) {
+
+            url = status.buddyPicture
+            if (!url) {
+                return;
+            }
+
+            if (url.indexOf("img:") === 0) {
+                status.buddyPicture = status.buddyPictureLocalUrl = mediaStream.url.buddy(url.substr(4));
+            }
+
+        };
+
         Buddylist.prototype.onStatus = function(status) {
 
             //console.log("onStatus", status);
@@ -326,6 +339,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 console.warn("Received old status update in status", status.Rev, scope.status.Rev);
             } else {
                 scope.status = status.Status;
+                this.updateBuddyPicture(scope.status);
                 var displayName = scope.displayName;
                 if (scope.status.displayName) {
                   scope.displayName = scope.status.displayName;
@@ -354,6 +368,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                 } else {
                     scope.status = user.Status;
                     scope.displayName = scope.status.displayName;
+                    this.updateBuddyPicture(scope.status);
                 }
             }
             //console.log("Joined scope", scope, scope.element);
