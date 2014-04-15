@@ -49,7 +49,7 @@ ifneq ($(NODEJS_BIN_EXISTS), 1)
     $(error "Can't find node.js runtime, please install / check your PATH")
 endif
 
-build: get binary styles javascript
+build: get binary assets
 
 gopath:
 		@echo GOPATH=$(GOPATH)
@@ -71,17 +71,26 @@ test: get
 		GOPATH=$(GOPATH) go test -i $(TESTDEPS)
 		GOPATH=$(GOPATH) go test -v $(TESTDEPS)
 
+assets: styles javascript
+
 styles:
-		(cd $(CURDIR)/src/styles && sass --compass --scss --style=compressed main.scss:$(CURDIR)/static/css/main.min.css)
+		sass --compass --scss $(SASSFLAGS) \
+			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
+
+releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
+releaseassets: SASSFLAGS = --style=compressed --no-cache
+releaseassets: dist_gopath assets
 
 javascript:
 		mkdir -p $(OUTPUT_JS)
-		$(NODEJS_BIN) $(CURDIR)/build/r.js -o $(CURDIR)/build/build.js dir=$(OUTPUT_JS) baseUrl=$(CURDIR)/static/js mainConfigFile=$(CURDIR)/static/js/main.js
+		$(NODEJS_BIN) $(CURDIR)/build/r.js \
+			-o $(CURDIR)/build/build.js \
+			dir=$(OUTPUT_JS) $(RJSFLAGS)
 
 release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
-release: dist_gopath $(DIST_BIN) binary styles javascript
+release: dist_gopath $(DIST_BIN) binary releaseassets
 
 releasetest: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 releasetest: dist_gopath test
@@ -141,4 +150,4 @@ tarball: distclean release install
 		echo -n $(VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME).tar.gz -C $(DIST) $(PACKAGE_NAME)
 
-.PHONY: clean distclean pristine get build styles javascript release releasetest dist_gopath install gopath binary tarball
+.PHONY: clean distclean pristine get build styles javascript release releasetest dist_gopath install gopath binary tarball assets
