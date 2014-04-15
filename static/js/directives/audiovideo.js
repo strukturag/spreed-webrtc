@@ -300,7 +300,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         var space = innerHeight*innerWidth; // square pixels
                         var videoSpace = space/videos.length;
                         var singleVideoWidthOptimal = Math.pow(videoSpace * aspectRatio, 0.5);
-                        var videosPerRow = Math.ceil(innerWidth/singleVideoWidthOptimal)
+                        var videosPerRow = Math.ceil(innerWidth/singleVideoWidthOptimal);
+                        if (videosPerRow > videos.length) {
+                            videosPerRow = videos.length;
+                        }
                         var singleVideoWidth = Math.ceil(innerWidth/videosPerRow);
                         var singleVideoHeight = Math.ceil(singleVideoWidth/aspectRatio);
                         var newContainerWidth = (videosPerRow*singleVideoWidth);

@@ -67,8 +67,8 @@ transform: rotateY(180deg);
 }
 #mini {
 position: absolute;
-height: 20%;
-bottom: 4px;
+max-height: 18%;
+bottom: 2px;
 right: 2px;
 transform: scale(-1, 1);
 -webkit-transform: scale(-1, 1);
@@ -86,6 +86,7 @@ transition-property: opacity;
 -webkit-transition-property: opacity;
 transition-duration: 2s;
 -webkit-transition-duration: 2s;
+background: rgba(0,0,0,0.4);
 /*background: red;*/
 }
 #remoteVideos {
@@ -106,7 +107,8 @@ width:100%;
 height:100%;
 }
 #miniVideo {
-height: 100%;
+max-height: 100%;
+max-width:100%;
 }
 .remoteVideo {
 display: inline-block;
@@ -115,6 +117,7 @@ height:100%;
 vertical-align:bottom;
 position:relative;
 visibility:hidden;
+background: rgba(0,0,0,0.4);
 }
 .remoteVideo.withvideo {
 visibility:visible;
