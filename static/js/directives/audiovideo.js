@@ -306,8 +306,11 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         var singleVideoHeight = Math.ceil(singleVideoWidth/aspectRatio);
                         var newContainerWidth = (videosPerRow*singleVideoWidth);
                         var newContainerHeight = Math.ceil(videos.length/videosPerRow)*singleVideoHeight;
-                        if (newContainerHeight*1.3 <= innerHeight) {
-                            newContainerHeight = newContainerHeight*1.3;
+                        if (newContainerHeight > innerHeight) {
+                            var tooHigh = (newContainerHeight-innerHeight) / Math.ceil(videos.length / videosPerRow);
+                            singleVideoHeight -= tooHigh;
+                            singleVideoWidth = singleVideoHeight * aspectRatio;
+                            newContainerHeight = innerHeight;
                         }
                         /*
                         console.log("space", space);
