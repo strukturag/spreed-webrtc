@@ -23,6 +23,7 @@ package main
 import (
 	"bytes"
 	"container/list"
+	"encoding/binary"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
@@ -72,6 +73,7 @@ type Connection struct {
 	Hello        bool
 	Version      string
 	RemoteAddr   string
+	rtt          time.Duration
 }
 
 func NewConnection(h *Hub, ws *websocket.Conn, remoteAddr string) *Connection {
@@ -161,8 +163,14 @@ func (c *Connection) readAll(dest Buffer, r io.Reader) error {
 func (c *Connection) readPump() {
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
-	c.ws.SetPongHandler(func(string) error {
-		c.ws.SetReadDeadline(time.Now().Add(pongWait))
+	c.ws.SetPongHandler(func(msg string) error {
+		now := time.Now()
+		if len(msg) == 8 {
+			now := now.UnixNano()
+			sent := int64(binary.BigEndian.Uint64([]byte(msg)))
+			c.rtt = time.Duration(now - sent)
+		}
+		c.ws.SetReadDeadline(now.Add(pongWait))
 		return nil
 	})
 	times := list.New()
@@ -307,7 +315,9 @@ cleanup:
 
 // Write ping message.
 func (c *Connection) ping() error {
-	return c.write(websocket.PingMessage, []byte{})
+	data := make([]byte, 8, 8)
+	binary.BigEndian.PutUint64(data, uint64(time.Now().UnixNano()))
+	return c.write(websocket.PingMessage, data)
 }
 
 // Write writes a message with the given opCode and payload.
