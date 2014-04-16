@@ -64,6 +64,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 peerTemplate(subscope, function(clonedElement, scope) {
                     $($scope.remoteVideos).append(clonedElement);
+                    clonedElement.data("peerid", scope.peerid);
                     scope.element = clonedElement;
                     var video = clonedElement.find("video").get(0);
                     $window.attachMediaStream(video, stream);
@@ -238,14 +239,20 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
+                //scope.rendererName = "conferencekiosk";
+                scope.rendererName = "onepeople";
+
                 var needsResize = false;
-                var rendererName = "onepeople";
                 scope.resize = function() {
                     needsResize = true;
                 };
 
                 var resize = function() {
-                    videoLayout.update(rendererName, scope, controller);
+                    var size = {
+                        width: scope.layoutparent.width(),
+                        height: scope.layoutparent.height()
+                    }
+                    videoLayout.update(scope.rendererName, size, scope, controller);
                 };
 
                 $($window).on("resize", scope.resize);

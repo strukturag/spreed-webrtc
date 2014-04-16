@@ -23,20 +23,32 @@ define(["jquery", "underscore"], function($, _) {
 	var dynamicCSSContainer = "audiovideo-dynamic";
 	var renderers = {};
 
+	var getRemoteVideoSize = function(videos, peers) {
+		var size = {
+			width: 1920,
+			height: 1080
+		}
+		if (videos.length) {
+            if (videos.length === 1) {
+                var remoteVideo = peers[videos[0]].element.find("video").get(0);
+                size.width = remoteVideo.videoWidth;
+                size.height = remoteVideo.videoHeight;
+                console.log("Remote video size: ", size);
+            }
+        }
+        return size;
+	}
+
 	// videoLayout
-	return [function() {
+	return ["$window", function($window) {
 
 		// Video layout with all persons rendered the same size.
-		var OnePeople = function(scope, controller) {
-			this.stylesBackup = {
-				width: scope.container.style.width,
-				left: scope.container.style.left
-			}
+		var OnePeople = function(container, scope, controller) {
 		};
 
 		OnePeople.prototype.name = "onepeople";
 
-		OnePeople.prototype.render = function(scope, videos, peers) {
+		OnePeople.prototype.render = function(container, size, scope, videos, peers) {
 
 			if (this.closed) {
 				return;
@@ -46,7 +58,8 @@ define(["jquery", "underscore"], function($, _) {
             var videoHeight;
 
             if (videos.length) {
-                if (videos.length === 1) {
+            	var remoteSize = getRemoteVideoSize(videos, peers);
+                /*if (videos.length === 1) {
                     var remoteVideo = peers[videos[0]].element.find("video").get(0);
                     videoWidth = remoteVideo.videoWidth;
                     videoHeight = remoteVideo.videoHeight;
@@ -54,7 +67,9 @@ define(["jquery", "underscore"], function($, _) {
                 } else {
                     videoWidth = 1920;
                     videoHeight = 1080;
-                }
+                }*/
+                videoWidth = remoteSize.width;
+                videoHeight = remoteSize.height;
             }
 
             if (!videoWidth) {
@@ -79,9 +94,8 @@ define(["jquery", "underscore"], function($, _) {
             }
 
             var aspectRatio = videoWidth/videoHeight;
-            var innerHeight = scope.layoutparent.height();
-            var innerWidth = scope.layoutparent.width();
-            var container = scope.container;
+            var innerHeight = size.height; //scope.layoutparent.height();
+            var innerWidth = size.width; //scope.layoutparent.width();
 
             //console.log("resize", innerHeight, innerWidth);
             //console.log("resize", container, videos.length, aspectRatio, innerHeight, innerWidth);
@@ -135,40 +149,114 @@ define(["jquery", "underscore"], function($, _) {
 
 		};
 
-		OnePeople.prototype.close = function(scope, controller) {
+		OnePeople.prototype.close = function(container, scope, controller) {
 
-			scope.container.css(this.stylesBackup);
-			$.injectCSS({}, {
-				truncateFirst: true,
-                containerName: dynamicCSSContainer
-            });
 			this.closed = true;
 
 		};
 
+		var ConferenceKiosk = function(container, scope, controller) {
+
+			this.remoteVideos = $(container).find("#remoteVideos");
+			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
+			this.remoteVideos.before(this.bigVideo);
+
+			this.big = null;
+			this.remoteVideos.on("click", ".remoteVideo", _.bind(function(event) {
+				if ($(event.currentTarget).hasClass("remoteVideo")) {
+					this.makeBig($(event.currentTarget));
+				}
+			}, this));
+
+		};
+
+		ConferenceKiosk.prototype.name = "conferencekiosk";
+
+		ConferenceKiosk.prototype.makeBig = function(remoteVideo) {
+
+			if (this.big === remoteVideo) {
+				return;
+			}
+
+			if (this.big) {
+				// Add old video back.
+				this.big.insertAfter(remoteVideo);
+				this.big.find("video").get(0).play();
+			}
+
+			this.big = remoteVideo;
+			remoteVideo.appendTo(this.bigVideo);
+			remoteVideo.find("video").get(0).play();
+
+		};
+
+		ConferenceKiosk.prototype.render = function(container, size, scope, videos, peers) {
+
+			var big = this.big;
+			if (big) {
+				var currentbigpeerid = this.big.data("peerid");
+				if (!peers[currentbigpeerid]) {
+					console.log("Current big peer is no longer there", currentbigpeerid);
+					this.big = big = null;
+				}
+			}
+			if (!big) {
+				if (videos.length) {
+					this.makeBig(peers[videos[0]].element);
+					this.bigVideo.style.opacity = 1;
+				}
+
+			}
+
+			var remoteSize = getRemoteVideoSize(videos, peers);
+			var aspectRatio = remoteSize.width/remoteSize.height;
+            var innerHeight = size.height - 110;
+            var innerWidth = size.width;
+
+			var bigVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
+            var bigVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
+
+            this.bigVideo.style.width = bigVideoWidth + 'px';
+            this.bigVideo.style.height = bigVideoHeight + 'px';
+
+		};
+
+		ConferenceKiosk.prototype.close = function(container, scope, controller) {
+			this.closed = true;
+			this.bigVideo.remove()
+			this.bigVideo = null;
+			this.remoteVideos = null;
+		};
+
 		// Register renderers.
 		renderers[OnePeople.prototype.name] = OnePeople;
+		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
 
 		// Public api.
 		var current = null;
 		return {
-			update: function(name, scope, controller) {
+			update: function(name, size, scope, controller) {
 
 				var videos = _.keys(controller.peers);
 				var peers = controller.peers;
+				var container = scope.container;
 
 				if (!current) {
-					current = new renderers[name](scope, controller)
+					current = new renderers[name](container, scope, controller)
 					console.log("Created new video layout renderer", name, current);
+					$(container).addClass("renderer-"+name);
 				} else {
 					if (current.name !== name) {
-						current.close(scope, controller);
-						current = new renderers[name](scope, conroller)
+						current.close(container, scope, controller);
+						$(container).removeAttr("style");
+						$(container).removeClass("renderer-"+current.name);
+						current = new renderers[name](container, scope, conroller)
+						$(container).addClass("renderer-"+name);
 						console.log("Switched to new video layout renderer", name, current);
 					}
 				}
 
-				current.render(scope, videos, peers);
+				current.render(container, size, scope, videos, peers);
 
 			},
 			register: function(name, impl) {

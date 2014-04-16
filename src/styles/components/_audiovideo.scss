@@ -96,6 +96,54 @@ right:520px;
 	border:1px solid #9dd53a;
 }
 
+.renderer-conferencekiosk {
+	#remoteVideos {
+		top:auto;
+		bottom:2px;
+		text-align:center;
+		background:rgba(0,0,0,0.4);
+		padding-right:192px;
+		>div {
+			height:108px;
+			width:192px;
+			cursor:pointer;
+		}
+		.overlaylogo {
+			display:none;
+		}
+		.peerlabel, .peeractions i {
+			font-size:1.1em;
+		}
+		.peerlabel {
+			background: rgba(0,0,0,0.9);
+		}
+	}
+	#mini {
+		max-height: none;
+		height:108px;
+		width:192px;
+	}
+	.bigVideo {
+		position:absolute;
+		left:0px;
+		right:0px;
+		bottom:112px;
+		top:2px;
+		margin: auto;
+		opacity: 0;
+		transition-property: opacity;
+		-webkit-transition-property: opacity;
+		transition-duration: 2s;
+		-webkit-transition-duration: 2s;
+	}
+
+}
+
+.bigVideo video {
+	width:100%;
+	height:100%;
+}
+
 @media only screen and (max-width: 630px) {
 	.mainScreenshare #audiovideo {
 		display:none;
