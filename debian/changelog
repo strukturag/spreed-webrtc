@@ -1,3 +1,18 @@
+spreed-speakfreely-server (0.17.3) precise; urgency=low
+
+  * Buddy images are now loaded with seperate URL calls.
+  * Updated Korean (ko) language.
+  * Fixed video bottom overflow with certain window sizes.
+  * Own video is now always at the bottom.
+  * Bar does no longer overlap.
+  * Added new top level Make target for building assets.
+  * File permission fixes.
+  * Do not use sleepy as submodule but include it directly.
+  * Refactored video layout renderer in seperate service.
+  * Implemented alternaitve conference view (not enabled yet). 
+
+ -- Simon Eisenmann <simon@struktur.de>  Wed, 16 Apr 2014 17:41:13 +0200
+
 spreed-speakfreely-server (0.17.2) precise; urgency=low
 
   * Fixed timeouts when there was a disconnect.
