@@ -1,4 +1,0 @@
-[submodule "src/app/spreed-speakfreely-server/sleepy"]
-	path = src/app/spreed-speakfreely-server/sleepy
-	url = https://github.com/strukturag/sleepy.git
-	branch = gorillasupport
