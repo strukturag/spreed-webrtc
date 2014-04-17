@@ -20,8 +20,8 @@
 
 PKG := app/spreed-speakfreely-server
 EXENAME := spreed-speakfreely-server
-CONFIG_FILE := spreed-speakfreely-server.conf
-CONFIG_PATH := /etc
+CONFIG_FILE ?= spreed-speakfreely-server.conf
+CONFIG_PATH ?= /etc
 
 VENDOR = "$(CURDIR)/vendor"
 GOPATH = "$(VENDOR):$(CURDIR)"
