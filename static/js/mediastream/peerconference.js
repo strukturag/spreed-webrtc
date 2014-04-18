@@ -183,11 +183,15 @@ define(['underscore', 'mediastream/peercall'], function(_, PeerCall) {
 
         console.log("Conference peer connection state changed", iceConnectionState, currentcall);
         switch (iceConnectionState) {
+        case "completed":            
         case "connected":
             if (!this.callsIn.hasOwnProperty(currentcall.id)) {
                 this.callsIn[currentcall.id] = true;
                 this.pushUpdate();
             }
+            break;
+        case "failed":
+            console.warn("Conference peer connection state failed", currentcall);
             break;
         }
         this.webrtc.onConnectionStateChange(iceConnectionState, currentcall);

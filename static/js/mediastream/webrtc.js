@@ -443,6 +443,7 @@ define([
     xfer.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentxfer) {
       console.log("Xfer state changed", iceConnectionState);
       switch (iceConnectionState) {
+      case "completed":
       case "connected":
         // Do nothing here, we wait for dataReady.
         break
@@ -516,6 +517,7 @@ define([
     peerscreenshare.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentscreenshare) {
       console.log("Screen share state changed", iceConnectionState);
       switch (iceConnectionState) {
+      case "completed":
       case "connected":
         opts.connected(currentscreenshare);
         break
