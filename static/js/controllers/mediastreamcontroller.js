@@ -589,7 +589,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                 changed = true;
             }
             if (changed) {
-                $scope.$broadcast("mainresize");
+                $scope.$broadcast("mainresize", layout.main);
             }
         });
 
@@ -618,7 +618,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                         $element.addClass(makeName("main", layout.main));
                     }
                 }
-                $scope.$broadcast("mainresize");
+                $scope.$broadcast("mainresize", layout.main);
             }}()
         ), true);
 

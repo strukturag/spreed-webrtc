@@ -241,6 +241,17 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 //scope.rendererName = "conferencekiosk";
                 scope.rendererName = "onepeople";
+                scope.renderersAvailable = videoLayout.layouts();
+
+                var rendererName = null;
+                var getRendererName = function() {
+                    // Return name of current renderer.
+                    if (rendererName !== null) {
+                        return rendererName;
+                    } else {
+                        return scope.rendererName;
+                    }
+                };
 
                 var needsResize = false;
                 scope.resize = function() {
@@ -252,15 +263,28 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         width: scope.layoutparent.width(),
                         height: scope.layoutparent.height()
                     }
-                    videoLayout.update(scope.rendererName, size, scope, controller);
+                    videoLayout.update(getRendererName(), size, scope, controller);
                 };
 
+                // Make sure we draw on resize.
                 $($window).on("resize", scope.resize);
-                scope.$on("mainresize", function() {
+                scope.$on("mainresize", function(event, main) {
+                    if (main) {
+                        // Force onepeople renderer when we have a main view.
+                        rendererName = "onepeople"
+                    } else if (rendererName) {
+                        rendererName = null;
+                    }
                     _.defer(scope.resize);
                 });
                 scope.resize();
 
+                // Make sure we draw when the renderer was changed.
+                scope.$watch("rendererName", function() {
+                    _.defer(scope.resize);
+                });
+
+                // Update function run in rendering thread.
                 var update = function() {
                     if (needsResize) {
                         needsResize =false;
@@ -268,7 +292,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }
                     requestAnimationFrame(update);
                 }
-                update();
+                _.defer(update);
 
             }
 

@@ -261,6 +261,9 @@ define(["jquery", "underscore"], function($, _) {
 			},
 			register: function(name, impl) {
 				renderers[name] = impl;
+			},
+			layouts: function() {
+				return _.keys(renderers);
 			}
 		}
 
