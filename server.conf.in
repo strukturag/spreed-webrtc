@@ -10,6 +10,14 @@ listen = 127.0.0.1:8080
 #stats = true # Provide stats API at /api/v1/stats (do not enable this in production or unprotected!).
 #pprofListen = 127.0.0.1:6060 # See http://golang.org/pkg/net/http/pprof/ for details
 
+[https]
+#listen = 127.0.0.1:8443
+#certificate = server.crt # Full path to certificate.
+#key = server.key # Full path to key.
+#minVersion = SSLv3 # Minimal supported encryption (SSLv3, TLSv1, TLSv1.1, TLSv1.2).
+#readtimeout = 10
+#writetimeout = 10
+
 [app]
 #title = Spreed Speak Freely
 #ver = 1234 # version string to use for static resource
