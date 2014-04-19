@@ -647,7 +647,10 @@ define([
   };
 
   WebRTC.prototype.onConnectionStateChange = function(iceConnectionState, currentcall) {
-    this.e.triggerHandler('statechange', [iceConnectionState, currentcall]);
+    // Defer this to allow native event handlers to complete before running more stuff.
+    _.defer(_.bind(function() {
+      this.e.triggerHandler('statechange', [iceConnectionState, currentcall]);
+    }, this));
   };
 
   WebRTC.prototype.onRemoteStreamAdded = function(stream, currentcall) {
