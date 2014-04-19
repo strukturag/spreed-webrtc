@@ -41,8 +41,9 @@ transition-duration: 2s;
 -webkit-transition-duration: 2s;
 transform: rotateY(0deg);
 -webkit-transform: rotateY(0deg);
+z-index:2;
 }
-#card.active {
+.active #card {
 transform: rotateY(180deg);
 -webkit-transform: rotateY(180deg);
 }
@@ -55,6 +56,7 @@ bottom:0px;
 transform: scale(-1, 1);
 -webkit-transform: scale(-1, 1);
 pointer-events:none;
+z-index:2;
 }
 #remote {
 position: absolute;
@@ -64,6 +66,8 @@ top:0px;
 bottom:0px;
 transform: rotateY(180deg);
 -webkit-transform: rotateY(180deg);
+pointer-events:none;
+z-index:2;
 }
 #mini {
 position: absolute;
@@ -140,6 +144,7 @@ color:rgba(255,255,255,0.3);
 text-align:center;
 font-size:80px;
 margin-top:-40px;
+pointer-events:auto;
 }
 .remoteVideo.onlyaudio video {
 display:none;

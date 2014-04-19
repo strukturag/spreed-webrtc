@@ -252,6 +252,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }
                 };
 
+                scope.setRenderer = function(name) {
+                    scope.rendererName = name;
+                };
+
                 var needsRedraw = false;
                 scope.redraw = function() {
                     needsRedraw = true;

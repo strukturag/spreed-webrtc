@@ -225,6 +225,10 @@ define(["jquery", "underscore"], function($, _) {
 
 		ConferenceKiosk.prototype.close = function(container, scope, controller) {
 			this.closed = true;
+			if (this.big) {
+				this.remoteVideos.append(this.big);
+			}
+			this.big = null;
 			this.bigVideo.remove()
 			this.bigVideo = null;
 			this.remoteVideos = null;

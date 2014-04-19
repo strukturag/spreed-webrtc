@@ -1,7 +1,8 @@
-<div id="card">
-	<div id="local">
-      <video id="localVideo" autoplay="autoplay" muted="true"></video>
-      <div class="overlaylogo"></div>
+<div class="audioVideo">
+  <div id="card">
+    <div id="local">
+        <video id="localVideo" autoplay="autoplay" muted="true"></video>
+        <div class="overlaylogo"></div>
     </div>
     <div id="remote">
       <div id="remoteVideos"></div>
@@ -9,4 +10,9 @@
         <video id="miniVideo" autoplay="autoplay" muted="true"></video>
       </div>
     </div>
+  </div>
+  <div class="overlayactions">
+    <button class="btn btn-link" title="{{_('Standard view')}}" ng-click="setRenderer('onepeople')"><i class="fa fa-table" ></i></button>
+    <button class="btn btn-link" title="{{_('Kiosk view')}}" ng-click="setRenderer('conferencekiosk')"><i class="fa fa-user"></i></button>
+  </div>
 </div>

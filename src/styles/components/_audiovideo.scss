@@ -48,6 +48,34 @@ right:260px;
 right:520px;
 }
 
+.audioVideo {
+	position:relative;
+	width:100%;
+	height:100%;
+}
+
+.audioVideo .overlayactions {
+	position: absolute;
+	left:0px;
+	top:0px;
+	bottom:0px;
+	height:70px;
+	margin:auto 0;
+	width:40px;
+	opacity:0.5;
+	padding:3px 0;
+	background: rgba(0,0,0,0.2);
+	text-shadow: 0 0 5px black;
+	z-index:5;
+
+	button {
+		width:40px;
+		display: block;
+		color:#ccc;
+		cursor:pointer;
+	}
+}
+
 .remoteVideo .peerlabel {
 	-webkit-transition: color 500ms ease-out;
 	-moz-transition: color 500ms ease-out;
@@ -112,6 +140,7 @@ right:520px;
 		text-align:center;
 		background:rgba(0,0,0,0.4);
 		padding-right:192px;
+		min-height:108px;
 		>div {
 			height:108px;
 			width:192px;
