@@ -129,7 +129,7 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 		};
 
 		FileUpload.prototype.bindDrop = function(namespace, element, cb) {
-			console.log("Binding file upload drop to", namespace, element);
+			//console.log("Binding file upload drop to", namespace, element);
 
 			// Helper to allow later modifications.
 			var binder = {
