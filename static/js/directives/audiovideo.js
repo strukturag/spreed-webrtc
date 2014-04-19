@@ -82,12 +82,12 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                             });
                         }
                         scope.$emit("active", currentcall);
-                        $scope.resize();
+                        $scope.redraw();
                     }, function() {
                         peers[peerid] = scope;
                         console.warn("We did not receive video data for remote stream", currentcall, stream, video);
                         scope.$emit("active", currentcall);
-                        $scope.resize();
+                        $scope.redraw();
                     });
                     scope.doChat = function() {
                         $scope.$emit("startchat", currentcall.id, {autofocus: true, restore: true});
@@ -107,7 +107,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         subscope.element.remove();
                     }
                     subscope.$destroy();
-                    $scope.resize();
+                    $scope.redraw();
                 }
 
             };
@@ -167,7 +167,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }
                     if ($scope.localVideo.videoWidth > 0) {
                         $scope.localVideo.style.opacity = 1;
-                        $scope.resize();
+                        $scope.redraw();
                     } else {
                         count++;
                         if (count < 100) {
@@ -239,7 +239,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
-                //scope.rendererName = "conferencekiosk";
                 scope.rendererName = "onepeople";
                 scope.renderersAvailable = videoLayout.layouts();
 
@@ -253,42 +252,46 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }
                 };
 
-                var needsResize = false;
-                scope.resize = function() {
-                    needsResize = true;
+                var needsRedraw = false;
+                scope.redraw = function() {
+                    needsRedraw = true;
                 };
 
-                var resize = function() {
+                var redraw = function() {
                     var size = {
                         width: scope.layoutparent.width(),
                         height: scope.layoutparent.height()
                     }
-                    videoLayout.update(getRendererName(), size, scope, controller);
+                    var again = videoLayout.update(getRendererName(), size, scope, controller);
+                    if (again) {
+                        // Layout needs a redraw.
+                        needsRedraw = true;
+                    }
                 };
 
                 // Make sure we draw on resize.
-                $($window).on("resize", scope.resize);
+                $($window).on("resize", scope.redraw);
                 scope.$on("mainresize", function(event, main) {
                     if (main) {
-                        // Force onepeople renderer when we have a main view.
-                        rendererName = "onepeople"
+                        // Force smally renderer when we have a main view.
+                        rendererName = "smally"
                     } else if (rendererName) {
                         rendererName = null;
                     }
-                    _.defer(scope.resize);
+                    _.defer(scope.redraw);
                 });
-                scope.resize();
+                scope.redraw();
 
                 // Make sure we draw when the renderer was changed.
                 scope.$watch("rendererName", function() {
-                    _.defer(scope.resize);
+                    _.defer(scope.redraw);
                 });
 
                 // Update function run in rendering thread.
                 var update = function() {
-                    if (needsResize) {
-                        needsResize =false;
-                        resize();
+                    if (needsRedraw) {
+                        needsRedraw =false;
+                        redraw();
                     }
                     requestAnimationFrame(update);
                 }
