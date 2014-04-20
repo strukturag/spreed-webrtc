@@ -159,7 +159,7 @@ define(["jquery", "underscore"], function($, _) {
 		// A view with one selectable large video. The others are small.
 		var ConferenceKiosk = function(container, scope, controller) {
 
-			this.remoteVideos = $(container).find("#remoteVideos");
+			this.remoteVideos = $(container).find(".remoteVideos");
 			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
 			this.remoteVideos.before(this.bigVideo);
 
