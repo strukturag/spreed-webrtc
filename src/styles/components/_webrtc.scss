@@ -164,11 +164,12 @@ transition-property: opacity;
 -webkit-transition-property: opacity;
 transition-duration: 0.2s;
 -webkit-transition-duration: 0.2s;
+pointer-events:auto;
 }
 .remoteVideo .peeractions i {
 font-size:3vw;
 }
-.remoteVideo:hover .peeractions {
+.peeractions:hover {
 opacity:.5;
 }
 .remoteVideo .peerlabel {
