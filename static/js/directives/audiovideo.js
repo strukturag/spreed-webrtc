@@ -30,7 +30,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
             var peers = {};
             var events = $({});
 
-            $scope.card = $element;
             $scope.container = $element.parent().get(0);
             $scope.layoutparent = $element.parent().parent();
 
@@ -136,7 +135,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                 if (!$scope.isActive) {
                     $scope.isActive = true;
                     $scope.remoteVideos.style.opacity = 1;
-                    $scope.card.addClass("active");
+                    $element.addClass("active");
                     //console.log("active 3");
                     _.delay(function() {
                         $scope.localVideo.style.opacity = 0;
@@ -202,7 +201,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                 $scope.mini.removeClass("visible");
                 $scope.localVideo.style.opacity = 0;
                 $scope.remoteVideos.style.opacity = 0;
-                $scope.card.removeClass('active');
+                $element.removeClass('active');
                 _.each(peers, function(scope, k) {
                     scope.$destroy();
                     delete peers[k];
@@ -241,7 +240,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 //console.log("compile", arguments)
 
-                $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
+                iElement.on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
                 var rendererName = null;
                 var getRendererName = function() {

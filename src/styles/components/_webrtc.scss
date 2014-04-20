@@ -20,9 +20,6 @@
  */
 #container {
 position: absolute;
-/*margin: 0px auto;*/
-perspective: 1000;
--webkit-perspective: 1000;
 top:0px;
 left:0px;
 bottom:0px;
@@ -169,7 +166,7 @@ pointer-events:auto;
 .remoteVideo .peeractions i {
 font-size:3vw;
 }
-.peeractions:hover {
+.remoteVideo .peeractions:hover {
 opacity:.5;
 }
 .remoteVideo .peerlabel {

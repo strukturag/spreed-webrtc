@@ -54,6 +54,11 @@ right:520px;
 	height:100%;
 }
 
+.audioVideo.active {
+	perspective: 1000;
+	-webkit-perspective: 1000;
+}
+
 .audioVideo .overlayactions {
 	position: absolute;
 	left:0px;
@@ -62,11 +67,11 @@ right:520px;
 	height:70px;
 	margin:auto 0;
 	width:40px;
-	opacity:0.5;
 	padding:3px 0;
 	background: rgba(0,0,0,0.2);
 	text-shadow: 0 0 5px black;
 	z-index:5;
+	opacity:0;
 
 	button {
 		width:40px;
@@ -74,6 +79,14 @@ right:520px;
 		color:#ccc;
 		cursor:pointer;
 	}
+}
+
+.audioVideo.active:hover .overlayactions {
+	opacity: 0.3;
+}
+
+.audioVideo.active .overlayactions:hover {
+	opacity: 0.6;
 }
 
 .remoteVideo .peerlabel {
