@@ -51,21 +51,21 @@ type MessageRequest struct {
 }
 
 type HubStat struct {
-	Rooms                 int                  `json:"rooms"`
-	Connections           int                  `json:"connections"`
-	Users                 int                  `json:"users"`
-	Count                 uint64               `json:"count"`
-	BroadcastChatMessages uint64               `json:"broadcastchatmessages"`
-	UnicastChatMessages   uint64               `json:"unicastchatmessages"`
-	IdsInRoom             map[string][]string  `json:"idsinroom,omitempty"`
-	UsersById             map[string]*DataUser `json:"usersbyid,omitempty"`
-	ConnectionsByIdx      map[string]string    `json:"connectionsbyidx,omitempty"`
+	Rooms                 int                     `json:"rooms"`
+	Connections           int                     `json:"connections"`
+	Sessions              int                     `json:"sessions"`
+	Count                 uint64                  `json:"count"`
+	BroadcastChatMessages uint64                  `json:"broadcastchatmessages"`
+	UnicastChatMessages   uint64                  `json:"unicastchatmessages"`
+	IdsInRoom             map[string][]string     `json:"idsinroom,omitempty"`
+	SessionsById          map[string]*DataSession `json:"sessionsbyid,omitempty"`
+	ConnectionsByIdx      map[string]string       `json:"connectionsbyidx,omitempty"`
 }
 
 type Hub struct {
 	server                *Server
 	connectionTable       map[string]*Connection
-	userTable             map[string]*User
+	sessionTable          map[string]*Session
 	roomTable             map[string]*RoomWorker
 	version               string
 	config                *Config
@@ -84,7 +84,7 @@ func NewHub(version string, config *Config, sessionSecret, turnSecret string) *H
 
 	h := &Hub{
 		connectionTable: make(map[string]*Connection),
-		userTable:       make(map[string]*User),
+		sessionTable:    make(map[string]*Session),
 		roomTable:       make(map[string]*RoomWorker),
 		version:         version,
 		config:          config,
@@ -105,7 +105,7 @@ func (h *Hub) Stat(details bool) *HubStat {
 	stat := &HubStat{
 		Rooms:       len(h.roomTable),
 		Connections: len(h.connectionTable),
-		Users:       len(h.userTable),
+		Sessions:    len(h.sessionTable),
 		Count:       h.count,
 		BroadcastChatMessages: atomic.LoadUint64(&h.broadcastChatMessages),
 		UnicastChatMessages:   atomic.LoadUint64(&h.unicastChatMessages),
@@ -113,18 +113,18 @@ func (h *Hub) Stat(details bool) *HubStat {
 	if details {
 		rooms := make(map[string][]string)
 		for roomid, room := range h.roomTable {
-			users := make([]string, 0, len(room.connections))
+			sessions := make([]string, 0, len(room.connections))
 			for id := range room.connections {
-				users = append(users, id)
+				sessions = append(sessions, id)
 			}
-			rooms[roomid] = users
+			rooms[roomid] = sessions
 		}
 		stat.IdsInRoom = rooms
-		users := make(map[string]*DataUser)
-		for userid, user := range h.userTable {
-			users[userid] = user.Data()
+		sessions := make(map[string]*DataSession)
+		for sessionid, session := range h.sessionTable {
+			sessions[sessionid] = session.Data()
 		}
-		stat.UsersById = users
+		stat.SessionsById = sessions
 		connections := make(map[string]string)
 		for id, connection := range h.connectionTable {
 			connections[fmt.Sprintf("%d", connection.Idx)] = id
@@ -248,12 +248,12 @@ func (h *Hub) registerHandler(c *Connection) {
 
 	h.mutex.Lock()
 
-	// Create new user instance.
+	// Create new session instance.
 	h.count++
 	c.Idx = h.count
-	u := &User{Id: c.Id}
-	h.userTable[c.Id] = u
-	c.User = u
+	s := &Session{Id: c.Id}
+	h.sessionTable[c.Id] = s
+	c.Session = s
 	c.IsRegistered = true
 
 	// Register connection or replace existing one.
@@ -281,13 +281,13 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		h.mutex.Unlock()
 		return
 	}
-	user := c.User
+	session := c.Session
 	c.close()
 	delete(h.connectionTable, c.Id)
-	delete(h.userTable, c.Id)
+	delete(h.sessionTable, c.Id)
 	h.mutex.Unlock()
-	if user != nil {
-		h.buddyImages.DeleteUserImage(user.Id)
+	if session != nil {
+		h.buddyImages.Delete(session.Id)
 	}
 	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
@@ -322,21 +322,21 @@ func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
 
 }
 
-func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
+func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 
 	//fmt.Println("Userupdate", u)
 	h.mutex.RLock()
-	user, ok := h.userTable[u.Id]
+	session, ok := h.sessionTable[s.Id]
 	h.mutex.RUnlock()
 	var rev uint64
 	if ok {
-		rev = user.Update(u)
-		if u.Status != nil {
-			status, ok := u.Status.(map[string]interface{})
+		rev = session.Update(s)
+		if s.Status != nil {
+			status, ok := s.Status.(map[string]interface{})
 			if ok && status["buddyPicture"] != nil {
 				pic := status["buddyPicture"].(string)
 				if strings.HasPrefix(pic, "data:") {
-					imageId := h.buddyImages.Update(u.Id, pic[5:])
+					imageId := h.buddyImages.Update(s.Id, pic[5:])
 					if imageId != "" {
 						status["buddyPicture"] = "img:" + imageId
 					}
@@ -344,7 +344,7 @@ func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
 			}
 		}
 	} else {
-		log.Printf("Update data for unknown user %s\n", u.Id)
+		log.Printf("Update data for unknown user %s\n", s.Id)
 	}
 	return rev
 

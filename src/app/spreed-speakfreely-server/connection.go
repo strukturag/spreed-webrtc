@@ -66,9 +66,9 @@ type Connection struct {
 
 	// Metadata.
 	Id           string
-	Roomid       string // Keep Roomid here for quick acess without locking c.User.
+	Roomid       string // Keep Roomid here for quick acess without locking c.Session.
 	Idx          uint64
-	User         *User
+	Session      *Session
 	IsRegistered bool
 	Hello        bool
 	Version      string
@@ -93,7 +93,7 @@ func (c *Connection) close() {
 	if !c.isClosed {
 		c.ws.Close()
 		c.mutex.Lock()
-		c.User = nil
+		c.Session = nil
 		c.isClosed = true
 		for {
 			head := c.queue.Front()

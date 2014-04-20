@@ -25,7 +25,7 @@ import (
 	"sync"
 )
 
-type User struct {
+type Session struct {
 	Id        string
 	Roomid    string
 	Ua        string
@@ -34,46 +34,45 @@ type User struct {
 	mutex     sync.RWMutex
 }
 
-func (u *User) Update(update *UserUpdate) uint64 {
+func (s *Session) Update(update *SessionUpdate) uint64 {
 
-	//user := reflect.ValueOf(&u).Elem()
-	u.mutex.Lock()
-	defer u.mutex.Unlock()
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
 
 	for _, key := range update.Types {
 
 		//fmt.Println("type update", key)
 		switch key {
 		case "Roomid":
-			u.Roomid = update.Roomid
+			s.Roomid = update.Roomid
 		case "Ua":
-			u.Ua = update.Ua
+			s.Ua = update.Ua
 		case "Status":
-			u.Status = update.Status
+			s.Status = update.Status
 		}
 
 	}
 
-	u.UpdateRev++
-	return u.UpdateRev
+	s.UpdateRev++
+	return s.UpdateRev
 
 }
 
-func (u *User) Data() *DataUser {
+func (s *Session) Data() *DataSession {
 
-	u.mutex.RLock()
-	defer u.mutex.RUnlock()
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 
-	return &DataUser{
-		Id:     u.Id,
-		Ua:     u.Ua,
-		Status: u.Status,
-		Rev:    u.UpdateRev,
+	return &DataSession{
+		Id:     s.Id,
+		Ua:     s.Ua,
+		Status: s.Status,
+		Rev:    s.UpdateRev,
 	}
 
 }
 
-type UserUpdate struct {
+type SessionUpdate struct {
 	Id     string
 	Types  []string
 	Roomid string

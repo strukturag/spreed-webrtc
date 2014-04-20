@@ -61,7 +61,7 @@ type DataTurn struct {
 	Urls     []string `json:"urls"`
 }
 
-type DataUser struct {
+type DataSession struct {
 	Type    string
 	Id      string
 	Ua      string
@@ -120,9 +120,9 @@ type DataOutgoing struct {
 	To   string
 }
 
-type DataUsers struct {
+type DataSessions struct {
 	Type  string
-	Users []*DataUser
+	Users []*DataSession
 	Index uint64
 	Batch uint64
 }

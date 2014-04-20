@@ -49,7 +49,7 @@ func (s *Server) OnUnregister(c *Connection) {
 	//log.Println("OnUnregister", c.id)
 	if c.Hello {
 		s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
-		s.Broadcast(c, &DataUser{Type: "Left", Id: c.Id, Status: "hard"})
+		s.Broadcast(c, &DataSession{Type: "Left", Id: c.Id, Status: "hard"})
 	} else {
 		//log.Println("Ingoring OnUnregister because of no Hello", c.Idx)
 	}
@@ -72,17 +72,17 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 	case "Hello":
 		//log.Println("Hello", msg.Hello, c.Idx)
 		// TODO(longsleep): Filter room id and user agent.
-		s.UpdateUser(c, &UserUpdate{Types: []string{"Roomid", "Ua"}, Roomid: msg.Hello.Id, Ua: msg.Hello.Ua})
+		s.UpdateSession(c, &SessionUpdate{Types: []string{"Roomid", "Ua"}, Roomid: msg.Hello.Id, Ua: msg.Hello.Ua})
 		if c.Hello && c.Roomid != msg.Hello.Id {
 			// Room changed.
 			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
-			s.Broadcast(c, &DataUser{Type: "Left", Id: c.Id, Status: "soft"})
+			s.Broadcast(c, &DataSession{Type: "Left", Id: c.Id, Status: "soft"})
 		}
 		c.Roomid = msg.Hello.Id
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
 			c.Hello = true
 			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid, Status: true})
-			s.Broadcast(c, &DataUser{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
+			s.Broadcast(c, &DataSession{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
 		} else {
 			c.Hello = false
 		}
@@ -103,9 +103,9 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		s.Unicast(c, msg.Bye.To, msg.Bye)
 	case "Status":
 		//log.Println("Status", msg.Status)
-		rev := s.UpdateUser(c, &UserUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
+		rev := s.UpdateSession(c, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
-			s.Broadcast(c, &DataUser{Type: "Status", Id: c.Id, Status: msg.Status.Status, Rev: rev})
+			s.Broadcast(c, &DataSession{Type: "Status", Id: c.Id, Status: msg.Status.Status, Rev: rev})
 		}
 	case "Chat":
 		// TODO(longsleep): Limit sent chat messages per incoming connection.
@@ -170,10 +170,10 @@ func (s *Server) Alive(c *Connection, alive *DataAlive) {
 
 }
 
-func (s *Server) UpdateUser(c *Connection, userupdate *UserUpdate) uint64 {
+func (s *Server) UpdateSession(c *Connection, su *SessionUpdate) uint64 {
 
-	userupdate.Id = c.Id
-	return c.h.userupdateHandler(userupdate)
+	su.Id = c.Id
+	return c.h.sessionupdateHandler(su)
 
 }
 
@@ -211,7 +211,7 @@ func (s *Server) Users(c *Connection) {
 
 func (s *Server) UpdateRoomConnection(c *Connection, rcu *RoomConnectionUpdate) {
 
-	rcu.Userid = c.Id
+	rcu.Sessionid = c.Id
 	rcu.Connection = c
 	room := c.h.GetRoom(c.Roomid)
 	room.connectionHandler(rcu)
