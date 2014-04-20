@@ -227,6 +227,7 @@ define(["jquery", "underscore"], function($, _) {
 			this.closed = true;
 			if (this.big) {
 				this.remoteVideos.append(this.big);
+				this.big.find("video").get(0).play();
 			}
 			this.big = null;
 			this.bigVideo.remove()
