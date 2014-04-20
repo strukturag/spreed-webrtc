@@ -41,6 +41,9 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
             $scope.hasUsermedia = false;
             $scope.isActive = false;
+
+            $scope.rendererName = $scope.defaultRendererName = "onepeople";
+
             //console.log("audiovideo", localVideo, miniVideo);
 
             $scope.addRemoteStream = function(stream, currentcall) {
@@ -204,6 +207,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     scope.$destroy();
                     delete peers[k];
                 });
+                $scope.rendererName = $scope.defaultRendererName;
 
             });
 
@@ -238,9 +242,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                 //console.log("compile", arguments)
 
                 $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
-
-                scope.rendererName = "onepeople";
-                scope.renderersAvailable = videoLayout.layouts();
 
                 var rendererName = null;
                 var getRendererName = function() {
