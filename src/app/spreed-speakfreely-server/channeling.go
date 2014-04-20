@@ -48,6 +48,7 @@ type DataAnswer struct {
 type DataSelf struct {
 	Type    string
 	Id      string
+	Userid  string
 	Token   string
 	Version string
 	Turn    *DataTurn
@@ -64,9 +65,10 @@ type DataTurn struct {
 type DataSession struct {
 	Type    string
 	Id      string
+	Userid  string `json:"Userid,omitempty"`
 	Ua      string
-	Token   string
-	Version string
+	Token   string `json:"Token,omitempty"`
+	Version string `json:"Version,omitempty"`
 	Rev     uint64
 	Status  interface{}
 }

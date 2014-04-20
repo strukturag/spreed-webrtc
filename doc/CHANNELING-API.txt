@@ -1,5 +1,5 @@
 
-               Spreed Speak Freely Channeling API v1.2.0
+               Spreed Speak Freely Channeling API v1.3.0
             =================================================
                         (c)2014 struktur AG
 
@@ -85,6 +85,7 @@ Special purpose documents for channling
     {
         "Type": "Self",
         "Id": "4",
+        "Userid": "",
         "Token": "some-very-long-string",
         "Version": "server-version-number",
         "Turn": {
@@ -107,7 +108,8 @@ Special purpose documents for channling
     Keys:
 
         Type   : Self (string)
-        Id     : Channel id for this connection (string)
+        Id     : Channel id for this connection (string).
+        Userid : User id if this session belongs to an authenticated user. Else empty.
         Token  : Security token (string), to restablish connection with the same
                  session. Pass the value as URL query parameter t, to the websocket URL.
         Version: Server version number. Use this to detect server upgrades.
@@ -259,9 +261,7 @@ Additional types for session listing and notifications
 
     {
         "Type": "Left",
-        "Id": "5",
-        "Ua": "",
-        "Status": null
+        "Id": "5"
     }
 
   Joined
@@ -269,9 +269,12 @@ Additional types for session listing and notifications
     {
         "Type": "Joined",
         "Id": "7",
+        "Userid": "u7",
         "Ua": "Chrome 28",
         "Status": null
     }
+
+    Note: The Userid field is only present if that session belongs to a known user.
 
   Status
 
@@ -313,25 +316,29 @@ Additional types for session listing and notifications
             {
                 "Type": "Online",
                 "Id": "1",
-                "Ua": "webrtc-publisher",
-                "Status": null
+                "Ua": "Firefox 27",
+                "Status": {...}
             },
             {
                 "Type": "Online",
                 "Id": "3",
+                "Userid": "u3",
                 "Ua": "Chrome 28",
-                "Status": null
+                "Status": {...}
             },
             {
                 "Type": "Online",
                 "Id": "4",
+                "Userid": "u4",
                 "Ua": "Chrome 28",
-                "Status": null
+                "Status": {...}
             }
         ],
         "Index": 0,
         "Batch": 0
     }
+
+    Note: The Userid field is only present, if that session belongs to a known user. 
 
   Alive
 
