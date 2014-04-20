@@ -134,7 +134,7 @@ func (r *RoomWorker) Run(f func()) bool {
 func (r *RoomWorker) usersHandler(c *Connection) {
 
 	worker := func() {
-		users := &DataSessions{Type: "Users"}
+		sessions := &DataSessions{Type: "Users"}
 		var sl []*DataSession
 		appender := func(ec *Connection) bool {
 			ecsession := ec.Session
@@ -164,17 +164,17 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 				break
 			}
 		}
-		users.Users = sl
-		usersJson := c.h.buffers.New()
-		encoder := json.NewEncoder(usersJson)
-		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: users})
+		sessions.Users = sl
+		sessionsJson := c.h.buffers.New()
+		encoder := json.NewEncoder(sessionsJson)
+		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions})
 		if err != nil {
 			log.Println("Users error while encoding JSON", err)
-			usersJson.Decref()
+			sessionsJson.Decref()
 			return
 		}
-		c.send(usersJson)
-		usersJson.Decref()
+		c.send(sessionsJson)
+		sessionsJson.Decref()
 
 	}
 
