@@ -37,7 +37,9 @@ type Server struct {
 
 func (s *Server) OnRegister(c *Connection) {
 	//log.Println("OnRegister", c.id)
-	if token, err := c.h.EncodeTicket("token", c.Id); err == nil {
+	st := &SessionToken{Id: c.Id}
+	if token, err := c.h.EncodeSessionToken(st); err == nil {
+		log.Println("Created new session token", len(token), token)
 		// Send stuff back.
 		s.Unicast(c, c.Id, &DataSelf{Type: "Self", Id: c.Id, Token: token, Version: c.h.version, Turn: c.h.CreateTurnData(c.Id), Stun: c.h.config.StunURIs})
 	} else {

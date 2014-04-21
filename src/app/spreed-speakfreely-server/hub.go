@@ -92,6 +92,10 @@ func NewHub(version string, config *Config, sessionSecret, turnSecret string) *H
 		turnSecret:      []byte(turnSecret),
 	}
 
+	if len(h.sessionSecret) < 32 {
+		log.Printf("Weak sessionSecret (only %d bytes). It is recommended to use a key with 32 or 64 bytes.\n", len(h.sessionSecret))
+	}
+
 	h.tickets = securecookie.New(h.sessionSecret, nil)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
@@ -155,21 +159,27 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
-func (h *Hub) EncodeTicket(key, value string) (string, error) {
+func (h *Hub) CreateSessionid() (string, error) {
 
-	if value == "" {
-		// Create new id.
-		value = fmt.Sprintf("%s", securecookie.GenerateRandomKey(16))
-	}
-	return h.tickets.Encode(key, value)
+	// NOTE(longsleep): Is it required to make this a secure cookie,
+	// random data in itself should be sufficent if we do not validate
+	// session ids somewhere?
+	value := fmt.Sprintf("%s", securecookie.GenerateRandomKey(32))
+	return h.tickets.Encode("id", value)
 
 }
 
-func (h *Hub) DecodeTicket(key, value string) (string, error) {
+func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
-	result := ""
-	err := h.tickets.Decode(key, value, &result)
-	return result, err
+	return h.tickets.Encode("token", st)
+
+}
+
+func (h *Hub) DecodeSessionToken(token string) (*SessionToken, error) {
+
+	st := &SessionToken{}
+	err := h.tickets.Decode("token", token, st)
+	return st, err
 
 }
 
@@ -180,8 +190,8 @@ func (h *Hub) GetRoom(id string) *RoomWorker {
 	if !ok {
 		h.mutex.RUnlock()
 		h.mutex.Lock()
-		// need to re-check, another thread might have created the room
-		// while we waited for the lock
+		// Need to re-check, another thread might have created the room
+		// while we waited for the lock.
 		room, ok = h.roomTable[id]
 		if !ok {
 			room = NewRoomWorker(h, id)
@@ -252,25 +262,22 @@ func (h *Hub) registerHandler(c *Connection) {
 	h.count++
 	c.Idx = h.count
 	s := &Session{Id: c.Id}
-	h.sessionTable[c.Id] = s
 	c.Session = s
 	c.IsRegistered = true
 
 	// Register connection or replace existing one.
 	if ec, ok := h.connectionTable[c.Id]; ok {
-		delete(h.connectionTable, ec.Id)
 		ec.IsRegistered = false
 		ec.close()
-		h.connectionTable[c.Id] = c
-		h.mutex.Unlock()
 		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.RemoteAddr, c.Id)
-	} else {
-		h.connectionTable[c.Id] = c
-		//fmt.Println("registered", c.Id)
-		h.mutex.Unlock()
-		//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
-		h.server.OnRegister(c)
 	}
+
+	h.connectionTable[c.Id] = c
+	h.sessionTable[c.Id] = s
+	//fmt.Println("registered", c.Id)
+	h.mutex.Unlock()
+	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
+	h.server.OnRegister(c)
 
 }
 

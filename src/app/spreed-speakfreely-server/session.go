@@ -27,6 +27,7 @@ import (
 
 type Session struct {
 	Id        string
+	Userid    string
 	Roomid    string
 	Ua        string
 	UpdateRev uint64
@@ -58,6 +59,15 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 }
 
+func (s *Session) Apply(st *SessionToken) {
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.Id = st.Id
+	s.Userid = st.Userid
+
+}
+
 func (s *Session) Data() *DataSession {
 
 	s.mutex.RLock()
@@ -65,6 +75,7 @@ func (s *Session) Data() *DataSession {
 
 	return &DataSession{
 		Id:     s.Id,
+		Userid: s.Userid,
 		Ua:     s.Ua,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
@@ -78,4 +89,9 @@ type SessionUpdate struct {
 	Roomid string
 	Ua     string
 	Status interface{}
+}
+
+type SessionToken struct {
+	Id     string
+	Userid string
 }

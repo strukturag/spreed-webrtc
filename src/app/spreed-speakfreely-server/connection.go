@@ -112,24 +112,25 @@ func (c *Connection) close() {
 
 func (c *Connection) register() error {
 
-	id, err := c.h.EncodeTicket("id", "")
+	id, err := c.h.CreateSessionid()
 	if err != nil {
 		log.Println("Failed to create new Id while register", err)
 		return err
 	}
 	c.Id = id
-	//log.Println("Created new id", id)
+	log.Println("Created new id", len(id), id)
 	c.h.registerHandler(c)
 	return nil
 }
 
 func (c *Connection) reregister(token string) error {
 
-	if id, err := c.h.DecodeTicket("token", token); err == nil {
-		c.Id = id
+	if st, err := c.h.DecodeSessionToken(token); err == nil {
+		c.Id = st.Id
 		c.h.registerHandler(c)
+		c.Session.Apply(st)
 	} else {
-		log.Println("Error while decoding token", err)
+		log.Println("Error while decoding session token", err)
 		c.register()
 	}
 	return nil

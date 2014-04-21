@@ -24,7 +24,7 @@ listen = 127.0.0.1:8080
 #stunURIs = stun.l.google.com:19302
 #turnURIs = turn:turnserver:port?transport=udp turn:anotherturnserver:port?transport=tcp turns:turnserver:443?transport=tcp
 #turnSecret = the-default-turn-shared-secret-do-not-keep
-sessionSecret = the-default-secret-do-not-keep
+sessionSecret = the-default-secret-do-not-keep-me # Use 32 or 64 bytes random data
 #tokenFile = tokens.txt # If set, everyone needs to give one of the tokens to launch the web client. One token per line in the file.
 #globalRoom = global # Enables a global room. Users in that room are in all rooms.
 #defaultRoomEnabled = true # Set to false to disable default room.
