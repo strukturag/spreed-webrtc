@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package main
 
 import (
@@ -49,19 +50,19 @@ func (tf *TokenFile) ReloadIfModified() error {
 	return nil
 }
 
-func reload_tokens(tf *TokenFile) {
+func reloadRokens(tf *TokenFile) {
 
 	r, err := os.Open(tf.Path)
 	if err != nil {
 		panic(err)
 	}
 
-	csv_reader := csv.NewReader(r)
-	csv_reader.Comma = ':'
-	csv_reader.Comment = '#'
-	csv_reader.TrimLeadingSpace = true
+	csvReader := csv.NewReader(r)
+	csvReader.Comma = ':'
+	csvReader.Comment = '#'
+	csvReader.TrimLeadingSpace = true
 
-	records, err := csv_reader.ReadAll()
+	records, err := csvReader.ReadAll()
 	if err != nil {
 		panic(err)
 	}
@@ -76,15 +77,14 @@ func reload_tokens(tf *TokenFile) {
 func TokenFileProvider(filename string) TokenProvider {
 
 	tf := &TokenFile{Path: filename}
-	tf.Reload = func() { reload_tokens(tf) }
+	tf.Reload = func() { reloadRokens(tf) }
 	return func(token string) string {
 		tf.ReloadIfModified()
 		_, exists := tf.Tokens[token]
 		if !exists {
 			return ""
-		} else {
-			return token
 		}
+		return token
 	}
 
 }

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package main
 
 import (
@@ -49,12 +50,12 @@ var templates *template.Template
 var config *Config
 
 // Helper to retrieve languages from request.
-func getRequestLanguages(r *http.Request, supported_languages []string) []string {
+func getRequestLanguages(r *http.Request, supportedLanguages []string) []string {
 
-	accept_language_header, ok := r.Header["Accept-Language"]
+	acceptLanguageHeader, ok := r.Header["Accept-Language"]
 	var langs []string
 	if ok {
-		langs = goacceptlanguageparser.ParseAcceptLanguage(accept_language_header[0], supported_languages)
+		langs = goacceptlanguageparser.ParseAcceptLanguage(acceptLanguageHeader[0], supportedLanguages)
 	}
 	return langs
 
@@ -290,9 +291,8 @@ func runner(runtime phoenix.Runtime) error {
 		templates, err = templates.ParseGlob(path.Join(extraFolder, "*.html"))
 		if err != nil {
 			return fmt.Errorf("Failed to load extra templates: %s", err)
-		} else {
-			log.Printf("Loaded extra templates from: %s", extraFolder)
 		}
+		log.Printf("Loaded extra templates from: %s", extraFolder)
 	}
 
 	// Create our hub instance.
