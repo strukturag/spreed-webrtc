@@ -68,6 +68,10 @@ func (s *Session) Apply(st *SessionToken) {
 
 }
 
+func (s *Session) Token() *SessionToken {
+	return &SessionToken{Id: s.Id, Userid: s.Userid}
+}
+
 func (s *Session) Data() *DataSession {
 
 	s.mutex.RLock()

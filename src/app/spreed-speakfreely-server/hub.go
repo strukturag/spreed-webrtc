@@ -159,13 +159,22 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
-func (h *Hub) CreateSessionid() (string, error) {
+func (h *Hub) CreateSession(st *SessionToken) *Session {
 
 	// NOTE(longsleep): Is it required to make this a secure cookie,
 	// random data in itself should be sufficent if we do not validate
 	// session ids somewhere?
-	value := fmt.Sprintf("%s", securecookie.GenerateRandomKey(32))
-	return h.tickets.Encode("id", value)
+
+	session := &Session{}
+
+	if st == nil {
+		session.Id, _ = h.tickets.Encode("id", fmt.Sprintf("%s", securecookie.GenerateRandomKey(32)))
+		log.Println("Created new session id", len(session.Id), session.Id)
+	} else {
+		session.Apply(st)
+	}
+
+	return session
 
 }
 
@@ -254,15 +263,17 @@ func (h *Hub) isDefaultRoomid(id string) bool {
 	return id == ""
 }
 
-func (h *Hub) registerHandler(c *Connection) {
+func (h *Hub) registerHandler(c *Connection, s *Session) {
+
+	// Apply session to connection.
+	c.Id = s.Id
+	c.Session = s
 
 	h.mutex.Lock()
 
-	// Create new session instance.
+	// Set flags.
 	h.count++
 	c.Idx = h.count
-	s := &Session{Id: c.Id}
-	c.Session = s
 	c.IsRegistered = true
 
 	// Register connection or replace existing one.

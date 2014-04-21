@@ -112,23 +112,16 @@ func (c *Connection) close() {
 
 func (c *Connection) register() error {
 
-	id, err := c.h.CreateSessionid()
-	if err != nil {
-		log.Println("Failed to create new Id while register", err)
-		return err
-	}
-	c.Id = id
-	log.Println("Created new id", len(id), id)
-	c.h.registerHandler(c)
+	s := c.h.CreateSession(nil)
+	c.h.registerHandler(c, s)
 	return nil
 }
 
 func (c *Connection) reregister(token string) error {
 
 	if st, err := c.h.DecodeSessionToken(token); err == nil {
-		c.Id = st.Id
-		c.h.registerHandler(c)
-		c.Session.Apply(st)
+		s := c.h.CreateSession(st)
+		c.h.registerHandler(c, s)
 	} else {
 		log.Println("Error while decoding session token", err)
 		c.register()
