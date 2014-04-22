@@ -28,6 +28,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"log"
@@ -180,6 +181,22 @@ func (h *Hub) CreateSession(st *SessionToken) *Session {
 
 }
 
+func (h *Hub) ValidateSession(id, sid string) bool {
+
+	var decoded string
+	err := h.tickets.Decode("id", id, &decoded)
+	if err != nil {
+		log.Println("Session validation error", err, id, sid)
+		return false
+	}
+	if decoded != sid {
+		log.Println("Session validation failed", id, sid)
+		return false
+	}
+	return true
+
+}
+
 func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
 	return h.tickets.Encode("token", st)
@@ -302,7 +319,6 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		return
 	}
 	session := c.Session
-	c.close()
 	delete(h.connectionTable, c.Id)
 	delete(h.sessionTable, c.Id)
 	h.mutex.Unlock()
@@ -311,6 +327,7 @@ func (h *Hub) unregisterHandler(c *Connection) {
 	}
 	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
+	c.close()
 
 }
 
@@ -367,5 +384,24 @@ func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 		log.Printf("Update data for unknown user %s\n", s.Id)
 	}
 	return rev
+
+}
+
+func (h *Hub) sessiontokenHandler(st *SessionToken) (string, error) {
+
+	h.mutex.RLock()
+	c, ok := h.connectionTable[st.Id]
+	h.mutex.RUnlock()
+
+	if !ok {
+		return "", errors.New("no such connection")
+	}
+
+	nonce, err := c.Session.Authorize(st)
+	if err != nil {
+		return "", err
+	}
+
+	return nonce, nil
 
 }

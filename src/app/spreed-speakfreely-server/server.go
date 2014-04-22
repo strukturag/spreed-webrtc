@@ -59,7 +59,7 @@ func (s *Server) OnUnregister(c *Connection) {
 	//log.Println("OnUnregister", c.id)
 	if c.Hello {
 		s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
-		s.Broadcast(c, &DataSession{Type: "Left", Id: c.Id, Status: "hard"})
+		s.Broadcast(c, c.Session.DataSessionLeft("hard"))
 	} else {
 		//log.Println("Ingoring OnUnregister because of no Hello", c.Idx)
 	}
@@ -86,13 +86,13 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		if c.Hello && c.Roomid != msg.Hello.Id {
 			// Room changed.
 			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
-			s.Broadcast(c, &DataSession{Type: "Left", Id: c.Id, Status: "soft"})
+			s.Broadcast(c, c.Session.DataSessionLeft("soft"))
 		}
 		c.Roomid = msg.Hello.Id
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
 			c.Hello = true
 			s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid, Status: true})
-			s.Broadcast(c, &DataSession{Type: "Joined", Id: c.Id, Ua: msg.Hello.Ua})
+			s.Broadcast(c, c.Session.DataSessionJoined())
 		} else {
 			c.Hello = false
 		}
@@ -109,13 +109,20 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
 			s.Users(c)
 		}
+	case "Authentication":
+		if s.Authenticate(c, msg.Authentication.Authentication) {
+			s.OnRegister(c)
+			if c.Hello {
+				s.Broadcast(c, c.Session.DataSessionStatus())
+			}
+		}
 	case "Bye":
 		s.Unicast(c, msg.Bye.To, msg.Bye)
 	case "Status":
 		//log.Println("Status", msg.Status)
-		rev := s.UpdateSession(c, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
+		s.UpdateSession(c, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
 		if c.h.config.defaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
-			s.Broadcast(c, &DataSession{Type: "Status", Id: c.Id, Status: msg.Status.Status, Rev: rev})
+			s.Broadcast(c, c.Session.DataSessionStatus())
 		}
 	case "Chat":
 		// TODO(longsleep): Limit sent chat messages per incoming connection.
@@ -216,6 +223,19 @@ func (s *Server) Users(c *Connection) {
 
 	room := c.h.GetRoom(c.Roomid)
 	room.usersHandler(c)
+
+}
+
+func (s *Server) Authenticate(c *Connection, st *SessionToken) bool {
+
+	err := c.Session.Authenticate(st)
+	if err == nil {
+		log.Println("Authentication success", c.Id, c.Idx, st.Userid)
+		return true
+	} else {
+		log.Println("Authentication failed", err, c.Id, c.Idx, st.Userid, st.Nonce)
+		return false
+	}
 
 }
 

@@ -55,6 +55,55 @@ define([
             console.info("Started disconnector.");
         };
 
+        (function() {
+
+            var lastNonce = null;
+            var lastUserid = null;
+
+            $window.testAuthorize = function(userid) {
+
+                console.log("Testing authorize with userid", userid);
+                var url = mediaStream.url.api("sessions") + "/" + api.id + "/";
+                console.log("URL", url);
+                var data = {
+                    Id: api.id,
+                    Sid: api.sid,
+                    Userid: userid
+                }
+                console.log("Data", data);
+                $.ajax({
+                    type: "PATCH",
+                    url: url,
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: JSON.stringify(data),
+                    success: function(data) {
+                        if (data.success) {
+                            lastNonce = data.nonce;
+                            lastUserid = userid;
+                            console.log("Retrieved nonce", lastNonce, lastUserid);
+                        }
+                    },
+                    error: function() {
+                        console.log("error", arguments)
+                    }
+                });
+
+            };
+
+            $window.testAuthenticate = function() {
+
+                if (!lastNonce || !lastUserid) {
+                    console.log("Run testAuthorize first.");
+                    return
+                }
+
+                api.requestAuthentication(lastUserid, lastNonce);                
+
+            };
+
+        }())
+
         var mediaStream = {
             version: version,
             ws: url,

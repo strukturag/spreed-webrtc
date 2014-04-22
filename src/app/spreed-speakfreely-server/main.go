@@ -343,6 +343,7 @@ func runner(runtime phoenix.Runtime) error {
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+	api.AddResource(&Sessions{hub: hub}, "/sessions/{id}/")
 	if statsEnabled {
 		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")

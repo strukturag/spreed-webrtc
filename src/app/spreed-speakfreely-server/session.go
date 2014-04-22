@@ -22,8 +22,12 @@
 package main
 
 import (
+	"errors"
+	"github.com/gorilla/securecookie"
 	"sync"
 )
+
+var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
 	Id        string
@@ -33,6 +37,7 @@ type Session struct {
 	Ua        string
 	UpdateRev uint64
 	Status    interface{}
+	Nonce     string
 	mutex     sync.RWMutex
 }
 
@@ -70,12 +75,63 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 }
 
-func (s *Session) Apply(st *SessionToken) {
+func (s *Session) Apply(st *SessionToken) uint64 {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	s.Id = st.Id
+	s.Sid = st.Sid
 	s.Userid = st.Userid
+
+	s.UpdateRev++
+	return s.UpdateRev
+
+}
+
+func (s *Session) Authorize(st *SessionToken) (string, error) {
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	if s.Id != st.Id || s.Sid != st.Sid {
+		return "", errors.New("session id mismatch")
+	}
+	if s.Userid != "" {
+		return "", errors.New("session already authenticated")
+	}
+
+	// Create authentication nonce.
+	var err error
+	s.Nonce, err = sessionNonces.Encode(s.Sid, st.Userid)
+
+	return s.Nonce, err
+
+}
+
+func (s *Session) Authenticate(st *SessionToken) error {
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	if s.Userid != "" {
+		return errors.New("session already authenticated")
+	}
+	if s.Nonce == "" || s.Nonce != st.Nonce {
+		return errors.New("nonce validation failed")
+	}
+	var userid string
+	err := sessionNonces.Decode(s.Sid, st.Nonce, &userid)
+	if err != nil {
+		return err
+	}
+	if st.Userid != userid {
+		return errors.New("user id mismatch")
+	}
+
+	s.Nonce = ""
+	s.Userid = st.Userid
+	s.UpdateRev++
+	return nil
 
 }
 
@@ -98,6 +154,48 @@ func (s *Session) Data() *DataSession {
 
 }
 
+func (s *Session) DataSessionLeft(state string) *DataSession {
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return &DataSession{
+		Type:   "Left",
+		Id:     s.Id,
+		Status: state,
+	}
+
+}
+
+func (s *Session) DataSessionJoined() *DataSession {
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return &DataSession{
+		Type:   "Joined",
+		Id:     s.Id,
+		Userid: s.Userid,
+		Ua:     s.Ua,
+	}
+
+}
+
+func (s *Session) DataSessionStatus() *DataSession {
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return &DataSession{
+		Type:   "Status",
+		Id:     s.Id,
+		Userid: s.Userid,
+		Status: s.Status,
+		Rev:    s.UpdateRev,
+	}
+
+}
+
 type SessionUpdate struct {
 	Id     string
 	Types  []string
@@ -110,4 +208,11 @@ type SessionToken struct {
 	Id     string
 	Sid    string
 	Userid string
+	Nonce  string `json:"Nonce,omitempty"`
+}
+
+func init() {
+	// Create nonce generator.
+	sessionNonces = securecookie.New(securecookie.GenerateRandomKey(64), nil)
+	sessionNonces.MaxAge(60)
 }
