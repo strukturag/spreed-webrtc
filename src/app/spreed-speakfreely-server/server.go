@@ -43,6 +43,7 @@ func (s *Server) OnRegister(c *Connection) {
 		s.Unicast(c, c.Id, &DataSelf{
 			Type:    "Self",
 			Id:      c.Id,
+			Sid:     c.Session.Sid,
 			Userid:  c.Session.Userid,
 			Token:   token,
 			Version: c.h.version,

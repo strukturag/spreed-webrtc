@@ -85,6 +85,7 @@ Special purpose documents for channling
     {
         "Type": "Self",
         "Id": "4",
+        "Sid": "5157",
         "Userid": "",
         "Token": "some-very-long-string",
         "Version": "server-version-number",
@@ -108,7 +109,8 @@ Special purpose documents for channling
     Keys:
 
         Type   : Self (string)
-        Id     : Channel id for this connection (string).
+        Id     : Public Session id for this connection (string).
+        Sid    : Secure (non public) id for this session (string).
         Userid : User id if this session belongs to an authenticated user. Else empty.
         Token  : Security token (string), to restablish connection with the same
                  session. Pass the value as URL query parameter t, to the websocket URL.

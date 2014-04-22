@@ -27,12 +27,23 @@ import (
 
 type Session struct {
 	Id        string
+	Sid       string
 	Userid    string
 	Roomid    string
 	Ua        string
 	UpdateRev uint64
 	Status    interface{}
 	mutex     sync.RWMutex
+}
+
+func NewSession(id, sid, userid string) *Session {
+
+	return &Session{
+		Id:     id,
+		Sid:    sid,
+		Userid: userid,
+	}
+
 }
 
 func (s *Session) Update(update *SessionUpdate) uint64 {
@@ -69,7 +80,7 @@ func (s *Session) Apply(st *SessionToken) {
 }
 
 func (s *Session) Token() *SessionToken {
-	return &SessionToken{Id: s.Id, Userid: s.Userid}
+	return &SessionToken{Id: s.Id, Sid: s.Sid, Userid: s.Userid}
 }
 
 func (s *Session) Data() *DataSession {
@@ -97,5 +108,6 @@ type SessionUpdate struct {
 
 type SessionToken struct {
 	Id     string
+	Sid    string
 	Userid string
 }

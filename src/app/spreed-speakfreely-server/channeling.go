@@ -48,6 +48,7 @@ type DataAnswer struct {
 type DataSelf struct {
 	Type    string
 	Id      string
+	Sid     string
 	Userid  string
 	Token   string
 	Version string

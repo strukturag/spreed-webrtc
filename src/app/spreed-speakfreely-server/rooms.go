@@ -37,7 +37,7 @@ type Rooms struct {
 
 func (rooms *Rooms) Post(values url.Values, headers http.Header) (int, interface{}, http.Header) {
 
-	name := RandomString(11)
+	name := NewRandomString(11)
 	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
 
 }

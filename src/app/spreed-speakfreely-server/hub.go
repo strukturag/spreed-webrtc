@@ -165,13 +165,15 @@ func (h *Hub) CreateSession(st *SessionToken) *Session {
 	// random data in itself should be sufficent if we do not validate
 	// session ids somewhere?
 
-	session := &Session{}
+	var session *Session
 
 	if st == nil {
-		session.Id, _ = h.tickets.Encode("id", fmt.Sprintf("%s", securecookie.GenerateRandomKey(32)))
-		log.Println("Created new session id", len(session.Id), session.Id)
+		sid := NewRandomString(32)
+		id, _ := h.tickets.Encode("id", sid)
+		session = NewSession(id, sid, "")
+		log.Println("Created new session id", len(id), id, sid)
 	} else {
-		session.Apply(st)
+		session = NewSession(st.Id, st.Sid, st.Userid)
 	}
 
 	return session
