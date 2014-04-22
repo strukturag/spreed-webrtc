@@ -24,7 +24,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 )
 
@@ -37,9 +36,9 @@ type Tokens struct {
 	provider TokenProvider
 }
 
-func (tokens Tokens) Post(values url.Values, headers http.Header) (int, interface{}, http.Header) {
+func (tokens Tokens) Post(request *http.Request) (int, interface{}, http.Header) {
 
-	auth := values.Get("a")
+	auth := request.Form.Get("a")
 
 	if len(auth) > 100 {
 		return 413, NewApiError("auth_too_large", "Auth too large"), nil
