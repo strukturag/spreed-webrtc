@@ -98,7 +98,7 @@ define([
                     return
                 }
 
-                api.requestAuthentication(lastUserid, lastNonce);                
+                api.requestAuthentication(lastUserid, lastNonce);
 
             };
 
@@ -252,10 +252,16 @@ define([
                                     });
                                 }
                             }).
-                            error(function() {
-                                alertify.dialog.error(translation._("Error"), translation._("Failed to verify access code. Check your Internet connection and try again."), function() {
-                                    prompt();
-                                });
+                            error(function(data, status) {
+                                if ((status == 403 || status == 413) && data.success == false) {
+                                    alertify.dialog.error(translation._("Access denied"), translation._("Please provide a valid access code."), function() {
+                                        prompt();
+                                    });
+                                } else {
+                                    alertify.dialog.error(translation._("Error"), translation._("Failed to verify access code. Check your Internet connection and try again."), function() {
+                                        prompt();
+                                    });
+                                }
                             });
                         };
                         if (storedCode) {

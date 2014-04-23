@@ -87,7 +87,7 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	}
 
 	if error {
-		return 403, NewApiError("session_patch_failed", "Failed to patch session"), nil
+		return 403, NewApiError("session_patch_failed", "Failed to patch session"), http.Header{"Content-Type": {"application/json"}}
 	}
 
 	return 200, &SessionNonce{Nonce: nonce, Success: true}, http.Header{"Content-Type": {"application/json"}}
