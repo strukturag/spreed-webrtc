@@ -1,0 +1,98 @@
+
+               Spreed Speak Freely REST API v1.0.0
+            ===============================================
+                        (c)2014 struktur AG
+
+The server provides a REST api end point to provide functionality outside the
+the channeling API or without a established web socket connection.
+
+Available end points with request methods and content-type:
+
+
+  /api/v1/rooms
+
+    The rooms end point can be used to generate new random room ids.
+
+    POST application/x-www-form-urlencoded
+      No parameters.
+      Response 200:
+        {
+          "success": true,
+          "name": "room-name",
+          "url": "https://yourserver/room-name"
+        }
+
+
+  /api/v1/tokens
+
+    The tokens end point is to validate client side access tokens.
+
+    POST application/x-www-form-urlencoded
+      a: Authentication token as entered by the user (string)
+      Response 200:
+        {
+          "success": true,
+          "token": "validated-auth-token"
+        }
+      Response 200:
+        {
+          "success": false,
+          "token": ""
+        }
+      Response 413:
+        {
+          "success": false,
+          "code": "error-code",
+          "message": "error-message"
+        }
+
+
+  /api/v1/sessions/{id}/
+
+    The sessions end point is for session interaction like authorization and
+    can only be used with a session id passed in as subpath. Make sure to
+    provide the trailing slash (/).
+
+    PATCH application/json
+      {
+        Id: "session-id",
+        Sid: "secure-session-id",
+        Userid: "user-id-to-authorize"
+      }
+      Response 200:
+        {
+          "success": true,
+          "nonce": "authorization-nonce"
+        }
+      Response 403:
+        {
+          "success": false,
+          "code": "error-code",
+          "message": "error-message"
+        }
+
+
+  /api/v1/stats
+
+    The stats end point provides server statistics. It is only available when
+    the server configuration has it enabled.
+
+    GET application/x-www-form-urlencoded
+      details: If 1 when the stats document contains details per connection.
+      Response 200:
+        {
+          Runtime: { /* Runtime stats (memory and such ..) */ },
+          Hub: { /* Server stats */ }
+        }
+        Please see the implementation on exact fields of Runtime and Hub stats.
+
+
+End of REST API.
+
+For latest version of Spreed Speak Freely check
+https://github.com/strukturag/spreed-speakfreely
+
+For questions, contact mailto:opensource@struktur.de.
+
+
+(c)2014 struktur AG
