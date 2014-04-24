@@ -1,3 +1,21 @@
+spreed-speakfreely-server (0.17.4) precise; urgency=low
+
+  * Updated Japanese translation.
+  * Allow Makefile variables CONFIG_FILE and CONFIG_PATH.
+  * Fixed a possible conference connection issue when all ICE connected were successfull.
+  * Videos are now properly aligned to window top.
+  * Top bar buttons no longer overlap.
+  * Use onepeople audio video renderer per default.
+  * Added support for native HTTPS server.
+  * Fixed a data channel not ready error.
+  * Use new video layout implementation to draw when there is a main view.
+  * Added UI controls to switch video layout.
+  * Made the conferencekiosk renderer mode working and enabled it in Ui.
+  * Use new websocket.Upgraded API.
+  * No longer hang up on reload when not confirmed.
+
+ -- Simon Eisenmann <simon@struktur.de>  Thu, 24 Apr 2014 17:59:05 +0200
+
 spreed-speakfreely-server (0.17.3) precise; urgency=low
 
   * Buddy images are now loaded with seperate URL calls.
