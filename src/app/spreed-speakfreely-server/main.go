@@ -357,14 +357,8 @@ func runner(runtime phoenix.Runtime) error {
 		}
 	}
 
-	err = runtime.DefaultHTTPHandler(r)
-	if err != nil {
-		log.Println("Failed to create HTTP handler", err)
-	}
-	err = runtime.DefaultHTTPSHandler(r)
-	if err != nil {
-		log.Println("Failed to create HTTPS handler", err)
-	}
+	runtime.DefaultHTTPHandler(r)
+	runtime.DefaultHTTPSHandler(r)
 
 	return runtime.Start()
 }
