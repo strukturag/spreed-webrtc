@@ -32,6 +32,23 @@ const (
 	wsWriteBufSize = 1024
 )
 
+var (
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  wsReadBufSize,
+		WriteBufferSize: wsWriteBufSize,
+		CheckOrigin: func(r *http.Request) bool {
+			// Allow all connections by default to keep backwards
+			// compatibility, but we should really check the Origin
+			// header instead!
+			//
+			// NOTE: We can omit "CheckOrigin" if the host in Origin
+			//       must be the same as the host of the request (which
+			//       is probably always the case).
+			return true
+		},
+	}
+)
+
 func makeWsHubHandler(h *Hub) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,9 +60,8 @@ func makeWsHubHandler(h *Hub) http.HandlerFunc {
 		}
 
 		// Upgrade to Websocket mode.
-		ws, err := websocket.Upgrade(w, r, nil, wsReadBufSize, wsWriteBufSize)
+		ws, err := upgrader.Upgrade(w, r, nil)
 		if _, ok := err.(websocket.HandshakeError); ok {
-			w.WriteHeader(http.StatusBadRequest)
 			return
 		} else if err != nil {
 			log.Println(err)
