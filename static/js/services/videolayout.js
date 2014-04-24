@@ -125,7 +125,7 @@ define(["jquery", "underscore"], function($, _) {
                 container.style.width = newContainerWidth + "px";
                 container.style.left = ((innerWidth - newContainerWidth) / 2) + 'px';
                 extraCSS = {
-                    "#remoteVideos": {
+                    ".renderer-onepeople .remoteVideos": {
                         ">div": {
                             width: singleVideoWidth+"px",
                             height: singleVideoHeight+"px"
