@@ -90,18 +90,12 @@ define([
 
     this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
 
-    window.onbeforeunload = _.bind(function() {
-        if (this.currentcall) {
-          this.currentcall.close();
-          this.api.sendBye(this.currentcall.id);
-        }
-        if (this.currentconference) {
-          this.currentconference.close();
-        }
+    $(window).on("unload", _.bind(function() {
+        this.doHangup("unload");
         if (this.api.connector) {
           this.api.connector.disabled = true;
         }
-    }, this);
+    }, this));
 
     // Create default media (audio/video).
     this.usermedia = new UserMedia();
