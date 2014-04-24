@@ -90,13 +90,13 @@ define(["jquery", "underscore"], function($, _) {
 
             //console.log("resize", innerHeight, innerWidth);
             //console.log("resize", container, videos.length, aspectRatio, innerHeight, innerWidth);
+            var extraCSS = {};
 
             if (videos.length === 1) {
                 var newVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
                 var newVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
                 container.style.width = newVideoWidth + 'px';
                 container.style.left = ((innerWidth - newVideoWidth) / 2) + 'px';
-                var extraCSS = {};
             } else {
                 var space = innerHeight*innerWidth; // square pixels
                 var videoSpace = space/videos.length;
@@ -166,6 +166,7 @@ define(["jquery", "underscore"], function($, _) {
 			this.big = null;
 			this.remoteVideos.on("click", ".remoteVideo", _.bind(function(event) {
 				if ($(event.currentTarget).hasClass("remoteVideo")) {
+					event.stopPropagation();
 					this.makeBig($(event.currentTarget));
 				}
 			}, this));
@@ -214,12 +215,29 @@ define(["jquery", "underscore"], function($, _) {
 			var aspectRatio = remoteSize.width/remoteSize.height;
             var innerHeight = size.height - 110;
             var innerWidth = size.width;
+            var extraCSS = {};
 
 			var bigVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
             var bigVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
 
             this.bigVideo.style.width = bigVideoWidth + 'px';
             this.bigVideo.style.height = bigVideoHeight + 'px';
+
+            // Make space for own video on the right if width goes low.
+            if (((size.width - (videos.length-1) * 192) / 2) < 192) {
+            	extraCSS = {
+                    ".renderer-conferencekiosk .remoteVideos": {
+                        "margin-right": "192px",
+                        "overflow-x": "auto",
+                        "overflow-y": "hidden"
+                    }
+                };
+            }
+
+            $.injectCSS(extraCSS, {
+                truncateFirst: true,
+                containerName: dynamicCSSContainer
+            });
 
 		};
 
