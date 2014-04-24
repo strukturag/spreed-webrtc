@@ -243,7 +243,7 @@
 	margin:auto 0;
 	width:40px;
 	padding:3px 0;
-	background: rgba(0,0,0,0.2);
+	background: rgba(0,0,0,0.9);
 	z-index:5;
 	opacity:0;
 
@@ -253,6 +253,7 @@
 		color:#ccc;
 		cursor:pointer;
 		text-shadow: 0 0 5px black;
+		outline: 0;
 	}
 }
 
