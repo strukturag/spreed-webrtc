@@ -122,7 +122,7 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "private, max-age=0")
 
 	// Detect if the request was made with SSL.
-	ssl := false
+	ssl := r.TLS != nil
 	proto, ok := r.Header["X-Forwarded-Proto"]
 	if ok {
 		ssl = proto[0] == "https"
@@ -358,6 +358,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	runtime.DefaultHTTPHandler(r)
+	runtime.DefaultHTTPSHandler(r)
 
 	return runtime.Start()
 }

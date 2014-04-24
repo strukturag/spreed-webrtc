@@ -24,3 +24,7 @@ vendor/*
 /.sass-cache
 /extra
 /src/i18n/*.mo
+server.key
+server.csr
+server.crt
+server.pem
