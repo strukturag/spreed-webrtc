@@ -77,6 +77,12 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 		log.Println("Session patch failed - sid empty.")
 	}
 
+	// Make sure Sid matches session and is valid.
+	if !sessions.hub.ValidateSession(snr.Id, snr.Sid) {
+		log.Println("Session patch failed - validation failed.")
+		error = true
+	}
+
 	// Validate with users handler.
 	userid, err := sessions.users.Handler.Validate(&snr)
 	if err != nil {
@@ -88,12 +94,6 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	if userid == "" {
 		error = true
 		log.Println("Session patch failed - userid empty.")
-	}
-
-	// Make sure Sid matches session.
-	if !sessions.hub.ValidateSession(snr.Id, snr.Sid) {
-		log.Println("Session patch failed - validation failed.")
-		error = true
 	}
 
 	var nonce string

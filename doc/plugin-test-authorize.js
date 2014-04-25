@@ -26,6 +26,8 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 
 			var lastNonce = null;
 			var lastUserid = null;
+			var lastUseridCombo = null;
+			var lastSecret = null;
 			var disconnectTimeout = null;
 
 			app.run(["$window", "mediaStream", function($window, mediaStream) {
@@ -46,7 +48,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 					console.info("Started disconnector.");
 				};
 
-				$window.testCreateSuserid = function(key, userid) {
+				$window.testCreateSuseridLocal = function(key, userid) {
 
 					var k = sjcl.codec.utf8String.toBits(key);
 					var foo = new sjcl.misc.hmac(k, sjcl.hash.sha256)
@@ -54,6 +56,37 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 					var useridCombo = ""+expiration+":"+userid;
 					var secret = foo.mac(useridCombo);
 					return [useridCombo, sjcl.codec.base64.fromBits(secret)]
+
+				};
+
+				$window.testCreateSuseridServer = function() {
+
+					var url = mediaStream.url.api("users");
+					console.log("URL", url);
+					var data = {
+						id: mediaStream.api.id,
+						sid: mediaStream.api.sid
+					}
+					console.log("Data", data);
+					$.ajax({
+						type: "POST",
+						url: url,
+						contentType: "application/json",
+						dataType: "json",
+						data: JSON.stringify(data),
+						success: function(data) {
+							if (data.success) {
+								lastNonce = data.nonce;
+								lastUserid = data.userid;
+								lastUseridCombo = data.useridcombo;
+								lastSecret = data.secret;
+								console.log("Retrieved user", data);
+							}
+						},
+						error: function() {
+							console.log("error", arguments)
+						}
+					});
 
 				};
 
@@ -79,7 +112,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 							if (data.success) {
 								lastNonce = data.nonce;
 								lastUserid = data.userid;
-								console.log("Retrieved nonce", lastNonce, lastUserid);
+								console.log("Retrieved nonce", data);
 							}
 						},
 						error: function() {
@@ -89,7 +122,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 
 				};
 
-				$window.testAuthenticate = function() {
+				$window.testLastAuthenticate = function() {
 
 					if (!lastNonce || !lastUserid) {
 						console.log("Run testAuthorize first.");
@@ -97,6 +130,17 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 					}
 
 					mediaStream.api.requestAuthentication(lastUserid, lastNonce);
+
+				};
+
+				$window.testLastAuthorize = function() {
+
+					if (!lastUseridCombo || !lastSecret) {
+						console.log("Run testCreateSuseridServer fist.");
+						return
+					}
+
+					$window.testAuthorize(lastUseridCombo, lastSecret);
 
 				};
 

@@ -270,9 +270,6 @@ func runner(runtime phoenix.Runtime) error {
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
 
-	// Create Users handler.
-	users := NewUsers(runtime)
-
 	// Create configuration data structure.
 	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)
 
@@ -300,6 +297,9 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Create our hub instance.
 	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
+
+	// Create Users handler.
+	users := NewUsers(hub, runtime)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
@@ -348,6 +348,7 @@ func runner(runtime phoenix.Runtime) error {
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if users.Enabled {
 		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
+		api.AddResource(users, "/users")
 	}
 	if statsEnabled {
 		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")

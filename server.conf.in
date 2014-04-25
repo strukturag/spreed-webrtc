@@ -51,7 +51,7 @@ listen = 127.0.0.1:8080
 ; cannot be established without a TURN server due to firewall reasons. An open
 ; source TURN server which is fully supported can be found at
 ; https://code.google.com/p/rfc5766-turn-server/.
-;turnURIs = turn:turnserver:port?transport=udp turns:turnserver:443?transport=tcp
+;turnURIs = turn:turnserver:port?transport=udp
 ; Shared secret authentication for TURN user generation if the TURN server is
 ; protected (which it should be).
 ; See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00 for details.
@@ -61,7 +61,8 @@ listen = 127.0.0.1:8080
 ; are recommented.
 sessionSecret = the-default-secret-do-not-keep-me
 ; Full path to a text file containig client tokens which a user needs to enter
-; when accessing the web client. Each line in this file represents a valid token.
+; when accessing the web client. Each line in this file represents a valid
+; token.
 ;tokenFile = tokens.txt
 ; The name of a global room. If enabled it should be kept secret. Users in that
 ; room are visible in all other rooms.
@@ -97,3 +98,7 @@ sessionSecret = the-default-secret-do-not-keep-me
 ; The shared secred for HMAC validation in "sharedsecret" mode. Best use 32 or
 ; 64 bytes of random data.
 ;sharedsecret_secret = some-secret-do-not-keep
+; The server can create new userids if enabled. Set allowRegistration to true to
+; enable userid creation/registration. Users are created to match the settings
+; of the currently configured mode (see above).
+;allowRegistration = false

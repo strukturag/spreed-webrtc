@@ -14,20 +14,6 @@ API or there was a problem while JSON encoding.
 Available end points with request methods and content-type:
 
 
-  /api/v1/rooms
-
-    The rooms end point can be used to generate new random room ids.
-
-    POST application/x-www-form-urlencoded
-      No parameters.
-      Response 200:
-        {
-          "success": true,
-          "name": "room-name",
-          "url": "https://yourserver/room-name"
-        }
-
-
   /api/v1/tokens
 
     The tokens end point is to validate client side access tokens.
@@ -47,29 +33,76 @@ Available end points with request methods and content-type:
         }
 
 
-  /api/v1/sessions/{id}/
+  /api/v1/rooms
 
-    The sessions end point is for session interaction like authorization and
-    can only be used with a session id passed in as subpath. Make sure to
-    provide the trailing slash (/).
+    The rooms end point can be used to generate new random room ids.
 
-    PATCH application/json
+    POST application/x-www-form-urlencoded
+      No parameters.
+      Response 200:
+        {
+          "success": true,
+          "name": "room-name",
+          "url": "https://yourserver/room-name"
+        }
+
+
+  /api/v1/sessions
+
+    The sessions end point is for session interaction like authorization.
+
+    /api/v1/sessions/{id}/
+
+      A session id is passed in as subpath. Make sure to add the trailing slash (/).
+
+      PATCH application/json
+        {
+          id: "session-id",
+          sid: "secure-session-id",
+          useridcombo: "authorization-id",
+          secret: "secret-for-this-user-id"
+        }
+        Response 200:
+          {
+            "success": true,
+            "userid": "user-id-for-nonce",
+            "nonce": "authorization-nonce"
+          }
+        Response 403:
+          {
+            "success": false,
+            "code": "error-code",
+            "message": "error-message"
+          }
+        Response 404 text/plain:
+          Returned when users are disabled on the server.
+
+
+  /api/v1/users
+
+    The users end point is for user interaction like registration.
+
+    POST application/json
       {
-        Id: "session-id",
-        Sid: "secure-session-id",
-        Userid: "user-id-to-authorize"
+        id: "session-id",
+        sid: "secure-session-id"
       }
       Response 200:
         {
           "success": true,
+          "userid": "user-id",
+          "useridcombo": "authorization-id",
+          "secret": "authorization-secret-for-authorization-id",
           "nonce": "authorization-nonce"
         }
-      Response 403:
+      Response 400, 403:
         {
           "success": false,
           "code": "error-code",
           "message": "error-message"
         }
+      Response 404 text/plain:
+        Returned when user registration is disabled on the server.
 
 
   /api/v1/stats
