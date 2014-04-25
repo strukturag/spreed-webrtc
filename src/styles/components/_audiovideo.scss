@@ -68,7 +68,7 @@ right:520px;
 }
 
 .remoteVideo.talking .peerlabel {
-	color: #9dd53a;
+	color: $audiovideolevel;
 }
 
 .remoteVideo .overlaylogo {
@@ -93,7 +93,7 @@ right:520px;
 }
 
 .localVideo.talking video {
-	border:1px solid #9dd53a;
+	border:1px solid $audiovideolevel;
 }
 
 .renderer-conferencekiosk {
