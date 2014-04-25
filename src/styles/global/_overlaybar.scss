@@ -28,15 +28,11 @@
   text-shadow: 0 0 5px black;
   vertical-align: middle;
   @include user-select(none);
+}
+
+.overlaybar {
   &:hover {
     background: $componentfg2;
-  }
-  &.notvisible {
-    background: transparent;
-    pointer-events: none;
-    &:hover {
-      background: transparent;
-    }
   }
   .btn {
     text-shadow: none;
@@ -58,20 +54,33 @@
 }
 
 .overlaybar {
-  .overlaybarbutton {
-    font-size: 20px;
-    vertical-align: middle;
-    position: absolute;
-    left: 3px;
-    top: 1px;
-    padding: 6px;
-    display: block;
-    color: $bordercolor;
-    z-index: 15;
-    opacity: .7;
-    pointer-events: auto;
+  &.notvisible {
+    background: transparent;
+    pointer-events: none;
+    &:hover {
+      background: transparent;
+    }
+    .overlaybar-content {
+      display: none;
+    }
+    .overlaybar-overlay {
+      display: block;
+    }
   }
-  .overlaybarcontent {
+  .overlaybar-button {
+    color: $bordercolor;
+    display: block;
+    font-size: 20px;
+    left: 3px;
+    opacity: .7;
+    padding: 6px;
+    position: absolute;
+    pointer-events: auto;
+    top: 1px;
+    vertical-align: middle;
+    z-index: 15;
+  }
+  .overlaybar-content {
     display: inline-block;
     margin-left: .5em;
     margin-bottom: 0;
@@ -83,19 +92,11 @@
       max-width: 160px;
     }
   }
-  .overlaybaroverlay {
+  .overlaybar-overlay {
     display: none;
-    opacity: .7;
-    text-align: left;
     margin-left: .5em;
+    opacity: .7;
     padding-top: 2px;
-  }
-  &.notvisible {
-    .overlaybarcontent {
-      display: none;
-    }
-    .overlaybaroverlay {
-      display: block;
-    }
+    text-align: left;
   }
 }

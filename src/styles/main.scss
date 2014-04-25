@@ -19,8 +19,11 @@
  *
  */
 
+// must set custom compass variables before import of compass
 @import "global/variables";
-@import "compass/typography/vertical_rhythm";
+@import "compass";
+// auto import of user-interface not in css3 partial of compass 12.2
+@import "compass/css3/user-interface";
 @import "libs/libs";
 
 @import "global/mixins";
