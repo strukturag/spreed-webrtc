@@ -18,167 +18,185 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #bar {
--webkit-box-shadow:  0px 2px 10px 0px rgba(0, 0, 0, 0.2);
-box-shadow:  0px 2px 10px 0px rgba(0, 0, 0, 0.2);
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-min-height: 44px;
-background-color: $componentbg;
-color: $componentfg1;
-font-size: 1em;
-font-weight: bold;
-line-height: 40px;
-text-align: center;
--webkit-touch-callout: none;
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-z-index:5;
-}
-#bar > .left {
-position: absolute;
-left:0px;
-top:0px;
-bottom:0px;
-padding-left:12px;
-}
-#bar .logo {
-font-size:11px;
-line-height:11px;
-font-weight:normal;
-color:black;
-width:90px;
-height:32px;
-background-size:100%;
-background-repeat:no-repeat;
-background-image:url(../img/logo-small.png);
-display:inline-block;
-text-align:left;
-}
-#bar .logo > span {
-position: relative;
-left: 38px;
-top: 26px;
-font-style: italic;
-}
-#bar .logo > span a {
-color:#222;
-}
-#bar > .right {
-position: absolute;
-right:0px;
-top:1px;
-bottom:1px;
-padding-right:8px;
-}
-#bar > .left > *, #bar > .right > * {
-vertical-align: middle;
-}
-#bar > .right .btn {
-border-color:transparent;
-background:transparent;
-color:rgba(0,0,0,0.3);
-height:42px;
-width:42px;
-display: inline-block;
-font-size:24px;
-padding:0px;
-line-height:40px;
-text-align:center;
-margin-left:-4px;
-}
-#bar > .right .btn:focus {
-border: none;
-box-shadow: 0;
-outline: none;
-}
-#bar > .right .btn:hover {
-border-color: #ccc;
-background-color:none;
-color:rgba(0,0,0,0.4);
-}
-#bar > .right .btn.active {
-border-color: #ccc;
-background-color:none;
-color:rgba(0,0,0,0.4);
-}
-#bar > .right .btn.active.amutebtn {
-background-color: #db4f39;
-border-color: #db4f39;
-color: white;
-}
-#bar > .right .btn.active.aenablebtn {
-background-color: #84b819;
-border-color: #84b819;
-color: white;
-}
-#bar .btn {
-position:relative;
-}
-#bar .badge {
-background-color: #84b819;
-font-size:.4em;
-position:absolute;
-right:0px;
-top:2px;
-border:1px solid white;
-}
-#bar .userpicture {
-margin:-5px 0.5em 0px 0.5em;
-width:46px;
-height:46px;
-border-radius:2px;
-display:inline-block;
-}
-#bar > .middle {
-z-index:5;
-background-color: $componentbg;
-display:inline-block;
-padding:0 1em;
-position:relative;
-min-height: 44px;
-vertical-align:middle;
-margin-left:-70px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 44px;
+  background-color: $componentbg;
+  color: $componentfg1;
+  font-size: 1em;
+  font-weight: bold;
+  line-height: 40px;
+  text-align: center;
+  z-index: 5;
+  @include box-shadow(0 2px 10px 0 rgba(0,0,0,.2));
+  @include touch-callout(none);
+  @include user-select(none);
+  > .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding-left: 12px;
+    // TODO(theurere): cleanup
+    > *, #bar > .right > * {
+      vertical-align: middle;
+    }
+  }
+  .logo {
+    font-size: 11px;
+    line-height: 11px;
+    font-weight:normal;
+    color: black;
+    width: 90px;
+    height: 32px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url(../img/logo-small.png);
+    display: inline-block;
+    text-align: left;
+    > span {
+      position: relative;
+      left: 38px;
+      top: 26px;
+      font-style: italic;
+    }
+    > span a {
+      color: #222;
+    }
+  }
 }
 
-@media all and (max-width: 700px) {
-    #bar {
-        z-index:40;
-        -webkit-box-shadow: none;
-        box-shadow: none;
+#bar {
+  > .right {
+    position: absolute;
+    right: 0;
+    top: 1px;
+    bottom: 1px;
+    padding-right: 8px;
+    .btn {
+      border-color: transparent;
+      background: transparent;
+      color: rgba(0,0,0,.3);
+      height: 42px;
+      width: 42px;
+      display: inline-block;
+      font-size: 24px;
+      padding: 0;
+      line-height: 40px;
+      text-align: center;
+      margin-left: -4px;
     }
-    #bar > .middle.status-connecting, #bar > .middle.status-closed, #bar > .middle.status-reconnecting, #bar > .middle.status-error, #bar > .middle.status-ringing  {
-        max-width:100%;
-        border-bottom:1px solid $bordercolor;
-        .actions {
-            display: block;
-            padding:.2em 0 .8em 0;
-        }
-        min-height: 45px;
+    .btn:focus {
+      border: none;
+      box-shadow: 0;
+      outline: none;
     }
-    #bar > .middle.status-connected, #bar > .middle.status-conference {
-        position:absolute;
-        left:0px;
-        right:0px;
-        max-width:100%;
+    .btn:hover {
+      border-color: #ccc;
+      background-color: none;
+      color: rgba(0,0,0,.4);
     }
-    #bar > .middle {
-        display:block;
-        max-width:40%;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
-        margin-left:0px;
-
-        img {
-            display:none;
-        }
+    .btn.active {
+      border-color: #ccc;
+      background-color: none;
+      color: rgba(0,0,0,.4);
     }
-
+    .btn.active.amutebtn {
+      background-color: #db4f39;
+      border-color: #db4f39;
+      color: white;
+    }
+    .btn.active.aenablebtn {
+      background-color: #84b819;
+      border-color: #84b819;
+      color: white;
+    }
+  }
 }
 
+#bar {
+  .btn {
+    position: relative;
+  }
+  .badge {
+    background-color: #84b819;
+    font-size: .4em;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    border: 1px solid white;
+  }
+  .userpicture {
+    margin: -5px .5em 0 .5em;
+    width: 46px;
+    height: 46px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  > .middle {
+    z-index: 5;
+    background-color: $componentbg;
+    display: inline-block;
+    padding: 0 1em;
+    position: relative;
+    min-height: 44px;
+    vertical-align: middle;
+    margin-left: -70px;
+    @include breakpt($breakpoint-medium) {
+      display: block;
+      max-width: 40%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-left: 0px;
+    }
+  }
+}
+
+#bar {
+  @include breakpt($breakpoint-medium) {
+    z-index: 40;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  > .middle img {
+    @include breakpt($breakpoint-medium) {
+      display: none;
+    }
+  }
+  > .middle.status-connected,
+  > .middle.status-conference {
+    @include breakpt($breakpoint-medium) {
+      position: absolute;
+      left: 0;
+      right: 0;
+      max-width: 100%;
+    }
+  }
+  > .middle.status-connecting,
+  > .middle.status-closed,
+  > .middle.status-reconnecting,
+  > .middle.status-error,
+  > .middle.status-ringing  {
+    @include breakpt($breakpoint-medium) {
+      max-width: 100%;
+      border-bottom: 1px solid $bordercolor;
+      min-height: 45px;
+    }
+  }
+  // TODO(theurere): cleanup
+  > .middle.status-connecting .actions,
+  > .middle.status-closed .actions,
+  > .middle.status-reconnecting .actions,
+  > .middle.status-error .actions,
+  > .middle.status-ringing .actions {
+    @include breakpt($breakpoint-medium) {
+      display: block;
+      padding: .2em 0 .8em 0;
+    }
+  }
+}
