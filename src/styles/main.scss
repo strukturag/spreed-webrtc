@@ -23,7 +23,8 @@
 
 @import "libs/libs";
 
-@import "global/colors";
+@import "global/variables";
+@import "global/mixins";
 
 @import "global/base";
 @import "global/angular";
