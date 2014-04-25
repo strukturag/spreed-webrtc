@@ -18,167 +18,170 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #bar {
--webkit-box-shadow:  0px 2px 10px 0px rgba(0, 0, 0, 0.2);
-box-shadow:  0px 2px 10px 0px rgba(0, 0, 0, 0.2);
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-min-height: 44px;
-background-color: $componentbg;
-color: $componentfg1;
-font-size: 1em;
-font-weight: bold;
-line-height: 40px;
-text-align: center;
--webkit-touch-callout: none;
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-z-index:5;
-}
-#bar > .left {
-position: absolute;
-left:0px;
-top:0px;
-bottom:0px;
-padding-left:12px;
-}
-#bar .logo {
-font-size:11px;
-line-height:11px;
-font-weight:normal;
-color:black;
-width:90px;
-height:32px;
-background-size:100%;
-background-repeat:no-repeat;
-background-image:url(../img/logo-small.png);
-display:inline-block;
-text-align:left;
-}
-#bar .logo > span {
-position: relative;
-left: 38px;
-top: 26px;
-font-style: italic;
-}
-#bar .logo > span a {
-color:#222;
-}
-#bar > .right {
-position: absolute;
-right:0px;
-top:1px;
-bottom:1px;
-padding-right:8px;
-}
-#bar > .left > *, #bar > .right > * {
-vertical-align: middle;
-}
-#bar > .right .btn {
-border-color:transparent;
-background:transparent;
-color:rgba(0,0,0,0.3);
-height:42px;
-width:42px;
-display: inline-block;
-font-size:24px;
-padding:0px;
-line-height:40px;
-text-align:center;
-margin-left:-4px;
-}
-#bar > .right .btn:focus {
-border: none;
-box-shadow: 0;
-outline: none;
-}
-#bar > .right .btn:hover {
-border-color: #ccc;
-background-color:none;
-color:rgba(0,0,0,0.4);
-}
-#bar > .right .btn.active {
-border-color: #ccc;
-background-color:none;
-color:rgba(0,0,0,0.4);
-}
-#bar > .right .btn.active.amutebtn {
-background-color: #db4f39;
-border-color: #db4f39;
-color: white;
-}
-#bar > .right .btn.active.aenablebtn {
-background-color: #84b819;
-border-color: #84b819;
-color: white;
-}
-#bar .btn {
-position:relative;
-}
-#bar .badge {
-background-color: #84b819;
-font-size:.4em;
-position:absolute;
-right:0px;
-top:2px;
-border:1px solid white;
-}
-#bar .userpicture {
-margin:-5px 0.5em 0px 0.5em;
-width:46px;
-height:46px;
-border-radius:2px;
-display:inline-block;
-}
-#bar > .middle {
-z-index:5;
-background-color: $componentbg;
-display:inline-block;
-padding:0 1em;
-position:relative;
-min-height: 44px;
-vertical-align:middle;
-margin-left:-70px;
+  background-color: $componentbg;
+  color: $componentfg1;
+  left: 0;
+  min-height: 44px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-align: center;
+  z-index: 5;
+  @include adjust-leading-to(2);
+  @include box-shadow(0 2px 10px 0 $componentfg3);
+  // @include debug-vertical-alignment();
+  @include touch-callout(none);
+  @include user-select(none);
+  @include breakpt($breakpoint-medium) {
+    z-index: 40;
+    @include box-shadow(none);
+  }
+  .btn {
+    position: relative;
+  }
 }
 
-@media all and (max-width: 700px) {
-    #bar {
-        z-index:40;
-        -webkit-box-shadow: none;
-        box-shadow: none;
+.bar-left {
+  bottom: 0;
+  left: 0;
+  top: 0;
+  padding-left: 12px;
+  position: absolute;
+  .logo {
+    background: url(../img/logo-small.png) no-repeat;
+    background-size: 100%;
+    display: inline-block;
+    color: black;
+    height: 32px;
+    text-align: left;
+    width: 90px;
+    vertical-align: middle;
+    @include adjust-font-size-to(11px,0.4);
+    span {
+      font-style: italic;
+      left: 38px;
+      position: relative;
+      top: 26px;
     }
-    #bar > .middle.status-connecting, #bar > .middle.status-closed, #bar > .middle.status-reconnecting, #bar > .middle.status-error, #bar > .middle.status-ringing  {
-        max-width:100%;
-        border-bottom:1px solid $bordercolor;
-        .actions {
-            display: block;
-            padding:.2em 0 .8em 0;
-        }
-        min-height: 45px;
+    span a {
+      color: $dgrey;
     }
-    #bar > .middle.status-connected, #bar > .middle.status-conference {
-        position:absolute;
-        left:0px;
-        right:0px;
-        max-width:100%;
-    }
-    #bar > .middle {
-        display:block;
-        max-width:40%;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
-        margin-left:0px;
-
-        img {
-            display:none;
-        }
-    }
-
+  }
 }
 
+.bar-middle {
+  background-color: $componentbg;
+  display: inline-block;
+  font-weight: bold;
+  min-height: 44px;
+  padding: 0 1em;
+  position: relative;
+  margin-left: -70px;
+  z-index: 5;
+  @include breakpt($breakpoint-medium) {
+    display: block;
+    margin-left: 0px;
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .userpicture {
+    border-radius: 2px;
+    display: inline-block;
+    height: 46px;
+    margin: -5px .5em 0 .5em;
+    width: 46px;
+  }
+  img {
+    @include breakpt($breakpoint-medium) {
+      display: none;
+    }
+  }
+  &.status-connected,
+  &.status-conference {
+    @include breakpt($breakpoint-medium) {
+      max-width: 100%;
+      left: 0;
+      position: absolute;
+      right: 0;
+    }
+  }
+  &.status-connecting,
+  &.status-closed,
+  &.status-reconnecting,
+  &.status-error,
+  &.status-ringing  {
+    @include breakpt($breakpoint-medium) {
+      border-bottom: 1px solid $bordercolor;
+      max-width: 100%;
+      min-height: 45px;
+    }
+  }
+  // TODO(theurere): cleanup
+  &.status-connecting .actions,
+  &.status-closed .actions,
+  &.status-reconnecting .actions,
+  &.status-error .actions,
+  &.status-ringing .actions {
+    @include breakpt($breakpoint-medium) {
+      display: block;
+      padding: .2em 0 .8em 0;
+    }
+  }
+}
+
+.bar-right {
+  bottom: 1px;
+  padding-right: 8px;
+  position: absolute;
+  right: 0;
+  top: 1px;
+  .badge {
+    background-color: $actioncolor1;
+    border: 1px solid white;
+    font-size: .4em;
+    position: absolute;
+    right: 0;
+    top: 2px;
+  }
+  .btn {
+    background: transparent;
+    border-color: transparent;
+    color: $grey3;
+    display: inline-block;
+    height: 42px;
+    margin-left: -4px;
+    padding: 0;
+    text-align: center;
+    width: 42px;
+    @include adjust-font-size-to(24px);
+    &:focus {
+      border: none;
+      outline: none;
+      @include box-shadow(0);
+    }
+    &:hover {
+      background-color: none;
+      border-color: #ccc;
+      color: $grey4;
+    }
+    &.active {
+      background-color: none;
+      border-color: #ccc;
+      color: $grey4;
+    }
+    &.active.amutebtn {
+      background-color: $red;
+      border-color: $red;
+      color: white;
+    }
+    &.active.aenablebtn {
+      background-color: $actioncolor1;
+      border-color: $actioncolor1;
+      color: white;
+    }
+  }
+}
