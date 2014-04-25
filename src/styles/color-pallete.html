@@ -3,13 +3,15 @@
 <style>
    td {
       width: 20em;
+      padding: 0 2%;
    }
    .color-block {
       height: 50px;
+      border: 10px solid white;
    }
    .color-desc {
       height: 25px;
-      padding: 5% 10% 0 10%;
+      padding: 5% 0 0 0;
       text-align: center;
    }
 </style>
@@ -83,8 +85,16 @@
       <td class="color-desc">
          none: #84b819
       </td>
+      <td class="color-desc">
+         none: rgba(0,0,0,.4)
+      </td>
+      <td class="color-desc">
+         none: rgba(0,0,0,.3)
+      </td>
    </tr>
    <tr>
       <td class="color-block" style="background-color: #84b819;"></td>
+      <td class="color-block" style="background-color: rgba(0,0,0,.4);"></td>
+      <td class="color-block" style="background-color: rgba(0,0,0,.3);"></td>
    </tr>
 </table>

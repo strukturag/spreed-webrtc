@@ -32,7 +32,7 @@
   line-height: 40px;
   text-align: center;
   z-index: 5;
-  @include box-shadow(0 2px 10px 0 rgba(0,0,0,.2));
+  @include box-shadow(0 2px 10px 0 $componentfg3);
   @include touch-callout(none);
   @include user-select(none);
   > .left {
@@ -65,7 +65,7 @@
       font-style: italic;
     }
     > span a {
-      color: #222;
+      color: $dgrey;
     }
   }
 }
@@ -80,7 +80,7 @@
     .btn {
       border-color: transparent;
       background: transparent;
-      color: rgba(0,0,0,.3);
+      color: $grey3;
       height: 42px;
       width: 42px;
       display: inline-block;
@@ -98,21 +98,21 @@
     .btn:hover {
       border-color: #ccc;
       background-color: none;
-      color: rgba(0,0,0,.4);
+      color: $grey4;
     }
     .btn.active {
       border-color: #ccc;
       background-color: none;
-      color: rgba(0,0,0,.4);
+      color: $grey4;
     }
     .btn.active.amutebtn {
-      background-color: #db4f39;
-      border-color: #db4f39;
+      background-color: $red;
+      border-color: $red;
       color: white;
     }
     .btn.active.aenablebtn {
-      background-color: #84b819;
-      border-color: #84b819;
+      background-color: $actioncolor1;
+      border-color: $actioncolor1;
       color: white;
     }
   }
@@ -123,7 +123,7 @@
     position: relative;
   }
   .badge {
-    background-color: #84b819;
+    background-color: $actioncolor1;
     font-size: .4em;
     position: absolute;
     right: 0;
