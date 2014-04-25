@@ -205,10 +205,10 @@ type SessionUpdate struct {
 }
 
 type SessionToken struct {
-	Id     string
-	Sid    string
-	Userid string
-	Nonce  string `json:"Nonce,omitempty"`
+	Id     string // Public session id.
+	Sid    string // Secret session id.
+	Userid string // Public user id.
+	Nonce  string `json:"Nonce,omitempty"` // User autentication nonce.
 }
 
 func init() {

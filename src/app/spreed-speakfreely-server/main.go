@@ -270,6 +270,9 @@ func runner(runtime phoenix.Runtime) error {
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
 
+	// Create Users handler.
+	users := NewUsers(runtime)
+
 	// Create configuration data structure.
 	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)
 
@@ -343,7 +346,9 @@ func runner(runtime phoenix.Runtime) error {
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
-	api.AddResource(&Sessions{hub: hub}, "/sessions/{id}/")
+	if users.Enabled {
+		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
+	}
 	if statsEnabled {
 		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")

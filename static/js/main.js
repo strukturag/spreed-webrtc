@@ -49,6 +49,7 @@ require.config({
     'humanize': 'libs/humanize',
     'sha': 'libs/sha',
     'dialogs': 'libs/angular/dialogs.min',
+    'sjcl': 'libs/sjcl',
 
     'partials': '../partials',
     'sounds': '../sounds',
@@ -110,6 +111,9 @@ require.config({
     'dialogs': {
         deps: ['angular', 'angular-sanitize'],
         exports: 'angular'
+    },
+    'sjcl': {
+        exports: 'sjcl'
     }
   }
 });

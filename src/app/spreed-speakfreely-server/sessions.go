@@ -24,16 +24,26 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 )
 
 type SessionNonce struct {
 	Nonce   string `json:"nonce"`
+	Userid  string `json:"userid"`
 	Success bool   `json:"success"`
 }
 
+type SessionNonceRequest struct {
+	Id          string `json:"id"`          // Public session id.
+	Sid         string `json:"sid"`         // Private session id.
+	UseridCombo string `json:"useridcombo"` // Public user id as used secret (Expiration:Userid)
+	Secret      string `json:"secret"`      // base64(hmac-sha265(SecretKey, UseridCombo))
+}
+
 type Sessions struct {
-	hub *Hub
+	hub   *Hub
+	users *Users
 }
 
 // Patch is used to add a userid to a given session (login).
@@ -43,8 +53,8 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	error := false
 
 	decoder := json.NewDecoder(request.Body)
-	var st SessionToken
-	err := decoder.Decode(&st)
+	var snr SessionNonceRequest
+	err := decoder.Decode(&snr)
 	if err != nil {
 		error = true
 	}
@@ -56,32 +66,42 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	}
 
 	// Make sure data matches request.
-	if id != st.Id {
+	if id != snr.Id {
 		error = true
+		log.Println("Session patch failed - request id mismatch.")
 	}
 
 	// Make sure that we have a Sid.
-	if st.Sid == "" {
+	if snr.Sid == "" {
 		error = true
+		log.Println("Session patch failed - sid empty.")
+	}
+
+	// Validate with users handler.
+	userid, err := sessions.users.Handler.Validate(&snr)
+	if err != nil {
+		error = true
+		log.Println("Session patch failed - users validation failed.", err)
 	}
 
 	// Make sure that we have a user.
-	if st.Userid == "" {
+	if userid == "" {
 		error = true
+		log.Println("Session patch failed - userid empty.")
 	}
 
-	// TODO(longsleep): Validate userid.
-
 	// Make sure Sid matches session.
-	if !sessions.hub.ValidateSession(st.Id, st.Sid) {
+	if !sessions.hub.ValidateSession(snr.Id, snr.Sid) {
+		log.Println("Session patch failed - validation failed.")
 		error = true
 	}
 
 	var nonce string
 	if !error {
-		// FIXME(longsleep): Not running this might releal error state with a timing attack.
-		nonce, err = sessions.hub.sessiontokenHandler(&st)
+		// FIXME(longsleep): Not running this might reveal error state with a timing attack.
+		nonce, err = sessions.hub.sessiontokenHandler(&SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
 		if err != nil {
+			log.Println("Session patch failed - handle failed.", err)
 			error = true
 		}
 	}
@@ -90,6 +110,7 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 		return 403, NewApiError("session_patch_failed", "Failed to patch session"), http.Header{"Content-Type": {"application/json"}}
 	}
 
-	return 200, &SessionNonce{Nonce: nonce, Success: true}, http.Header{"Content-Type": {"application/json"}}
+	log.Printf("Session patch successfull %s -> %s\n", snr.Id, userid)
+	return 200, &SessionNonce{Nonce: nonce, Userid: userid, Success: true}, http.Header{"Content-Type": {"application/json"}}
 
 }

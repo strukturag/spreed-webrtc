@@ -1,35 +1,99 @@
-# Spreed Speak Freely server example configuration
+; Spreed Speak Freely server example configuration
 
 [http]
+; HTTP listener in format ip:port.
 listen = 127.0.0.1:8080
-#root = /usr/share/spreed-speakfreely-server/www
-#readtimeout = 10
-#writetimeout = 10
-#basePath = /some/sub/path/ # Set this when running behind a web server under a sub path.
-#maxfd = 32768 # Try to set max open files limit on start (works only when run as root).
-#stats = true # Provide stats API at /api/v1/stats (do not enable this in production or unprotected!).
-#pprofListen = 127.0.0.1:6060 # See http://golang.org/pkg/net/http/pprof/ for details
+; Full path to directory where to find the server web assets.
+;root = /usr/share/spreed-speakfreely-server/www
+; HTTP socket read timeout in seconds.
+;readtimeout = 10
+; HTTP socket write timeout in seconds.
+;writetimeout = 10
+; Use basePath if the server does not run on the root path (/) of your server.
+;basePath = /some/sub/path/
+; Set maximum number of open files (only works when run as root).
+;maxfd = 32768
+; Enable stats API /api/v1/stats for debugging (not for production use!).
+;stats = false
+; Enable HTTP listener for golang pprof module. See
+; http://golang.org/pkg/net/http/pprof/ for details.
+;pprofListen = 127.0.0.1:6060
 
 [https]
-#listen = 127.0.0.1:8443
-#certificate = server.crt # Full path to certificate.
-#key = server.key # Full path to key.
-#minVersion = SSLv3 # Minimal supported encryption (SSLv3, TLSv1, TLSv1.1, TLSv1.2).
-#readtimeout = 10
-#writetimeout = 10
+; Native HTTPS listener in format ip:port.
+;listen = 127.0.0.1:8443
+; Full path to PEM encoded certificate chain.
+;certificate = server.crt
+; Full path to PEM encoded private key.
+;key = server.key
+; Mimimal supported encryption standard (SSLv3, TLSv1, TLSv1.1 or TLSv1.2).
+;minVersion = SSLv3
+; HTTPS socket read timeout in seconds.
+;readtimeout = 10
+; HTTPS socket write timeout in seconds.
+;writetimeout = 10
 
 [app]
-#title = Spreed Speak Freely
-#ver = 1234 # version string to use for static resource
-#stunURIs = stun.l.google.com:19302
-#turnURIs = turn:turnserver:port?transport=udp turn:anotherturnserver:port?transport=tcp turns:turnserver:443?transport=tcp
-#turnSecret = the-default-turn-shared-secret-do-not-keep
-sessionSecret = the-default-secret-do-not-keep-me # Use 32 or 64 bytes random data
-#tokenFile = tokens.txt # If set, everyone needs to give one of the tokens to launch the web client. One token per line in the file.
-#globalRoom = global # Enables a global room. Users in that room are in all rooms.
-#defaultRoomEnabled = true # Set to false to disable default room.
-#extra = /usr/share/spreed-speakfreely-server/extra # Extra templates directory. Add .html files to define extra-* template slots here.
-#plugin = plugins/example1 # Plugin support.
+; HTML page title
+;title = Spreed Speak Freely
+; Version string to use for static resources. This defaults to the server
+; version and should only be changed when you use your own way to invalidate
+; long cached static resources.
+;ver = 1234
+; STUN server URIs in format host:port. You can provide multiple seperated by
+; space. If you do not have one use a public one like stun.l.google.com:19302.
+; If you have a TURN server you do not need to set an STUN server as the TURN
+; server will normally do STUN too.
+;stunURIs = stun.l.google.com:19302
+; TURN server URIs in format host:port?transport=udp|tcp. You can provide
+; multiple seperated by space. If you do not have at least one TURN server then
+; some users will not be able to use the server as the peer to peer connection
+; cannot be established without a TURN server due to firewall reasons. An open
+; source TURN server which is fully supported can be found at
+; https://code.google.com/p/rfc5766-turn-server/.
+;turnURIs = turn:turnserver:port?transport=udp turns:turnserver:443?transport=tcp
+; Shared secret authentication for TURN user generation if the TURN server is
+; protected (which it should be).
+; See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00 for details.
+; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
+;turnSecret = the-default-turn-shared-secret-do-not-keep
+; Session secret to use for session id generator. 32 or 64 bytes of random data
+; are recommented.
+sessionSecret = the-default-secret-do-not-keep-me
+; Full path to a text file containig client tokens which a user needs to enter
+; when accessing the web client. Each line in this file represents a valid token.
+;tokenFile = tokens.txt
+; The name of a global room. If enabled it should be kept secret. Users in that
+; room are visible in all other rooms.
+;globalRoom = global
+; The default room is the room at the root URL of the servers base address and
+; all users will join this room if enabled. If it is disabled then a room join
+; form will be shown instead.
+;defaultRoomEnabled = true
+; Full path to an extra templates directory. Templates in this directory ending
+; with .html will be parsed on startup and can be used to fill the supported
+; extra-* template slots. If the extra folder has a sub folder "static", the
+; resources in this static folder will be available as /extra/static/filename
+; relative to your servers base URL.
+;extra = /usr/share/spreed-speakfreely-server/extra
+; URL relative to the servers base path for a plugin javascript file which is
+; automatically loaded on web client start for all users. You can put your
+; plugin in the extra/static folder (see above) or provide another folder using
+; a front end webserver. Check the doc folder for more info about plugins and
+; examples.
+;plugin = extra/static/myplugin.js
 
 [log]
-#logfile = /var/log/spreed-speakfreely-server.log
+;logfile = /var/log/spreed-speakfreely-server.log
+
+[users]
+; Set to true to enable user functionality.
+;enabled = false
+; Set authorization mode for users. Currently implemented is the "sharedsecret"
+; mode which does validate the userid with a HMAC authentication secret.
+; The format goes like this:
+;   BASE64(HMAC-SHA-256(secret, expirationTimestampInSeconds:userid))
+;mode = sharedsecret
+; The shared secred for HMAC validation in "sharedsecret" mode. Best use 32 or
+; 64 bytes of random data.
+;sharedsecret_secret = some-secret-do-not-keep
