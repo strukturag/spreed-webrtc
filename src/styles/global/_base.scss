@@ -19,15 +19,12 @@
  *
  */
 
-// @include establish-baseline();
-
 html,
 body {
   background-clip: padding-box;
   background-color: $background;
   height: 100%;
   font: normal $base-font-size $font-sans-serif;
-  // @include debug-vertical-alignment();
 }
 
 body {
@@ -131,8 +128,15 @@ a {
 }
 
 .welcome {
+<<<<<<< HEAD
   color: $light-text;
   font-size: 1.1em;
   margin-top: 80px;
   text-shadow: 0 0 5px black;
+=======
+	color:#aaa;
+	text-shadow: 0 0 5px black;
+	font-size:1.1em;
+	margin-top:80px;
+>>>>>>> 2be25f6... Add bootstrap v3.1.1 sass.
 }
