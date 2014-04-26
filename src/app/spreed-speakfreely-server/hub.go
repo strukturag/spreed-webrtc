@@ -79,9 +79,11 @@ type Hub struct {
 	broadcastChatMessages uint64
 	unicastChatMessages   uint64
 	buddyImages           ImageCache
+	realm                 string
+	tokenName             string
 }
 
-func NewHub(version string, config *Config, sessionSecret, turnSecret string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, turnSecret, realm string) *Hub {
 
 	h := &Hub{
 		connectionTable: make(map[string]*Connection),
@@ -91,6 +93,7 @@ func NewHub(version string, config *Config, sessionSecret, turnSecret string) *H
 		config:          config,
 		sessionSecret:   []byte(sessionSecret),
 		turnSecret:      []byte(turnSecret),
+		realm:           realm,
 	}
 
 	if len(h.sessionSecret) < 32 {
@@ -100,6 +103,7 @@ func NewHub(version string, config *Config, sessionSecret, turnSecret string) *H
 	h.tickets = securecookie.New(h.sessionSecret, nil)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
+	h.tokenName = fmt.Sprintf("token@%s", h.realm)
 	return h
 
 }
@@ -203,14 +207,14 @@ func (h *Hub) ValidateSession(id, sid string) bool {
 
 func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
-	return h.tickets.Encode("token", st)
+	return h.tickets.Encode(h.tokenName, st)
 
 }
 
 func (h *Hub) DecodeSessionToken(token string) (*SessionToken, error) {
 
 	st := &SessionToken{}
-	err := h.tickets.Decode("token", token, st)
+	err := h.tickets.Decode(h.tokenName, token, st)
 	return st, err
 
 }
@@ -401,7 +405,7 @@ func (h *Hub) sessiontokenHandler(st *SessionToken) (string, error) {
 		return "", errors.New("no such connection")
 	}
 
-	nonce, err := c.Session.Authorize(st)
+	nonce, err := c.Session.Authorize(h.realm, st)
 	if err != nil {
 		return "", err
 	}

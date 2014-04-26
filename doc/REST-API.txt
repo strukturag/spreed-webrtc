@@ -92,6 +92,7 @@ Available end points with request methods and content-type:
           "success": true,
           "userid": "user-id",
           "useridcombo": "authorization-id",
+          "timestamp": 1430688014,
           "secret": "authorization-secret-for-authorization-id",
           "nonce": "authorization-nonce"
         }

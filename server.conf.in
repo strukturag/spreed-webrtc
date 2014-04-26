@@ -75,6 +75,10 @@ sessionSecret = the-default-secret-do-not-keep-me
 ; server generated security tokens. When the serverToken is changed all existing
 ; nonces become invalid. Use 32 or 64 byte random data.
 ;serverToken = i-did-not-change-the-public-token-boo
+; The server realm is part of the validation chain of tokens and nonces and is
+; added as suffix to server created user ids if user creation is enabled. When
+; the realm is changed, all existing tokens and nonces become invalid.
+;serverRealm = local
 ; Full path to an extra templates directory. Templates in this directory ending
 ; with .html will be parsed on startup and can be used to fill the supported
 ; extra-* template slots. If the extra folder has a sub folder "static", the

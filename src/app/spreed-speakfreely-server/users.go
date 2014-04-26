@@ -83,8 +83,10 @@ func (uh *UsersSharedsecretHandler) Create(un *UserNonce) (*UserNonce, error) {
 
 	// TODO(longsleep): Make this configureable - One year for now ...
 	expiration := time.Now().Add(time.Duration(1) * time.Hour * 24 * 31 * 12)
-	un.UseridCombo = fmt.Sprintf("%d:%s", expiration.Unix(), un.Userid)
+	un.Timestamp = expiration.Unix()
+	un.UseridCombo = fmt.Sprintf("%d:%s", un.Timestamp, un.Userid)
 	un.Secret = uh.createHMAC(un.UseridCombo)
+
 	return un, nil
 
 }
@@ -94,15 +96,17 @@ type UserNonce struct {
 	Userid      string `json:"userid"`
 	UseridCombo string `json:"useridcombo"`
 	Secret      string `json:"secret"`
+	Timestamp   int64  `json:"timestamp"`
 	Success     bool   `json:"success"`
 }
 
 type Users struct {
 	hub     *Hub
-	Handler UsersHandler
+	realm   string
+	handler UsersHandler
 }
 
-func NewUsers(hub *Hub, runtime phoenix.Runtime) *Users {
+func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 
 	var handler UsersHandler
 
@@ -125,7 +129,8 @@ func NewUsers(hub *Hub, runtime phoenix.Runtime) *Users {
 
 	return &Users{
 		hub:     hub,
-		Handler: handler,
+		realm:   realm,
+		handler: handler,
 	}
 
 }
@@ -146,7 +151,7 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 	}
 
 	// Do this before session validation to avoid timing information.
-	userid := uuid.NewV4().String()
+	userid := fmt.Sprintf("%s@%s", uuid.NewV4().String(), users.realm)
 
 	// Make sure Sid matches session and is valid.
 	if !users.hub.ValidateSession(snr.Id, snr.Sid) {
@@ -158,7 +163,7 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 		return 400, NewApiError("users_request_failed", fmt.Sprintf("Error: %q", err)), http.Header{"Content-Type": {"application/json"}}
 	}
 
-	un, err := users.Handler.Create(&UserNonce{Nonce: nonce, Userid: userid, Success: true})
+	un, err := users.handler.Create(&UserNonce{Nonce: nonce, Userid: userid, Success: true})
 	if err != nil {
 		return 400, NewApiError("users_create_failed", fmt.Sprintf("Error: %q", err)), http.Header{"Content-Type": {"application/json"}}
 	}

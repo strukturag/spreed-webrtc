@@ -23,6 +23,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gorilla/securecookie"
 	"sync"
 )
@@ -88,7 +89,7 @@ func (s *Session) Apply(st *SessionToken) uint64 {
 
 }
 
-func (s *Session) Authorize(st *SessionToken) (string, error) {
+func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -102,13 +103,13 @@ func (s *Session) Authorize(st *SessionToken) (string, error) {
 
 	// Create authentication nonce.
 	var err error
-	s.Nonce, err = sessionNonces.Encode(s.Sid, st.Userid)
+	s.Nonce, err = sessionNonces.Encode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Userid)
 
 	return s.Nonce, err
 
 }
 
-func (s *Session) Authenticate(st *SessionToken) error {
+func (s *Session) Authenticate(realm string, st *SessionToken) error {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -120,7 +121,7 @@ func (s *Session) Authenticate(st *SessionToken) error {
 		return errors.New("nonce validation failed")
 	}
 	var userid string
-	err := sessionNonces.Decode(s.Sid, st.Nonce, &userid)
+	err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
 	if err != nil {
 		return err
 	}

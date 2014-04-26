@@ -432,16 +432,26 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                 if (!login && mediaStream.config.UsersAllowRegistration) {
                     console.log("No userid - creating one ...");
                     mediaStream.users.register(function(data) {
-                        var login = sjcl.encrypt(key, JSON.stringify({
-                            v: 1,
-                            t: data.timestamp || "",
-                            a: data.useridcombo,
-                            b: data.secret,
-                        }));
-                        localStorage.setItem("mediastream-login", login);
-                        console.info("Created new userid:", data.userid);
-                        mediaStream.api.requestAuthentication(data.userid, data.nonce);
-                        delete data.nonce;
+                        console.info("Created new userid:", data.userid);                        
+                        if (data.nonce) {
+                            // If the server provided us a nonce, we can do everthing on our own.
+                            // So we store the stuff in localStorage for later use and directly
+                            // authenticate ourselves with the provided nonce.
+                            var login = sjcl.encrypt(key, JSON.stringify({
+                                v: 1,
+                                t: data.timestamp || "",
+                                a: data.useridcombo,
+                                b: data.secret,
+                            }));
+                            localStorage.setItem("mediastream-login", login);
+                            mediaStream.api.requestAuthentication(data.userid, data.nonce);
+                            delete data.nonce;
+                        } else {
+                            // No nonce received. So this means something we cannot do on our own.
+                            // Make are GET request and retrieve nonce that way and let the 
+                            // browser/server do the rest.
+                            // TODO(longsleep): Implement me.
+                        }
                     }, function(data, status) {
                         console.error("Failed to create userid", status, data);
                     });

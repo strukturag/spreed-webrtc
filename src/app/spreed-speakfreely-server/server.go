@@ -228,7 +228,7 @@ func (s *Server) Users(c *Connection) {
 
 func (s *Server) Authenticate(c *Connection, st *SessionToken) bool {
 
-	err := c.Session.Authenticate(st)
+	err := c.Session.Authenticate(c.h.realm, st)
 	if err == nil {
 		log.Println("Authentication success", c.Id, c.Idx, st.Userid)
 		return true

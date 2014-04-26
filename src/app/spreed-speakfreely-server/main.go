@@ -263,12 +263,6 @@ func runner(runtime phoenix.Runtime) error {
 		defaultRoomEnabled = defaultRoomEnabledString == "true"
 	}
 
-	serverToken, err := runtime.GetString("app", "serverToken")
-	if err == nil {
-		//TODO(longsleep): When we have a database, generate this once from random source and store it.
-		serverToken = "i-did-not-change-the-public-token-boo"
-	}
-
 	usersEnabled := false
 	usersEnabledString, err := runtime.GetString("users", "enabled")
 	if err == nil {
@@ -279,6 +273,17 @@ func runner(runtime phoenix.Runtime) error {
 	usersAllowRegistrationString, err := runtime.GetString("users", "allowRegistration")
 	if err == nil {
 		usersAllowRegistration = usersAllowRegistrationString == "true"
+	}
+
+	serverToken, err := runtime.GetString("app", "serverToken")
+	if err != nil {
+		//TODO(longsleep): When we have a database, generate this once from random source and store it.
+		serverToken = "i-did-not-change-the-public-token-boo"
+	}
+
+	serverRealm, err := runtime.GetString("app", "serverRealm")
+	if err != nil {
+		serverRealm = "local"
 	}
 
 	// Create token provider.
@@ -313,8 +318,11 @@ func runner(runtime phoenix.Runtime) error {
 		log.Printf("Loaded extra templates from: %s", extraFolder)
 	}
 
+	// Create realm string from config.
+	computedRealm := fmt.Sprintf("%s.%s", serverRealm, serverToken)
+
 	// Create our hub instance.
-	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
+	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret, computedRealm)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
@@ -363,7 +371,7 @@ func runner(runtime phoenix.Runtime) error {
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if usersEnabled {
 		// Create Users handler.
-		users := NewUsers(hub, runtime)
+		users := NewUsers(hub, serverRealm, runtime)
 		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
 		if usersAllowRegistration {
 			api.AddResource(users, "/users")
