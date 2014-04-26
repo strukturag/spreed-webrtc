@@ -60,6 +60,64 @@ define([
                     return (context.Cfg.B || "/") + "api/v1/" + path;
                 }
             },
+            users: {
+                register: function(success_cb, error_cb) {
+                    var url = mediaStream.url.api("users");
+                    var data = {
+                        id: mediaStream.api.id,
+                        sid: mediaStream.api.sid
+                    }
+                    $http({
+                        method: "POST",
+                        url: url,
+                        data: JSON.stringify(data),
+                        headers: {'Content-Type': 'application/json'}
+                    }).
+                    success(function(data, status) {
+                        if (data.userid !== "" && data.success) {
+                            success_cb(data, status);
+                        } else {
+                            if (error_cb) {
+                                error_cb(data, status);
+                            }
+                        }
+                    }).
+                    error(function(data, status) {
+                        if (error_cb) {
+                            error_cb(data, status)
+                        } 
+                    });
+                },
+                authorize: function(useridCombo, secret, success_cb, error_cb) {
+                    var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
+                    var data = {
+                        id: mediaStream.api.id,
+                        sid: mediaStream.api.sid,
+                        useridcombo: useridCombo,
+                        secret: secret
+                    }
+                    $http({
+                        method: "PATCH",
+                        url: url,
+                        data: JSON.stringify(data),
+                        headers: {'Content-Type': 'application/json'}
+                    }).
+                    success(function(data, status) {
+                        if (data.nonce !== "" && data.success) {
+                            success_cb(data, status);
+                        } else {
+                            if (error_cb) {
+                                error_cb(data, status);
+                            }
+                        }
+                    }).
+                    error(function(data, status) {
+                        if (error_cb) {
+                            error_cb(data, status)
+                        } 
+                    });
+                }
+            },
             initialize: function($rootScope, translation) {
 
                 var cont = false;

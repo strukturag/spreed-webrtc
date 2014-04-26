@@ -263,6 +263,24 @@ func runner(runtime phoenix.Runtime) error {
 		defaultRoomEnabled = defaultRoomEnabledString == "true"
 	}
 
+	serverToken, err := runtime.GetString("app", "serverToken")
+	if err == nil {
+		//TODO(longsleep): When we have a database, generate this once from random source and store it.
+		serverToken = "i-did-not-change-the-public-token-boo"
+	}
+
+	usersEnabled := false
+	usersEnabledString, err := runtime.GetString("users", "enabled")
+	if err == nil {
+		usersEnabled = usersEnabledString == "true"
+	}
+
+	usersAllowRegistration := false
+	usersAllowRegistrationString, err := runtime.GetString("users", "allowRegistration")
+	if err == nil {
+		usersAllowRegistration = usersAllowRegistrationString == "true"
+	}
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
@@ -271,7 +289,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)
+	config = NewConfig(title, ver, runtimeVersion, basePath, serverToken, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, usersEnabled, usersAllowRegistration, plugin)
 
 	// Load templates.
 	tt := template.New("")
@@ -297,9 +315,6 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Create our hub instance.
 	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
-
-	// Create Users handler.
-	users := NewUsers(hub, runtime)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
@@ -346,9 +361,13 @@ func runner(runtime phoenix.Runtime) error {
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
-	if users.Enabled {
+	if usersEnabled {
+		// Create Users handler.
+		users := NewUsers(hub, runtime)
 		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
-		api.AddResource(users, "/users")
+		if usersAllowRegistration {
+			api.AddResource(users, "/users")
+		}
 	}
 	if statsEnabled {
 		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")

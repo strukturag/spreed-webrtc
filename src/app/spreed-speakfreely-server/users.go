@@ -99,55 +99,32 @@ type UserNonce struct {
 
 type Users struct {
 	hub     *Hub
-	Enabled bool
-	Create  bool
 	Handler UsersHandler
 }
 
 func NewUsers(hub *Hub, runtime phoenix.Runtime) *Users {
 
-	enabled := false
-	enabledString, err := runtime.GetString("users", "enabled")
-	if err == nil {
-		enabled = enabledString == "true"
-	}
-
-	create := false
-	createString, err := runtime.GetString("users", "allowRegistration")
-	if err == nil {
-		create = createString == "true"
-	}
-
 	var handler UsersHandler
 
-	if enabled {
-
-		mode, _ := runtime.GetString("users", "mode")
-		switch mode {
-		case "sharedsecret":
-			secret, _ := runtime.GetString("users", "sharedsecret_secret")
-			if secret != "" {
-				handler = &UsersSharedsecretHandler{secret: []byte(secret)}
-			}
-		default:
-			mode = ""
+	mode, _ := runtime.GetString("users", "mode")
+	switch mode {
+	case "sharedsecret":
+		secret, _ := runtime.GetString("users", "sharedsecret_secret")
+		if secret != "" {
+			handler = &UsersSharedsecretHandler{secret: []byte(secret)}
 		}
-
-		if handler == nil {
-			enabled = false
-		} else {
-			log.Printf("Enabled users handler '%s'\n", mode)
-			if create {
-				log.Println("Enabled users registration")
-			}
-		}
-
+	default:
+		mode = ""
 	}
+
+	if handler == nil {
+		handler = &UsersSharedsecretHandler{secret: []byte("")}
+	}
+
+	log.Printf("Enabled users handler '%s'\n", mode)
 
 	return &Users{
 		hub:     hub,
-		Enabled: enabled,
-		Create:  create,
 		Handler: handler,
 	}
 
@@ -155,10 +132,6 @@ func NewUsers(hub *Hub, runtime phoenix.Runtime) *Users {
 
 // Post is used to create new userids for this server.
 func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) {
-
-	if !users.Create {
-		return 404, "404 page not found", http.Header{"Content-Type": {"text/plain"}}
-	}
 
 	decoder := json.NewDecoder(request.Body)
 	var snr SessionNonceRequest

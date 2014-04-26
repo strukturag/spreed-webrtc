@@ -60,88 +60,42 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 				};
 
 				$window.testCreateSuseridServer = function() {
-
-					var url = mediaStream.url.api("users");
-					console.log("URL", url);
-					var data = {
-						id: mediaStream.api.id,
-						sid: mediaStream.api.sid
-					}
-					console.log("Data", data);
-					$.ajax({
-						type: "POST",
-						url: url,
-						contentType: "application/json",
-						dataType: "json",
-						data: JSON.stringify(data),
-						success: function(data) {
-							if (data.success) {
-								lastNonce = data.nonce;
-								lastUserid = data.userid;
-								lastUseridCombo = data.useridcombo;
-								lastSecret = data.secret;
-								console.log("Retrieved user", data);
-							}
-						},
-						error: function() {
-							console.log("error", arguments)
-						}
+					mediaStream.users.register(function(data) {
+						lastNonce = data.nonce;
+						lastUserid = data.userid;
+						lastUseridCombo = data.useridcombo;
+						lastSecret = data.secret;
+						console.log("Retrieved user", data);
+					}, function() {
+						console.log("Register error", arguments);
 					});
-
 				};
 
 				$window.testAuthorize = function(useridCombo, secret) {
-
 					console.log("Testing authorize with userid", useridCombo, secret);
-					var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
-					console.log("URL", url);
-					var data = {
-						id: mediaStream.api.id,
-						sid: mediaStream.api.sid,
-						useridcombo: useridCombo,
-						secret: secret
-					}
-					console.log("Data", data);
-					$.ajax({
-						type: "PATCH",
-						url: url,
-						contentType: "application/json",
-						dataType: "json",
-						data: JSON.stringify(data),
-						success: function(data) {
-							if (data.success) {
-								lastNonce = data.nonce;
-								lastUserid = data.userid;
-								console.log("Retrieved nonce", data);
-							}
-						},
-						error: function() {
-							console.log("error", arguments)
-						}
+					mediaStream.users.authorize(useridCombo, secret, function(data) {
+						lastNonce = data.nonce;
+						lastUserid = data.userid;
+						console.log("Retrieved nonce", data);
+					}, function() {
+						console.log("Authorize error", arguments);
 					});
-
 				};
 
 				$window.testLastAuthenticate = function() {
-
 					if (!lastNonce || !lastUserid) {
 						console.log("Run testAuthorize first.");
 						return
 					}
-
 					mediaStream.api.requestAuthentication(lastUserid, lastNonce);
-
 				};
 
 				$window.testLastAuthorize = function() {
-
 					if (!lastUseridCombo || !lastSecret) {
 						console.log("Run testCreateSuseridServer fist.");
 						return
 					}
-
 					$window.testAuthorize(lastUseridCombo, lastSecret);
-
 				};
 
 			}]);

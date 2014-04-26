@@ -71,6 +71,10 @@ sessionSecret = the-default-secret-do-not-keep-me
 ; all users will join this room if enabled. If it is disabled then a room join
 ; form will be shown instead.
 ;defaultRoomEnabled = true
+; Server token is a public random string which is used to enhance security of
+; server generated security tokens. When the serverToken is changed all existing
+; nonces become invalid. Use 32 or 64 byte random data.
+;serverToken = i-did-not-change-the-public-token-boo
 ; Full path to an extra templates directory. Templates in this directory ending
 ; with .html will be parsed on startup and can be used to fill the supported
 ; extra-* template slots. If the extra folder has a sub folder "static", the
@@ -89,7 +93,7 @@ sessionSecret = the-default-secret-do-not-keep-me
 
 [users]
 ; Set to true to enable user functionality.
-;enabled = false
+enabled = false
 ; Set authorization mode for users. Currently implemented is the "sharedsecret"
 ; mode which does validate the userid with a HMAC authentication secret.
 ; The format goes like this:

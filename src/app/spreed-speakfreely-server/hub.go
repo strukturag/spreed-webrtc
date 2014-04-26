@@ -174,7 +174,11 @@ func (h *Hub) CreateSession(st *SessionToken) *Session {
 		session = NewSession(id, sid, "")
 		log.Println("Created new session id", len(id), id, sid)
 	} else {
-		session = NewSession(st.Id, st.Sid, st.Userid)
+		userid := st.Userid
+		if !h.config.UsersEnabled {
+			userid = ""
+		}
+		session = NewSession(st.Id, st.Sid, userid)
 	}
 
 	return session
