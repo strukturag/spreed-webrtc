@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-25 13:40+0200\n"
+"POT-Creation-Date: 2014-04-27 23:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,6 +141,18 @@ msgstr ""
 msgid "Your picture and name are visible to others."
 msgstr ""
 
+msgid "Your ID"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Only register an ID if this is your private browser."
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
 msgid "Microphone"
 msgstr ""
 
@@ -207,7 +219,12 @@ msgstr ""
 msgid "Remember settings"
 msgstr ""
 
-msgid "Apply"
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "Share by Email"
@@ -421,9 +438,6 @@ msgid "More information required"
 msgstr ""
 
 msgid "Ok"
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Access code required"

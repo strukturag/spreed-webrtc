@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-25 13:40+0200\n"
+"POT-Creation-Date: 2014-04-27 23:58+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -141,6 +141,18 @@ msgstr "名前"
 msgid "Your picture and name are visible to others."
 msgstr "あなたの写真と名前は公開されています."
 
+msgid "Your ID"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid "Only register an ID if this is your private browser."
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
 msgid "Microphone"
 msgstr "マイク"
 
@@ -207,8 +219,13 @@ msgstr "詳細設定を隠す"
 msgid "Remember settings"
 msgstr "設定を保存"
 
-msgid "Apply"
-msgstr "適用"
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+
+msgid "Close"
+msgstr "閉じる"
 
 msgid "Share by Email"
 msgstr "Eメールでシェア"
@@ -426,9 +443,6 @@ msgstr "さらなる情報が必要です"
 msgid "Ok"
 msgstr "OK"
 
-msgid "Close"
-msgstr "閉じる"
-
 msgid "Access code required"
 msgstr "アクセスコードが必要です"
 
@@ -459,4 +473,7 @@ msgstr "誰か"
 
 msgid "Me"
 msgstr "私"
+
+#~ msgid "Apply"
+#~ msgstr "適用"
 

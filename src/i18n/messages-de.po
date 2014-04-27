@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-25 13:40+0200\n"
-"PO-Revision-Date: 2014-04-25 13:45+0100\n"
+"POT-Creation-Date: 2014-04-27 23:58+0200\n"
+"PO-Revision-Date: 2014-04-27 23:59+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -141,6 +141,20 @@ msgstr "Name"
 msgid "Your picture and name are visible to others."
 msgstr "Ihr Bild und Name werden anderen Benutzern angezeigt."
 
+msgid "Your ID"
+msgstr "Ihre ID"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Only register an ID if this is your private browser."
+msgstr ""
+"Sie sollten sich nur registrieren wenn dies ein privater Browser ist den "
+"nur Sie benutzen."
+
+msgid "Log out"
+msgstr "Ausloggen"
+
 msgid "Microphone"
 msgstr "Mikrofon"
 
@@ -207,8 +221,15 @@ msgstr "Erweiterte Einstellungen ausblenden"
 msgid "Remember settings"
 msgstr "Einstellungen merken"
 
-msgid "Apply"
-msgstr "Übernehmen"
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+"Ihre ID bleibt dennoch gespeichert. Klicken Sie Ausloggen weiter oben um "
+"die ID zu löschen."
+
+msgid "Close"
+msgstr "Schließen"
 
 msgid "Share by Email"
 msgstr "Per E-Mail teilen"
@@ -435,9 +456,6 @@ msgstr "Weitere Informationen nötig"
 msgid "Ok"
 msgstr "Ok"
 
-msgid "Close"
-msgstr "Schließen"
-
 msgid "Access code required"
 msgstr "Bitte Zugriffscode eingeben"
 
@@ -470,4 +488,7 @@ msgstr "Unbekannt"
 
 msgid "Me"
 msgstr "Ich"
+
+#~ msgid "Apply"
+#~ msgstr "Übernehmen"
 
