@@ -21,12 +21,13 @@
 define([
     'jquery',
     'underscore',
+    'ua-parser',
     'mediastream/connector',
     'mediastream/api',
     'mediastream/webrtc',
     'mediastream/tokens'
 
-], function($, _, Connector, Api, WebRTC, tokens) {
+], function($, _, uaparser, Connector, Api, WebRTC, tokens) {
 
     return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce) {
 
@@ -40,8 +41,8 @@ define([
         var api = new Api(connector);
         var webrtc = new WebRTC(api);
 
-        // TODO(longsleep): Add client side part into this key.
-        var secureKey = context.Cfg.Token;
+        // Create encryption key from server token and browser name.
+        var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
 
         var mediaStream = {
             version: version,
