@@ -394,6 +394,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                 // Check if we can load a user.
                 var login = mediaStream.users.load();
                 if (login !== null) {
+                    $scope.loadedUserlogin = true;
                     console.log("Trying to authorize with stored credentials ...");
                     mediaStream.users.authorize(login, function(data) {
                         console.info("Retrieved nonce - authenticating as user:", data.userid);

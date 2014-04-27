@@ -34,7 +34,7 @@
           </label>
           <span class="help-block" ng-if="!userid && withUsersRegistration">{{_('Only register an ID if this is your private browser.')}}</span>
           <pre class="small" ng-if="userid">{{userid}}</pre>
-          <label ng-if="userid">
+          <label ng-if="userid && loadedUserlogin">
             <a class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</a>
           </label>
         </div>
@@ -145,7 +145,7 @@
           	<label>
             	<input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
         	  </label>
-            <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
+            <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings && loadedUserlogin"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
           </div>
           <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
         </div>

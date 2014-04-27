@@ -135,6 +135,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                     if (data.nonce) {
                         // If the server provided us a nonce, we can do everthing on our own.
                         mediaStream.users.store(data);
+                        $scope.loadedUserlogin = true;
+                        safeApply($scope);
                         // Directly authenticate ourselves with the provided nonce.
                         mediaStream.api.requestAuthentication(data.userid, data.nonce);
                         delete data.nonce;
