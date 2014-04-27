@@ -144,9 +144,10 @@
           <div class="checkbox" style="padding-bottom:1em">
           	<label>
             	<input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
-        	</label>
+        	  </label>
+            <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
           </div>
-          <a ng-click="saveSettings(user)" class="btn btn-primary">{{_('Apply')}}</a> <a ng-click="cancelSettings()" class="btn btn-default">{{_('Cancel')}}</a>
+          <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
         </div>
       </div>
 

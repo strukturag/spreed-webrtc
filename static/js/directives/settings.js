@@ -49,7 +49,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
 
             var localStream = null;
 
-            $scope.saveSettings = function(user) {
+            $scope.saveSettings = function() {
+                var user = $scope.user;
                 $scope.update(user);
                 $scope.layout.settings = false;
                 if ($scope.rememberSettings) {
@@ -150,10 +151,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
             };
 
             $scope.forgetUserid = function() {
-
                 mediaStream.users.forget();
                 mediaStream.connector.forgetAndReconnect();
-
             };
 
             $scope.checkDefaultMediaSources = function() {
@@ -177,7 +176,7 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
             $scope.mediaSources.refresh(function() {
                 safeApply($scope, $scope.checkDefaultMediaSources);
             });
-            $scope.$watch("layout.settings", function(showSettings) {
+            $scope.$watch("layout.settings", function(showSettings, oldValue) {
                 if (showSettings) {
                     $scope.desktopNotify.refresh();
                     $scope.mediaSources.refresh(function(audio, video) {
@@ -196,6 +195,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                             }
                         });
                     });
+                } else if (!showSettings && oldValue) {
+                    $scope.saveSettings();
                 }
             });
         }];
