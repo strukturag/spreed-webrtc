@@ -7,7 +7,7 @@
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
         <div class="col-xs-8">
-          <label style="padding-top:5px">
+          <label>
             <div style="margin-bottom:5px">
               <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
             </div>
@@ -24,6 +24,19 @@
         <div class="col-xs-8">
           <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
           <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
+        </div>
+      </div>
+      <div class="form-group" ng-if="withUsers || userid">
+        <label class="col-xs-4 control-label">{{_('Your ID')}} {{serverCfg|json}}</label>
+        <div class="col-xs-8">
+          <label ng-if="!userid && withUsersRegistration">
+            <a class="btn btn-small btn-primary" ng-click="registerUserid()">{{_('Register')}}</a>
+          </label>
+          <span class="help-block" ng-if="!userid && withUsersRegistration">{{_('Only register an ID if this is your private browser.')}}</span>
+          <pre class="small" ng-if="userid">{{userid}}</pre>
+          <label ng-if="userid">
+            <a class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</a>
+          </label>
         </div>
       </div>
       <hr/>

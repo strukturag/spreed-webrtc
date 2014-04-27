@@ -154,7 +154,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                 language: ""
             }
         };
-        $scope.withStoredLogin = false;
 
         // Data voids.
         var cache = {};
@@ -390,73 +389,20 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                 }
             }
 
-            // Support authentication.
+            // Support authentication from localStorage.
             if (!data.Userid && mediaStream.config.UsersEnabled) {
-
-                var key = mediaStream.config.Token;
-
-                // Check if we have something in store.
-                var login = localStorage.getItem("mediastream-login");
-                if (login) {
-                    safeApply($scope, function(scope) {
-                        scope.withStoredLogin = true;
-                    });
-                    try {
-                        login = sjcl.decrypt(key, login);
-                        login = JSON.parse(login)
-                    } catch(err) {
-                        console.error("Failed to parse login data", err);
-                        login = {};
-                    }
+                // Check if we can load a user.
+                var login = mediaStream.users.load();
+                if (login !== null) {
                     console.log("Trying to authorize with stored credentials ...");
-                    switch (login.v) {
-                    case 1:
-                        var useridCombo = login.a;
-                        var secret = login.b;
-                        var expiry = login.t;
-                        if (useridCombo && secret) {
-                            mediaStream.users.authorize(useridCombo, secret, function(data) {
-                                console.info("Retrieved nonce - authenticating as user:", data.userid);
-                                mediaStream.api.requestAuthentication(data.userid, data.nonce);
-                                delete data.nonce;
-                            }, function(data, status) {
-                                console.error("Failed to authorize session", status, data);
-                            });
-                        }
-                        break;
-                    default:
-                        console.warn("Unknown stored credentials", login.v);
-                        break
-                    }
-                }
-                if (!login && mediaStream.config.UsersAllowRegistration) {
-                    console.log("No userid - creating one ...");
-                    mediaStream.users.register(function(data) {
-                        console.info("Created new userid:", data.userid);                        
-                        if (data.nonce) {
-                            // If the server provided us a nonce, we can do everthing on our own.
-                            // So we store the stuff in localStorage for later use and directly
-                            // authenticate ourselves with the provided nonce.
-                            var login = sjcl.encrypt(key, JSON.stringify({
-                                v: 1,
-                                t: data.timestamp || "",
-                                a: data.useridcombo,
-                                b: data.secret,
-                            }));
-                            localStorage.setItem("mediastream-login", login);
-                            mediaStream.api.requestAuthentication(data.userid, data.nonce);
-                            delete data.nonce;
-                        } else {
-                            // No nonce received. So this means something we cannot do on our own.
-                            // Make are GET request and retrieve nonce that way and let the 
-                            // browser/server do the rest.
-                            // TODO(longsleep): Implement me.
-                        }
+                    mediaStream.users.authorize(login, function(data) {
+                        console.info("Retrieved nonce - authenticating as user:", data.userid);
+                        mediaStream.api.requestAuthentication(data.userid, data.nonce);
+                        delete data.nonce;
                     }, function(data, status) {
-                        console.error("Failed to create userid", status, data);
+                        console.error("Failed to authorize session", status, data);
                     });
                 }
-
             }
 
             // Support to upgrade stuff when ttl was reached.
@@ -466,6 +412,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                     mediaStream.api.sendSelf();
                 }, data.Turn.ttl / 100 * 90 * 1000);
             }
+
             // Support resurrection shrine.
             if (resurrect) {
                 var resurrection = resurrect;
@@ -478,6 +425,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
                     }
                 }, 0);
             }
+
         });
 
         mediaStream.webrtc.e.on("peercall", function(event, peercall) {

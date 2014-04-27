@@ -111,6 +111,15 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
     };
 
+    Connector.prototype.forgetAndReconnect = function() {
+
+        this.token = null;
+        if (this.conn && this.connected) {
+            this.conn.close();
+        }
+
+    };
+
     Connector.prototype.room = function(roomid, cb) {
 
       var was_connected = this.connected;

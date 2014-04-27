@@ -40,6 +40,9 @@ define([
         var api = new Api(connector);
         var webrtc = new WebRTC(api);
 
+        // TODO(longsleep): Add client side part into this key.
+        var secureKey = context.Cfg.Token;
+
         var mediaStream = {
             version: version,
             ws: url,
@@ -88,18 +91,21 @@ define([
                         } 
                     });
                 },
-                authorize: function(useridCombo, secret, success_cb, error_cb) {
+                authorize: function(data, success_cb, error_cb) {
                     var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
-                    var data = {
+                    /*var data = {
                         id: mediaStream.api.id,
                         sid: mediaStream.api.sid,
                         useridcombo: useridCombo,
                         secret: secret
-                    }
+                    }*/
+                    var login = _.clone(data);
+                    login.id = mediaStream.api.id;
+                    login.sid = mediaStream.api.sid;
                     $http({
                         method: "PATCH",
                         url: url,
-                        data: JSON.stringify(data),
+                        data: JSON.stringify(login),
                         headers: {'Content-Type': 'application/json'}
                     }).
                     success(function(data, status) {
@@ -116,6 +122,38 @@ define([
                             error_cb(data, status)
                         } 
                     });
+                },
+                store: function(data) {
+                    // So we store the stuff in localStorage for later use.
+                    var store = _.clone(data);
+                    store.v = 42; // No idea what number - so use 42.
+                    var login = sjcl.encrypt(secureKey, JSON.stringify(store));
+                    localStorage.setItem("mediastream-login", login);
+                    return login;
+                },
+                load: function() {
+                    // Check if we have something in store.
+                    var login = localStorage.getItem("mediastream-login");
+                    if (login) {
+                        try {
+                            login = sjcl.decrypt(secureKey, login);
+                            login = JSON.parse(login)
+                        } catch(err) {
+                            console.error("Failed to parse stored login data", err);
+                            login = {};
+                        }
+                        switch (login.v) {
+                        case 42:
+                            return login;
+                        default:
+                            console.warn("Unknown stored credentials", login.v);
+                            break
+                        }
+                    }
+                    return null;
+                },
+                forget: function() {
+                    localStorage.removeItem("mediastream-login");
                 }
             },
             initialize: function($rootScope, translation) {
