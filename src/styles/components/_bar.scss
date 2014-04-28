@@ -33,16 +33,12 @@
   @include box-shadow(0 2px 10px 0 $componentfg3);
   @include touch-callout(none);
   @include user-select(none);
-  > .left {
+  .left {
     bottom: 0;
     left: 0;
     top: 0;
     padding-left: 12px;
     position: absolute;
-    // TODO(theurere): cleanup
-    > *, #bar > .right > * {
-      vertical-align: middle;
-    }
   }
   .logo {
     background: url(../img/logo-small.png) no-repeat;
@@ -53,58 +49,58 @@
     height: 32px;
     text-align: left;
     width: 90px;
-    > span {
+    vertical-align: middle;
+    span {
       font-style: italic;
       left: 38px;
       position: relative;
       top: 26px;
     }
-    > span a {
+    span a {
       color: $dgrey;
     }
   }
 }
 
-#bar {
-  > .right {
-    bottom: 1px;
-    padding-right: 8px;
-    position: absolute;
-    right: 0;
-    top: 1px;
-    .btn {
-      background: transparent;
-      border-color: transparent;
-      color: $grey3;
-      display: inline-block;
-      font: 24px/40px $font-sans-serif;
-      height: 42px;
-      margin-left: -4px;
-      padding: 0;
-      text-align: center;
-      width: 42px;
-    }
-    .btn:focus {
+#bar .right {
+  bottom: 1px;
+  padding-right: 8px;
+  position: absolute;
+  right: 0;
+  top: 1px;
+  .btn {
+    background: transparent;
+    border-color: transparent;
+    color: $grey3;
+    display: inline-block;
+    font: 24px/40px $font-sans-serif;
+    height: 42px;
+    margin-left: -4px;
+    padding: 0;
+    text-align: center;
+    width: 42px;
+    vertical-align: middle;
+    &:focus {
       border: none;
-      @include box-shadow(0);
       outline: none;
+      @include box-shadow(0);
     }
-    .btn:hover {
+    &:hover {
       background-color: none;
       border-color: #ccc;
       color: $grey4;
     }
-    .btn.active {
+    &.active {
       background-color: none;
       border-color: #ccc;
       color: $grey4;
     }
-    .btn.active.amutebtn {
+    &.active.amutebtn {
       background-color: $red;
       border-color: $red;
       color: white;
     }
-    .btn.active.aenablebtn {
+    &.active.aenablebtn {
       background-color: $actioncolor1;
       border-color: $actioncolor1;
       color: white;
