@@ -92,7 +92,7 @@
     }
     .btn:focus {
       border: none;
-      box-shadow: 0;
+      @include box-shadow(0);
       outline: none;
     }
     .btn:hover {
@@ -159,9 +159,8 @@
 
 #bar {
   @include breakpt($breakpoint-medium) {
-    -webkit-box-shadow: none;
-    box-shadow: none;
     z-index: 40;
+    @include box-shadow(none);
   }
   > .middle img {
     @include breakpt($breakpoint-medium) {
