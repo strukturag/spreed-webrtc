@@ -33,7 +33,7 @@
   @include box-shadow(0 2px 10px 0 $componentfg3);
   @include touch-callout(none);
   @include user-select(none);
-  .left {
+  .bar-left {
     bottom: 0;
     left: 0;
     top: 0;
@@ -62,7 +62,7 @@
   }
 }
 
-#bar .right {
+#bar .bar-right {
   bottom: 1px;
   padding-right: 8px;
   position: absolute;
@@ -127,7 +127,7 @@
     margin: -5px .5em 0 .5em;
     width: 46px;
   }
-  > .middle {
+  .bar-middle {
     background-color: $componentbg;
     display: inline-block;
     min-height: 44px;
