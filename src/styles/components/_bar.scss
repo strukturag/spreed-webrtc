@@ -20,49 +20,49 @@
  */
 
 #bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  min-height: 44px;
   background-color: $componentbg;
   color: $componentfg1;
   font-size: 1em;
   font-weight: bold;
   line-height: 40px;
+  left: 0;
+  min-height: 44px;
+  position: absolute;
+  right: 0;
+  top: 0;
   text-align: center;
   z-index: 5;
   @include box-shadow(0 2px 10px 0 $componentfg3);
   @include touch-callout(none);
   @include user-select(none);
   > .left {
-    position: absolute;
+    bottom: 0;
     left: 0;
     top: 0;
-    bottom: 0;
     padding-left: 12px;
+    position: absolute;
     // TODO(theurere): cleanup
     > *, #bar > .right > * {
       vertical-align: middle;
     }
   }
   .logo {
-    font-size: 11px;
-    line-height: 11px;
-    font-weight:normal;
-    color: black;
-    width: 90px;
-    height: 32px;
     background-size: 100%;
     background-repeat: no-repeat;
     background-image: url(../img/logo-small.png);
     display: inline-block;
+    color: black;
+    font-size: 11px;
+    font-weight:normal;
+    height: 32px;
+    line-height: 11px;
     text-align: left;
+    width: 90px;
     > span {
-      position: relative;
-      left: 38px;
-      top: 26px;
       font-style: italic;
+      left: 38px;
+      position: relative;
+      top: 26px;
     }
     > span a {
       color: $dgrey;
@@ -72,23 +72,23 @@
 
 #bar {
   > .right {
+    bottom: 1px;
+    padding-right: 8px;
     position: absolute;
     right: 0;
     top: 1px;
-    bottom: 1px;
-    padding-right: 8px;
     .btn {
-      border-color: transparent;
       background: transparent;
+      border-color: transparent;
       color: $grey3;
-      height: 42px;
-      width: 42px;
       display: inline-block;
       font-size: 24px;
-      padding: 0;
+      height: 42px;
       line-height: 40px;
-      text-align: center;
       margin-left: -4px;
+      padding: 0;
+      text-align: center;
+      width: 42px;
     }
     .btn:focus {
       border: none;
@@ -96,13 +96,13 @@
       outline: none;
     }
     .btn:hover {
-      border-color: #ccc;
       background-color: none;
+      border-color: #ccc;
       color: $grey4;
     }
     .btn.active {
-      border-color: #ccc;
       background-color: none;
+      border-color: #ccc;
       color: $grey4;
     }
     .btn.active.amutebtn {
@@ -124,44 +124,44 @@
   }
   .badge {
     background-color: $actioncolor1;
+    border: 1px solid white;
     font-size: .4em;
     position: absolute;
     right: 0;
     top: 2px;
-    border: 1px solid white;
   }
   .userpicture {
-    margin: -5px .5em 0 .5em;
-    width: 46px;
-    height: 46px;
     border-radius: 2px;
     display: inline-block;
+    height: 46px;
+    margin: -5px .5em 0 .5em;
+    width: 46px;
   }
   > .middle {
-    z-index: 5;
     background-color: $componentbg;
     display: inline-block;
+    min-height: 44px;
     padding: 0 1em;
     position: relative;
-    min-height: 44px;
-    vertical-align: middle;
     margin-left: -70px;
+    vertical-align: middle;
+    z-index: 5;
     @include breakpt($breakpoint-medium) {
       display: block;
+      margin-left: 0px;
       max-width: 40%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-left: 0px;
     }
   }
 }
 
 #bar {
   @include breakpt($breakpoint-medium) {
-    z-index: 40;
     -webkit-box-shadow: none;
     box-shadow: none;
+    z-index: 40;
   }
   > .middle img {
     @include breakpt($breakpoint-medium) {
@@ -171,10 +171,10 @@
   > .middle.status-connected,
   > .middle.status-conference {
     @include breakpt($breakpoint-medium) {
-      position: absolute;
-      left: 0;
-      right: 0;
       max-width: 100%;
+      left: 0;
+      position: absolute;
+      right: 0;
     }
   }
   > .middle.status-connecting,
@@ -183,8 +183,8 @@
   > .middle.status-error,
   > .middle.status-ringing  {
     @include breakpt($breakpoint-medium) {
-      max-width: 100%;
       border-bottom: 1px solid $bordercolor;
+      max-width: 100%;
       min-height: 45px;
     }
   }
