@@ -33,13 +33,21 @@
   @include box-shadow(0 2px 10px 0 $componentfg3);
   @include touch-callout(none);
   @include user-select(none);
-  .bar-left {
-    bottom: 0;
-    left: 0;
-    top: 0;
-    padding-left: 12px;
-    position: absolute;
+  @include breakpt($breakpoint-medium) {
+    z-index: 40;
+    @include box-shadow(none);
   }
+  .btn {
+    position: relative;
+  }
+}
+
+.bar-left {
+  bottom: 0;
+  left: 0;
+  top: 0;
+  padding-left: 12px;
+  position: absolute;
   .logo {
     background: url(../img/logo-small.png) no-repeat;
     background-size: 100%;
@@ -62,12 +70,82 @@
   }
 }
 
-#bar .bar-right {
+.bar-middle {
+  background-color: $componentbg;
+  display: inline-block;
+  min-height: 44px;
+  padding: 0 1em;
+  position: relative;
+  margin-left: -70px;
+  vertical-align: middle;
+  z-index: 5;
+  @include breakpt($breakpoint-medium) {
+    display: block;
+    margin-left: 0px;
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .userpicture {
+    border-radius: 2px;
+    display: inline-block;
+    height: 46px;
+    margin: -5px .5em 0 .5em;
+    width: 46px;
+  }
+  img {
+    @include breakpt($breakpoint-medium) {
+      display: none;
+    }
+  }
+  &.status-connected,
+  &.status-conference {
+    @include breakpt($breakpoint-medium) {
+      max-width: 100%;
+      left: 0;
+      position: absolute;
+      right: 0;
+    }
+  }
+  &.status-connecting,
+  &.status-closed,
+  &.status-reconnecting,
+  &.status-error,
+  &.status-ringing  {
+    @include breakpt($breakpoint-medium) {
+      border-bottom: 1px solid $bordercolor;
+      max-width: 100%;
+      min-height: 45px;
+    }
+  }
+  // TODO(theurere): cleanup
+  &.status-connecting .actions,
+  &.status-closed .actions,
+  &.status-reconnecting .actions,
+  &.status-error .actions,
+  &.status-ringing .actions {
+    @include breakpt($breakpoint-medium) {
+      display: block;
+      padding: .2em 0 .8em 0;
+    }
+  }
+}
+
+.bar-right {
   bottom: 1px;
   padding-right: 8px;
   position: absolute;
   right: 0;
   top: 1px;
+  .badge {
+    background-color: $actioncolor1;
+    border: 1px solid white;
+    font-size: .4em;
+    position: absolute;
+    right: 0;
+    top: 2px;
+  }
   .btn {
     background: transparent;
     border-color: transparent;
@@ -104,88 +182,6 @@
       background-color: $actioncolor1;
       border-color: $actioncolor1;
       color: white;
-    }
-  }
-}
-
-#bar {
-  .btn {
-    position: relative;
-  }
-  .badge {
-    background-color: $actioncolor1;
-    border: 1px solid white;
-    font-size: .4em;
-    position: absolute;
-    right: 0;
-    top: 2px;
-  }
-  .userpicture {
-    border-radius: 2px;
-    display: inline-block;
-    height: 46px;
-    margin: -5px .5em 0 .5em;
-    width: 46px;
-  }
-  .bar-middle {
-    background-color: $componentbg;
-    display: inline-block;
-    min-height: 44px;
-    padding: 0 1em;
-    position: relative;
-    margin-left: -70px;
-    vertical-align: middle;
-    z-index: 5;
-    @include breakpt($breakpoint-medium) {
-      display: block;
-      margin-left: 0px;
-      max-width: 40%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-}
-
-#bar {
-  @include breakpt($breakpoint-medium) {
-    z-index: 40;
-    @include box-shadow(none);
-  }
-  > .middle img {
-    @include breakpt($breakpoint-medium) {
-      display: none;
-    }
-  }
-  > .middle.status-connected,
-  > .middle.status-conference {
-    @include breakpt($breakpoint-medium) {
-      max-width: 100%;
-      left: 0;
-      position: absolute;
-      right: 0;
-    }
-  }
-  > .middle.status-connecting,
-  > .middle.status-closed,
-  > .middle.status-reconnecting,
-  > .middle.status-error,
-  > .middle.status-ringing  {
-    @include breakpt($breakpoint-medium) {
-      border-bottom: 1px solid $bordercolor;
-      max-width: 100%;
-      min-height: 45px;
-    }
-  }
-  // TODO(theurere): cleanup
-  > .middle.status-connecting .actions,
-  > .middle.status-closed .actions,
-  > .middle.status-reconnecting .actions,
-  > .middle.status-error .actions,
-  > .middle.status-ringing .actions {
-    @include breakpt($breakpoint-medium) {
-      display: block;
-      padding: .2em 0 .8em 0;
     }
   }
 }
