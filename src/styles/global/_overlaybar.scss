@@ -28,83 +28,74 @@
   text-shadow: 0 0 5px black;
   vertical-align: middle;
   @include user-select(none);
-  input[type="radio"], 
+  &:hover {
+    background: $componentfg2;
+  }
+  &.notvisible {
+    background: transparent;
+    pointer-events: none;
+    &:hover {
+      background: transparent;
+    }
+  }
+  .btn {
+    text-shadow: none;
+  }
+  .btn-link {
+    text-shadow: 0 0 5px black;
+  }
+  .form-group > * {
+    float: left;
+    padding-top: 0;
+  }
+  input[type="radio"],
   input[type="checkbox"] {
     margin-top: 2px;
   }
+  label {
+    padding-top: 7px !important;
+  }
 }
 
-.overlaybar:hover {
-  background: $componentfg2;
-}
-
-.overlaybar.notvisible {
-  background: transparent;
-  pointer-events: none;
-}
-.overlaybar.notvisible:hover {
-  background: transparent;
-}
-
-.overlaybar .btn {
-  text-shadow: none;
-}
-
-.overlaybar .btn-link {
-  text-shadow: 0 0 5px black;
-}
-
-.overlaybar .overlaybarbutton {
-  font-size: 20px;
-  vertical-align: middle;
-  position: absolute;
-  left: 3px;
-  top: 1px;
-  padding: 6px;
-  display: block;
-  color: $bordercolor;
-  z-index: 15;
-  opacity: .7;
-  pointer-events: auto;
-}
-
-.overlaybar .overlaybarcontent {
-  display: inline-block;
-  margin-left: .5em;
-  margin-bottom: 0;
-  max-width: 60%;
-}
-
-.overlaybarcontent > * {
-  padding-right: .5em;
-}
-
-.overlaybarcontent .input-group {
-  max-width: 160px;
-}
-
-.overlaybar label {
-  padding-top: 7px !important;
-}
-
-.overlaybar .overlaybaroverlay {
-  display: none;
-  opacity: .7;
-  text-align: left;
-  margin-left: .5em;
-  padding-top: 2px;
-}
-
-.overlaybar.notvisible {
+.overlaybar {
+  .overlaybarbutton {
+    font-size: 20px;
+    vertical-align: middle;
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    padding: 6px;
+    display: block;
+    color: $bordercolor;
+    z-index: 15;
+    opacity: .7;
+    pointer-events: auto;
+  }
   .overlaybarcontent {
-    display: none;
+    display: inline-block;
+    margin-left: .5em;
+    margin-bottom: 0;
+    max-width: 60%;
+    > * {
+      padding-right: .5em;
+    }
+    .input-group {
+      max-width: 160px;
+    }
   }
   .overlaybaroverlay {
-    display: block;
+    display: none;
+    opacity: .7;
+    text-align: left;
+    margin-left: .5em;
+    padding-top: 2px;
   }
-}
-
-.overlaybar .form-group > * {
-  float: left;
-  padding-top: 0;
+  &.notvisible {
+    .overlaybarcontent {
+      display: none;
+    }
+    .overlaybaroverlay {
+      display: block;
+    }
+  }
 }

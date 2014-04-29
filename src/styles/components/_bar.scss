@@ -20,16 +20,20 @@
  */
 
 #bar {
-  background-color: $componentbg;
-  color: $componentfg1;
   left: 0;
   min-height: 44px;
   position: absolute;
   right: 0;
   top: 0;
-  text-align: center;
   z-index: 5;
-  @include adjust-leading-to(2);
+}
+
+.bar {
+  background-color: $componentbg;
+  color: $componentfg1;
+  font: bold 1em/40px $font-sans-serif;
+  text-align: center;
+  // @include adjust-leading-to(2);
   @include box-shadow(0 2px 10px 0 $componentfg3);
   // @include debug-vertical-alignment();
   @include touch-callout(none);
@@ -43,7 +47,7 @@
   }
 }
 
-.bar-left {
+.bar .left {
   bottom: 0;
   left: 0;
   top: 0;
@@ -55,10 +59,11 @@
     display: inline-block;
     color: black;
     height: 32px;
+    font: normal 11px/11px $font-sans-serif;
     text-align: left;
     width: 90px;
     vertical-align: middle;
-    @include adjust-font-size-to(11px,0.4);
+    // @include adjust-font-size-to(11px,0.4);
     span {
       font-style: italic;
       left: 38px;
@@ -71,7 +76,7 @@
   }
 }
 
-.bar-middle {
+.bar .middle {
   background-color: $componentbg;
   display: inline-block;
   font-weight: bold;
@@ -133,7 +138,7 @@
   }
 }
 
-.bar-right {
+.bar .right {
   bottom: 1px;
   padding-right: 8px;
   position: absolute;
@@ -153,11 +158,12 @@
     color: $grey3;
     display: inline-block;
     height: 42px;
+    font: 24px/40px $font-sans-serif;
     margin-left: -4px;
     padding: 0;
     text-align: center;
     width: 42px;
-    @include adjust-font-size-to(24px);
+    // @include adjust-font-size-to(24px);
     &:focus {
       border: none;
       outline: none;
