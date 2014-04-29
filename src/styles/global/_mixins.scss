@@ -33,3 +33,10 @@
   -webkit-transition-duration: $duration;
 
 }
+
+@mixin transition($transition) {
+  transition: all linear 0.5s;
+  -moz-transition: all linear 0.5s;
+  -o-transition: all linear 0.5s;
+  -webkit-transition: all linear 0.5s;
+}
