@@ -22,7 +22,6 @@
 #bar {
   background-color: $componentbg;
   color: $componentfg1;
-  font: bold 1em/40px $font-sans-serif;
   left: 0;
   min-height: 44px;
   position: absolute;
@@ -30,7 +29,9 @@
   top: 0;
   text-align: center;
   z-index: 5;
+  @include adjust-leading-to(2);
   @include box-shadow(0 2px 10px 0 $componentfg3);
+  // @include debug-vertical-alignment();
   @include touch-callout(none);
   @include user-select(none);
   @include breakpt($breakpoint-medium) {
@@ -53,11 +54,11 @@
     background-size: 100%;
     display: inline-block;
     color: black;
-    font: normal 11px/11px $font-sans-serif;
     height: 32px;
     text-align: left;
     width: 90px;
     vertical-align: middle;
+    @include adjust-font-size-to(11px,0.4);
     span {
       font-style: italic;
       left: 38px;
@@ -73,11 +74,11 @@
 .bar-middle {
   background-color: $componentbg;
   display: inline-block;
+  font-weight: bold;
   min-height: 44px;
   padding: 0 1em;
   position: relative;
   margin-left: -70px;
-  vertical-align: middle;
   z-index: 5;
   @include breakpt($breakpoint-medium) {
     display: block;
@@ -151,13 +152,12 @@
     border-color: transparent;
     color: $grey3;
     display: inline-block;
-    font: 24px/40px $font-sans-serif;
     height: 42px;
     margin-left: -4px;
     padding: 0;
     text-align: center;
     width: 42px;
-    vertical-align: middle;
+    @include adjust-font-size-to(24px);
     &:focus {
       border: none;
       outline: none;
