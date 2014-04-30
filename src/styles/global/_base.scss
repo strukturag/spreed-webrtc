@@ -19,14 +19,14 @@
  *
  */
 
-@include establish-baseline();
+// @include establish-baseline();
 
 html,
 body {
   background-clip: padding-box;
   background-color: $background;
   height: 100%;
-  font: normal #{$base-font-size}/#{$base-rhythm-unit} $font-sans-serif;
+  font: normal $base-font-size $font-sans-serif;
   // @include debug-vertical-alignment();
 }
 

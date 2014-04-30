@@ -1,4 +1,4 @@
-<span class="bar-middle status-{{status}}" ng-switch on="status">
+<span class="middle status-{{status}}" ng-switch on="status">
   <span ng-switch-when="initializing">{{_("Initializing")}} <i class="fa fa-spinner fa-spin"></i></span>
   <span ng-switch-when="waiting"><span class="msg">{{_("Online")}} </span><i style="color:rgb(132,184,25)" class="fa fa-bullseye"></i> {{id|displayName}} <img class="userpicture" ng-show="master.buddyPicture" ng-src="{{master.buddyPicture}}" alt="" /></span>
   <span ng-switch-when="connecting"><span class="msg">{{_("Calling")}} {{dialing|displayName}}</span> <a class="btn btn-small btn-danger" ng-click="doAbort()"><i class="fa fa-spinner fa-spin"></i> {{_("Hangup")}}</a></span>
