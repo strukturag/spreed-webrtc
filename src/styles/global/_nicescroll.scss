@@ -18,23 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-.nicescroll::-webkit-scrollbar {
-width: 8px;
-height: 8px;
-background-color: $background;
-border: solid transparent;
-}
 
-.nicescroll::-webkit-scrollbar:hover {
-background-color: $background;
-border-left: 1px solid rgba(0,0,0,.12);
-border-right: 1px solid rgba(0,0,0,.12);
-}
-
-.nicescroll::-webkit-scrollbar-thumb {
-background: rgba(0,0,0,0.2);
-}
-
-.nicescroll::-webkit-scrollbar-thumb:active {
-background: rgba(0,0,0,0.4);
+.nicescroll {
+  &::-webkit-scrollbar {
+    background-color: $background;
+    border: solid transparent;
+    height: 8px;
+    width: 8px;
+    &:hover {
+      background-color: $background;
+      border-left: 1px solid rgba(0,0,0,.12);
+      border-right: 1px solid rgba(0,0,0,.12);
+    }
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    &:active {
+      background: rgba(0,0,0,0.4);
+    }
+  }
 }
