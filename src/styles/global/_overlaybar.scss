@@ -38,6 +38,9 @@
       background: transparent;
     }
   }
+}
+
+.overlaybar {
   .btn {
     text-shadow: none;
   }
@@ -59,17 +62,17 @@
 
 .overlaybar {
   .overlaybar-button {
-    font-size: 20px;
-    vertical-align: middle;
-    position: absolute;
-    left: 3px;
-    top: 1px;
-    padding: 6px;
-    display: block;
     color: $bordercolor;
-    z-index: 15;
+    display: block;
+    font-size: 20px;
+    left: 3px;
     opacity: .7;
+    padding: 6px;
+    position: absolute;
     pointer-events: auto;
+    top: 1px;
+    vertical-align: middle;
+    z-index: 15;
   }
   .overlaybar-content {
     display: inline-block;
@@ -85,10 +88,10 @@
   }
   .overlaybar-overlay {
     display: none;
-    opacity: .7;
-    text-align: left;
     margin-left: .5em;
+    opacity: .7;
     padding-top: 2px;
+    text-align: left;
   }
   &.notvisible {
     .overlaybar-content {
