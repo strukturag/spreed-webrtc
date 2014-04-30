@@ -84,7 +84,7 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	}
 
 	// Validate with users handler.
-	userid, err := sessions.users.handler.Validate(&snr)
+	userid, err := sessions.users.handler.Validate(&snr, request)
 	if err != nil {
 		error = true
 		log.Println("Session patch failed - users validation failed.", err)

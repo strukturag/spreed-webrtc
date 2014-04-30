@@ -38,8 +38,8 @@ import (
 )
 
 type UsersHandler interface {
-	Validate(snr *SessionNonceRequest) (string, error)
-	Create(snr *UserNonce) (*UserNonce, error)
+	Validate(snr *SessionNonceRequest, request *http.Request) (string, error)
+	Create(snr *UserNonce, request *http.Request) (*UserNonce, error)
 }
 
 type UsersSharedsecretHandler struct {
@@ -54,7 +54,7 @@ func (uh *UsersSharedsecretHandler) createHMAC(useridCombo string) string {
 
 }
 
-func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest) (string, error) {
+func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
 
 	// Parse UseridCombo.
 	useridCombo := strings.SplitN(snr.UseridCombo, ":", 2)
@@ -79,7 +79,7 @@ func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest) (string, 
 
 }
 
-func (uh *UsersSharedsecretHandler) Create(un *UserNonce) (*UserNonce, error) {
+func (uh *UsersSharedsecretHandler) Create(un *UserNonce, request *http.Request) (*UserNonce, error) {
 
 	// TODO(longsleep): Make this configureable - One year for now ...
 	expiration := time.Now().Add(time.Duration(1) * time.Hour * 24 * 31 * 12)
@@ -88,6 +88,26 @@ func (uh *UsersSharedsecretHandler) Create(un *UserNonce) (*UserNonce, error) {
 	un.Secret = uh.createHMAC(un.UseridCombo)
 
 	return un, nil
+
+}
+
+type UsersHTTPHeaderHandler struct {
+	headerName string
+}
+
+func (uh *UsersHTTPHeaderHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
+
+	userid := request.Header.Get(uh.headerName)
+	if userid == "" {
+		return "", errors.New("no userid provided")
+	}
+	return userid, nil
+
+}
+
+func (uh *UsersHTTPHeaderHandler) Create(un *UserNonce, request *http.Request) (*UserNonce, error) {
+
+	return nil, errors.New("create is not possible in httpheader mode")
 
 }
 
@@ -117,6 +137,12 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 		if secret != "" {
 			handler = &UsersSharedsecretHandler{secret: []byte(secret)}
 		}
+	case "httpheader":
+		headerName, _ := runtime.GetString("users", "httpheader_header")
+		if headerName == "" {
+			headerName = "x-users"
+		}
+		handler = &UsersHTTPHeaderHandler{headerName: headerName}
 	default:
 		mode = ""
 	}
@@ -163,7 +189,7 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 		return 400, NewApiError("users_request_failed", fmt.Sprintf("Error: %q", err)), http.Header{"Content-Type": {"application/json"}}
 	}
 
-	un, err := users.handler.Create(&UserNonce{Nonce: nonce, Userid: userid, Success: true})
+	un, err := users.handler.Create(&UserNonce{Nonce: nonce, Userid: userid, Success: true}, request)
 	if err != nil {
 		return 400, NewApiError("users_create_failed", fmt.Sprintf("Error: %q", err)), http.Header{"Content-Type": {"application/json"}}
 	}

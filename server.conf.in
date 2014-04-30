@@ -98,14 +98,23 @@ sessionSecret = the-default-secret-do-not-keep-me
 [users]
 ; Set to true to enable user functionality.
 enabled = false
-; Set authorization mode for users. Currently implemented is the "sharedsecret"
-; mode which does validate the userid with a HMAC authentication secret.
-; The format goes like this:
-;   BASE64(HMAC-SHA-256(secret, expirationTimestampInSeconds:userid))
+; Set users authorization mode.
+; sharedsecret:
+;   Validates the userid with a HMAC authentication secret.
+;   The format goes like this:
+;     BASE64(HMAC-SHA-256(secret, expirationTimestampInSeconds:userid))
+; httpheader:
+;   The userid is provided as an HTTP header. The server does not do any
+;   validation. This usually only makes sense with a front end HTTPS proxy which
+;   does the authentication and injects the user id as HTTP header for sessions
+;   REST requests. In mode httpheader, allowRegistration should be false.
 ;mode = sharedsecret
 ; The shared secred for HMAC validation in "sharedsecret" mode. Best use 32 or
 ; 64 bytes of random data.
 ;sharedsecret_secret = some-secret-do-not-keep
+; The HTTP header name where to find the userid in "httpheader" mode.
+;httpheader_header = x-userid
+
 ; The server can create new userids if enabled. Set allowRegistration to true to
 ; enable userid creation/registration. Users are created to match the settings
 ; of the currently configured mode (see above).
