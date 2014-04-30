@@ -58,7 +58,7 @@
 }
 
 .overlaybar {
-  .overlaybarbutton {
+  .overlaybar-button {
     font-size: 20px;
     vertical-align: middle;
     position: absolute;
@@ -71,7 +71,7 @@
     opacity: .7;
     pointer-events: auto;
   }
-  .overlaybarcontent {
+  .overlaybar-content {
     display: inline-block;
     margin-left: .5em;
     margin-bottom: 0;
@@ -83,7 +83,7 @@
       max-width: 160px;
     }
   }
-  .overlaybaroverlay {
+  .overlaybar-overlay {
     display: none;
     opacity: .7;
     text-align: left;
@@ -91,10 +91,10 @@
     padding-top: 2px;
   }
   &.notvisible {
-    .overlaybarcontent {
+    .overlaybar-content {
       display: none;
     }
-    .overlaybaroverlay {
+    .overlaybar-overlay {
       display: block;
     }
   }
