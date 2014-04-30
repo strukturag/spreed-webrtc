@@ -119,12 +119,7 @@ define([
             var domain = "messages";
             var catalog = domain + "-" + lang;
             var bootstrap = function(translationData) {
-                if (translationData) {
-                    // Set loaded translation data.
-                    translationData.missing_key_callback = function(key) {
-                        console.warn("Missing key " + key + " for " + lang);
-                    };
-                } else {
+                if (!translationData) {
                     // Fallback catalog in case translation could not be loaded.
                     lang = "en";
                     translationData = {};

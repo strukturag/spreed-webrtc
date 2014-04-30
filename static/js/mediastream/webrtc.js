@@ -90,18 +90,12 @@ define([
 
     this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
 
-    window.onbeforeunload = _.bind(function() {
-        if (this.currentcall) {
-          this.currentcall.close();
-          this.api.sendBye(this.currentcall.id);
-        }
-        if (this.currentconference) {
-          this.currentconference.close();
-        }
+    $(window).on("unload", _.bind(function() {
+        this.doHangup("unload");
         if (this.api.connector) {
           this.api.connector.disabled = true;
         }
-    }, this);
+    }, this));
 
     // Create default media (audio/video).
     this.usermedia = new UserMedia();
@@ -443,6 +437,7 @@ define([
     xfer.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentxfer) {
       console.log("Xfer state changed", iceConnectionState);
       switch (iceConnectionState) {
+      case "completed":
       case "connected":
         // Do nothing here, we wait for dataReady.
         break
@@ -516,6 +511,7 @@ define([
     peerscreenshare.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentscreenshare) {
       console.log("Screen share state changed", iceConnectionState);
       switch (iceConnectionState) {
+      case "completed":
       case "connected":
         opts.connected(currentscreenshare);
         break
@@ -645,7 +641,10 @@ define([
   };
 
   WebRTC.prototype.onConnectionStateChange = function(iceConnectionState, currentcall) {
-    this.e.triggerHandler('statechange', [iceConnectionState, currentcall]);
+    // Defer this to allow native event handlers to complete before running more stuff.
+    _.defer(_.bind(function() {
+      this.e.triggerHandler('statechange', [iceConnectionState, currentcall]);
+    }, this));
   };
 
   WebRTC.prototype.onRemoteStreamAdded = function(stream, currentcall) {

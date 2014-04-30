@@ -30,17 +30,19 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
             var peers = {};
             var events = $({});
 
-            $scope.card = $element;
-            $scope.container = $element.parent().get(0);
-            $scope.layoutparent = $element.parent().parent();
+            $scope.container = $element.get(0);
+            $scope.layoutparent = $element.parent();
 
-            $scope.remoteVideos = $element.find("#remoteVideos").get(0);
-            $scope.localVideo = $element.find("#localVideo").get(0);
-            $scope.miniVideo = $element.find("#miniVideo").get(0);
-            $scope.mini = $element.find("#mini");
+            $scope.remoteVideos = $element.find(".remoteVideos").get(0);
+            $scope.localVideo = $element.find(".localVideo").get(0);
+            $scope.miniVideo = $element.find(".miniVideo").get(0);
+            $scope.mini = $element.find(".miniContainer").get(0);
 
             $scope.hasUsermedia = false;
             $scope.isActive = false;
+
+            $scope.rendererName = $scope.defaultRendererName = "onepeople";
+
             //console.log("audiovideo", localVideo, miniVideo);
 
             $scope.addRemoteStream = function(stream, currentcall) {
@@ -82,12 +84,12 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                             });
                         }
                         scope.$emit("active", currentcall);
-                        $scope.resize();
+                        $scope.redraw();
                     }, function() {
                         peers[peerid] = scope;
                         console.warn("We did not receive video data for remote stream", currentcall, stream, video);
                         scope.$emit("active", currentcall);
-                        $scope.resize();
+                        $scope.redraw();
                     });
                     scope.doChat = function() {
                         $scope.$emit("startchat", currentcall.id, {autofocus: true, restore: true});
@@ -107,7 +109,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                         subscope.element.remove();
                     }
                     subscope.$destroy();
-                    $scope.resize();
+                    $scope.redraw();
                 }
 
             };
@@ -133,7 +135,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                 if (!$scope.isActive) {
                     $scope.isActive = true;
                     $scope.remoteVideos.style.opacity = 1;
-                    $scope.card.addClass("active");
+                    $element.addClass("active");
                     //console.log("active 3");
                     _.delay(function() {
                         $scope.localVideo.style.opacity = 0;
@@ -141,7 +143,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }, 500);
                     _.delay(function() {
                         //console.log("active 4", $scope.mini);
-                        $scope.mini.addClass("visible"); //.style.opacity = 1;
+                        $($scope.mini).addClass("visible");
                     }, 1000);
                 }
 
@@ -167,7 +169,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     }
                     if ($scope.localVideo.videoWidth > 0) {
                         $scope.localVideo.style.opacity = 1;
-                        $scope.resize();
+                        $scope.redraw();
                     } else {
                         count++;
                         if (count < 100) {
@@ -196,14 +198,15 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
                     $scope.miniVideo.src = '';
                     $($scope.remoteVideos).empty();
                 }, 1500);
-                $scope.mini.removeClass("visible");
+                $($scope.mini).removeClass("visible");
                 $scope.localVideo.style.opacity = 0;
                 $scope.remoteVideos.style.opacity = 0;
-                $scope.card.removeClass('active');
+                $element.removeClass('active');
                 _.each(peers, function(scope, k) {
                     scope.$destroy();
                     delete peers[k];
                 });
+                $scope.rendererName = $scope.defaultRendererName;
 
             });
 
@@ -237,38 +240,66 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
                 //console.log("compile", arguments)
 
-                $(scope.card).on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
+                iElement.on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
-                //scope.rendererName = "conferencekiosk";
-                scope.rendererName = "onepeople";
-
-                var needsResize = false;
-                scope.resize = function() {
-                    needsResize = true;
+                var rendererName = null;
+                var getRendererName = function() {
+                    // Return name of current renderer.
+                    if (rendererName !== null) {
+                        return rendererName;
+                    } else {
+                        return scope.rendererName;
+                    }
                 };
 
-                var resize = function() {
+                scope.setRenderer = function(name) {
+                    scope.rendererName = name;
+                };
+
+                var needsRedraw = false;
+                scope.redraw = function() {
+                    needsRedraw = true;
+                };
+
+                var redraw = function() {
                     var size = {
                         width: scope.layoutparent.width(),
                         height: scope.layoutparent.height()
                     }
-                    videoLayout.update(scope.rendererName, size, scope, controller);
+                    var again = videoLayout.update(getRendererName(), size, scope, controller);
+                    if (again) {
+                        // Layout needs a redraw.
+                        needsRedraw = true;
+                    }
                 };
 
-                $($window).on("resize", scope.resize);
-                scope.$on("mainresize", function() {
-                    _.defer(scope.resize);
+                // Make sure we draw on resize.
+                $($window).on("resize", scope.redraw);
+                scope.$on("mainresize", function(event, main) {
+                    if (main) {
+                        // Force smally renderer when we have a main view.
+                        rendererName = "smally"
+                    } else if (rendererName) {
+                        rendererName = null;
+                    }
+                    _.defer(scope.redraw);
                 });
-                scope.resize();
+                scope.redraw();
 
+                // Make sure we draw when the renderer was changed.
+                scope.$watch("rendererName", function() {
+                    _.defer(scope.redraw);
+                });
+
+                // Update function run in rendering thread.
                 var update = function() {
-                    if (needsResize) {
-                        needsResize =false;
-                        resize();
+                    if (needsRedraw) {
+                        needsRedraw =false;
+                        redraw();
                     }
                     requestAnimationFrame(update);
                 }
-                update();
+                _.defer(update);
 
             }
 

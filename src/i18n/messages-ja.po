@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
 "POT-Creation-Date: 2014-04-14 16:16+0200\n"
-"PO-Revision-Date: 2014-04-09 14:43+0100\n"
+"PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -111,12 +111,11 @@ msgstr "ルームを出る"
 msgid "Current room"
 msgstr "現在のルーム"
 
-#, fuzzy
 msgid "Screen sharing options"
-msgstr "メディアスクリーン共有"
+msgstr "画面共有オプション"
 
 msgid "Fit screen."
-msgstr ""
+msgstr "画面に合わせる"
 
 msgid "Your picture"
 msgstr "あなたの写真"
@@ -152,7 +151,7 @@ msgid "High"
 msgstr "高い"
 
 msgid "HD"
-msgstr ""
+msgstr "HD"
 
 msgid "Language"
 msgstr "言語"
@@ -289,7 +288,7 @@ msgid "Click here for help (Google Chrome)."
 msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
 
 msgid "Please set your user details and settings."
-msgstr "あなたのユーザー情報とセッティングを設定してください."
+msgstr "あなたのプロフィールとアプリの動作を設定してください."
 
 msgid ""
 "Please note that some settings require you to reload or to make a new "
@@ -369,7 +368,7 @@ msgid " does not pick up."
 msgstr "は電話にでません."
 
 msgid " tried to call you."
-msgstr ""
+msgstr "は電話しようとしました."
 
 msgid " called you."
 msgstr "から電話がありました."
@@ -396,6 +395,9 @@ msgid ""
 "usermedia-screen-capture and open it with your browser and enable the "
 "flag on top. Then restart the browser and you are ready to go."
 msgstr ""
+"画面共有は拒否されました.ブラウザの画面共有の設定を確認して下さい. Chromeのアドレスバーに chrome://flags/#enable-"
+"usermedia-screen-capture "
+"を入力して開き、スクリーンキャプチャのサポートを有効にしてください。その後ブラウザを再起動してください。"
 
 msgid "Use browser language"
 msgstr "ブラウザの言語を使用"
@@ -437,19 +439,18 @@ msgstr "アクセスコードの確認に失敗しました.インターネッ�
 
 #, fuzzy, python-format
 msgid "and %s"
-msgstr ""
+msgstr "と %2"
 
 #, python-format
 msgid "and %d others"
 msgstr ""
 
 msgid "User"
-msgstr ""
+msgstr "ユーザー"
 
 msgid "Someone"
-msgstr ""
+msgstr "誰か"
 
-#, fuzzy
 msgid "Me"
-msgstr "名前"
+msgstr "私"
 

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package main
 
 import (
@@ -113,7 +114,7 @@ func (h *Hub) Stat(details bool) *HubStat {
 		rooms := make(map[string][]string)
 		for roomid, room := range h.roomTable {
 			users := make([]string, 0, len(room.connections))
-			for id, _ := range room.connections {
+			for id := range room.connections {
 				users = append(users, id)
 			}
 			rooms[roomid] = users
@@ -215,9 +216,9 @@ func (h *Hub) GetGlobalConnections() []*Connection {
 	if room, ok := h.roomTable[h.config.globalRoomid]; ok {
 		h.mutex.RUnlock()
 		return room.GetConnections()
-	} else {
-		h.mutex.RUnlock()
 	}
+
+	h.mutex.RUnlock()
 	return make([]*Connection, 0)
 
 }

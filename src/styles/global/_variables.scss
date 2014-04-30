@@ -1,48 +1,42 @@
-
-// ** Custom Variables **
-// --------------------------------------------------
-
-// Colors
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 $background: #e5e5e5;
 $componentbg: #f5f5f5;
 $componentfg1: #262626;
 $componentfg2: rgba(0,0,0,.5);
-$componentfg3: rgba(0,0,0,.2);
+$componentfg3: rgba(0,0,0,.2); //#ccc
 $componentfg4: #737373;
 $sidepanebg: white;
 $bordercolor: #ccc;
 $actioncolor1: rgb(132,184,25);
 $actioncolor2: rgb(0,149,52);
-$audiovideolevel: #9dd53a;
 
+$grey3: rgba(0,0,0,.3);
+$grey4: rgba(0,0,0,.4);
+$dgrey: rgb(34,34,34);
+$red: rgb(219,79,57);
 
+$breakpoint-small: 480px;
+$breakpoint-medium: 700px;
+$breakpoint-large: 1280px;
 
-// ** Fontawsome changed variables **
-// original at libs/fontawesome/_variables.scss
-// --------------------------
-
-
-
-// ** Bootstrap changed variables **
-// original at libs/bootstrap/_variables.scss
-// --------------------------------------------------
-
-//== Scaffolding
-//
-// ## Settings for some of the most global styles.
-
-//** Background color for `<body>`.
-$body-bg:               $background;
-
-
-//== Typography
-//
-//## Font, line-height, and color for body text, headings, and more.
-
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-serif:       Georgia, "Times New Roman", Times, serif;
-//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
-$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
-$font-family-base:        $font-family-sans-serif;
-
-$font-size-base:          13px;
+$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$base-font-size: 13px;

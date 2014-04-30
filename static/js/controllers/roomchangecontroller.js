@@ -23,7 +23,7 @@ define([], function() {
     // RoomchangeController
     return ["$scope", "$element", "$window", "$location", "mediaStream", "$http", "$timeout", function($scope, $element, $window, $location, mediaStream, $http, $timeout) {
 
-        console.log("Room change controller", $element, $scope.roomdata);
+        //console.log("Room change controller", $element, $scope.roomdata);
 
         var url = mediaStream.url.api("rooms");
 

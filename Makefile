@@ -20,8 +20,8 @@
 
 PKG := app/spreed-speakfreely-server
 EXENAME := spreed-speakfreely-server
-CONFIG_FILE := spreed-speakfreely-server.conf
-CONFIG_PATH := /etc
+CONFIG_FILE ?= spreed-speakfreely-server.conf
+CONFIG_PATH ?= /etc
 
 VENDOR = "$(CURDIR)/vendor"
 GOPATH = "$(VENDOR):$(CURDIR)"
@@ -62,6 +62,9 @@ binary:
 
 binaryrace:
 		GOPATH=$(GOPATH) go build -race -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
+
+binaryall:
+		GOPATH=$(GOPATH) go build -a -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
 
 fmt:
 		GOPATH=$(GOPATH) go fmt app/...
@@ -154,4 +157,4 @@ tarball: distclean release install
 		echo -n $(VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME).tar.gz -C $(DIST) $(PACKAGE_NAME)
 
-.PHONY: clean distclean pristine get build styles javascript release releasetest dist_gopath install gopath binary tarball assets
+.PHONY: clean distclean pristine get build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets

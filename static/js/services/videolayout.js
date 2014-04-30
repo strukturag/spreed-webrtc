@@ -42,7 +42,7 @@ define(["jquery", "underscore"], function($, _) {
 	// videoLayout
 	return ["$window", function($window) {
 
-		// Video layout with all persons rendered the same size.
+		// Video layout with all videos rendered the same size.
 		var OnePeople = function(container, scope, controller) {
 		};
 
@@ -59,15 +59,6 @@ define(["jquery", "underscore"], function($, _) {
 
             if (videos.length) {
             	var remoteSize = getRemoteVideoSize(videos, peers);
-                /*if (videos.length === 1) {
-                    var remoteVideo = peers[videos[0]].element.find("video").get(0);
-                    videoWidth = remoteVideo.videoWidth;
-                    videoHeight = remoteVideo.videoHeight;
-                    console.log("Remote video size: ", videoWidth, videoHeight);
-                } else {
-                    videoWidth = 1920;
-                    videoHeight = 1080;
-                }*/
                 videoWidth = remoteSize.width;
                 videoHeight = remoteSize.height;
             }
@@ -94,18 +85,18 @@ define(["jquery", "underscore"], function($, _) {
             }
 
             var aspectRatio = videoWidth/videoHeight;
-            var innerHeight = size.height; //scope.layoutparent.height();
-            var innerWidth = size.width; //scope.layoutparent.width();
+            var innerHeight = size.height;
+            var innerWidth = size.width;
 
             //console.log("resize", innerHeight, innerWidth);
             //console.log("resize", container, videos.length, aspectRatio, innerHeight, innerWidth);
+            var extraCSS = {};
 
             if (videos.length === 1) {
                 var newVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
                 var newVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
                 container.style.width = newVideoWidth + 'px';
                 container.style.left = ((innerWidth - newVideoWidth) / 2) + 'px';
-                var extraCSS = {};
             } else {
                 var space = innerHeight*innerWidth; // square pixels
                 var videoSpace = space/videos.length;
@@ -134,7 +125,7 @@ define(["jquery", "underscore"], function($, _) {
                 container.style.width = newContainerWidth + "px";
                 container.style.left = ((innerWidth - newContainerWidth) / 2) + 'px';
                 extraCSS = {
-                    "#remoteVideos": {
+                    ".renderer-onepeople .remoteVideos": {
                         ">div": {
                             width: singleVideoWidth+"px",
                             height: singleVideoHeight+"px"
@@ -155,15 +146,27 @@ define(["jquery", "underscore"], function($, _) {
 
 		};
 
+
+		// Smally inherits from OnePeople
+		var Smally = function(container, scope, controller) {
+			// Call super.
+			OnePeople.call(this, container, scope, controller);
+		}
+		Smally.prototype = Object.create(OnePeople.prototype);
+		Smally.prototype.constructor = Smally;
+		Smally.prototype.name = "smally";
+
+		// A view with one selectable large video. The others are small.
 		var ConferenceKiosk = function(container, scope, controller) {
 
-			this.remoteVideos = $(container).find("#remoteVideos");
+			this.remoteVideos = $(container).find(".remoteVideos");
 			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
 			this.remoteVideos.before(this.bigVideo);
 
 			this.big = null;
 			this.remoteVideos.on("click", ".remoteVideo", _.bind(function(event) {
 				if ($(event.currentTarget).hasClass("remoteVideo")) {
+					event.stopPropagation();
 					this.makeBig($(event.currentTarget));
 				}
 			}, this));
@@ -212,6 +215,7 @@ define(["jquery", "underscore"], function($, _) {
 			var aspectRatio = remoteSize.width/remoteSize.height;
             var innerHeight = size.height - 110;
             var innerWidth = size.width;
+            var extraCSS = {};
 
 			var bigVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
             var bigVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
@@ -219,18 +223,42 @@ define(["jquery", "underscore"], function($, _) {
             this.bigVideo.style.width = bigVideoWidth + 'px';
             this.bigVideo.style.height = bigVideoHeight + 'px';
 
+            // Make space for own video on the right if width goes low.
+            if (((size.width - (videos.length-1) * 192) / 2) < 192) {
+            	extraCSS = {
+                    ".renderer-conferencekiosk .remoteVideos": {
+                        "margin-right": "192px",
+                        "overflow-x": "auto",
+                        "overflow-y": "hidden"
+                    }
+                };
+            }
+
+            $.injectCSS(extraCSS, {
+                truncateFirst: true,
+                containerName: dynamicCSSContainer
+            });
+
 		};
 
 		ConferenceKiosk.prototype.close = function(container, scope, controller) {
 			this.closed = true;
+			if (this.big) {
+				this.remoteVideos.append(this.big);
+				this.big.find("video").get(0).play();
+			}
+			this.big = null;
 			this.bigVideo.remove()
 			this.bigVideo = null;
 			this.remoteVideos = null;
 		};
 
+
 		// Register renderers.
 		renderers[OnePeople.prototype.name] = OnePeople;
+		renderers[Smally.prototype.name] = Smally;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
+
 
 		// Public api.
 		var current = null;
@@ -240,27 +268,33 @@ define(["jquery", "underscore"], function($, _) {
 				var videos = _.keys(controller.peers);
 				var peers = controller.peers;
 				var container = scope.container;
+				var layoutparent = scope.layoutparent;
 
 				if (!current) {
 					current = new renderers[name](container, scope, controller)
 					console.log("Created new video layout renderer", name, current);
-					$(container).addClass("renderer-"+name);
+					$(layoutparent).addClass("renderer-"+name);
+					return true;
 				} else {
 					if (current.name !== name) {
 						current.close(container, scope, controller);
 						$(container).removeAttr("style");
-						$(container).removeClass("renderer-"+current.name);
-						current = new renderers[name](container, scope, conroller)
-						$(container).addClass("renderer-"+name);
+						$(layoutparent).removeClass("renderer-"+current.name);
+						current = new renderers[name](container, scope, controller)
+						$(layoutparent).addClass("renderer-"+name);
 						console.log("Switched to new video layout renderer", name, current);
+						return true;
 					}
 				}
 
-				current.render(container, size, scope, videos, peers);
+				return current.render(container, size, scope, videos, peers);
 
 			},
 			register: function(name, impl) {
 				renderers[name] = impl;
+			},
+			layouts: function() {
+				return _.keys(renderers);
 			}
 		}
 
