@@ -21,7 +21,7 @@
 
 #bar {
   left: 0;
-  min-height: 44px;
+  min-height: $minbarheight;
   position: absolute;
   right: 0;
   top: 0;
@@ -29,6 +29,9 @@
 }
 
 .bar {
+  // without height bar jumps and disappears on reload
+  // use em to scale with text.
+  height: #{$minbarheight/$base-font-size}em;
   background-color: $componentbg;
   color: $componentfg1;
   font: bold 1em/40px $font-sans-serif;

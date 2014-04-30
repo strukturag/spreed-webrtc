@@ -18,6 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+// ** Custom Variables **
+// --------------------------------------------------
 $background: #e5e5e5;
 $componentbg: #f5f5f5;
 $componentfg1: #262626;
@@ -44,3 +47,38 @@ $breakpoint-large: 1280px;
 $font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
 $base-font-size: 13px;
 $base-line-height: 19px;
+
+$audiovideolevel: #9dd53a;
+
+//main navigation bar
+$minbarheight: 44px;
+
+// ** Fontawsome changed variables **
+// original at libs/fontawesome/_variables.scss
+// --------------------------
+
+
+
+// ** Bootstrap changed variables **
+// original at libs/bootstrap/_variables.scss
+// --------------------------------------------------
+
+//== Scaffolding
+//
+// ## Settings for some of the most global styles.
+
+//** Background color for `<body>`.
+$body-bg:               $background;
+
+
+//== Typography
+//
+//## Font, line-height, and color for body text, headings, and more.
+
+$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-serif:       Georgia, "Times New Roman", Times, serif;
+//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
+$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-family-base:        $font-family-sans-serif;
+
+$font-size-base:          $base-font-size;

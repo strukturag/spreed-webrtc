@@ -79,6 +79,10 @@ assets: styles javascript
 styles:
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
+		sass --compass --scss $(SASSFLAGS) \
+			$(CURDIR)/src/styles/bootstrap.scss:$(CURDIR)/static/css/bootstrap.min.css
+		sass --compass --scss $(SASSFLAGS) \
+			$(CURDIR)/src/styles/font-awesome.scss:$(CURDIR)/static/css/font-awesome.min.css
 
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
 releaseassets: SASSFLAGS = --style=compressed --no-cache
