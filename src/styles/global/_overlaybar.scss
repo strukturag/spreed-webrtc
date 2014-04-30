@@ -28,19 +28,12 @@
   text-shadow: 0 0 5px black;
   vertical-align: middle;
   @include user-select(none);
-  &:hover {
-    background: $componentfg2;
-  }
-  &.notvisible {
-    background: transparent;
-    pointer-events: none;
-    &:hover {
-      background: transparent;
-    }
-  }
 }
 
 .overlaybar {
+  &:hover {
+    background: $componentfg2;
+  }
   .btn {
     text-shadow: none;
   }
@@ -61,6 +54,19 @@
 }
 
 .overlaybar {
+  &.notvisible {
+    background: transparent;
+    pointer-events: none;
+    &:hover {
+      background: transparent;
+    }
+    .overlaybar-content {
+      display: none;
+    }
+    .overlaybar-overlay {
+      display: block;
+    }
+  }
   .overlaybar-button {
     color: $bordercolor;
     display: block;
@@ -92,13 +98,5 @@
     opacity: .7;
     padding-top: 2px;
     text-align: left;
-  }
-  &.notvisible {
-    .overlaybar-content {
-      display: none;
-    }
-    .overlaybar-overlay {
-      display: block;
-    }
   }
 }
