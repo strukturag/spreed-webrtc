@@ -45,6 +45,10 @@ import (
 	"time"
 )
 
+var (
+	serialNumberLimit *big.Int = new(big.Int).Lsh(big.NewInt(1), 128)
+)
+
 type UsersHandler interface {
 	Validate(snr *SessionNonceRequest, request *http.Request) (string, error)
 	Create(snr *UserNonce, request *http.Request) (*UserNonce, error)
@@ -171,22 +175,27 @@ func (uh *UsersCertificateHandler) loadCertificate(fn string) error {
 
 }
 
-func (uh *UsersCertificateHandler) makeTemplate(serialNumber string) *x509.Certificate {
+func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certificate, error) {
 
 	notBefore := time.Now()
 	notAfter := notBefore.Add(uh.validFor)
 
+	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
+	if err != nil {
+		return nil, err
+  	} 
+
 	return &x509.Certificate{
-		SerialNumber: big.NewInt(42),
+		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			SerialNumber: serialNumber,
+			CommonName: commonName,
 		},
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
 		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-		BasicConstraintsValid: false,
-	}
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
+		BasicConstraintsValid: true,
+	}, nil
 
 }
 
@@ -210,7 +219,10 @@ func (uh *UsersCertificateHandler) Create(un *UserNonce, request *http.Request) 
 		return nil, errors.New(fmt.Sprintf("unable to parse spkac: %s", err))
 	}
 
-	template := uh.makeTemplate(un.Userid)
+	template, err := uh.makeTemplate(un.Userid)
+	if err != nil {
+		return nil, err
+	}
 
 	certDerBytes, err := x509.CreateCertificate(rand.Reader, template, uh.certificate, publicKey, uh.privateKey)
 	if err != nil {
