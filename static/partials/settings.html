@@ -1,6 +1,6 @@
 <div class="settings nicescroll">
   <div class="version">{{version}}</div>
-  <form class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
+  <div class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
     <fieldset>
 
       <legend>{{_('Settings')}}</legend>
@@ -27,17 +27,31 @@
         </div>
       </div>
       <div class="form-group" ng-if="withUsers || userid">
-        <label class="col-xs-4 control-label">{{_('Your ID')}} {{serverCfg|json}}</label>
-        <div class="col-xs-8">
+        <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
+
+        <form class="col-xs-8" target="users_registration_certificate_iframe">
+          <keygen style="display:none" name="pubkey"/>
           <label ng-if="!userid && withUsersRegistration">
-            <a class="btn btn-small btn-primary" ng-click="registerUserid()">{{_('Register')}}</a>
+            <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
           </label>
-          <span class="help-block" ng-if="!userid && withUsersRegistration">{{_('Only register an ID if this is your private browser.')}}</span>
+          <pre class="small" ng-if="userid">{{userid}}</pre>
+          <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+        </form>
+
+        <div ng-if="false" class="col-xs-8">
+          <label ng-if="!userid && withUsersRegistration">
+            <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+          </label>
           <pre class="small" ng-if="userid">{{userid}}</pre>
           <label ng-if="userid && loadedUserlogin">
-            <a class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</a>
+            <button class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</button>
           </label>
         </div>
+
+        <div class="col-xs-8 col-xs-offset-4" ng-if="!userid && withUsersRegistration">
+          <span class="help-block">{{_('Only register an ID if this is your private browser.')}}</span>
+        </div>
+
       </div>
       <hr/>
       <div ng-show="mediaSources.supported" class="form-group">
@@ -152,5 +166,5 @@
       </div>
 
     </fieldset>
-  </form>
+  </div>
 </div>

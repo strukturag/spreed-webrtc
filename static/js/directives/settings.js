@@ -127,10 +127,10 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                 }
             };
 
-            $scope.registerUserid = function() {
+            $scope.registerUserid = function(btn) {
 
                 console.log("No userid - creating one ...");
-                mediaStream.users.register(function(data) {
+                mediaStream.users.register(btn.form, function(data) {
                     console.info("Created new userid:", data.userid);                        
                     if (data.nonce) {
                         // If the server provided us a nonce, we can do everthing on our own.

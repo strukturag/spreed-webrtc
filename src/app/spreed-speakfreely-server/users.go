@@ -23,14 +23,22 @@ package main
 
 import (
 	"crypto/hmac"
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/longsleep/pkac"
 	"github.com/satori/go.uuid"
 	"github.com/strukturag/phoenix"
+	"io/ioutil"
 	"log"
+	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
@@ -111,6 +119,115 @@ func (uh *UsersHTTPHeaderHandler) Create(un *UserNonce, request *http.Request) (
 
 }
 
+func loadPEMfromFile(fn string) (block *pem.Block, err error) {
+
+	data, err := ioutil.ReadFile(fn)
+	if err != nil {
+		return
+	}
+
+	block, _ = pem.Decode(data)
+	return block, nil
+
+}
+
+type UsersCertificateHandler struct {
+	validFor    time.Duration
+	privateKey  *rsa.PrivateKey
+	certificate *x509.Certificate
+}
+
+func (uh *UsersCertificateHandler) loadPrivateKey(fn string) error {
+
+	pemBlock, err := loadPEMfromFile(fn)
+	if err != nil {
+		return err
+	}
+	privateKey, err := x509.ParsePKCS1PrivateKey(pemBlock.Bytes)
+	if err != nil {
+		return err
+	}
+
+	uh.privateKey = privateKey
+	log.Printf("Users certificate private key loaded from %s\n", fn)
+	return nil
+
+}
+
+func (uh *UsersCertificateHandler) loadCertificate(fn string) error {
+
+	pemBlock, err := loadPEMfromFile(fn)
+	if err != nil {
+		return err
+	}
+	certificates, err := x509.ParseCertificates(pemBlock.Bytes)
+	if err != nil {
+		return err
+	}
+
+	uh.certificate = certificates[0]
+	log.Printf("Users certificate loaded from %s\n", fn)
+	return nil
+
+}
+
+func (uh *UsersCertificateHandler) makeTemplate(serialNumber string) *x509.Certificate {
+
+	notBefore := time.Now()
+	notAfter := notBefore.Add(uh.validFor)
+
+	return &x509.Certificate{
+		SerialNumber: big.NewInt(42),
+		Subject: pkix.Name{
+			SerialNumber: serialNumber,
+		},
+		NotBefore:             notBefore,
+		NotAfter:              notAfter,
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		BasicConstraintsValid: false,
+	}
+
+}
+
+func (uh *UsersCertificateHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
+	return "", errors.New("certificate validation not implemented")
+}
+
+func (uh *UsersCertificateHandler) Create(un *UserNonce, request *http.Request) (*UserNonce, error) {
+
+	spkac := request.Form.Get("pubkey")
+	if spkac == "" {
+		return nil, errors.New("no spkac provided")
+	}
+	spkacDerBytes, err := base64.StdEncoding.DecodeString(spkac)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("spkac invalid: %s", err))
+	}
+
+	publicKey, err := pkac.ParseSPKAC(spkacDerBytes)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("unable to parse spkac: %s", err))
+	}
+
+	template := uh.makeTemplate(un.Userid)
+
+	certDerBytes, err := x509.CreateCertificate(rand.Reader, template, uh.certificate, publicKey, uh.privateKey)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("failed to create certificate: %s", err))
+	}
+
+	log.Println("Generated new certificate", un.Userid)
+	un.SetResponse(certDerBytes, "application/x-x509-user-cert", http.Header{
+		"Content-Length": {strconv.Itoa(len(certDerBytes))},
+		"Accept-Ranges":  {"bytes"},
+		"Last-Modified":  {time.Now().UTC().Format(http.TimeFormat)},
+	})
+
+	return un, nil
+
+}
+
 type UserNonce struct {
 	Nonce       string `json:"nonce"`
 	Userid      string `json:"userid"`
@@ -118,6 +235,28 @@ type UserNonce struct {
 	Secret      string `json:"secret"`
 	Timestamp   int64  `json:"timestamp"`
 	Success     bool   `json:"success"`
+	raw         []byte
+	contentType string
+	header      http.Header
+}
+
+func (un *UserNonce) SetResponse(raw []byte, contentType string, header http.Header) {
+	un.raw = raw
+	un.contentType = contentType
+	un.header = header
+}
+
+func (un *UserNonce) Response() (int, interface{}, http.Header) {
+	header := un.header
+	if header == nil {
+		header = http.Header{}
+	}
+	if un.contentType != "" {
+		header.Set("Content-Type", un.contentType)
+		return 200, un.raw, header
+	} else {
+		return 200, un, header
+	}
 }
 
 type Users struct {
@@ -143,6 +282,18 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 			headerName = "x-users"
 		}
 		handler = &UsersHTTPHeaderHandler{headerName: headerName}
+	case "certificate":
+		uh := &UsersCertificateHandler{}
+		uh.validFor = 24 * time.Hour * 365
+		keyFn, _ := runtime.GetString("users", "certificate_key")
+		certificateFn, _ := runtime.GetString("users", "certificate_certificate")
+		if keyFn != "" && certificateFn != "" {
+			uh.loadPrivateKey(keyFn)
+		}
+		if certificateFn != "" {
+			uh.loadCertificate(certificateFn)
+		}
+		handler = uh
 	default:
 		mode = ""
 	}
@@ -164,11 +315,22 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 // Post is used to create new userids for this server.
 func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) {
 
-	decoder := json.NewDecoder(request.Body)
-	var snr SessionNonceRequest
-	err := decoder.Decode(&snr)
-	if err != nil {
-		return 400, NewApiError("users_bad_request", "Failed to parse request"), http.Header{"Content-Type": {"application/json"}}
+	var snr *SessionNonceRequest
+
+	switch request.Header.Get("Content-Type") {
+	case "application/json":
+		decoder := json.NewDecoder(request.Body)
+		err := decoder.Decode(snr)
+		if err != nil {
+			return 400, NewApiError("users_bad_request", "Failed to parse request"), http.Header{"Content-Type": {"application/json"}}
+		}
+	case "application/x-www-form-urlencoded":
+		snr = &SessionNonceRequest{
+			Id:  request.Form.Get("id"),
+			Sid: request.Form.Get("sid"),
+		}
+	default:
+		return 400, NewApiError("users_invalid_request", "Invalid request type"), http.Header{"Content-Type": {"application/json"}}
 	}
 
 	// Make sure that we have a Sid.
@@ -195,6 +357,6 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 	}
 
 	log.Printf("Users create successfull %s -> %s\n", snr.Id, un.Userid)
-	return 200, un, http.Header{"Content-Type": {"application/json"}}
+	return un.Response()
 
 }

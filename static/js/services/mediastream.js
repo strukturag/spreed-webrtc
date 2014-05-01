@@ -65,32 +65,51 @@ define([
                 }
             },
             users: {
-                register: function(success_cb, error_cb) {
+                register: function(form, success_cb, error_cb) {
                     var url = mediaStream.url.api("users");
-                    var data = {
-                        id: mediaStream.api.id,
-                        sid: mediaStream.api.sid
-                    }
-                    $http({
-                        method: "POST",
-                        url: url,
-                        data: JSON.stringify(data),
-                        headers: {'Content-Type': 'application/json'}
-                    }).
-                    success(function(data, status) {
-                        if (data.userid !== "" && data.success) {
-                            success_cb(data, status);
-                        } else {
-                            if (error_cb) {
-                                error_cb(data, status);
-                            }
+                    if (form) {
+                        $(form).attr("action", url).attr("method", "POST");
+                        var idE = $('<input name="id" type="hidden">');
+                        idE.val(mediaStream.api.id);
+                        var sidE = $('<input name="sid" type="hidden">');
+                        sidE.val(mediaStream.api.sid);
+                        $(form).append(idE);
+                        $(form).append(sidE);
+                        var iframe = $(form).find("iframe");
+                        console.log("xxxx", iframe[0]);
+                        form.submit();
+                        $timeout(function() {
+                            idE.remove();
+                            sidE.remove();
+                            idE=null;
+                            sidE=null;
+                        }, 0);
+                    } else {
+                        var data = {
+                            id: mediaStream.api.id,
+                            sid: mediaStream.api.sid
                         }
-                    }).
-                    error(function(data, status) {
-                        if (error_cb) {
-                            error_cb(data, status)
-                        } 
-                    });
+                        $http({
+                            method: "POST",
+                            url: url,
+                            data: JSON.stringify(data),
+                            headers: {'Content-Type': 'application/json'}
+                        }).
+                        success(function(data, status) {
+                            if (data.userid !== "" && data.success) {
+                                success_cb(data, status);
+                            } else {
+                                if (error_cb) {
+                                    error_cb(data, status);
+                                }
+                            }
+                        }).
+                        error(function(data, status) {
+                            if (error_cb) {
+                                error_cb(data, status)
+                            } 
+                        });
+                    }
                 },
                 authorize: function(data, success_cb, error_cb) {
                     var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
