@@ -100,8 +100,8 @@ a {
   right: 15%;
   top: 15%;
   z-index: 20000;
-  @include transition-property(opacity);
-  @include transition-duration(.5s);
+  transition-property: opacity;
+  transition-duration: .5s;
   div {
     color: $lighter-text;
     display: block;
@@ -124,7 +124,7 @@ a {
   position: absolute;
   right: 0;
   top: 44px;
-  @include user-select(none);
+  user-select: none;
 }
 
 .welcome {

@@ -26,8 +26,8 @@
   padding: 3px 8px 0 30px;
   position: absolute;
   text-shadow: 0 0 5px black;
+  user-select: none;
   vertical-align: middle;
-  @include user-select(none);
 }
 
 .overlaybar {
