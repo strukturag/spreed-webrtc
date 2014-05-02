@@ -25,6 +25,7 @@ CONFIG_PATH ?= /etc
 
 VENDOR = "$(CURDIR)/vendor"
 GOPATH = "$(VENDOR):$(CURDIR)"
+
 SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
@@ -48,6 +49,10 @@ NODEJS_BIN_EXISTS := $(shell [ -x "$(NODEJS_BIN)" ] && echo 1 || echo 0)
 ifneq ($(NODEJS_BIN_EXISTS), 1)
     $(error "Can't find node.js runtime, please install / check your PATH")
 endif
+NPM_BIN_PATH := $(shell npm bin)
+
+# Tools
+AUTOPREFIXER := autoprefixer
 
 build: get binary assets
 
@@ -79,6 +84,7 @@ assets: styles javascript
 styles:
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
+		$(NPM_BIN_PATH)/$(AUTOPREFIXER) $(CURDIR)/static/css/main.min.css
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/bootstrap.scss:$(CURDIR)/static/css/bootstrap.min.css
 		sass --compass --scss $(SASSFLAGS) \
