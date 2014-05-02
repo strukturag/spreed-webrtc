@@ -53,6 +53,7 @@ NPM_BIN_PATH := $(shell npm bin)
 
 # Tools
 AUTOPREFIXER := autoprefixer
+AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1, Opera 12.0"
 
 build: get binary assets
 
@@ -84,11 +85,14 @@ assets: styles javascript
 styles:
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
-		$(NPM_BIN_PATH)/$(AUTOPREFIXER) $(CURDIR)/static/css/main.min.css
+		$(NPM_BIN_PATH)/$(AUTOPREFIXER) --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(CURDIR)/static/css/main.min.css
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/bootstrap.scss:$(CURDIR)/static/css/bootstrap.min.css
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/font-awesome.scss:$(CURDIR)/static/css/font-awesome.min.css
+
+style-vendor-prefix-info:
+		$(NPM_BIN_PATH)/$(AUTOPREFIXER) --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) --info
 
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
 releaseassets: SASSFLAGS = --style=compressed --no-cache
