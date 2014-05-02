@@ -22,21 +22,19 @@
 package main
 
 import (
+	"crypto"
 	"crypto/hmac"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"github.com/longsleep/pkac"
 	"github.com/satori/go.uuid"
 	"github.com/strukturag/phoenix"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"net/http"
@@ -123,56 +121,10 @@ func (uh *UsersHTTPHeaderHandler) Create(un *UserNonce, request *http.Request) (
 
 }
 
-func loadPEMfromFile(fn string) (block *pem.Block, err error) {
-
-	data, err := ioutil.ReadFile(fn)
-	if err != nil {
-		return
-	}
-
-	block, _ = pem.Decode(data)
-	return block, nil
-
-}
-
 type UsersCertificateHandler struct {
 	validFor    time.Duration
-	privateKey  *rsa.PrivateKey
+	privateKey  crypto.PrivateKey
 	certificate *x509.Certificate
-}
-
-func (uh *UsersCertificateHandler) loadPrivateKey(fn string) error {
-
-	pemBlock, err := loadPEMfromFile(fn)
-	if err != nil {
-		return err
-	}
-	privateKey, err := x509.ParsePKCS1PrivateKey(pemBlock.Bytes)
-	if err != nil {
-		return err
-	}
-
-	uh.privateKey = privateKey
-	log.Printf("Users certificate private key loaded from %s\n", fn)
-	return nil
-
-}
-
-func (uh *UsersCertificateHandler) loadCertificate(fn string) error {
-
-	pemBlock, err := loadPEMfromFile(fn)
-	if err != nil {
-		return err
-	}
-	certificates, err := x509.ParseCertificates(pemBlock.Bytes)
-	if err != nil {
-		return err
-	}
-
-	uh.certificate = certificates[0]
-	log.Printf("Users certificate loaded from %s\n", fn)
-	return nil
-
 }
 
 func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certificate, error) {
@@ -183,7 +135,7 @@ func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certif
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
 		return nil, err
-  	} 
+	}
 
 	return &x509.Certificate{
 		SerialNumber: serialNumber,
@@ -280,6 +232,7 @@ type Users struct {
 func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 
 	var handler UsersHandler
+	var err error
 
 	mode, _ := runtime.GetString("users", "mode")
 	switch mode {
@@ -300,10 +253,23 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 		keyFn, _ := runtime.GetString("users", "certificate_key")
 		certificateFn, _ := runtime.GetString("users", "certificate_certificate")
 		if keyFn != "" && certificateFn != "" {
-			uh.loadPrivateKey(keyFn)
+			if uh.privateKey, err = loadX509PrivateKey(keyFn); err == nil {
+				log.Printf("Users certificate private key loaded from %s\n", keyFn)
+			} else {
+				log.Printf("Failed to load certificat private key: %s\n", err)
+			}
 		}
 		if certificateFn != "" {
-			uh.loadCertificate(certificateFn)
+			if certificate, err := loadX509Certificate(certificateFn); err == nil {
+				if certificates, err := x509.ParseCertificates(certificate.Certificate[0]); err == nil {
+					uh.certificate = certificates[0]
+					log.Printf("Users certificate loaded from %s\n", certificateFn)
+				} else {
+					log.Printf("Failed to parse users certificate: %s\n", err)
+				}
+			} else {
+				log.Printf("Failed to load users certificate: %s\n", err)
+			}
 		}
 		handler = uh
 	default:

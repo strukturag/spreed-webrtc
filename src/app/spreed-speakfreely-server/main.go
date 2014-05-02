@@ -24,6 +24,8 @@ package main
 import (
 	"app/spreed-speakfreely-server/sleepy"
 	"bytes"
+	"crypto/tls"
+	"crypto/x509"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -393,6 +395,25 @@ func runner(runtime phoenix.Runtime) error {
 
 	runtime.DefaultHTTPHandler(r)
 	runtime.DefaultHTTPSHandler(r)
+
+	if tlsConfig, err := runtime.TLSConfig(); err == nil {
+		tlsConfig.ClientAuth = tls.VerifyClientCertIfGiven
+		// Create cert pool.
+		pool := x509.NewCertPool()
+		if certificateFn, err := runtime.GetString("users", "certificate_certificate"); err == nil {
+			if certificate, err := loadX509Certificate(certificateFn); err == nil {
+				for _, derCert := range certificate.Certificate {
+					cert, err := x509.ParseCertificate(derCert)
+					if err != nil {
+						continue
+					}
+					pool.AddCert(cert)
+				}
+			}
+			log.Printf("Initialized TLS auth pool with %d certtificates.", len(pool.Subjects()))
+		}
+		tlsConfig.ClientCAs = pool
+	}
 
 	return runtime.Start()
 }
