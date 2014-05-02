@@ -28,7 +28,7 @@
   &.ng-hide-add {
     opacity: 1;
     display: block !important;
-    @include transition(all linear 0.5s);
+    transition: all linear 0.5s;
     &.ng-hide-add-active {
       opacity: 0;
     }
@@ -36,7 +36,7 @@
   &.ng-hide-remove {
     opacity: 0;
     display: block !important;
-    @include transition(all linear 0.5s);
+    transition: all linear 0.5s;
     &.ng-hide-remove-active {
       opacity: 1;
     }

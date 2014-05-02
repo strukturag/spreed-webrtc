@@ -27,7 +27,7 @@
   position: absolute;
   text-shadow: 0 0 5px black;
   vertical-align: middle;
-  @include user-select(none);
+  user-select: none;
 }
 
 .overlaybar {
