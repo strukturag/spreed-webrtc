@@ -48,6 +48,7 @@ var (
 )
 
 type UsersHandler interface {
+	Get(request *http.Request) (string, error)
 	Validate(snr *SessionNonceRequest, request *http.Request) (string, error)
 	Create(snr *UserNonce, request *http.Request) (*UserNonce, error)
 }
@@ -62,6 +63,10 @@ func (uh *UsersSharedsecretHandler) createHMAC(useridCombo string) string {
 	m.Write([]byte(useridCombo))
 	return base64.StdEncoding.EncodeToString(m.Sum(nil))
 
+}
+
+func (uh *UsersSharedsecretHandler) Get(request *http.Request) (userid string, err error) {
+	return
 }
 
 func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
@@ -105,20 +110,20 @@ type UsersHTTPHeaderHandler struct {
 	headerName string
 }
 
-func (uh *UsersHTTPHeaderHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
-
-	userid := request.Header.Get(uh.headerName)
+func (uh *UsersHTTPHeaderHandler) Get(request *http.Request) (userid string, err error) {
+	userid = request.Header.Get(uh.headerName)
 	if userid == "" {
-		return "", errors.New("no userid provided")
+		err = errors.New("no userid provided")
 	}
-	return userid, nil
+	return
+}
 
+func (uh *UsersHTTPHeaderHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
+	return uh.Get(request)
 }
 
 func (uh *UsersHTTPHeaderHandler) Create(un *UserNonce, request *http.Request) (*UserNonce, error) {
-
 	return nil, errors.New("create is not possible in httpheader mode")
-
 }
 
 type UsersCertificateHandler struct {
@@ -151,8 +156,25 @@ func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certif
 
 }
 
+func (uh *UsersCertificateHandler) Get(request *http.Request) (userid string, err error) {
+
+	if len(request.TLS.VerifiedChains) == 0 {
+		return
+	}
+	chain := request.TLS.VerifiedChains[0]
+	if len(chain) == 0 {
+		return
+	}
+
+	cert := chain[0]
+	userid = cert.Subject.CommonName
+	log.Printf("Client certificate found for user: %s\n", userid)
+
+	return
+}
+
 func (uh *UsersCertificateHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
-	return "", errors.New("certificate validation not implemented")
+	return uh.Get(request)
 }
 
 func (uh *UsersCertificateHandler) Create(un *UserNonce, request *http.Request) (*UserNonce, error) {
@@ -240,6 +262,8 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 		secret, _ := runtime.GetString("users", "sharedsecret_secret")
 		if secret != "" {
 			handler = &UsersSharedsecretHandler{secret: []byte(secret)}
+		} else {
+			log.Println("Cannot enable sharedsecret users handler: No secret.")
 		}
 	case "httpheader":
 		headerName, _ := runtime.GetString("users", "httpheader_header")
@@ -249,6 +273,7 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 		handler = &UsersHTTPHeaderHandler{headerName: headerName}
 	case "certificate":
 		uh := &UsersCertificateHandler{}
+		// TODO(longsleep): Add validFor to configuration.
 		uh.validFor = 24 * time.Hour * 365
 		keyFn, _ := runtime.GetString("users", "certificate_key")
 		certificateFn, _ := runtime.GetString("users", "certificate_certificate")
@@ -264,23 +289,34 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 				if certificates, err := x509.ParseCertificates(certificate.Certificate[0]); err == nil {
 					uh.certificate = certificates[0]
 					log.Printf("Users certificate loaded from %s\n", certificateFn)
+					handler = uh
 				} else {
 					log.Printf("Failed to parse users certificate: %s\n", err)
 				}
 			} else {
 				log.Printf("Failed to load users certificate: %s\n", err)
 			}
+		} else {
+			log.Println("Cannot enable certificate users handler: No certificate.")
 		}
-		handler = uh
 	default:
 		mode = ""
 	}
 
-	if handler == nil {
-		handler = &UsersSharedsecretHandler{secret: []byte("")}
-	}
+	if handler != nil {
 
-	log.Printf("Enabled users handler '%s'\n", mode)
+		// Register handler Get at the hub.
+		hub.useridRetriever = func(request *http.Request) (userid string, err error) {
+			userid, err = handler.Get(request)
+			if userid != "" {
+				log.Printf("Users handler get success: %s\n", userid)
+			}
+			return
+		}
+
+		log.Printf("Enabled users handler '%s'\n", mode)
+
+	}
 
 	return &Users{
 		hub:     hub,
@@ -292,6 +328,10 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 
 // Post is used to create new userids for this server.
 func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) {
+
+	if users.handler == nil {
+		return 404, "No handler found", http.Header{"Content-Type": {"text/plain"}}
+	}
 
 	var snr *SessionNonceRequest
 

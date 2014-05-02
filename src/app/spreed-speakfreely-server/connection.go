@@ -27,6 +27,7 @@ import (
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -55,8 +56,9 @@ const (
 
 type Connection struct {
 	// References.
-	h  *Hub
-	ws *websocket.Conn
+	h       *Hub
+	ws      *websocket.Conn
+	request *http.Request
 
 	// Data handling.
 	condition *sync.Cond
@@ -72,15 +74,14 @@ type Connection struct {
 	IsRegistered bool
 	Hello        bool
 	Version      string
-	RemoteAddr   string
 }
 
-func NewConnection(h *Hub, ws *websocket.Conn, remoteAddr string) *Connection {
+func NewConnection(h *Hub, ws *websocket.Conn, request *http.Request) *Connection {
 
 	c := &Connection{
-		h:          h,
-		ws:         ws,
-		RemoteAddr: remoteAddr,
+		h:       h,
+		ws:      ws,
+		request: request,
 	}
 	c.condition = sync.NewCond(&c.mutex)
 
@@ -112,7 +113,7 @@ func (c *Connection) close() {
 
 func (c *Connection) register() error {
 
-	s := c.h.CreateSession(nil)
+	s := c.h.CreateSession(c.request, nil)
 	c.h.registerHandler(c, s)
 	return nil
 }
@@ -120,7 +121,7 @@ func (c *Connection) register() error {
 func (c *Connection) reregister(token string) error {
 
 	if st, err := c.h.DecodeSessionToken(token); err == nil {
-		s := c.h.CreateSession(st)
+		s := c.h.CreateSession(c.request, st)
 		c.h.registerHandler(c, s)
 	} else {
 		log.Println("Error while decoding session token", err)

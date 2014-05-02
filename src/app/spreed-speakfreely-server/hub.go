@@ -32,6 +32,7 @@ import (
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"log"
+	"net/http"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -81,6 +82,7 @@ type Hub struct {
 	buddyImages           ImageCache
 	realm                 string
 	tokenName             string
+	useridRetriever       func(*http.Request) (string, error)
 }
 
 func NewHub(version string, config *Config, sessionSecret, turnSecret, realm string) *Hub {
@@ -164,22 +166,30 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
-func (h *Hub) CreateSession(st *SessionToken) *Session {
+func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
 	// NOTE(longsleep): Is it required to make this a secure cookie,
 	// random data in itself should be sufficent if we do not validate
 	// session ids somewhere?
 
 	var session *Session
+	var userid string
+	usersEnabled := h.config.UsersEnabled
+
+	if usersEnabled && h.useridRetriever != nil {
+		userid, _ = h.useridRetriever(request)
+	}
 
 	if st == nil {
 		sid := NewRandomString(32)
 		id, _ := h.tickets.Encode("id", sid)
-		session = NewSession(id, sid, "")
-		log.Println("Created new session id", len(id), id, sid)
+		session = NewSession(id, sid, userid)
+		log.Println("Created new session id", len(id), id, sid, userid)
 	} else {
-		userid := st.Userid
-		if !h.config.UsersEnabled {
+		if userid == "" {
+			userid = st.Userid
+		}
+		if !usersEnabled {
 			userid = ""
 		}
 		session = NewSession(st.Id, st.Sid, userid)
@@ -307,14 +317,14 @@ func (h *Hub) registerHandler(c *Connection, s *Session) {
 	if ec, ok := h.connectionTable[c.Id]; ok {
 		ec.IsRegistered = false
 		ec.close()
-		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.RemoteAddr, c.Id)
+		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.Id)
 	}
 
 	h.connectionTable[c.Id] = c
 	h.sessionTable[c.Id] = s
 	//fmt.Println("registered", c.Id)
 	h.mutex.Unlock()
-	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
+	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.Id)
 	h.server.OnRegister(c)
 
 }

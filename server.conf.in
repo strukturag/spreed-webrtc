@@ -108,14 +108,44 @@ enabled = false
 ;   validation. This usually only makes sense with a front end HTTPS proxy which
 ;   does the authentication and injects the user id as HTTP header for sessions
 ;   REST requests. In mode httpheader, allowRegistration should be false.
+; certificate:
+;   The userid is provided as CommonName with a certificate provided with TLS
+;   client authentication. When you use this with a front end proxy for TLS 
+;   termination, that proxy has to validate the certificate and inject certain
+;   headers into the proxy connection. Furthermode in certificate mode the
+;   server can act as a CA to sign incoming user requests with a private key
+;   when allowRegistration is true.
 ;mode = sharedsecret
 ; The shared secred for HMAC validation in "sharedsecret" mode. Best use 32 or
 ; 64 bytes of random data.
 ;sharedsecret_secret = some-secret-do-not-keep
 ; The HTTP header name where to find the userid in "httpheader" mode.
 ;httpheader_header = x-userid
-
-; The server can create new userids if enabled. Set allowRegistration to true to
-; enable userid creation/registration. Users are created to match the settings
+; Full path to PEM encoded private key to use for user creation in "certificate"
+; mode. Keep this commented if you do not want the server to sign certificate
+; requests.
+;certificate_key = userskey.key
+; Full path to PEM encoded certificate to use for user validation in 
+; "certificate" mode. When allowRegistration is true and certificate_key is also
+; set then the server will act as a CA and sign incoming user registrations and
+; return certificates to users as registration.
+;certificate_certificate = usersca.crt
+; The HTTP header name where to find if the TLS lient authentication was 
+; successfull. The value of this header is matched to 
+; certificate_verifiedHeaderValue and only if there is a match, the proxy 
+; handled TLS client authentication is accepted as success.
+;certificate_verifiedHeader = x-verified
+;certificate_verifiedHeaderValue = SUCCESS
+; The HTTP header name where to find the userid extracted by a proxy after 
+; TLS client authentication. If not set certificate_certificateHeader will be 
+; used to retrieve the userid from the CommonName field of the certificate.
+;certificate_useridHeader = x-userid
+; The HTTP header name where to find the PEM encoded certificate authenticated
+; by a front end proxy. This configuration this is optional if you have set a
+; certificate_useridHeader value and the front end TLS proxy does inject the
+; userid into that header.
+;certificate_certificateHeader = x-certificate
+; If enabled the server can create new userids. Set allowRegistration to true to
+; enable userid creation/registration. Users are created according the settings
 ; of the currently configured mode (see above).
 ;allowRegistration = false
