@@ -24,8 +24,6 @@ package main
 import (
 	"app/spreed-speakfreely-server/sleepy"
 	"bytes"
-	"crypto/tls"
-	"crypto/x509"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -358,6 +356,12 @@ func runner(runtime phoenix.Runtime) error {
 	// Create router.
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
+
+	// Prepare listeners.
+	runtime.DefaultHTTPHandler(r)
+	runtime.DefaultHTTPSHandler(r)
+
+	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
 	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
@@ -391,28 +395,6 @@ func runner(runtime phoenix.Runtime) error {
 			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", basePath), httputils.FileStaticServer(http.Dir(extraFolder))))
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
-	}
-
-	runtime.DefaultHTTPHandler(r)
-	runtime.DefaultHTTPSHandler(r)
-
-	if tlsConfig, err := runtime.TLSConfig(); err == nil {
-		tlsConfig.ClientAuth = tls.VerifyClientCertIfGiven
-		// Create cert pool.
-		pool := x509.NewCertPool()
-		if certificateFn, err := runtime.GetString("users", "certificate_certificate"); err == nil {
-			if certificate, err := loadX509Certificate(certificateFn); err == nil {
-				for _, derCert := range certificate.Certificate {
-					cert, err := x509.ParseCertificate(derCert)
-					if err != nil {
-						continue
-					}
-					pool.AddCert(cert)
-				}
-			}
-			log.Printf("Initialized TLS auth pool with %d certtificates.", len(pool.Subjects()))
-		}
-		tlsConfig.ClientCAs = pool
 	}
 
 	return runtime.Start()

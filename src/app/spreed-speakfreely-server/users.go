@@ -26,6 +26,7 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/base64"
@@ -253,17 +254,41 @@ type Users struct {
 
 func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 
+	var users = &Users{
+		hub:   hub,
+		realm: realm,
+	}
+
 	var handler UsersHandler
 	var err error
 
+	// Create handler based on mode.
 	mode, _ := runtime.GetString("users", "mode")
+	if handler, err = users.createHandler(mode, runtime); err == nil {
+		users.handler = handler
+		// Register handler Get at the hub.
+		users.hub.useridRetriever = func(request *http.Request) (userid string, err error) {
+			userid, err = handler.Get(request)
+			if userid != "" {
+				log.Printf("Users handler get success: %s\n", userid)
+			}
+			return
+		}
+		log.Printf("Enabled users handler '%s'\n", mode)
+	}
+
+	return users
+}
+
+func (users *Users) createHandler(mode string, runtime phoenix.Runtime) (handler UsersHandler, err error) {
+
 	switch mode {
 	case "sharedsecret":
 		secret, _ := runtime.GetString("users", "sharedsecret_secret")
 		if secret != "" {
 			handler = &UsersSharedsecretHandler{secret: []byte(secret)}
 		} else {
-			log.Println("Cannot enable sharedsecret users handler: No secret.")
+			err = errors.New("Cannot enable sharedsecret users handler: No secret.")
 		}
 	case "httpheader":
 		headerName, _ := runtime.GetString("users", "httpheader_header")
@@ -272,57 +297,58 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 		}
 		handler = &UsersHTTPHeaderHandler{headerName: headerName}
 	case "certificate":
+		var err2 error
 		uh := &UsersCertificateHandler{}
-		// TODO(longsleep): Add validFor to configuration.
-		uh.validFor = 24 * time.Hour * 365
+		validForDays, _ := runtime.GetInt("users", "certificate_validForDays")
+		if validForDays == 0 {
+			validForDays = 365
+		}
+		uh.validFor = time.Duration(validForDays) * 24 * time.Hour
 		keyFn, _ := runtime.GetString("users", "certificate_key")
 		certificateFn, _ := runtime.GetString("users", "certificate_certificate")
 		if keyFn != "" && certificateFn != "" {
-			if uh.privateKey, err = loadX509PrivateKey(keyFn); err == nil {
+			// Load private key from file and use it for signing,
+			if uh.privateKey, err2 = loadX509PrivateKey(keyFn); err2 == nil {
 				log.Printf("Users certificate private key loaded from %s\n", keyFn)
 			} else {
-				log.Printf("Failed to load certificat private key: %s\n", err)
+				log.Printf("Failed to load certificat private key: %s\n", err2)
 			}
 		}
 		if certificateFn != "" {
+			// Load Certificate from file.
 			if certificate, err := loadX509Certificate(certificateFn); err == nil {
+				// Parse first certificate in file.
 				if certificates, err := x509.ParseCertificates(certificate.Certificate[0]); err == nil {
+					// Use first parsed certificate as CA.
 					uh.certificate = certificates[0]
 					log.Printf("Users certificate loaded from %s\n", certificateFn)
 					handler = uh
-				} else {
-					log.Printf("Failed to parse users certificate: %s\n", err)
+					// Get TLS config if the server has one.
+					if tlsConfig, err2 := runtime.TLSConfig(); err2 == nil {
+						// Enable TLS client certificate authentication.
+						tlsConfig.ClientAuth = tls.VerifyClientCertIfGiven
+						// Create cert pool.
+						pool := x509.NewCertPool()
+						// Add CA certificate to pool for TLS client authentication.
+						for _, derCert := range certificate.Certificate {
+							cert, err2 := x509.ParseCertificate(derCert)
+							if err2 != nil {
+								continue
+							}
+							pool.AddCert(cert)
+						}
+						// Add pool to config.
+						tlsConfig.ClientCAs = pool
+						log.Printf("Initialized TLS auth pool with %d certificates.", len(pool.Subjects()))
+					}
 				}
-			} else {
-				log.Printf("Failed to load users certificate: %s\n", err)
 			}
 		} else {
-			log.Println("Cannot enable certificate users handler: No certificate.")
+			err = errors.New("Cannot enable certificate users handler: No certificate.")
 		}
-	default:
-		mode = ""
 	}
 
-	if handler != nil {
-
-		// Register handler Get at the hub.
-		hub.useridRetriever = func(request *http.Request) (userid string, err error) {
-			userid, err = handler.Get(request)
-			if userid != "" {
-				log.Printf("Users handler get success: %s\n", userid)
-			}
-			return
-		}
-
-		log.Printf("Enabled users handler '%s'\n", mode)
-
-	}
-
-	return &Users{
-		hub:     hub,
-		realm:   realm,
-		handler: handler,
-	}
+	return
 
 }
 
