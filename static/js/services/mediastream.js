@@ -68,6 +68,7 @@ define([
                 register: function(form, success_cb, error_cb) {
                     var url = mediaStream.url.api("users");
                     if (form) {
+                        // Form submit mode.
                         $(form).attr("action", url).attr("method", "POST");
                         var idE = $('<input name="id" type="hidden">');
                         idE.val(mediaStream.api.id);
@@ -76,7 +77,6 @@ define([
                         $(form).append(idE);
                         $(form).append(sidE);
                         var iframe = $(form).find("iframe");
-                        console.log("xxxx", iframe[0]);
                         form.submit();
                         $timeout(function() {
                             idE.remove();
@@ -85,6 +85,7 @@ define([
                             sidE=null;
                         }, 0);
                     } else {
+                        // AJAX mode.
                         var data = {
                             id: mediaStream.api.id,
                             sid: mediaStream.api.sid
@@ -113,12 +114,6 @@ define([
                 },
                 authorize: function(data, success_cb, error_cb) {
                     var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
-                    /*var data = {
-                        id: mediaStream.api.id,
-                        sid: mediaStream.api.sid,
-                        useridcombo: useridCombo,
-                        secret: secret
-                    }*/
                     var login = _.clone(data);
                     login.id = mediaStream.api.id;
                     login.sid = mediaStream.api.sid;

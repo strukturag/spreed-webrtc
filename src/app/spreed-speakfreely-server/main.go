@@ -286,6 +286,8 @@ func runner(runtime phoenix.Runtime) error {
 		serverRealm = "local"
 	}
 
+	usersMode, _ := runtime.GetString("users", "mode")
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
@@ -294,7 +296,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, basePath, serverToken, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, usersEnabled, usersAllowRegistration, plugin)
+	config = NewConfig(title, ver, runtimeVersion, basePath, serverToken, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, usersEnabled, usersAllowRegistration, usersMode, plugin)
 
 	// Load templates.
 	tt := template.New("")
@@ -377,7 +379,7 @@ func runner(runtime phoenix.Runtime) error {
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if usersEnabled {
 		// Create Users handler.
-		users := NewUsers(hub, serverRealm, runtime)
+		users := NewUsers(hub, usersMode, serverRealm, runtime)
 		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
 		if usersAllowRegistration {
 			api.AddResource(users, "/users")

@@ -39,6 +39,7 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
             ];
             $scope.withUsers = mediaStream.config.UsersEnabled;
             $scope.withUsersRegistration = mediaStream.config.UsersAllowRegistration;
+            $scope.withUsersMode = mediaStream.config.UsersMode;
 
             _.each(availableLanguages, function(name, code) {
                 $scope.availableLanguages.push({

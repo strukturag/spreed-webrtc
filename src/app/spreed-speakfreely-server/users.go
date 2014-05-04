@@ -252,7 +252,7 @@ type Users struct {
 	handler UsersHandler
 }
 
-func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
+func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 
 	var users = &Users{
 		hub:   hub,
@@ -263,7 +263,6 @@ func NewUsers(hub *Hub, realm string, runtime phoenix.Runtime) *Users {
 	var err error
 
 	// Create handler based on mode.
-	mode, _ := runtime.GetString("users", "mode")
 	if handler, err = users.createHandler(mode, runtime); err == nil {
 		users.handler = handler
 		// Register handler Get at the hub.

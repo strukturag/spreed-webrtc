@@ -37,12 +37,13 @@ type Config struct {
 	Version                string   // Server version number
 	UsersEnabled           bool     // Flag if users are enabled
 	UsersAllowRegistration bool     // Flag if users can register
+	UsersMode              string   // Users mode string
 	Plugin                 string   // Plugin to load
 	globalRoomid           string   // Id of the global room (not exported to Javascript)
 	defaultRoomEnabled     bool     // Flag if default room ("") is enabled
 }
 
-func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURIs, turnURIs []string, tokens bool, globalRoomid string, defaultRoomEnabled, usersEnabled, usersAllowRegistration bool, plugin string) *Config {
+func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURIs, turnURIs []string, tokens bool, globalRoomid string, defaultRoomEnabled, usersEnabled, usersAllowRegistration bool, usersMode, plugin string) *Config {
 	sv := fmt.Sprintf("static/ver=%s", ver)
 	return &Config{
 		Title:                  title,
@@ -56,6 +57,7 @@ func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURI
 		Version:                runtimeVersion,
 		UsersEnabled:           usersEnabled,
 		UsersAllowRegistration: usersAllowRegistration,
+		UsersMode:              usersMode,
 		Plugin:                 plugin,
 		globalRoomid:           globalRoomid,
 		defaultRoomEnabled:     defaultRoomEnabled,

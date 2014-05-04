@@ -28,26 +28,30 @@
       </div>
       <div class="form-group" ng-if="withUsers || userid">
         <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
-
-        <form class="col-xs-8" target="users_registration_certificate_iframe">
-          <keygen style="display:none" name="pubkey"/>
-          <label ng-if="!userid && withUsersRegistration">
-            <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
-          </label>
-          <pre class="small" ng-if="userid">{{userid}}</pre>
-          <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
-        </form>
-
-        <div ng-if="false" class="col-xs-8">
-          <label ng-if="!userid && withUsersRegistration">
-            <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
-          </label>
-          <pre class="small" ng-if="userid">{{userid}}</pre>
-          <label ng-if="userid && loadedUserlogin">
-            <button class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</button>
-          </label>
+        <div ng-switch="withUsersMode">
+          <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
+            <div ng-if="!userid">
+              <keygen style="display:none" name="pubkey"/>
+              <label ng-if="!userid && withUsersRegistration">
+                <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+              </label>
+              <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+            </div>
+            <div ng-if="userid">
+              <pre class="small">{{userid}}</pre>
+              <span class-"help-block">{{_('Authenticated by certificate.')}}</span>
+            </div>
+          </form>
+          <div ng-switch-default class="col-xs-8">
+            <label ng-if="!userid && withUsersRegistration">
+              <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+            </label>
+            <pre class="small" ng-if="userid">{{userid}}</pre>
+            <label ng-if="userid && loadedUserlogin">
+              <button class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</button>
+            </label>
+          </div>
         </div>
-
         <div class="col-xs-8 col-xs-offset-4" ng-if="!userid && withUsersRegistration">
           <span class="help-block">{{_('Only register an ID if this is your private browser.')}}</span>
         </div>
