@@ -84,6 +84,22 @@ define([
                             idE=null;
                             sidE=null;
                         }, 0);
+                        var retries = 0;
+                        var authorize = function() {
+                            mediaStream.users.authorize({}, function(data) {
+                                console.info("Retrieved nonce - authenticating as user:", data.userid);
+                                mediaStream.api.requestAuthentication(data.userid, data.nonce);
+                                delete data.nonce;
+                            }, function(data, status) {
+                                retries++;
+                                if (retries <= 10) {
+                                    $timeout(authorize, 2000);
+                                } else {
+                                    console.error("Failed to authorize session", status, data);
+                                }
+                            });
+                        };
+                        $timeout(authorize, 1500);
                     } else {
                         // AJAX mode.
                         var data = {
