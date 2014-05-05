@@ -36,7 +36,7 @@
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
   bottom: 0;
-  color: rgba(0,0,0,0.3);
+  color: $buddylist-background;
   content: "\f100";
   cursor: pointer;
   display: none;
@@ -93,7 +93,7 @@
   .buddylistloading,
   .buddylistempty {
     bottom: 0;
-    color: rgba(0,0,0,.3);
+    color: $buddylist-background;
     display: none;
     font-size: 1.4em;
     height: 2em;
@@ -118,7 +118,7 @@
   position: relative;
   text-align: left;
   width: 100%;
-  @include tap-highlight-color(rgba(0, 0, 0, 0));
+  @include tap-highlight-color($tap-highlight);
 }
 
 .buddy:hover {
@@ -180,7 +180,7 @@
 }
 
 .buddy .buddyactions {
-  background: rgba(255,255,255,0.5);
+  background: $buddylist-action-background;
   bottom: 0px;
   line-height: 66px;
   position: absolute;
