@@ -4,3 +4,9 @@
     @content;
   }
 }
+
+@mixin breakpt-only-screen($pt) {
+  @media only screen and (max-width: $pt) {
+    @content;
+  }
+}
