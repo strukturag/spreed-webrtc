@@ -126,13 +126,13 @@
 }
 
 .buddy {
-  &.withSubline > .buddy1 {
+  &.withSubline > .display-name {
     top: 15px;
   }
   &.hovered .buddyactions {
     right: 0;
   }
-  > .buddyimage {
+  .buddyimage {
     background: $actioncolor1;
     border-radius: 2px;
     float: left;
@@ -142,11 +142,11 @@
     position: relative;
     text-align: center;
     width: 46px;
-    > i {
+    i {
       color: $actioncolor2;
       line-height: 46px;
     }
-    > img {
+    img {
       bottom: 0;
       display: block;
       left: 0;
@@ -155,7 +155,7 @@
       top: 0;
     }
   }
-  > .buddy1 {
+  .display-name {
     color: $componentfg1;
     font-weight: bold;
     font-size: 14px;
@@ -168,7 +168,7 @@
     top: 24px;
     white-space: nowrap;
   }
-  > .buddy2 {
+  .browser {
     color: $componentfg2;
     left: 65px;
     overflow: hidden;
