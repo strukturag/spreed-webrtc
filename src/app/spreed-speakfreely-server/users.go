@@ -362,6 +362,7 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 
 	switch request.Header.Get("Content-Type") {
 	case "application/json":
+		snr = &SessionNonceRequest{}
 		decoder := json.NewDecoder(request.Body)
 		err := decoder.Decode(snr)
 		if err != nil {
