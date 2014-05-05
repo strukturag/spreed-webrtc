@@ -45,6 +45,17 @@ $video-onlyaudio-background: #666;
 $video-onlyaudio: rgba(255,255,255,.3);
 $video-overlayactions: rgba(0,0,0,.9);
 
+$buddylist-background: rgba(0,0,0,.3);
+$buddylist-action-background: rgba(255,255,255,0.5);
+
+$chat-background: #e7e7e7;
+$chat-disabled: #aaa;
+$chat-badge: #84b819;
+$chat-ctrl: rgba(0,0,0,.3);
+$chat-timestamp: #aaa;
+
+$tap-highlight: rgba(0, 0, 0, 0);
+
 $breakpoint-small: 480px;
 $breakpoint-medium: 700px;
 $breakpoint-large: 1280px;
@@ -66,8 +77,7 @@ $minbarheight: 44px;
 // ** Fontawsome changed variables **
 // original at libs/fontawesome/_variables.scss
 // --------------------------
-
-
+$fa-css-prefix:       fa;
 
 // ** Bootstrap changed variables **
 // original at libs/bootstrap/_variables.scss
