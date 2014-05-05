@@ -112,9 +112,11 @@ enabled = false
 ;   The userid is provided as CommonName with a certificate provided with TLS
 ;   client authentication. When you use this with a front end proxy for TLS
 ;   termination, that proxy has to validate the certificate and inject certain
-;   headers into the proxy connection. Furthermode in certificate mode the
-;   server can act as a CA to sign incoming user requests with a private key
-;   when allowRegistration is true.
+;   headers into the proxy connection. In certificate mode the server can act as
+;   a signing CA to sign incoming user certificate requests with a private key
+;   when allowRegistration is true. While certificate mode offers the highest
+;   security it is currently considered experimental and the user experience
+;   varies between browsers and platforms.
 ;mode = sharedsecret
 ; The shared secred for HMAC validation in "sharedsecret" mode. Best use 32 or
 ; 64 bytes of random data.
