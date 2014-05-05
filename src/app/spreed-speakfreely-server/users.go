@@ -31,6 +31,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"github.com/longsleep/pkac"
@@ -128,9 +129,13 @@ func (uh *UsersHTTPHeaderHandler) Create(un *UserNonce, request *http.Request) (
 }
 
 type UsersCertificateHandler struct {
-	validFor    time.Duration
-	privateKey  crypto.PrivateKey
-	certificate *x509.Certificate
+	validFor            time.Duration
+	privateKey          crypto.PrivateKey
+	certificate         *x509.Certificate
+	verifiedHeader      string
+	verifiedHeaderValue string
+	certificateHeader   string
+	organization        []string
 }
 
 func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certificate, error) {
@@ -146,7 +151,8 @@ func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certif
 	return &x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			CommonName: commonName,
+			CommonName:   commonName,
+			Organization: uh.organization,
 		},
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
@@ -158,19 +164,52 @@ func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certif
 }
 
 func (uh *UsersCertificateHandler) Get(request *http.Request) (userid string, err error) {
-
-	if request.TLS == nil || len(request.TLS.VerifiedChains) == 0 {
-		return
+	if uh.verifiedHeader != "" && uh.verifiedHeaderValue != "" {
+		// Use incoming HTTP headers.
+		if request.Header.Get(uh.verifiedHeader) != uh.verifiedHeaderValue {
+			// Verify header does not match - ignore incoming userid.
+			return
+		}
+		if uh.certificateHeader != "" {
+			// Read userid from certificate in header if configured.
+			var cert tls.Certificate
+			var certDERBlock *pem.Block
+			// Whuahah this is an evil fix to get back valid PEM data from Nginx $ssl_client_cert values.
+			certString := strings.Replace(request.Header.Get(uh.certificateHeader), " ", "\n", -1)
+			certString = strings.Replace(certString, "BEGIN\n", "BEGIN ", 1)
+			certString = strings.Replace(certString, "END\n", "END ", 1)
+			certPEMBlock := []byte(certString)
+			for {
+				certDERBlock, certPEMBlock = pem.Decode(certPEMBlock)
+				if certDERBlock == nil {
+					break
+				}
+				if certDERBlock.Type == "CERTIFICATE" {
+					cert.Certificate = append(cert.Certificate, certDERBlock.Bytes)
+				}
+			}
+			if len(cert.Certificate) == 0 {
+				err = errors.New("failed to parse certificate PEM data")
+				return
+			}
+			var certificates []*x509.Certificate
+			if certificates, err = x509.ParseCertificates(cert.Certificate[0]); err == nil {
+				userid = certificates[0].Subject.CommonName
+			}
+		}
+	} else {
+		// Direct TLS termination and authentication.
+		if request.TLS == nil || len(request.TLS.VerifiedChains) == 0 {
+			return
+		}
+		chain := request.TLS.VerifiedChains[0]
+		if len(chain) == 0 {
+			return
+		}
+		cert := chain[0]
+		userid = cert.Subject.CommonName
 	}
-	chain := request.TLS.VerifiedChains[0]
-	if len(chain) == 0 {
-		return
-	}
-
-	cert := chain[0]
-	userid = cert.Subject.CommonName
 	log.Printf("Client certificate found for user: %s\n", userid)
-
 	return
 }
 
@@ -268,8 +307,12 @@ func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 		// Register handler Get at the hub.
 		users.hub.useridRetriever = func(request *http.Request) (userid string, err error) {
 			userid, err = handler.Get(request)
-			if userid != "" {
-				log.Printf("Users handler get success: %s\n", userid)
+			if err != nil {
+				log.Printf("Failed to get userid from handler: %s", err)
+			} else {
+				if userid != "" {
+					log.Printf("Users handler get success: %s\n", userid)
+				}
 			}
 			return
 		}
@@ -299,12 +342,24 @@ func (users *Users) createHandler(mode string, runtime phoenix.Runtime) (handler
 		handler = &UsersHTTPHeaderHandler{headerName: headerName}
 	case "certificate":
 		var err2 error
-		uh := &UsersCertificateHandler{}
+		verifiedHeader, _ := runtime.GetString("users", "certificate_verifiedHeader")
+		verifiedHeaderValue, _ := runtime.GetString("users", "certificate_verifiedHeaderValue")
+		certificateHeader, _ := runtime.GetString("users", "certificate_certificateHeader")
 		validForDays, _ := runtime.GetInt("users", "certificate_validForDays")
 		if validForDays == 0 {
 			validForDays = 365
 		}
-		uh.validFor = time.Duration(validForDays) * 24 * time.Hour
+		organization, _ := runtime.GetString("users", "certificate_organization")
+		if organization == "" {
+			organization = "My Spreed Server"
+		}
+		uh := &UsersCertificateHandler{
+			verifiedHeader:      verifiedHeader,
+			verifiedHeaderValue: verifiedHeaderValue,
+			certificateHeader:   certificateHeader,
+			validFor:            time.Duration(validForDays) * 24 * time.Hour,
+			organization:        []string{organization},
+		}
 		keyFn, _ := runtime.GetString("users", "certificate_key")
 		certificateFn, _ := runtime.GetString("users", "certificate_certificate")
 		if keyFn != "" && certificateFn != "" {

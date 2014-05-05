@@ -110,7 +110,7 @@ enabled = false
 ;   REST requests. In mode httpheader, allowRegistration should be false.
 ; certificate:
 ;   The userid is provided as CommonName with a certificate provided with TLS
-;   client authentication. When you use this with a front end proxy for TLS 
+;   client authentication. When you use this with a front end proxy for TLS
 ;   termination, that proxy has to validate the certificate and inject certain
 ;   headers into the proxy connection. Furthermode in certificate mode the
 ;   server can act as a CA to sign incoming user requests with a private key
@@ -125,31 +125,29 @@ enabled = false
 ; mode. Keep this commented if you do not want the server to sign certificate
 ; requests.
 ;certificate_key = userskey.key
-; Full path to PEM encoded certificate to use for user validation in 
+; Full path to PEM encoded certificate to use for user validation in
 ; "certificate" mode. When allowRegistration is true and certificate_key is also
 ; set then the server will act as a CA and sign incoming user registrations and
 ; return certificates to users as registration.
 ;certificate_certificate = usersca.crt
-; The HTTP header name where to find if the TLS client authentication was 
-; successfull. The value of this header is matched to 
-; certificate_verifiedHeaderValue and only if there is a match, the proxy 
+; The HTTP header name where to find if the TLS client authentication was
+; successfull. The value of this header is matched to
+; certificate_verifiedHeaderValue and only if there is a match, the proxy
 ; handled TLS client authentication is accepted as success. Make sure to secure
 ; these headers with your front end proxy (always set them). Do not use these
 ; settings when not using a front end proxy.
 ;certificate_verifiedHeader = x-verified
 ;certificate_verifiedHeaderValue = SUCCESS
-; The HTTP header name where to find the userid extracted by a proxy after 
-; TLS client authentication. If not set certificate_certificateHeader will be 
-; used to retrieve the userid from the CommonName field of the certificate.
-;certificate_useridHeader = x-userid
 ; The HTTP header name where to find the PEM encoded certificate authenticated
-; by a front end proxy. This configuration this is optional if you have set a
-; certificate_useridHeader value and the front end TLS proxy does inject the
-; userid into that header.
+; by a front end proxy. With Nginx the required value is in $ssl_client_cert.
 ;certificate_certificateHeader = x-certificate
 ; The valid duration of generated certificates created in certificate mode when
 ; allowRegistration is enabled.
 ;certificate_validForDays = 365
+; Organization to set into the created user certificates. Use a readable public
+; name to make the certificate easily recognizable as certificate for your
+; server so users can choose the correct certificate when prompted.
+;certificate_organization= = My Spreed Server
 ; If enabled the server can create new userids. Set allowRegistration to true to
 ; enable userid creation/registration. Users are created according the settings
 ; of the currently configured mode (see above).
