@@ -263,7 +263,7 @@ func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 	var err error
 
 	// Create handler based on mode.
-	if handler, err = users.createHandler(mode, runtime); err == nil {
+	if handler, err = users.createHandler(mode, runtime); handler != nil && err == nil {
 		users.handler = handler
 		// Register handler Get at the hub.
 		users.hub.useridRetriever = func(request *http.Request) (userid string, err error) {
