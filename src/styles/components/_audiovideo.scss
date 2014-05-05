@@ -129,7 +129,7 @@
     max-width: 100%;
   }
   .localVideo {
-    background: rgba(0,0,0,.4);
+    background: $video-background;
     display: block;
     max-height: 100%;
     opacity: 0;
@@ -156,7 +156,7 @@
 }
 
 .audiovideo .remoteVideo{
-  background: rgba(0,0,0,.4);
+  background: $video-background;
   display: inline-block;
   max-height: 100%;
   max-width: 100%;
@@ -169,11 +169,11 @@
     visibility: visible;
   }
   &.onlyaudio {
-    background: #666;
+    background: $video-onlyaudio-background;
     visibility: visible;
   }
   .onlyaudio {
-    color: rgba(255,255,255,.3);
+    color: $video-onlyaudio;
     display: none;
     font-size: 80px;
     left: 0;
@@ -226,7 +226,7 @@
 }
 
 .audiovideo .overlayActions {
-  background: rgba(0,0,0,.9);
+  background: $video-overlayactions;
   bottom: 0;
   height: 70px;
   left: 0;
@@ -249,7 +249,7 @@
 
 .remoteVideo {
   &.talking .peerLabel {
-    color: #9dd53a;
+    color: $audiovideolevel;
   }
   .peerLabel {
     transition: color 500ms ease-out;
@@ -272,7 +272,7 @@
 
 .miniContainer {
   &.talking video {
-    border: 1px solid #9dd53a;
+    border: 1px solid $audiovideolevel;
   }
   video {
     border: 1px solid transparent;
@@ -307,7 +307,7 @@
 
 .renderer-conferencekiosk {
   .remoteVideos {
-    background: rgba(0,0,0,.4);
+    background: $video-background;
     bottom: 2px;
     min-height: 108px;
     pointer-events: auto;
@@ -327,7 +327,7 @@
       font-size: 1.1em;
     }
     .peerLabel {
-      background: rgba(0,0,0,.9);
+      background: $video-overlayactions;
     }
   }
   .miniContainer {
