@@ -124,7 +124,7 @@ define([
                         error(function(data, status) {
                             if (error_cb) {
                                 error_cb(data, status)
-                            } 
+                            }
                         });
                     }
                 },
@@ -151,7 +151,7 @@ define([
                     error(function(data, status) {
                         if (error_cb) {
                             error_cb(data, status)
-                        } 
+                        }
                     });
                 },
                 store: function(data) {
@@ -159,12 +159,12 @@ define([
                     var store = _.clone(data);
                     store.v = 42; // No idea what number - so use 42.
                     var login = sjcl.encrypt(secureKey, JSON.stringify(store));
-                    localStorage.setItem("mediastream-login", login);
+                    localStorage.setItem("mediastream-login-"+context.Cfg.UsersMode, login);
                     return login;
                 },
                 load: function() {
                     // Check if we have something in store.
-                    var login = localStorage.getItem("mediastream-login");
+                    var login = localStorage.getItem("mediastream-login-"+context.Cfg.UsersMode);
                     if (login) {
                         try {
                             login = sjcl.decrypt(secureKey, login);
