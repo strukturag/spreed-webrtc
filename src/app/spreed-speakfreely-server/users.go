@@ -159,7 +159,7 @@ func (uh *UsersCertificateHandler) makeTemplate(commonName string) (*x509.Certif
 
 func (uh *UsersCertificateHandler) Get(request *http.Request) (userid string, err error) {
 
-	if len(request.TLS.VerifiedChains) == 0 {
+	if request.TLS == nil || len(request.TLS.VerifiedChains) == 0 {
 		return
 	}
 	chain := request.TLS.VerifiedChains[0]
