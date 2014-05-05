@@ -28,16 +28,16 @@
   width: 400px;
   z-index: 6;
   .audio-level {
-    background: #9dd53a; /* Old browsers */
-    background: gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
-    background: linear-gradient(to bottom, #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
+    background: $audiovideolevel; /* Old browsers */
+    background: gradient(linear, left top, left bottom, color-stop(0%,$audiovideolevel), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
+    background: linear-gradient(to bottom, $audiovideolevel 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
     border-radius: 0 0 2px 2px;
     height: 4px;
     left: 0;
     margin: 0 auto;
     position: absolute;
     right: 0;
-    transition: width 0.05s ease-in-out;
+    transition: width .05s ease-in-out;
     width: 0;
   }
 }
