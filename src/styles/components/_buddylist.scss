@@ -18,168 +18,187 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #buddylist {
-position: absolute;
-top: 0px;
-right: 0px;
-bottom: 0px;
-width:285px;
-z-index:50;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 285px;
+  z-index: 50;
 }
+
 #buddylist:before {
-position:absolute;
-width:25px;
-height:55px;
-line-height:55px;
-margin: auto;
-left: 0px;
-top:0px;
-bottom:0px;
-content:"\f100";
-font-family: 'FontAwesome';
-color:rgba(0,0,0,0.3);
-font-size:1.8em;
-text-align:center;
-cursor:pointer;
-pointer-events:auto;
-background:$componentbg;
-border-left:1px solid $bordercolor;
-border-top:1px solid $bordercolor;
-border-bottom:1px solid $bordercolor;
--webkit-border-top-left-radius: 6px;
--webkit-border-bottom-left-radius: 6px;
--moz-border-radius-topleft: 6px;
--moz-border-radius-bottomleft: 6px;
-border-top-left-radius: 6px;
-border-bottom-left-radius: 6px;
-display:none;
+  position: absolute;
+  width: 25px;
+  height: 55px;
+  line-height: 55px;
+  margin: auto;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  content: "\f100";
+  font-family: 'FontAwesome';
+  color: rgba(0,0,0,0.3);
+  font-size: 1.8em;
+  text-align: center;
+  cursor: pointer;
+  pointer-events: auto;
+  background: $componentbg;
+  border-left: 1px solid $bordercolor;
+  border-top: 1px solid $bordercolor;
+  border-bottom: 1px solid $bordercolor;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-radius-topleft: 6px;
+  -moz-border-radius-bottomleft: 6px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  display: none;
 }
+
 .withBuddylist #buddylist:before {
-content:"\f101";
+  content: "\f101";
 }
+
 .withBuddylistAutoHide #buddylist:before {
-display:block;
+  display: block;
 }
+
 .buddylist {
-position:absolute;
-left:25px;
-right:0px;
-top:0px;
-bottom:0px;
-overflow-x: hidden;
-overflow-y: auto;
-border-top: 1px solid $bordercolor;
-background: $componentbg;
-pointer-events:auto;
+  position: absolute;
+  left: 25px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-top: 1px solid $bordercolor;
+  background: $componentbg;
+  pointer-events: auto;
 }
-.buddylist .buddycontainer {
--webkit-user-select: none;
-position: relative;
-pointer-events:auto;
+
+.buddylist {
+  &.loading {
+    .buddylistloading {
+      display:block;
+    }
+  }
+  &.empty {
+    .buddylistempty {
+      display:block;
+    }
+  }
+  .buddycontainer {
+    position: relative;
+    pointer-events: auto;
+    user-select: none;
+  }
+  .buddylistloading,
+  .buddylistempty {
+    padding:.4em;
+    font-size: 1.4em;
+    text-align: center;
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+    height: 2em;
+    color: rgba(0,0,0,0.3);
+  }
 }
-.buddylist .buddylistloading, .buddylist .buddylistempty {
-padding:.4em;
-font-size:1.4em;
-text-align:center;
-display:none;
-position:absolute;
-left:0px;
-right:0px;
-bottom:0px;
-top:0px;
-margin:auto;
-height:2em;
-color:rgba(0,0,0,0.3);
-}
-.buddylist.loading .buddylistloading {
-display:block;
-}
-.buddylist.empty .buddylistempty {
-display:block;
-}
+
 .buddy {
-overflow: hidden;
-height: 66px;
-display: block;
-border-bottom: 1px solid $bordercolor;
-position: relative;
-cursor: pointer;
-text-align: left;
-width: 100%;
-font-size: 13px;
-background: $sidepanebg;
--webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  overflow: hidden;
+  height: 66px;
+  display: block;
+  border-bottom: 1px solid $bordercolor;
+  position: relative;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-size: 13px;
+  background: $sidepanebg;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
 .buddy:hover {
-background: $componentbg;
+  background: $componentbg;
 }
-.buddy > .buddyimage {
-float:left;
-height: 46px;
-width: 46px;
-overflow: hidden;
-margin: 10px;
-position: relative;
-border-radius: 2px;
-background: $actioncolor1;
-text-align:center;
+
+.buddy {
+  &.withSubline > .buddy1 {
+    top: 15px;
+  }
+  &.hovered .buddyactions {
+    right: 0;
+  }
+  > .buddyimage {
+    float:left;
+    height: 46px;
+    width: 46px;
+    overflow: hidden;
+    margin: 10px;
+    position: relative;
+    border-radius: 2px;
+    background: $actioncolor1;
+    text-align: center;
+    > i {
+      line-height: 46px;
+      color: $actioncolor2;
+    }
+    > img {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      display: block;
+    }
+  }
+  > .buddy1 {
+    position: absolute;
+    left: 65px;
+    white-space: nowrap;
+    overflow: hidden;
+    right: 4px;
+    height: 28px;
+    color: $componentfg1;
+    font-weight: bold;
+    font-size: 14px;
+    top: 24px;
+    text-overflow: ellipsis;
+  }
+  > .buddy2 {
+    position: absolute;
+    left: 65px;
+    white-space: nowrap;
+    overflow: hidden;
+    right: 0px;
+    color: $componentfg2;
+    top: 33px;
+  }
 }
-.buddy > .buddyimage > i {
-line-height:46px;
-color:$actioncolor2;
-}
-.buddy > .buddyimage > img {
-position: absolute;
-left:0px;
-right:0px;
-bottom:0px;
-top:0px;
-display:block;
-}
-.buddy > .buddy1 {
-position: absolute;
-left: 65px;
-white-space: nowrap;
-overflow: hidden;
-right: 4px;
-height: 28px;
-color: $componentfg1;
-font-weight:bold;
-font-size:14px;
-top: 24px;
-text-overflow: ellipsis;
-}
-.buddy.withSubline > .buddy1 {
-top: 15px;
-}
-.buddy > .buddy2 {
-position: absolute;
-left: 65px;
-white-space: nowrap;
-overflow: hidden;
-right: 0px;
-color: $componentfg2;
-top: 33px;
-}
+
 .buddy .buddyactions {
-position:absolute;
-right:-125px;
-top:0px;
-bottom:0px;
-background:rgba(255,255,255,0.5);
-z-index:5;
-line-height:66px;
-padding:0 10px;
-transition-property: right;
--webkit-transition-property: right;
-transition-duration: .3s;
--webkit-transition-duration: .3s;
-white-space:nowrap;
-text-align:right;
-}
-.buddy .buddyactions i {
-font-size:2em;
-}
-.buddy.hovered .buddyactions {
-right:0px;
+  position: absolute;
+  right: -125px;
+  top: 0px;
+  bottom: 0px;
+  background: rgba(255,255,255,0.5);
+  z-index: 5;
+  line-height: 66px;
+  padding: 0 10px;
+  transition-property: right;
+  -webkit-transition-property: right;
+  transition-duration: .3s;
+  -webkit-transition-duration: .3s;
+  white-space: nowrap;
+  text-align: right;
+  i {
+    font-size: 2em;
+  }
 }
