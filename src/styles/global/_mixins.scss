@@ -10,3 +10,8 @@
     @content;
   }
 }
+
+// not handled by autoprefixer
+@mixin tap-highlight-color($color) {
+  -webkit-tap-highlight-color: $color;
+}

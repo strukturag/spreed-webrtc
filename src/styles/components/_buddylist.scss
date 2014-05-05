@@ -20,41 +20,37 @@
  */
 
 #buddylist {
-  position: absolute;
-  top: 0;
-  right: 0;
   bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
   width: 285px;
   z-index: 50;
 }
 
 #buddylist:before {
-  position: absolute;
-  width: 25px;
-  height: 55px;
-  line-height: 55px;
-  margin: auto;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  content: "\f100";
-  font-family: 'FontAwesome';
-  color: rgba(0,0,0,0.3);
-  font-size: 1.8em;
-  text-align: center;
-  cursor: pointer;
-  pointer-events: auto;
   background: $componentbg;
   border-left: 1px solid $bordercolor;
   border-top: 1px solid $bordercolor;
   border-bottom: 1px solid $bordercolor;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-radius-topleft: 6px;
-  -moz-border-radius-bottomleft: 6px;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
+  bottom: 0;
+  color: rgba(0,0,0,0.3);
+  content: "\f100";
+  cursor: pointer;
   display: none;
+  font-family: FontAwesome;
+  font-size: 1.8em;
+  height: 55px;
+  left: 0;
+  line-height: 55px;
+  margin: auto;
+  pointer-events: auto;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 25px;
 }
 
 .withBuddylist #buddylist:before {
@@ -66,16 +62,16 @@
 }
 
 .buddylist {
-  position: absolute;
-  left: 25px;
-  right: 0;
-  top: 0;
+  background: $componentbg;
+  border-top: 1px solid $bordercolor;
   bottom: 0;
+  left: 25px;
   overflow-x: hidden;
   overflow-y: auto;
-  border-top: 1px solid $bordercolor;
-  background: $componentbg;
   pointer-events: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .buddylist {
@@ -90,39 +86,39 @@
     }
   }
   .buddycontainer {
-    position: relative;
     pointer-events: auto;
+    position: relative;
     user-select: none;
   }
   .buddylistloading,
   .buddylistempty {
-    padding:.4em;
-    font-size: 1.4em;
-    text-align: center;
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
     bottom: 0;
-    top: 0;
-    margin: auto;
+    color: rgba(0,0,0,.3);
+    display: none;
+    font-size: 1.4em;
     height: 2em;
-    color: rgba(0,0,0,0.3);
+    left: 0;
+    margin: auto;
+    padding:.4em;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
   }
 }
 
 .buddy {
-  overflow: hidden;
-  height: 66px;
-  display: block;
+  background: $sidepanebg;
   border-bottom: 1px solid $bordercolor;
-  position: relative;
   cursor: pointer;
+  display: block;
+  font-size: 13px;
+  height: 66px;
+  overflow: hidden;
+  position: relative;
   text-align: left;
   width: 100%;
-  font-size: 13px;
-  background: $sidepanebg;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  @include tap-highlight-color(rgba(0, 0, 0, 0));
 }
 
 .buddy:hover {
@@ -137,67 +133,65 @@
     right: 0;
   }
   > .buddyimage {
-    float:left;
-    height: 46px;
-    width: 46px;
-    overflow: hidden;
-    margin: 10px;
-    position: relative;
-    border-radius: 2px;
     background: $actioncolor1;
+    border-radius: 2px;
+    float: left;
+    height: 46px;
+    margin: 10px;
+    overflow: hidden;
+    position: relative;
     text-align: center;
+    width: 46px;
     > i {
-      line-height: 46px;
       color: $actioncolor2;
+      line-height: 46px;
     }
     > img {
-      position: absolute;
-      left: 0;
-      right: 0;
       bottom: 0;
-      top: 0;
       display: block;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
     }
   }
   > .buddy1 {
-    position: absolute;
-    left: 65px;
-    white-space: nowrap;
-    overflow: hidden;
-    right: 4px;
-    height: 28px;
     color: $componentfg1;
     font-weight: bold;
     font-size: 14px;
-    top: 24px;
+    height: 28px;
+    left: 65px;
+    position: absolute;
+    overflow: hidden;
+    right: 4px;
     text-overflow: ellipsis;
+    top: 24px;
+    white-space: nowrap;
   }
   > .buddy2 {
-    position: absolute;
-    left: 65px;
-    white-space: nowrap;
-    overflow: hidden;
-    right: 0px;
     color: $componentfg2;
+    left: 65px;
+    overflow: hidden;
+    position: absolute;
+    right: 0px;
     top: 33px;
+    white-space: nowrap;
   }
 }
 
 .buddy .buddyactions {
+  background: rgba(255,255,255,0.5);
+  bottom: 0px;
+  line-height: 66px;
   position: absolute;
   right: -125px;
-  top: 0px;
-  bottom: 0px;
-  background: rgba(255,255,255,0.5);
-  z-index: 5;
-  line-height: 66px;
   padding: 0 10px;
-  transition-property: right;
-  -webkit-transition-property: right;
-  transition-duration: .3s;
-  -webkit-transition-duration: .3s;
-  white-space: nowrap;
   text-align: right;
+  top: 0px;
+  transition-property: right;
+  transition-duration: .3s;
+  white-space: nowrap;
+  z-index: 5;
   i {
     font-size: 2em;
   }
