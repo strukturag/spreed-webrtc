@@ -86,16 +86,18 @@ define([
                         }, 0);
                         var retries = 0;
                         var authorize = function() {
-                            mediaStream.users.authorize({}, function(data) {
-                                console.info("Retrieved nonce - authenticating as user:", data.userid);
-                                mediaStream.api.requestAuthentication(data.userid, data.nonce);
-                                delete data.nonce;
-                            }, function(data, status) {
+                            mediaStream.users.authorize({
+                                count: retries
+                            }, success_cb, function(data, status) {
+                                // Error handler retry.
                                 retries++;
                                 if (retries <= 10) {
                                     $timeout(authorize, 2000);
                                 } else {
                                     console.error("Failed to authorize session", status, data);
+                                    if (error_cb) {
+                                        error_cb(data, status)
+                                    }
                                 }
                             });
                         };
@@ -184,7 +186,7 @@ define([
                     return null;
                 },
                 forget: function() {
-                    localStorage.removeItem("mediastream-login");
+                    localStorage.removeItem("mediastream-login-"+context.Cfg.UsersMode);
                 }
             },
             initialize: function($rootScope, translation) {
