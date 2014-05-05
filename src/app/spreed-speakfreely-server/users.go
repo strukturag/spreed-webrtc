@@ -274,6 +274,8 @@ func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 			return
 		}
 		log.Printf("Enabled users handler '%s'\n", mode)
+	} else if err != nil {
+		log.Printf("Failed to enable handler '%s': %s\n", mode, err)
 	}
 
 	return users
@@ -310,14 +312,16 @@ func (users *Users) createHandler(mode string, runtime phoenix.Runtime) (handler
 			if uh.privateKey, err2 = loadX509PrivateKey(keyFn); err2 == nil {
 				log.Printf("Users certificate private key loaded from %s\n", keyFn)
 			} else {
-				log.Printf("Failed to load certificat private key: %s\n", err2)
+				log.Printf("Failed to load certificate private key: %s\n", err2)
 			}
 		}
 		if certificateFn != "" {
 			// Load Certificate from file.
-			if certificate, err := loadX509Certificate(certificateFn); err == nil {
+			var certificate tls.Certificate
+			if certificate, err = loadX509Certificate(certificateFn); err == nil {
 				// Parse first certificate in file.
-				if certificates, err := x509.ParseCertificates(certificate.Certificate[0]); err == nil {
+				var certificates []*x509.Certificate
+				if certificates, err = x509.ParseCertificates(certificate.Certificate[0]); err == nil {
 					// Use first parsed certificate as CA.
 					uh.certificate = certificates[0]
 					log.Printf("Users certificate loaded from %s\n", certificateFn)
