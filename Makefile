@@ -57,6 +57,10 @@ gopath:
 get:
 		GOPATH=$(GOPATH) go get $(PKG)
 
+getupdate:
+		rm -rf vendor/*
+		GOPATH=$(GOPATH) go get $(PKG)
+
 binary:
 		GOPATH=$(GOPATH) go build -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
 
@@ -153,4 +157,4 @@ tarball: distclean release install
 		echo -n $(VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME).tar.gz -C $(DIST) $(PACKAGE_NAME)
 
-.PHONY: clean distclean pristine get build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: clean distclean pristine get getupdate build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets

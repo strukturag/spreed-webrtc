@@ -20,7 +20,7 @@
  */
 define(['underscore', 'text!partials/settings.html'], function(_, template) {
 
-	return ["$compile", function($compile) {
+	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
         var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation) {
 
@@ -37,6 +37,10 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                     name: translation._("Use browser language")
                 }
             ];
+            $scope.withUsers = mediaStream.config.UsersEnabled;
+            $scope.withUsersRegistration = mediaStream.config.UsersAllowRegistration;
+            $scope.withUsersMode = mediaStream.config.UsersMode;
+
             _.each(availableLanguages, function(name, code) {
                 $scope.availableLanguages.push({
                     code: code,
@@ -46,7 +50,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
 
             var localStream = null;
 
-            $scope.saveSettings = function(user) {
+            $scope.saveSettings = function() {
+                var user = $scope.user;
                 $scope.update(user);
                 $scope.layout.settings = false;
                 if ($scope.rememberSettings) {
@@ -120,9 +125,45 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                         $scope.showTakePicture = false;
                         safeApply($scope);
                     }
-
                 }
             };
+
+            $scope.registerUserid = function(btn) {
+
+                var successHandler = function(data) {
+                    console.info("Created new userid:", data.userid);
+                    // If the server provided us a nonce, we can do everthing on our own.
+                    mediaStream.users.store(data);
+                    $scope.loadedUserlogin = true;
+                    safeApply($scope);
+                    // Directly authenticate ourselves with the provided nonce.
+                    mediaStream.api.requestAuthentication(data.userid, data.nonce);
+                    delete data.nonce;
+                };
+
+                console.log("No userid - creating one ...");
+                mediaStream.users.register(btn.form, function(data) {
+                    if (data.nonce) {
+                        successHandler(data);
+                    } else {
+                        // No nonce received. So this means something we cannot do on our own.
+                        // Make are GET request and retrieve nonce that way and let the
+                        // browser/server do the rest.
+                        mediaStream.users.authorize(data, successHandler, function(data, status) {
+                            console.error("Failed to get nonce after create", status, data);
+                        });
+                    }
+                }, function(data, status) {
+                    console.error("Failed to create userid", status, data);
+                });
+
+            };
+
+            $scope.forgetUserid = function() {
+                mediaStream.users.forget();
+                mediaStream.connector.forgetAndReconnect();
+            };
+
             $scope.checkDefaultMediaSources = function() {
                 if ($scope.master.settings.microphoneId && !$scope.mediaSources.hasAudioId($scope.master.settings.microphoneId)) {
                     $scope.master.settings.microphoneId=null;
@@ -144,7 +185,7 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
             $scope.mediaSources.refresh(function() {
                 safeApply($scope, $scope.checkDefaultMediaSources);
             });
-            $scope.$watch("layout.settings", function(showSettings) {
+            $scope.$watch("layout.settings", function(showSettings, oldValue) {
                 if (showSettings) {
                     $scope.desktopNotify.refresh();
                     $scope.mediaSources.refresh(function(audio, video) {
@@ -163,6 +204,8 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                             }
                         });
                     });
+                } else if (!showSettings && oldValue) {
+                    $scope.saveSettings();
                 }
             });
         }];

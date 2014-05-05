@@ -48,6 +48,8 @@ type DataAnswer struct {
 type DataSelf struct {
 	Type    string
 	Id      string
+	Sid     string
+	Userid  string
 	Token   string
 	Version string
 	Turn    *DataTurn
@@ -61,13 +63,14 @@ type DataTurn struct {
 	Urls     []string `json:"urls"`
 }
 
-type DataUser struct {
+type DataSession struct {
 	Type    string
 	Id      string
-	Ua      string
-	Token   string
-	Version string
-	Rev     uint64
+	Userid  string `json:"Userid,omitempty"`
+	Ua      string `json:"Ua,omitempty"`
+	Token   string `json:"Token,omitempty"`
+	Version string `json:"Version,omitempty"`
+	Rev     uint64 `json:"Rev,omitempty"`
 	Status  interface{}
 }
 
@@ -102,16 +105,17 @@ type DataChatMessageStatus struct {
 }
 
 type DataIncoming struct {
-	Type       string
-	Hello      *DataHello
-	Offer      *DataOffer
-	Candidate  *DataCandidate
-	Answer     *DataAnswer
-	Bye        *DataBye
-	Status     *DataStatus
-	Chat       *DataChat
-	Conference *DataConference
-	Alive      *DataAlive
+	Type           string
+	Hello          *DataHello
+	Offer          *DataOffer
+	Candidate      *DataCandidate
+	Answer         *DataAnswer
+	Bye            *DataBye
+	Status         *DataStatus
+	Chat           *DataChat
+	Conference     *DataConference
+	Alive          *DataAlive
+	Authentication *DataAuthentication
 }
 
 type DataOutgoing struct {
@@ -120,9 +124,9 @@ type DataOutgoing struct {
 	To   string
 }
 
-type DataUsers struct {
+type DataSessions struct {
 	Type  string
-	Users []*DataUser
+	Users []*DataSession
 	Index uint64
 	Batch uint64
 }
@@ -136,4 +140,9 @@ type DataConference struct {
 type DataAlive struct {
 	Type  string
 	Alive uint64
+}
+
+type DataAuthentication struct {
+	Type           string
+	Authentication *SessionToken
 }

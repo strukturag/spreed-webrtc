@@ -28,9 +28,11 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"log"
+	"net/http"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -51,21 +53,21 @@ type MessageRequest struct {
 }
 
 type HubStat struct {
-	Rooms                 int                  `json:"rooms"`
-	Connections           int                  `json:"connections"`
-	Users                 int                  `json:"users"`
-	Count                 uint64               `json:"count"`
-	BroadcastChatMessages uint64               `json:"broadcastchatmessages"`
-	UnicastChatMessages   uint64               `json:"unicastchatmessages"`
-	IdsInRoom             map[string][]string  `json:"idsinroom,omitempty"`
-	UsersById             map[string]*DataUser `json:"usersbyid,omitempty"`
-	ConnectionsByIdx      map[string]string    `json:"connectionsbyidx,omitempty"`
+	Rooms                 int                     `json:"rooms"`
+	Connections           int                     `json:"connections"`
+	Sessions              int                     `json:"sessions"`
+	Count                 uint64                  `json:"count"`
+	BroadcastChatMessages uint64                  `json:"broadcastchatmessages"`
+	UnicastChatMessages   uint64                  `json:"unicastchatmessages"`
+	IdsInRoom             map[string][]string     `json:"idsinroom,omitempty"`
+	SessionsById          map[string]*DataSession `json:"sessionsbyid,omitempty"`
+	ConnectionsByIdx      map[string]string       `json:"connectionsbyidx,omitempty"`
 }
 
 type Hub struct {
 	server                *Server
 	connectionTable       map[string]*Connection
-	userTable             map[string]*User
+	sessionTable          map[string]*Session
 	roomTable             map[string]*RoomWorker
 	version               string
 	config                *Config
@@ -78,23 +80,32 @@ type Hub struct {
 	broadcastChatMessages uint64
 	unicastChatMessages   uint64
 	buddyImages           ImageCache
+	realm                 string
+	tokenName             string
+	useridRetriever       func(*http.Request) (string, error)
 }
 
-func NewHub(version string, config *Config, sessionSecret, turnSecret string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, turnSecret, realm string) *Hub {
 
 	h := &Hub{
 		connectionTable: make(map[string]*Connection),
-		userTable:       make(map[string]*User),
+		sessionTable:    make(map[string]*Session),
 		roomTable:       make(map[string]*RoomWorker),
 		version:         version,
 		config:          config,
 		sessionSecret:   []byte(sessionSecret),
 		turnSecret:      []byte(turnSecret),
+		realm:           realm,
+	}
+
+	if len(h.sessionSecret) < 32 {
+		log.Printf("Weak sessionSecret (only %d bytes). It is recommended to use a key with 32 or 64 bytes.\n", len(h.sessionSecret))
 	}
 
 	h.tickets = securecookie.New(h.sessionSecret, nil)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
+	h.tokenName = fmt.Sprintf("token@%s", h.realm)
 	return h
 
 }
@@ -105,7 +116,7 @@ func (h *Hub) Stat(details bool) *HubStat {
 	stat := &HubStat{
 		Rooms:       len(h.roomTable),
 		Connections: len(h.connectionTable),
-		Users:       len(h.userTable),
+		Sessions:    len(h.sessionTable),
 		Count:       h.count,
 		BroadcastChatMessages: atomic.LoadUint64(&h.broadcastChatMessages),
 		UnicastChatMessages:   atomic.LoadUint64(&h.unicastChatMessages),
@@ -113,18 +124,18 @@ func (h *Hub) Stat(details bool) *HubStat {
 	if details {
 		rooms := make(map[string][]string)
 		for roomid, room := range h.roomTable {
-			users := make([]string, 0, len(room.connections))
+			sessions := make([]string, 0, len(room.connections))
 			for id := range room.connections {
-				users = append(users, id)
+				sessions = append(sessions, id)
 			}
-			rooms[roomid] = users
+			rooms[roomid] = sessions
 		}
 		stat.IdsInRoom = rooms
-		users := make(map[string]*DataUser)
-		for userid, user := range h.userTable {
-			users[userid] = user.Data()
+		sessions := make(map[string]*DataSession)
+		for sessionid, session := range h.sessionTable {
+			sessions[sessionid] = session.Data()
 		}
-		stat.UsersById = users
+		stat.SessionsById = sessions
 		connections := make(map[string]string)
 		for id, connection := range h.connectionTable {
 			connections[fmt.Sprintf("%d", connection.Idx)] = id
@@ -155,21 +166,66 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
-func (h *Hub) EncodeTicket(key, value string) (string, error) {
+func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
-	if value == "" {
-		// Create new id.
-		value = fmt.Sprintf("%s", securecookie.GenerateRandomKey(16))
+	// NOTE(longsleep): Is it required to make this a secure cookie,
+	// random data in itself should be sufficent if we do not validate
+	// session ids somewhere?
+
+	var session *Session
+	var userid string
+	usersEnabled := h.config.UsersEnabled
+
+	if usersEnabled && h.useridRetriever != nil {
+		userid, _ = h.useridRetriever(request)
 	}
-	return h.tickets.Encode(key, value)
+
+	if st == nil {
+		sid := NewRandomString(32)
+		id, _ := h.tickets.Encode("id", sid)
+		session = NewSession(id, sid, userid)
+		log.Println("Created new session id", len(id), id, sid, userid)
+	} else {
+		if userid == "" {
+			userid = st.Userid
+		}
+		if !usersEnabled {
+			userid = ""
+		}
+		session = NewSession(st.Id, st.Sid, userid)
+	}
+
+	return session
 
 }
 
-func (h *Hub) DecodeTicket(key, value string) (string, error) {
+func (h *Hub) ValidateSession(id, sid string) bool {
 
-	result := ""
-	err := h.tickets.Decode(key, value, &result)
-	return result, err
+	var decoded string
+	err := h.tickets.Decode("id", id, &decoded)
+	if err != nil {
+		log.Println("Session validation error", err, id, sid)
+		return false
+	}
+	if decoded != sid {
+		log.Println("Session validation failed", id, sid)
+		return false
+	}
+	return true
+
+}
+
+func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
+
+	return h.tickets.Encode(h.tokenName, st)
+
+}
+
+func (h *Hub) DecodeSessionToken(token string) (*SessionToken, error) {
+
+	st := &SessionToken{}
+	err := h.tickets.Decode(h.tokenName, token, st)
+	return st, err
 
 }
 
@@ -180,8 +236,8 @@ func (h *Hub) GetRoom(id string) *RoomWorker {
 	if !ok {
 		h.mutex.RUnlock()
 		h.mutex.Lock()
-		// need to re-check, another thread might have created the room
-		// while we waited for the lock
+		// Need to re-check, another thread might have created the room
+		// while we waited for the lock.
 		room, ok = h.roomTable[id]
 		if !ok {
 			room = NewRoomWorker(h, id)
@@ -244,33 +300,32 @@ func (h *Hub) isDefaultRoomid(id string) bool {
 	return id == ""
 }
 
-func (h *Hub) registerHandler(c *Connection) {
+func (h *Hub) registerHandler(c *Connection, s *Session) {
+
+	// Apply session to connection.
+	c.Id = s.Id
+	c.Session = s
 
 	h.mutex.Lock()
 
-	// Create new user instance.
+	// Set flags.
 	h.count++
 	c.Idx = h.count
-	u := &User{Id: c.Id}
-	h.userTable[c.Id] = u
-	c.User = u
 	c.IsRegistered = true
 
 	// Register connection or replace existing one.
 	if ec, ok := h.connectionTable[c.Id]; ok {
-		delete(h.connectionTable, ec.Id)
 		ec.IsRegistered = false
 		ec.close()
-		h.connectionTable[c.Id] = c
-		h.mutex.Unlock()
-		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.RemoteAddr, c.Id)
-	} else {
-		h.connectionTable[c.Id] = c
-		//fmt.Println("registered", c.Id)
-		h.mutex.Unlock()
-		//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
-		h.server.OnRegister(c)
+		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.Id)
 	}
+
+	h.connectionTable[c.Id] = c
+	h.sessionTable[c.Id] = s
+	//fmt.Println("registered", c.Id)
+	h.mutex.Unlock()
+	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.Id)
+	h.server.OnRegister(c)
 
 }
 
@@ -281,16 +336,16 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		h.mutex.Unlock()
 		return
 	}
-	user := c.User
-	c.close()
+	session := c.Session
 	delete(h.connectionTable, c.Id)
-	delete(h.userTable, c.Id)
+	delete(h.sessionTable, c.Id)
 	h.mutex.Unlock()
-	if user != nil {
-		h.buddyImages.DeleteUserImage(user.Id)
+	if session != nil {
+		h.buddyImages.Delete(session.Id)
 	}
 	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
+	c.close()
 
 }
 
@@ -322,21 +377,21 @@ func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
 
 }
 
-func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
+func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 
 	//fmt.Println("Userupdate", u)
 	h.mutex.RLock()
-	user, ok := h.userTable[u.Id]
+	session, ok := h.sessionTable[s.Id]
 	h.mutex.RUnlock()
 	var rev uint64
 	if ok {
-		rev = user.Update(u)
-		if u.Status != nil {
-			status, ok := u.Status.(map[string]interface{})
+		rev = session.Update(s)
+		if s.Status != nil {
+			status, ok := s.Status.(map[string]interface{})
 			if ok && status["buddyPicture"] != nil {
 				pic := status["buddyPicture"].(string)
 				if strings.HasPrefix(pic, "data:") {
-					imageId := h.buddyImages.Update(u.Id, pic[5:])
+					imageId := h.buddyImages.Update(s.Id, pic[5:])
 					if imageId != "" {
 						status["buddyPicture"] = "img:" + imageId
 					}
@@ -344,8 +399,27 @@ func (h *Hub) userupdateHandler(u *UserUpdate) uint64 {
 			}
 		}
 	} else {
-		log.Printf("Update data for unknown user %s\n", u.Id)
+		log.Printf("Update data for unknown user %s\n", s.Id)
 	}
 	return rev
+
+}
+
+func (h *Hub) sessiontokenHandler(st *SessionToken) (string, error) {
+
+	h.mutex.RLock()
+	c, ok := h.connectionTable[st.Id]
+	h.mutex.RUnlock()
+
+	if !ok {
+		return "", errors.New("no such connection")
+	}
+
+	nonce, err := c.Session.Authorize(h.realm, st)
+	if err != nil {
+		return "", err
+	}
+
+	return nonce, nil
 
 }

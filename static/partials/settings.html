@@ -1,13 +1,13 @@
 <div class="settings nicescroll">
   <div class="version">{{version}}</div>
-  <form class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
+  <div class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
     <fieldset>
 
       <legend>{{_('Settings')}}</legend>
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
         <div class="col-xs-8">
-          <label style="padding-top:5px">
+          <label>
             <div style="margin-bottom:5px">
               <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
             </div>
@@ -24,6 +24,36 @@
         <div class="col-xs-8">
           <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
           <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
+        </div>
+      </div>
+      <div class="form-group" ng-if="withUsers || userid">
+        <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
+        <div ng-switch="withUsersMode">
+          <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
+            <div ng-if="!userid">
+              <keygen style="display:none" name="pubkey"/>
+              <label ng-if="!userid && withUsersRegistration">
+                <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+              </label>
+              <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+            </div>
+            <div ng-if="userid">
+              <pre class="small">{{userid}}</pre>
+              <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
+            </div>
+          </form>
+          <div ng-switch-default class="col-xs-8">
+            <label ng-if="!userid && withUsersRegistration">
+              <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+            </label>
+            <pre class="small" ng-if="userid">{{userid}}</pre>
+            <label ng-if="userid && loadedUserlogin">
+              <button class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</button>
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-8 col-xs-offset-4" ng-if="!userid && withUsersRegistration">
+          <span class="help-block">{{_('Only register an ID if this is your private browser.')}}</span>
         </div>
       </div>
       <hr/>
@@ -131,12 +161,13 @@
           <div class="checkbox" style="padding-bottom:1em">
           	<label>
             	<input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
-        	</label>
+        	  </label>
+            <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings && loadedUserlogin"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
           </div>
-          <a ng-click="saveSettings(user)" class="btn btn-primary">{{_('Apply')}}</a> <a ng-click="cancelSettings()" class="btn btn-default">{{_('Cancel')}}</a>
+          <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
         </div>
       </div>
 
     </fieldset>
-  </form>
+  </div>
 </div>
