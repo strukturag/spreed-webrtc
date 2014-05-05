@@ -23,6 +23,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 )
 
 type Config struct {
@@ -62,4 +63,8 @@ func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURI
 		globalRoomid:           globalRoomid,
 		defaultRoomEnabled:     defaultRoomEnabled,
 	}
+}
+
+func (config *Config) Get(request *http.Request) (int, interface{}, http.Header) {
+	return 200, config, http.Header{"Content-Type": {"application/json; charset=utf-8"}}
 }

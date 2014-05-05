@@ -376,6 +376,7 @@ func runner(runtime phoenix.Runtime) error {
 	api := sleepy.NewAPI()
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
+	api.AddResource(config, "/config")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if usersEnabled {
 		// Create Users handler.
