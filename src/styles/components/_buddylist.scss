@@ -126,7 +126,7 @@
 }
 
 .buddy {
-  &.withSubline > .display-name {
+  &.withSubline .display-name {
     top: 15px;
   }
   &.hovered .buddyactions {
@@ -142,7 +142,7 @@
     position: relative;
     text-align: center;
     width: 46px;
-    i {
+    .#{$fa-css-prefix} {
       color: $actioncolor2;
       line-height: 46px;
     }
@@ -192,7 +192,7 @@
   transition-duration: .3s;
   white-space: nowrap;
   z-index: 5;
-  i {
+  .#{$fa-css-prefix} {
     font-size: 2em;
   }
 }
