@@ -91,12 +91,14 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 			error = true
 			log.Println("Session patch failed - users validation failed.", err)
 		}
-	}
-
-	// Make sure that we have a user.
-	if userid == "" {
+		// Make sure that we have a user.
+		if userid == "" {
+			error = true
+			log.Println("Session patch failed - userid empty.")
+		}
+	} else {
+		log.Println("Session patch failed - no handler.")
 		error = true
-		log.Println("Session patch failed - userid empty.")
 	}
 
 	var nonce string
