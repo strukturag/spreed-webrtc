@@ -327,7 +327,7 @@ content: '\f00c';
 color:#ccc;
 }
 
-.chat .output .message .buddyimage {
+.chat .output .message .avatar {
 position: absolute;
 top: 4px;
 width:46px;
@@ -338,15 +338,15 @@ border-radius: 2px;
 background: $actioncolor1;
 text-align:center;
 }
-.chat .output .message.is_self .buddyimage {
+.chat .output .message.is_self .avatar {
 right: 4px;
 left: auto;
 }
-.chat .output .message .buddyimage > i {
+.chat .output .message .avatar > i {
 line-height:46px;
 color:$actioncolor2;
 }
-.chat .output .message .buddyimage > img {
+.chat .output .message .avatar > img {
 position: absolute;
 left:0px;
 right:0px;
