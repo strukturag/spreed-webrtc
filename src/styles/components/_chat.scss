@@ -30,20 +30,20 @@
   z-index: 45;
 }
 
-.withChat #chat .chatcontainer {
-  left:0px;
-}
-
-.withChat .chatpane.flip {
-  transform: rotateY(360deg);
-}
-
-.withChat.withChatMaximized #chat {
-  left: 0;
-  width: auto;
-    .chatcontainer {
-      width: auto;
-    }
+.withChat {
+  #chat .chatcontainer {
+    left:0px;
+  }
+  .chatpane.flip {
+    transform: rotateY(360deg);
+  }
+  &.withChatMaximized #chat {
+    left: 0;
+    width: auto;
+      .chatcontainer {
+        width: auto;
+      }
+  }
 }
 
 .chatcontainer {
@@ -68,19 +68,19 @@
 }
 
 .chatlist {
-  position: absolute;
-  top: 0;
-  left: 100%;
-  bottom: 0;
-  width: 100%;
   background: $chat-background;
+  bottom: 0;
+  left: 100%;
+  position: absolute;
   transition: left 200ms ease-in-out;
+  top: 0;
+  width: 100%;
   .list-group {
-    overflow-x: hidden;
-    overflow-y: auto;
     margin-top: -1px;
     margin-bottom: -1px;
     max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .list-group-item {
     border-right: none;
@@ -192,8 +192,8 @@
     width: 36px;
   }
   .chatheadertitle {
-    padding-left: 28px;
     display: inline;
+    padding-left: 28px;
   }
   .ctrl {
     color: $chat-ctrl;
@@ -243,22 +243,23 @@
     padding: 6px 0;
     text-align: center;
     &.p2p {
-      padding: 6px 0;
       font-weight: bold;
+      padding: 6px 0;
     }
   }
 }
 
-.chat.with_pictures .output .message.is_self .timestamp {
-  right: 58px;
+.chat.with_pictures .message {
+  &.is_self {
+    padding-right:54px;
+    .timestamp {
+      right: 58px;
+    }
+  }
+  &.is_remote {
+    padding-left: 58px;
+  }
 }
-.chat.with_pictures .output .message.is_remote {
-  padding-left: 58px;
-}
-.chat.with_pictures .output .message.is_self {
-  padding-right:54px;
-}
-
 
 .chat .message {
   background: #fff;
@@ -266,11 +267,9 @@
   border-radius: 6px;
   clear: both;
   display: block;
-  margin-bottom: 2px;
+  margin: 0 4px 2px 20px;
   padding: 8px;
   position: relative;
-  margin-left: 20px;
-  margin-right: 4px;
   word-wrap: break-word;
   ul {
     list-style-type: none;
@@ -287,8 +286,8 @@
       content: '\f075';
       font-family: FontAwesome;
       left: 0;
-      text-align: center;
       position: absolute;
+      text-align: center;
       width: 12px;
     }
   }
@@ -300,11 +299,19 @@
     text-align: right;
     top: 8px;
   }
+  strong {
+    display: block;
+    padding-bottom: 2px;
+    margin-right: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .chat .message {
   &.is_self li:before {
-    color:#ccc;
+    color: #ccc;
     transform: scale(-1, 1);
   }
   li {
@@ -317,49 +324,49 @@
     }
     &.sent:before {
       content: '\f003';
-      color:#5882FA;
+      color: #5882FA;
     }
     &.delivered:before {
       content: '\f019';
-      color:#5882FA;
+      color: #5882FA;
     }
     &.received:before {
       content: '\f06e';
-      color:#84b819;
+      color: #84b819;
     }
     &.read:before {
       content: '\f00c';
-      color:#ccc;
+      color: #ccc;
     }
   }
 }
 
 .chat .message {
   &.is_self .avatar {
-    right: 4px;
     left: auto;
+    right: 4px;
   }
   .avatar {
-    position: absolute;
-    top: 4px;
-    width:46px;
-    height:46px;
+    background: $actioncolor1;
+    border-radius: 2px;
+    height: 46px;
     left: 4px;
     overflow: hidden;
-    border-radius: 2px;
-    background: $actioncolor1;
-    text-align:center;
+    position: absolute;
+    text-align: center;
+    top: 4px;
+    width: 46px;
     .#{$fa-css-prefix} {
-      line-height:46px;
-      color:$actioncolor2;
+      color: $actioncolor2;
+      line-height: 46px;
     }
     img {
+      display: block;
+      bottom: 0;
+      left: 0;
+      right: 0;
       position: absolute;
-      left:0px;
-      right:0px;
-      bottom:0px;
-      top:0px;
-      display:block;
+      top: 0;
     }
   }
 }
@@ -367,46 +374,46 @@
 .chat .message {
   &:before,
   &:after {
-    content: "";
-    position: absolute;
     border-style: solid;
-    width: 0;
+    content: "";
     display: block;
+    position: absolute;
+    width: 0;
   }
   &.is_remote {
     &:before {
-      top: 4px;
-      bottom: auto;
-      left: -16px;
       border-width: 10px 17px 10px 0;
       border-color: transparent #fff;
+      bottom: auto;
+      left: -16px;
+      top: 4px;
     }
     &:after {
-      top:5px;
-      bottom:auto;
-      left:-15px;
       border-width: 9px 15px 9px 0;
       border-color: transparent #fff;
+      bottom:auto;
+      left: -15px;
+      top: 5px;
     }
   }
   &.is_self {
     background: #fff;
     margin-right:20px;
-    margin-left:4px;
-    padding-right:0px;
+    margin-left: 4px;
+    padding-right: 0;
     &:before {
-      top:4px;
-      bottom:auto;
-      right:-16px;
       border-width: 10px 0 10px 17px;
       border-color: transparent #fff;
+      bottom:auto;
+      right: -16px;
+      top: 4px;
     }
     &:after {
-      top:5px;
-      bottom:auto;
-      right:-15px;
       border-width: 9px 0 9px 15px;
       border-color: transparent #fff;
+      bottom:auto;
+      right: -15px;
+      top: 5px;
     }
   }
   &.with_name {
@@ -414,71 +421,58 @@
   }
 }
 
-.chat .output .message strong {
-  display:block;
-  padding-bottom:2px;
-  margin-right:40px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
 .chat {
   .chatbodybottom {
     background: #e7e7e7;
+    bottom: 1px;
+    left: 0;
+    margin: 0 auto;
     position: absolute;
-    left:0px;
-    bottom:1px;
-    right:0px;
-    margin:0 auto;
+    right: 0;
     @include breakpt-height($breakpoint-chat-small) {
       height: auto;
     }
   }
   .typinghint {
-    padding:2px 6px 0 6px;
+    padding: 2px 6px 0 6px;
     white-space: nowrap;
     overflow: hidden;
     font-size:.8em;
     color: #aaa;
-    height:14px;
+    height: 14px;
     @include breakpt-height($breakpoint-chat-small) {
       display: none;
     }
   }
   .inputbox {
-    position:relative;
+    position: relative;
     .btn {
-      position:absolute;
-      right:6px;
-      top:1px;
-      padding: 0.5em 1em;
-      display:none;
+      position: absolute;
+      right: 6px;
+      top: 1px;
+      padding: .5em 1em;
+      display: none;
     }
     > div {
-      border-top:1px solid $bordercolor;
+      border-top: 1px solid $bordercolor;
     }
     @include breakpt-height($breakpoint-chat-small) {
       height: auto;
     }
   }
   .input {
-    display:block;
-    resize: none;
-    width:100%;
-    height:54px;
-    max-height:54px; /* FF hack */
-    margin:0px;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-    border-color:transparent;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
+    border-radius: 0;
+    border-color: transparent;
     box-shadow: none;
+    display: block;
+    height: 54px;
+    max-height: 54px; /* FF hack */
+    margin: 0;
+    resize: none;
+    width: 100%;
     &:active,
     &:focus {
-      border-color:#66afe9;
+      border-color: #66afe9;
     }
     @include breakpt-height($breakpoint-chat-small) {
       max-height: 2.5em;
