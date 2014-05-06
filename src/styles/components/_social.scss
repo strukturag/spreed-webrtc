@@ -21,18 +21,18 @@
 
 .#{$fa-css-prefix} {
   &.email {
-    color: #aaa;
+    color: $social-email-color;
   }
   &.facebook {
-    color: #45619d;
+    color: $social-facebook-color;
   }
   &.google {
-    color: #dd4b39;
+    color: $social-google-color;
   }
   &.twitter {
-    color: #00aced;
+    color: $social-twitter-color;
   }
   &.xing {
-    color: #fff;
+    color: $social-xing-color;
   }
 }
