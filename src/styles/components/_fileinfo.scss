@@ -20,8 +20,8 @@
  */
 
 .file-info {
-  background: #fff;
-  border: 1px solid #ddd;
+  background: $fileinfo-background;
+  border: 1px solid $fileinfo-border;
   border-radius: 4px;
   padding: 1em;
   position: relative;
@@ -35,7 +35,7 @@
     z-index: 3;
   }
   .file-info-bg {
-    bottom: 0px;
+    bottom: 0;
     left: 41px;
     right: 0;
     overflow: hidden;
@@ -43,7 +43,7 @@
     top: -17px;
     z-index: 2;
     .#{$fa-css-prefix} {
-      color: #eee;
+      color: $fileinfo-icon-background-color;
       font-size: 20em;
     }
   }
@@ -64,7 +64,7 @@
 }
 
 .file-info-size {
-  font-size: 0.8em;
+  font-size: .8em;
   height: 20px;
   position: relative;
   > span {
@@ -141,6 +141,6 @@
 
 .file-info.downloading {
   .file-info-size{
-    border-color: #ddd;
+    border-color: $fileinfo-downloading-size-border;
   }
 }
