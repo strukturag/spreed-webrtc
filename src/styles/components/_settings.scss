@@ -33,6 +33,22 @@
 
 #settings.show {
   right: 0;
+  @include breakpt-only-screen($breakpoint-settings-medium) {
+    background: white;
+    left: 0;
+    width: auto;
+  }
+  .form-actions{
+    @include breakpt-only-screen($breakpoint-settings-medium) {
+      bottom: 0;
+      height: 60px;
+      left: 0;
+      margin-bottom: 0;
+      padding: 6px 0 6px 120px;
+      position: fixed;
+      right: 0;
+    }
+  }
 }
 
 .settings {
@@ -47,37 +63,28 @@
   top: 0;
 }
 
-.settings .version {
-  color: #ccc;
-  font-size: 10px;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-
-@media only screen and (max-width: 630px) {
-  .settings .form-horizontal .controls {
-    margin-left: 110px;
+.settings {
+  .version {
+    color: #ccc;
+    font-size: 10px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
   }
-  .settings .form-horizontal .control-label {
-    width: 100px;
-    word-wrap: break-word;
+  .form-horizontal {
+    .controls {
+      @include breakpt-only-screen($breakpoint-settings-medium) {
+        margin-left: 110px;
+      }
+    }
+    .control-label {
+      @include breakpt-only-screen($breakpoint-settings-medium) {
+        width: 100px;
+        word-wrap: break-word;
+      }
+    }
   }
-  .settings {
+  @include breakpt-only-screen($breakpoint-settings-medium) {
     padding-bottom: 10px;
-  }
-  #settings.show {
-    background: white;
-    left: 0;
-    width: auto;
-  }
-  #settings.show .form-actions {
-    bottom: 0;
-    height: 60px;
-    left: 0;
-    margin-bottom: 0;
-    padding: 6px 0 6px 120px;
-    position: fixed;
-    right: 0;
   }
 }
