@@ -18,134 +18,129 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- .file-info {
-	text-align:center;
-	border: 1px solid #ddd;
-	padding: 1em;
-	background: #fff;
-	border-radius: 4px;
-	padding: 1em;
-	position: relative;
-	max-width: 170px;
+
+.file-info {
+  background: $fileinfo-background;
+  border: 1px solid $fileinfo-border;
+  border-radius: 4px;
+  padding: 1em;
+  position: relative;
+  text-align: center;
+  max-width: 170px;
 }
 
-.file-info > div {
-	z-index: 3;
-	position: relative;
-}
-
-.file-info div.file-info-bg {
-	position:absolute;
-	left:41px;
-	top:-17px;
-	right:0px;
-	bottom:0px;
-	z-index:2;
-	overflow:hidden;
-}
-
-.file-info-bg i {
-	font-size: 20em;
-	color: #eee;
+.file-info {
+  > div {
+    position: relative;
+    z-index: 3;
+  }
+  .file-info-bg {
+    bottom: 0;
+    left: 41px;
+    right: 0;
+    overflow: hidden;
+    position: absolute;
+    top: -17px;
+    z-index: 2;
+    .#{$fa-css-prefix} {
+      color: $fileinfo-icon-background-color;
+      font-size: 20em;
+    }
+  }
+  .actions {
+    left: 50%;
+    margin-left: 10px;
+    position: absolute;
+    text-align: left;
+    top: 14px;
+  }
 }
 
 .file-info-name {
-	font-size: 1.1em;
-	padding: 0 .2em;
-	margin:0.2em 0;
-	min-width:140px;
+  font-size: 1.1em;
+  margin: .2em 0;
+  min-width: 140px;
+  padding: 0 .2em;
 }
 
 .file-info-size {
-	font-size: 0.8em;
-	position:relative;
-	height: 20px;
+  font-size: .8em;
+  height: 20px;
+  position: relative;
+  > span {
+    display: block;
+    left: 0;
+    margin: 0 auto;
+    padding: 4px;
+    position: absolute;
+    text-shadow: 1px 1px 1px white;
+    top: 1px;
+    right: 0;
+    z-index: 5;
+  }
+  > div {
+    bottom: 0;
+    box-shadow: none !important;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: 0;
+    &.progress-bar {
+      opacity: .5;
+    }
+    &.progress-bar.download {
+      opacity: 1;
+      z-index: 1;
+    }
+  }
 }
 
-.file-info.downloader .file-info-size {
-	margin-bottom: 10px;
+.file-info-speed {
+  bottom: 8px;
+  font-size: .8em;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
 }
 
-.file-info.downloading .file-info-size{
-	border-color: #ddd;
+.file-info.uploader {
+  .file-info-speed {
+    bottom: 6px;
+  }
+  .actions {
+    margin-left: 30px;
+    opacity: 0;
+  }
+  .anim {
+    margin-left: 0;
+  }
+  .hovercontrol {
+    &:hover .anim {
+      margin-left: -50px;
+    }
+    &:hover .actions {
+      margin-left: 0;
+      opacity: 1;
+    }
+    > div {
+      transition: all .2s ease-in-out
+    }
+  }
 }
 
-.file-info-size > span {
-	padding: 4px;
-	z-index:5;
-	display:block;
-	position:relative;
-	text-shadow: 1px 1px 1px white;
-	position: absolute;
-	margin: 0 auto;
-	top:1px;
-	right:0px;
-	left:0px;
+.file-info.downloader {
+  .anim {
+    margin-left: -40px;
+  }
+  .file-info-size {
+    margin-bottom: 10px;
+  }
 }
 
-.file-info-size > div {
-	z-index:0;
-	width:0%;
-	-webkit-box-shadow: none !important;
-	box-shadow: none !important;
-	position: absolute;
-	left:0px;
-	bottom:0px;
-	top:0px;
-}
-
-.file-info-size > div.progress-bar {
-	opacity: 0.5;
-}
-
-.file-info-size > div.progress-bar.download {
-	z-index:1;
-	opacity: 1;
-}
-
-div.file-info-speed {
-	position: absolute;
-	left: 0px;
-	right: 0px;
-	bottom: 8px;
-	text-align: center;
-	font-size: 0.8em;
-}
-.file-info.uploader div.file-info-speed {
-	bottom: 6px;
-}
-
-.file-info.downloader .anim {
-	margin-left: -40px;
-}
-
-.file-info.uploader .anim {
-	margin-left: 0px;
-}
-.file-info.uploader .hovercontrol:hover .anim {
-	margin-left: -50px;
-}
-
-.file-info.uploader .hovercontrol > div {
-  -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out
-}
-
-.file-info .actions {
-	position: absolute;
-	top: 14px;
-	left: 50%;
-	margin-left: 10px;
-	text-align: left;
-}
-
-.file-info.uploader .actions {
-	margin-left:30px;
-	opacity:0;
-}
-.file-info.uploader .hovercontrol:hover .actions {
-	margin-left:0px;
-	opacity:1;
+.file-info.downloading {
+  .file-info-size{
+    border-color: $fileinfo-downloading-size-border;
+  }
 }
