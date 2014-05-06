@@ -32,7 +32,7 @@
 
 .withChat {
   #chat .chatcontainer {
-    left:0px;
+    left: 0;
   }
   .chatpane.flip {
     transform: rotateY(360deg);
@@ -109,12 +109,12 @@
   }
   .list-group-item > .item-btn {
     cursor: pointer;
-    display:none;
-    position:absolute;
-    right:12px;
+    display: none;
+    position: absolute;
+    right: 12px;
   }
   .list-group-item:hover > .item-btn {
-    display:inline;
+    display: inline;
   }
 }
 
@@ -144,7 +144,7 @@
 .chat {
   &.active {
     &.visible {
-      display:block;
+      display: block;
     }
     .chatbody {
       // nothing
@@ -237,9 +237,9 @@
   padding: 0.4em 0;
   > i {
     clear: both;
-    color: #aaa;
+    color: $chat-meta;
     display: block;
-    font-size: 0.8em;
+    font-size: .8em;
     padding: 6px 0;
     text-align: center;
     &.p2p {
@@ -251,7 +251,7 @@
 
 .chat.with_pictures .message {
   &.is_self {
-    padding-right:54px;
+    padding-right: 54px;
     .timestamp {
       right: 58px;
     }
@@ -262,8 +262,8 @@
 }
 
 .chat .message {
-  background: #fff;
-  border: 1px solid #e5e5ef;
+  background: $chat-msg-background;
+  border: 1px solid $chat-msg-border;
   border-radius: 6px;
   clear: both;
   display: block;
@@ -282,7 +282,7 @@
     padding-left: 1.2em;
     position: relative;
     &:before {
-      color: #ccc;
+      color: $chat-msg-default-icon-color;
       content: '\f075';
       font-family: FontAwesome;
       left: 0;
@@ -293,7 +293,7 @@
   }
   .timestamp {
     color: $chat-timestamp;
-    font-size: 0.8em;
+    font-size: .8em;
     position: absolute;
     right: 8px;
     text-align: right;
@@ -311,32 +311,33 @@
 
 .chat .message {
   &.is_self li:before {
-    color: #ccc;
+    color: $chat-msg-default-icon-color;
     transform: scale(-1, 1);
   }
   li {
     &.unread:before {
-      content: '\f0eb';
-      color: #FE9A2E;
+      content: $chat-msg-unread-icon;
+      color: $chat-msg-unread-icon-color;
     }
     &.sending:before {
-      content: '\f0ec';
+      content: $chat-msg-sending-icon;
+      color: $chat-msg-sending-icon-color;
     }
     &.sent:before {
-      content: '\f003';
-      color: #5882FA;
+      content: $chat-msg-sent-icon;
+      color: $chat-msg-sent-icon-color;
     }
     &.delivered:before {
-      content: '\f019';
-      color: #5882FA;
+      content: $chat-msg-delivered-icon;
+      color: $chat-msg-delivered-icon-color;
     }
     &.received:before {
-      content: '\f06e';
-      color: #84b819;
+      content: $chat-msg-received-icon;
+      color: $chat-msg-received-icon-color;
     }
     &.read:before {
-      content: '\f00c';
-      color: #ccc;
+      content: $chat-msg-read-icon;
+      color: $chat-msg-read-icon-color;
     }
   }
 }

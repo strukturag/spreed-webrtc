@@ -48,11 +48,30 @@ $video-overlayactions: rgba(0,0,0,.9);
 $buddylist-background: rgba(0,0,0,.3);
 $buddylist-action-background: rgba(255,255,255,0.5);
 
+// chat
 $chat-background: #e7e7e7;
 $chat-disabled: #aaa;
 $chat-badge: #84b819;
 $chat-ctrl: rgba(0,0,0,.3);
 $chat-timestamp: #aaa;
+$chat-meta: #aaa;
+$chat-msg-background: white;
+$chat-msg-border: #e5e5ef;
+
+$chat-msg-default-icon-color: #ccc;
+$chat-msg-unread-icon-color: #FE9A2E;
+$chat-msg-sending-icon-color: $chat-msg-default-icon-color;
+$chat-msg-sent-icon-color: #5882FA;
+$chat-msg-delivered-icon-color: #5882FA;
+$chat-msg-received-icon-color: #84b819;
+$chat-msg-read-icon-color: $chat-msg-default-icon-color;
+
+$chat-msg-unread-icon: '\f0eb';
+$chat-msg-sending-icon: '\f0ec';
+$chat-msg-sent-icon: '\f003';
+$chat-msg-delivered-icon: '\f019';
+$chat-msg-received-icon: '\f06e';
+$chat-msg-read-icon: '\f00c';
 
 $tap-highlight: rgba(0, 0, 0, 0);
 
