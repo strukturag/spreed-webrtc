@@ -73,6 +73,13 @@ $chat-msg-delivered-icon: '\f019';
 $chat-msg-received-icon: '\f06e';
 $chat-msg-read-icon: '\f00c';
 
+$chat-msg-self-background: white;
+$chat-msg-remote-background: white;
+
+$chat-bottom-background: $chat-background;
+$chat-typing: $chat-meta;
+$chat-input-border-color: #66afe9;
+
 $tap-highlight: rgba(0, 0, 0, 0);
 
 $breakpoint-small: 480px;

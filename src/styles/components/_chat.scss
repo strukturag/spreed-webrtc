@@ -382,37 +382,38 @@
     width: 0;
   }
   &.is_remote {
-    &:before {
+    background: $chat-msg-remote-background;
+    &:before {  // arrow border
       border-width: 10px 17px 10px 0;
-      border-color: transparent #fff;
+      border-color: transparent $chat-msg-remote-background;
       bottom: auto;
       left: -16px;
       top: 4px;
     }
-    &:after {
+    &:after { // arrow background
       border-width: 9px 15px 9px 0;
-      border-color: transparent #fff;
+      border-color: transparent $chat-msg-remote-background;
       bottom:auto;
       left: -15px;
       top: 5px;
     }
   }
   &.is_self {
-    background: #fff;
+    background: $chat-msg-self-background;
     margin-right:20px;
     margin-left: 4px;
     padding-right: 0;
-    &:before {
+    &:before { // arrow border
       border-width: 10px 0 10px 17px;
-      border-color: transparent #fff;
-      bottom:auto;
+      border-color: transparent $chat-msg-self-background;
+      bottom: auto;
       right: -16px;
       top: 4px;
     }
-    &:after {
+    &:after { // arrow background
       border-width: 9px 0 9px 15px;
-      border-color: transparent #fff;
-      bottom:auto;
+      border-color: transparent $chat-msg-self-background;
+      bottom: auto;
       right: -15px;
       top: 5px;
     }
@@ -424,7 +425,7 @@
 
 .chat {
   .chatbodybottom {
-    background: #e7e7e7;
+    background: $chat-bottom-background;
     bottom: 1px;
     left: 0;
     margin: 0 auto;
@@ -439,7 +440,7 @@
     white-space: nowrap;
     overflow: hidden;
     font-size:.8em;
-    color: #aaa;
+    color: $chat-typing;
     height: 14px;
     @include breakpt-height($breakpoint-chat-small) {
       display: none;
@@ -473,7 +474,7 @@
     width: 100%;
     &:active,
     &:focus {
-      border-color: #66afe9;
+      border-color: $chat-input-border-color;
     }
     @include breakpt-height($breakpoint-chat-small) {
       max-height: 2.5em;
@@ -482,9 +483,9 @@
 }
 
 @keyframes newmessage {
-  0% {background-color: rgba(132,184,25,1.0);}
+  0% {background-color: $actioncolor1;}
   50% {background-color: $componentbg;}
-  100% {background-color: rgba(132,184,25,1.0);}
+  100% {background-color: $actioncolor1;}
 }
 
 .chat.newmessage {
