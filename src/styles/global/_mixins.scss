@@ -17,6 +17,12 @@
   }
 }
 
+@mixin breakpt-only-screen-with-min($pt1, $pt2) {
+  @media only screen and (min-width: $pt1) and (max-width: $pt2) {
+    @content;
+  }
+}
+
 // not handled by autoprefixer
 @mixin tap-highlight-color($color) {
   -webkit-tap-highlight-color: $color;
