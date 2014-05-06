@@ -20,92 +20,89 @@
  */
 
 .file-info {
-  text-align:center;
-  border: 1px solid #ddd;
-  padding: 1em;
   background: #fff;
+  border: 1px solid #ddd;
   border-radius: 4px;
   padding: 1em;
   position: relative;
+  text-align: center;
   max-width: 170px;
 }
 
 .file-info {
   > div {
-    z-index: 3;
     position: relative;
+    z-index: 3;
   }
   .file-info-bg {
-    position:absolute;
-    left:41px;
-    top:-17px;
-    right:0px;
-    bottom:0px;
-    z-index:2;
-    overflow:hidden;
+    bottom: 0px;
+    left: 41px;
+    right: 0;
+    overflow: hidden;
+    position: absolute;
+    top: -17px;
+    z-index: 2;
     .#{$fa-css-prefix} {
-      font-size: 20em;
       color: #eee;
+      font-size: 20em;
     }
   }
   .actions {
-    position: absolute;
-    top: 14px;
     left: 50%;
     margin-left: 10px;
+    position: absolute;
     text-align: left;
+    top: 14px;
   }
 }
 
 .file-info-name {
   font-size: 1.1em;
+  margin: .2em 0;
+  min-width: 140px;
   padding: 0 .2em;
-  margin:0.2em 0;
-  min-width:140px;
 }
 
 .file-info-size {
   font-size: 0.8em;
-  position:relative;
   height: 20px;
+  position: relative;
   > span {
-    padding: 4px;
-    z-index:5;
-    display:block;
-    position:relative;
-    text-shadow: 1px 1px 1px white;
-    position: absolute;
+    display: block;
+    left: 0;
     margin: 0 auto;
-    top:1px;
-    right:0px;
-    left:0px;
+    padding: 4px;
+    position: absolute;
+    text-shadow: 1px 1px 1px white;
+    top: 1px;
+    right: 0;
+    z-index: 5;
   }
   > div {
-    z-index:0;
-    width:0%;
-    -webkit-box-shadow: none !important;
+    bottom: 0;
     box-shadow: none !important;
+    left: 0;
     position: absolute;
-    left:0px;
-    bottom:0px;
-    top:0px;
+    top: 0;
+    width: 0;
+    z-index: 0;
     &.progress-bar {
-      opacity: 0.5;
+      opacity: .5;
     }
     &.progress-bar.download {
-      z-index:1;
       opacity: 1;
+      z-index: 1;
     }
   }
 }
 
 .file-info-speed {
-  position: absolute;
-  left: 0px;
-  right: 0px;
   bottom: 8px;
+  font-size: .8em;
+  left: 0;
+  position: absolute;
+  right: 0;
   text-align: center;
-  font-size: 0.8em;
 }
 
 .file-info.uploader {
@@ -113,19 +110,19 @@
     bottom: 6px;
   }
   .actions {
-    margin-left:30px;
-    opacity:0;
+    margin-left: 30px;
+    opacity: 0;
   }
   .anim {
-    margin-left: 0px;
+    margin-left: 0;
   }
   .hovercontrol {
     &:hover .anim {
       margin-left: -50px;
     }
     &:hover .actions {
-      margin-left:0px;
-      opacity:1;
+      margin-left: 0;
+      opacity: 1;
     }
     > div {
       transition: all .2s ease-in-out
