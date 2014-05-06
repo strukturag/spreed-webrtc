@@ -21,6 +21,8 @@
 
 // ** Custom Variables **
 // --------------------------------------------------
+
+// general
 $background: #e5e5e5;
 $componentbg: #f5f5f5;
 $componentfg1: #262626;
@@ -32,21 +34,38 @@ $bordercolor: #ccc;
 $actioncolor1: rgb(132,184,25);
 $actioncolor2: rgb(0,149,52);
 
-$light-text: #aaa;
-$lighter-text: #ddd;
+// general action based colors
+$action-hover: rgba(0,0,0,.4);
+$action-mute: rgb(219,79,57);
+$action-enable: $actioncolor1;
 
-$grey3: rgba(0,0,0,.3);
-$grey4: rgba(0,0,0,.4);
-$dgrey: rgb(34,34,34);
-$red: rgb(219,79,57);
+// base
+$welcome: #aaa;
+$loading: #ddd;
 
-$tap-highlight: rgba(0, 0, 0, 0);
+// font
+$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$base-font-size: 13px; // compass
+$base-line-height: 19px; // compass
 
+// audio video
+$audiovideolevel: $action-enable;
+
+// main navigation bar
+$minbarheight: 44px;
+$bar-logo-text-desc: rgb(34,34,34);
+$bar-btn-action-color: rgba(0,0,0,.3);
+$bar-btn-action-hover: $action-hover;
+$bar-btn-action-mute: $action-mute;
+$bar-btn-action-enable: $action-enable;
+
+// video
 $video-background: rgba(0,0,0,.4);
 $video-onlyaudio-background: #666;
 $video-onlyaudio: rgba(255,255,255,.3);
 $video-overlayactions: rgba(0,0,0,.9);
 
+// buddylist
 $buddylist-background: rgba(0,0,0,.3);
 $buddylist-action-background: rgba(255,255,255,0.5);
 
@@ -91,6 +110,18 @@ $fileinfo-downloading-size-border: #ddd;
 // settings
 $settings-version: #ccc;
 
+// social
+$social-email-color: #aaa;
+$social-facebook-color: #45619d;
+$social-google-color: #dd4b39;
+$social-twitter-color: #00aced;
+$social-xing-color: white;
+
+// useability
+$breakpoint-useability-small: 400px;
+$breakpoint-useability-large: 1020px;
+
+// breakpoints
 $breakpoint-small: 480px;
 $breakpoint-medium: 700px;
 $breakpoint-large: 1280px;
@@ -102,21 +133,16 @@ $breakpoint-chat-small: 210px;
 
 $breakpoint-settings-medium: 630px;
 
-$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
+// touch specific
+$tap-highlight: rgba(0, 0, 0, 0);
 
-// compass
-$base-font-size: 13px;
-$base-line-height: 19px;
 
-$audiovideolevel: #9dd53a;
-
-//main navigation bar
-$minbarheight: 44px;
 
 // ** Fontawsome changed variables **
 // original at libs/fontawesome/_variables.scss
 // --------------------------
 $fa-css-prefix:       fa;
+
 
 // ** Bootstrap changed variables **
 // original at libs/bootstrap/_variables.scss
@@ -128,7 +154,6 @@ $fa-css-prefix:       fa;
 
 //** Background color for `<body>`.
 $body-bg:               $background;
-
 
 //== Typography
 //

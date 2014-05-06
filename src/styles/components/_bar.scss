@@ -71,7 +71,7 @@
       top: 26px;
     }
     span a {
-      color: $dgrey;
+      color: $bar-logo-text-desc;
     }
   }
 }
@@ -155,7 +155,7 @@
   .btn {
     background: transparent;
     border-color: transparent;
-    color: $grey3;
+    color: $bar-btn-action-color;
     display: inline-block;
     height: 42px;
     font: 24px/40px $font-sans-serif;
@@ -170,22 +170,22 @@
     }
     &:hover {
       background-color: none;
-      border-color: #ccc;
-      color: $grey4;
+      border-color: $bordercolor;
+      color: $bar-btn-action-hover;
     }
     &.active {
       background-color: none;
-      border-color: #ccc;
-      color: $grey4;
+      border-color: $bordercolor;
+      color: $bar-btn-action-hover;
     }
     &.active.amutebtn {
-      background-color: $red;
-      border-color: $red;
+      background-color: $bar-btn-action-mute;
+      border-color: $bar-btn-action-mute;
       color: white;
     }
     &.active.aenablebtn {
-      background-color: $actioncolor1;
-      border-color: $actioncolor1;
+      background-color: $bar-btn-action-enable;
+      border-color: $bar-btn-action-enable;
       color: white;
     }
   }

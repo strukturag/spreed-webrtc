@@ -103,7 +103,7 @@ a {
   transition-property: opacity;
   transition-duration: .5s;
   div {
-    color: $lighter-text;
+    color: $loading;
     display: block;
     font-size: 3em;
     left: 0;
@@ -128,7 +128,7 @@ a {
 }
 
 .welcome {
-  color: $light-text;
+  color: $welcome;
   font-size: 1.1em;
   margin-top: 80px;
   text-shadow: 0 0 5px black;
