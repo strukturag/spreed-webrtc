@@ -26,8 +26,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 
 			var lastNonce = null;
 			var lastUserid = null;
-			var lastUseridCombo = null;
-			var lastSecret = null;
+			var lastData = null;
 			var disconnectTimeout = null;
 
 			app.run(["$window", "mediaStream", function($window, mediaStream) {
@@ -55,28 +54,30 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 					var expiration = parseInt(((new Date).getTime()/1000)+3600, 10);
 					var useridCombo = ""+expiration+":"+userid;
 					var secret = foo.mac(useridCombo);
-					return [useridCombo, sjcl.codec.base64.fromBits(secret)]
+					var data = {
+						useridcombo: useridCombo,
+						secret: sjcl.codec.base64.fromBits(secret)
+					}
+					lastData = data;
+					return data;
 
 				};
 
 				$window.testCreateSuseridServer = function() {
-					mediaStream.users.register(function(data) {
-						lastNonce = data.nonce;
-						lastUserid = data.userid;
-						lastUseridCombo = data.useridcombo;
-						lastSecret = data.secret;
+					mediaStream.users.register(null, function(data) {
 						console.log("Retrieved user", data);
+						lastData = data;
 					}, function() {
 						console.log("Register error", arguments);
 					});
 				};
 
-				$window.testAuthorize = function(useridCombo, secret) {
-					console.log("Testing authorize with userid", useridCombo, secret);
-					mediaStream.users.authorize(useridCombo, secret, function(data) {
+				$window.testAuthorize = function(data) {
+					console.log("Testing authorize with data", data);
+					mediaStream.users.authorize(data, function(data) {
 						lastNonce = data.nonce;
 						lastUserid = data.userid;
-						console.log("Retrieved nonce", data);
+						console.log("Retrieved nonce", lastNonce, lastUserid);
 					}, function() {
 						console.log("Authorize error", arguments);
 					});
@@ -91,11 +92,11 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 				};
 
 				$window.testLastAuthorize = function() {
-					if (!lastUseridCombo || !lastSecret) {
+					if (lastData === null) {
 						console.log("Run testCreateSuseridServer fist.");
 						return
 					}
-					$window.testAuthorize(lastUseridCombo, lastSecret);
+					$window.testAuthorize(lastData);
 				};
 
 			}]);
