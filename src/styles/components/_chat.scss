@@ -86,35 +86,33 @@
     border-right: none;
     border-left: none;
     border-radius: 0;
-    position: relative;
-  }
-  .list-group-item.newmessage {
-    animation: newmessage 1s ease -0.3s infinite;
-  }
-  .list-group-item .fa-lg {
-    display: inline-block;
-    text-align: center;
-    width: 18px;
-  }
-  .list-group-item .badge {
-    background: $chat-badge;
-    border: 1px solid white;
-    font-size: .8em;
-  }
-  .list-group-item {
     padding-right: 30px;
-  }
-  .list-group-item.disabled {
-    color: $chat-disabled;
-  }
-  .list-group-item > .item-btn {
-    cursor: pointer;
-    display: none;
-    position: absolute;
-    right: 12px;
-  }
-  .list-group-item:hover > .item-btn {
-    display: inline;
+    position: relative;
+    &.newmessage {
+      animation: newmessage 1s ease -0.3s infinite;
+    }
+    &.disabled {
+      color: $chat-disabled;
+    }
+    &:hover .item-btn {
+      display: inline;
+    }
+    .fa-lg {
+      display: inline-block;
+      text-align: center;
+      width: 18px;
+    }
+    .badge {
+      background: $chat-badge;
+      border: 1px solid white;
+      font-size: .8em;
+    }
+    .item-btn {
+      cursor: pointer;
+      display: none;
+      position: absolute;
+      right: 12px;
+    }
   }
 }
 
