@@ -18,18 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #roombar {
-	position: absolute;
-	left:0px;
-	top:44px;
-	right:0px;
-	min-width:260px;
-	z-index:4;
+  left: 0;
+  min-width: 260px;
+  position: absolute;
+  right: 0;
+  top: 44px;
+  z-index: 4;
 }
+
 #roombar .roombar {
-	position: absolute;
-	left:0px;
-	top:0px;
-	right:0px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
