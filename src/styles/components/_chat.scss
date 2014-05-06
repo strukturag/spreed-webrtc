@@ -162,6 +162,10 @@
   position: absolute;
   right: 0;
   top: 36px;
+  @include breakpt-height($breakpoint-chat-small) {
+    border-top: 1px solid $bordercolor;
+    top: 0px;
+  }
 }
 
 .chatheader {
@@ -210,6 +214,9 @@
     vertical-align: middle;
     white-space: nowrap;
   }
+  @include breakpt-height($breakpoint-chat-small) {
+    display: none;
+  }
 }
 
 .chat .outputbox {
@@ -218,6 +225,9 @@
   position: absolute;
   right: 0;
   top: 0;
+  @include breakpt-height($breakpoint-chat-small) {
+    bottom: 45px;
+  }
 }
 
 .chat .output {
@@ -421,6 +431,9 @@
     bottom:1px;
     right:0px;
     margin:0 auto;
+    @include breakpt-height($breakpoint-chat-small) {
+      height: auto;
+    }
   }
   .typinghint {
     padding:2px 6px 0 6px;
@@ -429,6 +442,9 @@
     font-size:.8em;
     color: #aaa;
     height:14px;
+    @include breakpt-height($breakpoint-chat-small) {
+      display: none;
+    }
   }
   .inputbox {
     position:relative;
@@ -441,6 +457,9 @@
     }
     > div {
       border-top:1px solid $bordercolor;
+    }
+    @include breakpt-height($breakpoint-chat-small) {
+      height: auto;
     }
   }
   .input {
@@ -461,6 +480,9 @@
     &:focus {
       border-color:#66afe9;
     }
+    @include breakpt-height($breakpoint-chat-small) {
+      max-height: 2.5em;
+    }
   }
 }
 
@@ -479,30 +501,5 @@
   }
   .chatheader {
     animation: newmessage 1s ease -0.3s infinite;
-  }
-}
-
-@media all and (max-height: 210px) {
-  .chat .inputbox {
-    height: auto;
-  }
-  .chat .input {
-    max-height: 2.5em;
-  }
-  .chat .outputbox {
-    bottom:45px;
-  }
-  .chat .chatbodybottom {
-    height: auto;
-  }
-  .chat .typinghint {
-    display: none;
-  }
-  .chat .chatheader {
-    display: none;
-  }
-  .chat .chatbody {
-    border-top: 1px solid $bordercolor;
-    top: 0px;
   }
 }
