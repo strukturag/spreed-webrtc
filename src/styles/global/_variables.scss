@@ -40,6 +40,8 @@ $grey4: rgba(0,0,0,.4);
 $dgrey: rgb(34,34,34);
 $red: rgb(219,79,57);
 
+$tap-highlight: rgba(0, 0, 0, 0);
+
 $video-background: rgba(0,0,0,.4);
 $video-onlyaudio-background: #666;
 $video-onlyaudio: rgba(255,255,255,.3);
@@ -80,12 +82,14 @@ $chat-bottom-background: $chat-background;
 $chat-typing: $chat-meta;
 $chat-input-border-color: #66afe9;
 
+// fileinfo
 $fileinfo-background: white;
 $fileinfo-border: #ddd;
 $fileinfo-icon-background-color: #eee;
 $fileinfo-downloading-size-border: #ddd;
 
-$tap-highlight: rgba(0, 0, 0, 0);
+// settings
+$settings-version: #ccc;
 
 $breakpoint-small: 480px;
 $breakpoint-medium: 700px;
@@ -95,6 +99,8 @@ $breakpoint-video-small: 590px;
 $breakpoint-video-medium: 630px;
 
 $breakpoint-chat-small: 210px;
+
+$breakpoint-settings-medium: 630px;
 
 $font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
 
