@@ -18,204 +18,198 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #chat {
-position: absolute;
-bottom:0px;
-right:260px;
-width:260px;
-top:0px;
-pointer-events: none;
-z-index:45;
--webkit-perspective: 1000;
--moz-perspective: 1000;
--o-perspective: 1000;
-perspective: 1000;
+  bottom: 0;
+  perspective: 1000;
+  pointer-events: none;
+  position: absolute;
+  right: 260px;
+  top: 0;
+  width: 260px;
+  z-index: 45;
 }
+
 .withChat #chat .chatcontainer {
-left:0px;
+  left:0px;
 }
+
+.withChat .chatpane.flip {
+  transform: rotateY(360deg);
+}
+
 .withChat.withChatMaximized #chat {
-left:0px;
-width:auto;
-	.chatcontainer {
-		width:auto;
-	}
+  left: 0;
+  width: auto;
+    .chatcontainer {
+      width: auto;
+    }
 }
+
 .chatcontainer {
-position:absolute;
-top:0px;
-left:260px;
-right:0px;
-bottom:0px;
-width:260px;
-overflow:hidden;
--webkit-transition: left 200ms ease-in-out;
--moz-transition: left 200ms ease-in-out;
--ms-transition: left 200ms ease-in-out;
--o-transition: left 200ms ease-in-out;
-transition: left 200ms ease-in-out;
-background: #e7e7e7;
+  background: $chat-background;
+  bottom: 0;
+  left: 260px;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: left 200ms ease-in-out;
+  width: 260px;
 }
+
 .chatlist {
-position:absolute;
-top:0px;
-left:100%;
-bottom:0px;
-width:100%;
-background: #e7e7e7;
--webkit-transition: left 200ms ease-in-out;
--moz-transition: left 200ms ease-in-out;
--ms-transition: left 200ms ease-in-out;
--o-transition: left 200ms ease-in-out;
-transition: left 200ms ease-in-out;
-	.list-group {
-		margin-top:-1px;
-		margin-bottom:-1px;
-		max-height:100%;
-		overflow-x: hidden;
-		overflow-y: auto;
-	}
-	.list-group-item {
-		border-right:none;
-		border-left:none;
-		-webkit-border-radius: 0px;
-        -moz-border-radius: 0px;
-        border-radius: 0px;
-        position:relative;
-	}
-	.list-group-item .fa-lg {
-		display:inline-block;
-		width:18px;
-		text-align:center;
-	}
-	.list-group-item .badge {
-		background: #84b819;
-		border: 1px solid white;
-		font-size:.8em;
-	}
-	.list-group-item {
-		padding-right: 30px;
-	}
-	.list-group-item.disabled {
-		color:#aaa;
-	}
-	.list-group-item > .item-btn {
-		position:absolute;
-		right:12px;
-		cursor: pointer;
-		display:none;
-	}
-	.list-group-item:hover > .item-btn {
-		display:inline;
-	}
+  position: absolute;
+  top: 0;
+  left: 100%;
+  bottom: 0;
+  width: 100%;
+  background: $chat-background;
+  transition: left 200ms ease-in-out;
+  .list-group {
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    max-height: 100%;
+  }
+  .list-group-item {
+    border-right: none;
+    border-left: none;
+    border-radius: 0;
+    position: relative;
+  }
+  .list-group-item .fa-lg {
+    display: inline-block;
+    text-align: center;
+    width: 18px;
+  }
+  .list-group-item .badge {
+    background: $chat-badge;
+    border: 1px solid white;
+    font-size: .8em;
+  }
+  .list-group-item {
+    padding-right: 30px;
+  }
+  .list-group-item.disabled {
+    color: $chat-disabled;
+  }
+  .list-group-item > .item-btn {
+    cursor: pointer;
+    display:none;
+    position:absolute;
+    right:12px;
+  }
+  .list-group-item:hover > .item-btn {
+    display:inline;
+  }
 
 }
+
 .chatpane {
-position:absolute;
-top:0px;
-right:0px;
-bottom:0px;
-width:100%;
--webkit-transition: 0.3s;
--webkit-transform-style: preserve-3d;
--moz-transition: 0.3s;
--moz-transform-style: preserve-3d;
--o-transition: 0.3s;
--o-transform-style: preserve-3d;
-transition: 0.3s;
-transform-style: preserve-3d;
--webkit-backface-visibility: hidden;
--moz-backface-visibility: hidden;
--o-backface-visibility: hidden;
-backface-visibility: hidden;
+  backface-visibility: hidden;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.3s;
+  transform-style: preserve-3d;
+  width: 100%;
 }
-.showchatlist .chatpane {
-right:100%;
+
+.showchatlist {
+  .chatpane {
+    right: 100%;
+  }
+  .chatlist {
+    left: 0;
+  }
 }
-.showchatlist .chatlist {
-left:0px;
-}
-.withChat .chatpane.flip {
--webkit-transform: rotateY(360deg);
--moz-transform: rotateY(360deg);
--o-transform: rotateY(360deg);
-transform: rotateY(360deg);
-}
+
 .chat {
-pointer-events: auto;
-position:absolute;
-top:0px;
-bottom:0px;
-right:0px;
-left:0px;
-background: #e7e7e7;
-overflow:hidden;
-display:none;
+  background: $chat-background;
+  display: none;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
-.chat.visible {
+
+.chat {
+  &.active {
+    &.visible {
+      display:block;
+    }
+    .chatbody {
+      // nothing
+    }
+    .chatheader {
+      // nothing
+    }
+  }
 }
-.chat.visible.active {
-display:block;
+
+.chatbody {
+  border-right: 1px solid $bordercolor;
+  bottom: -1px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 36px;
 }
-.chat .chatbody {
-position:absolute;
-bottom:-1px;
-left:0px;
-right:0px;
-top: 36px;
-border-right:1px solid $bordercolor;
+
+.chatheader {
+  background: $componentbg;
+  border-top: 1px solid $bordercolor;
+  border-bottom: 1px solid $bordercolor;
+  border-right: 1px solid $bordercolor;
+  height: 36px;
+  left: 0;
+  line-height: 34px;
+  padding: 0 4px 0 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  .chatstatusicon {
+    cursor: pointer;
+    display: block;
+    font-size: 1.4em;
+    height: 36px;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 36px;
+  }
+  .chatheadertitle {
+    padding-left: 28px;
+    display: inline;
+  }
+  .ctrl {
+    color: $chat-ctrl;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    .#{$fa-css-prefix} {
+      cursor: pointer;
+      padding: 6px;
+    }
+  }
+  span {
+    display: inline-block;
+    max-width: 60%;
+    overflow: hidden;
+    pointer-events: none;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
 }
-.chat.active .chatbody {
-}
-.chat .chatheader {
-position:absolute;
-left:0px;
-right:0px;
-top:0px;
-background: $componentbg;
-padding:0px 4px 0px 8px;
-border-top: 1px solid $bordercolor;
-border-bottom: 1px solid $bordercolor;
-border-right: 1px solid $bordercolor;
-height:36px;
-line-height:34px;
-}
-.chat.active .chatheader {
-}
-.chat .chatheader .chatstatusicon {
-position:absolute;
-left:0px;
-top:0px;
-font-size:1.4em;
-width:36px;
-height:36px;
-display:block;
-text-align:center;
-cursor: pointer;
-}
-.chat .chatheader .chatheadertitle {
-padding-left:28px;
-display:inline;
-}
-.chat .chatheader .ctrl {
-position:absolute;
-top:0px;
-right:1px;
-color:rgba(0,0,0,0.3);
-}
-.chat .chatheader span {
-display: inline-block;
-max-width:60%;
-text-overflow:ellipsis;
-white-space:nowrap;
-overflow:hidden;
-pointer-events: none;
-vertical-align: middle;
-}
-.chat .chatheader .ctrl i {
-padding:6px;
-cursor: pointer;
-}
+
 .chat .outputbox {
 position:absolute;
 left:0px;
