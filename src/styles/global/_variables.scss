@@ -21,6 +21,8 @@
 
 // ** Custom Variables **
 // --------------------------------------------------
+
+// general
 $background: #e5e5e5;
 $componentbg: #f5f5f5;
 $componentfg1: #262626;
@@ -32,31 +34,114 @@ $bordercolor: #ccc;
 $actioncolor1: rgb(132,184,25);
 $actioncolor2: rgb(0,149,52);
 
-$light-text: #aaa;
-$lighter-text: #ddd;
+// general action based colors
+$action-hover: rgba(0,0,0,.4);
+$action-mute: rgb(219,79,57);
+$action-enable: $actioncolor1;
 
-$grey3: rgba(0,0,0,.3);
-$grey4: rgba(0,0,0,.4);
-$dgrey: rgb(34,34,34);
-$red: rgb(219,79,57);
+// base
+$welcome: #aaa;
+$loading: #ddd;
 
+// font
+$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$base-font-size: 13px; // compass
+$base-line-height: 19px; // compass
+
+// audio video
+$audiovideolevel: $action-enable;
+
+// main navigation bar
+$minbarheight: 44px;
+$bar-logo-text-desc: rgb(34,34,34);
+$bar-btn-action-color: rgba(0,0,0,.3);
+$bar-btn-action-hover: $action-hover;
+$bar-btn-action-mute: $action-mute;
+$bar-btn-action-enable: $action-enable;
+
+// video
+$video-background: rgba(0,0,0,.4);
+$video-onlyaudio-background: #666;
+$video-onlyaudio: rgba(255,255,255,.3);
+$video-overlayactions: rgba(0,0,0,.9);
+
+// buddylist
+$buddylist-background: rgba(0,0,0,.3);
+$buddylist-action-background: rgba(255,255,255,0.5);
+
+// chat
+$chat-background: #e7e7e7;
+$chat-disabled: #aaa;
+$chat-badge: #84b819;
+$chat-ctrl: rgba(0,0,0,.3);
+$chat-timestamp: #aaa;
+$chat-meta: #aaa;
+$chat-msg-background: white;
+$chat-msg-border: #e5e5ef;
+
+$chat-msg-default-icon-color: #ccc;
+$chat-msg-unread-icon-color: #FE9A2E;
+$chat-msg-sending-icon-color: $chat-msg-default-icon-color;
+$chat-msg-sent-icon-color: #5882FA;
+$chat-msg-delivered-icon-color: #5882FA;
+$chat-msg-received-icon-color: #84b819;
+$chat-msg-read-icon-color: $chat-msg-default-icon-color;
+
+$chat-msg-unread-icon: '\f0eb';
+$chat-msg-sending-icon: '\f0ec';
+$chat-msg-sent-icon: '\f003';
+$chat-msg-delivered-icon: '\f019';
+$chat-msg-received-icon: '\f06e';
+$chat-msg-read-icon: '\f00c';
+
+$chat-msg-self-background: white;
+$chat-msg-remote-background: white;
+
+$chat-bottom-background: $chat-background;
+$chat-typing: $chat-meta;
+$chat-input-border-color: #66afe9;
+
+// fileinfo
+$fileinfo-background: white;
+$fileinfo-border: #ddd;
+$fileinfo-icon-background-color: #eee;
+$fileinfo-downloading-size-border: #ddd;
+
+// settings
+$settings-version: #ccc;
+
+// social
+$social-email-color: #aaa;
+$social-facebook-color: #45619d;
+$social-google-color: #dd4b39;
+$social-twitter-color: #00aced;
+$social-xing-color: white;
+
+// useability
+$breakpoint-useability-small: 400px;
+$breakpoint-useability-large: 1020px;
+
+// breakpoints
 $breakpoint-small: 480px;
 $breakpoint-medium: 700px;
 $breakpoint-large: 1280px;
 
-$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$base-font-size: 13px;
-$base-line-height: 19px;
+$breakpoint-video-small: 590px;
+$breakpoint-video-medium: 630px;
 
-$audiovideolevel: #9dd53a;
+$breakpoint-chat-small: 210px;
 
-//main navigation bar
-$minbarheight: 44px;
+$breakpoint-settings-medium: 630px;
+
+// touch specific
+$tap-highlight: rgba(0, 0, 0, 0);
+
+
 
 // ** Fontawsome changed variables **
 // original at libs/fontawesome/_variables.scss
 // --------------------------
-
+$fa-css-prefix:       fa;
 
 
 // ** Bootstrap changed variables **
@@ -70,12 +155,11 @@ $minbarheight: 44px;
 //** Background color for `<body>`.
 $body-bg:               $background;
 
-
 //== Typography
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-sans-serif:  $font-sans-serif;
 $font-family-serif:       Georgia, "Times New Roman", Times, serif;
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;

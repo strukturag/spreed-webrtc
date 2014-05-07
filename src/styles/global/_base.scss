@@ -25,7 +25,6 @@ body {
   background-color: $background;
   height: 100%;
   font: normal $base-font-size $font-sans-serif;
-  // @include debug-vertical-alignment();
 }
 
 body {
@@ -101,10 +100,10 @@ a {
   right: 15%;
   top: 15%;
   z-index: 20000;
-  @include transition-property(opacity);
-  @include transition-duration(.5s);
+  transition-property: opacity;
+  transition-duration: .5s;
   div {
-    color: $lighter-text;
+    color: $loading;
     display: block;
     font-size: 3em;
     left: 0;
@@ -125,11 +124,11 @@ a {
   position: absolute;
   right: 0;
   top: 44px;
-  @include user-select(none);
+  user-select: none;
 }
 
 .welcome {
-  color: $light-text;
+  color: $welcome;
   font-size: 1.1em;
   margin-top: 80px;
   text-shadow: 0 0 5px black;

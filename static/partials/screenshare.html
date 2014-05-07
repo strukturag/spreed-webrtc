@@ -1,8 +1,8 @@
 <div class="screenshare" ng-class="{remotesize: !fitScreen}">
 	<div class="screensharepane nicescroll"></div>
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideOptionsBar}">
-		<a class="overlaybarbutton" ng-model="hideOptionsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Screen sharing options')}}"><i class="fa fa-cogs"></i></a>
-		<form class="overlaybarcontent form-group">
+		<a class="overlaybar-button" ng-model="hideOptionsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Screen sharing options')}}"><i class="fa fa-cogs"></i></a>
+		<form class="overlaybar-content form-group">
 			<div class="checkbox">
 		        <label class="control-label pull-left">
 		          <input type="checkbox" ng-model="fitScreen"> {{_('Fit screen.')}}

@@ -1,57 +1,44 @@
 
-@mixin breakpt($pt) {
-  @media (max-width: $pt) {
-    @content;
+// not handled by autoprefixer
+@mixin tap-highlight-color($color) {
+  -webkit-tap-highlight-color: $color;
+}
+
+/*  Supports media type and up to two expressions 
+    
+    ex output:
+    @media only screen and (min-width: 700px) and (max-width: 1280px) {
+      .bar .middle img {
+        display: none; 
+      }
+    }
+
+    @param $media-value1:   required - number/units
+    @param $media-feature1: optional - width,height,ect...
+    @param $media-type:     optional - screen,print,ect...
+    @param $media-value2:   optional - number/units
+    @param $media-feature2: optional - width,height,ect...
+*/
+@mixin breakpt($media-value1, $media-feature1: max-width, $media-type: null,
+               $media-value2: null, $media-feature2: max-width) {
+  @if($media-type and $media-value2) {
+    @media #{$media-type} and ($media-feature1: $media-value1) and ($media-feature2: $media-value2) {
+      @content;
+    }
   }
-}
-
-@mixin user-select($select) {
-  -khtml-user-select: $select;
-  -moz-user-select: $select;
-  -ms-user-select: $select;
-  -o-user-select: $select;
-  -webkit-user-select: $select;
-  user-select: $select;
-}
-
-@mixin touch-callout($callout) {
-  -webkit-touch-callout: $callout;
-}
-
-@mixin box-shadow($shadow) {
-  -webkit-box-shadow: $shadow;
-  box-shadow: $shadow;
-}
-
-@mixin transition-property($property) {
-  transition-property: $property;
-  -webkit-transition-property: $property;
-}
-
-@mixin transition-duration($duration) {
-  transition-duration: $duration;
-  -webkit-transition-duration: $duration;
-}
-
-@mixin transition($transition) {
-  transition: $transition;
-  -moz-transition: $transition;
-  -o-transition: $transition;
-  -webkit-transition: $transition;
-}
-
-@mixin border-radius($radius) {
-  border-radius: $radius;
-  -moz-border-radius: $radius;
-  -webkit-border-radius: $radius;
-}
-
-@mixin linear-gradient($gradient...) {
-  background: #9dd53a; /* Old browsers */
-  background: linear-gradient(to bottom, #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
-  background: -o-linear-gradient(top, #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* IE10+ */
-  background: -moz-linear-gradient(top, #9dd53a 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9dd53a), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #9dd53a 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* Chrome10+,Safari5.1+ */
+  @if(not $media-type and $media-value2) {
+    @media ($media-feature1: $media-value1) and ($media-feature2: $media-value2) {
+      @content;
+    }
+  }
+  @if($media-type and not $media-value2) {
+    @media #{$media-type} and ($media-feature1: $media-value1) {
+      @content;
+    }
+  }
+  @if(not $media-type and not $media-value2) {
+    @media ($media-feature1: $media-value1) {
+      @content;
+    }
+  }
 }
