@@ -160,7 +160,7 @@
   position: absolute;
   right: 0;
   top: 36px;
-  @include breakpt-height($breakpoint-chat-small) {
+  @include breakpt($breakpoint-chat-small, max-height) {
     border-top: 1px solid $bordercolor;
     top: 0px;
   }
@@ -212,7 +212,7 @@
     vertical-align: middle;
     white-space: nowrap;
   }
-  @include breakpt-height($breakpoint-chat-small) {
+  @include breakpt($breakpoint-chat-small, max-height) {
     display: none;
   }
 }
@@ -223,7 +223,7 @@
   position: absolute;
   right: 0;
   top: 0;
-  @include breakpt-height($breakpoint-chat-small) {
+  @include breakpt($breakpoint-chat-small, max-height) {
     bottom: 45px;
   }
 }
@@ -429,7 +429,7 @@
     margin: 0 auto;
     position: absolute;
     right: 0;
-    @include breakpt-height($breakpoint-chat-small) {
+    @include breakpt($breakpoint-chat-small, max-height) {
       height: auto;
     }
   }
@@ -440,7 +440,7 @@
     font-size:.8em;
     color: $chat-typing;
     height: 14px;
-    @include breakpt-height($breakpoint-chat-small) {
+    @include breakpt($breakpoint-chat-small, max-height) {
       display: none;
     }
   }
@@ -456,7 +456,7 @@
     > div {
       border-top: 1px solid $bordercolor;
     }
-    @include breakpt-height($breakpoint-chat-small) {
+    @include breakpt($breakpoint-chat-small, max-height) {
       height: auto;
     }
   }
@@ -474,7 +474,7 @@
     &:focus {
       border-color: $chat-input-border-color;
     }
-    @include breakpt-height($breakpoint-chat-small) {
+    @include breakpt($breakpoint-chat-small, max-height) {
       max-height: 2.5em;
     }
   }

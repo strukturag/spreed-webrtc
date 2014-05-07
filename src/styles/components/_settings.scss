@@ -33,13 +33,13 @@
 
 #settings.show {
   right: 0;
-  @include breakpt-only-screen($breakpoint-settings-medium) {
+  @include breakpt($breakpoint-settings-medium, max-width, only screen) {
     background: white;
     left: 0;
     width: auto;
   }
   .form-actions{
-    @include breakpt-only-screen($breakpoint-settings-medium) {
+    @include breakpt($breakpoint-settings-medium, max-width, only screen) {
       bottom: 0;
       height: 60px;
       left: 0;
@@ -73,18 +73,18 @@
   }
   .form-horizontal {
     .controls {
-      @include breakpt-only-screen($breakpoint-settings-medium) {
+      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
         margin-left: 110px;
       }
     }
     .control-label {
-      @include breakpt-only-screen($breakpoint-settings-medium) {
+      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
         width: 100px;
         word-wrap: break-word;
       }
     }
   }
-  @include breakpt-only-screen($breakpoint-settings-medium) {
+  @include breakpt($breakpoint-settings-medium, max-width, only screen) {
     padding-bottom: 10px;
   }
 }
