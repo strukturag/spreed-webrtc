@@ -71,15 +71,9 @@ func makeWsHubHandler(h *Hub) http.HandlerFunc {
 		// Read request details.
 		r.ParseForm()
 		token := r.FormValue("t")
-		remoteAddr := r.RemoteAddr
-		if remoteAddr == "@" || remoteAddr == "127.0.0.1" {
-			if r.Header["X-Forwarded-For"][0] != "" {
-				remoteAddr = r.Header["X-Forwarded-For"][0]
-			}
-		}
 
 		// Create a new connection instance.
-		c := NewConnection(h, ws, remoteAddr)
+		c := NewConnection(h, ws, r)
 		if token != "" {
 			if err := c.reregister(token); err != nil {
 				log.Println(err)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-14 16:16+0200\n"
+"POT-Creation-Date: 2014-05-05 16:53+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -35,6 +35,12 @@ msgstr "설정"
 
 msgid "Your audio level"
 msgstr "음성크기"
+
+msgid "Standard view"
+msgstr ""
+
+msgid "Kiosk view"
+msgstr ""
 
 msgid "Start chat"
 msgstr "대화시작"
@@ -135,6 +141,23 @@ msgstr "이름"
 msgid "Your picture and name are visible to others."
 msgstr "사용자의 사진과 이름이 다른사람에게 보일수 있습니다."
 
+msgid "Your ID"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid ""
+"Authenticated by certificate. To log out you have to remove your "
+"certificate from the browser."
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Only register an ID if this is your private browser."
+msgstr ""
+
 msgid "Microphone"
 msgstr "마이크"
 
@@ -201,8 +224,13 @@ msgstr "고급 설정 감추기"
 msgid "Remember settings"
 msgstr "설정 기억"
 
-msgid "Apply"
-msgstr "적용"
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+
+msgid "Close"
+msgstr "닫음"
 
 msgid "Share by Email"
 msgstr "이메일로 공유"
@@ -419,9 +447,6 @@ msgstr "더 많은 정보가 필요함"
 
 msgid "Ok"
 msgstr "오케이"
-
-msgid "Close"
-msgstr "닫음"
 
 msgid "Access code required"
 msgstr "접속코드 필요함"

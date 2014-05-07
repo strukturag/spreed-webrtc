@@ -27,6 +27,7 @@ import (
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
+	"net/http"
 	"sync"
 	"time"
 )
@@ -55,8 +56,9 @@ const (
 
 type Connection struct {
 	// References.
-	h  *Hub
-	ws *websocket.Conn
+	h       *Hub
+	ws      *websocket.Conn
+	request *http.Request
 
 	// Data handling.
 	condition *sync.Cond
@@ -66,21 +68,20 @@ type Connection struct {
 
 	// Metadata.
 	Id           string
-	Roomid       string // Keep Roomid here for quick acess without locking c.User.
+	Roomid       string // Keep Roomid here for quick acess without locking c.Session.
 	Idx          uint64
-	User         *User
+	Session      *Session
 	IsRegistered bool
 	Hello        bool
 	Version      string
-	RemoteAddr   string
 }
 
-func NewConnection(h *Hub, ws *websocket.Conn, remoteAddr string) *Connection {
+func NewConnection(h *Hub, ws *websocket.Conn, request *http.Request) *Connection {
 
 	c := &Connection{
-		h:          h,
-		ws:         ws,
-		RemoteAddr: remoteAddr,
+		h:       h,
+		ws:      ws,
+		request: request,
 	}
 	c.condition = sync.NewCond(&c.mutex)
 
@@ -93,7 +94,7 @@ func (c *Connection) close() {
 	if !c.isClosed {
 		c.ws.Close()
 		c.mutex.Lock()
-		c.User = nil
+		c.Session = nil
 		c.isClosed = true
 		for {
 			head := c.queue.Front()
@@ -112,24 +113,18 @@ func (c *Connection) close() {
 
 func (c *Connection) register() error {
 
-	id, err := c.h.EncodeTicket("id", "")
-	if err != nil {
-		log.Println("Failed to create new Id while register", err)
-		return err
-	}
-	c.Id = id
-	//log.Println("Created new id", id)
-	c.h.registerHandler(c)
+	s := c.h.CreateSession(c.request, nil)
+	c.h.registerHandler(c, s)
 	return nil
 }
 
 func (c *Connection) reregister(token string) error {
 
-	if id, err := c.h.DecodeTicket("token", token); err == nil {
-		c.Id = id
-		c.h.registerHandler(c)
+	if st, err := c.h.DecodeSessionToken(token); err == nil {
+		s := c.h.CreateSession(c.request, st)
+		c.h.registerHandler(c, s)
 	} else {
-		log.Println("Error while decoding token", err)
+		log.Println("Error while decoding session token", err)
 		c.register()
 	}
 	return nil

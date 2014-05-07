@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigScreen, moment) {
+define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl) {
 
     return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
 
@@ -130,6 +130,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         // Default scope data.
         $scope.status = "initializing";
         $scope.id = null;
+        $scope.userid = null;
         $scope.peer = null;
         $scope.dialing = null;
         $scope.conference = null;
@@ -365,9 +366,11 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
         var reloadDialog = false;
 
         mediaStream.api.e.on("received.self", function(event, data) {
+
             $timeout.cancel(ttlTimeout);
             safeApply($scope, function(scope) {
                 scope.id = scope.myid = data.Id;
+                scope.userid = data.Userid;
                 scope.turn = data.Turn;
                 scope.stun = data.Stun;
                 scope.refreshWebrtcSettings();
@@ -385,6 +388,24 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                     }, 300);
                 }
             }
+
+            // Support authentication from localStorage.
+            if (!data.Userid && mediaStream.config.UsersEnabled) {
+                // Check if we can load a user.
+                var login = mediaStream.users.load();
+                if (login !== null) {
+                    $scope.loadedUserlogin = true;
+                    console.log("Trying to authorize with stored credentials ...");
+                    mediaStream.users.authorize(login, function(data) {
+                        console.info("Retrieved nonce - authenticating as user:", data.userid);
+                        mediaStream.api.requestAuthentication(data.userid, data.nonce);
+                        delete data.nonce;
+                    }, function(data, status) {
+                        console.error("Failed to authorize session", status, data);
+                    });
+                }
+            }
+
             // Support to upgrade stuff when ttl was reached.
             if (data.Turn.ttl) {
                 ttlTimeout = $timeout(function() {
@@ -392,6 +413,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                     mediaStream.api.sendSelf();
                 }, data.Turn.ttl / 100 * 90 * 1000);
             }
+
             // Support resurrection shrine.
             if (resurrect) {
                 var resurrection = resurrect;
@@ -404,6 +426,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                     }
                 }, 0);
             }
+
         });
 
         mediaStream.webrtc.e.on("peercall", function(event, peercall) {
@@ -519,6 +542,7 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
                 if (opts.soft) {
                     return;
                 }
+                $scope.userid = null;
                 break;
             case "error":
                 if (reconnecting || connected) {
@@ -590,6 +614,12 @@ define(['underscore', 'bigscreen', 'moment', 'webrtc.adapter'], function(_, BigS
             }
             if (changed) {
                 $scope.$broadcast("mainresize", layout.main);
+            }
+        });
+
+        $scope.$watch("userid", function(userid) {
+            if (userid) {
+                console.info("Session is now authenticated:", userid);
             }
         });
 

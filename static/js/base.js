@@ -31,5 +31,6 @@ define([
 	'audiocontext',
 	'rAF',
 	'humanize',
-	'sha'
+	'sha',
+	'sjcl'
 ], function(){});

@@ -35,7 +35,7 @@ const (
 
 type RoomConnectionUpdate struct {
 	Id         string
-	Userid     string
+	Sessionid  string
 	Status     bool
 	Connection *Connection
 }
@@ -134,15 +134,15 @@ func (r *RoomWorker) Run(f func()) bool {
 func (r *RoomWorker) usersHandler(c *Connection) {
 
 	worker := func() {
-		users := &DataUsers{Type: "Users"}
-		var ul []*DataUser
+		sessions := &DataSessions{Type: "Users"}
+		var sl []*DataSession
 		appender := func(ec *Connection) bool {
-			ecuser := ec.User
-			if ecuser != nil {
-				user := ecuser.Data()
-				user.Type = "Online"
-				ul = append(ul, user)
-				if len(ul) > maxUsersLength {
+			ecsession := ec.Session
+			if ecsession != nil {
+				session := ecsession.Data()
+				session.Type = "Online"
+				sl = append(sl, session)
+				if len(sl) > maxUsersLength {
 					log.Println("Limiting users response length in channel", r.Id)
 					return false
 				}
@@ -150,7 +150,7 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 			return true
 		}
 		r.mutex.RLock()
-		ul = make([]*DataUser, 0, len(r.connections))
+		sl = make([]*DataSession, 0, len(r.connections))
 		// Include connections in this room.
 		for _, ec := range r.connections {
 			if !appender(ec) {
@@ -164,17 +164,17 @@ func (r *RoomWorker) usersHandler(c *Connection) {
 				break
 			}
 		}
-		users.Users = ul
-		usersJson := c.h.buffers.New()
-		encoder := json.NewEncoder(usersJson)
-		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: users})
+		sessions.Users = sl
+		sessionsJson := c.h.buffers.New()
+		encoder := json.NewEncoder(sessionsJson)
+		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions})
 		if err != nil {
 			log.Println("Users error while encoding JSON", err)
-			usersJson.Decref()
+			sessionsJson.Decref()
 			return
 		}
-		c.send(usersJson)
-		usersJson.Decref()
+		c.send(sessionsJson)
+		sessionsJson.Decref()
 
 	}
 
@@ -209,10 +209,10 @@ func (r *RoomWorker) connectionHandler(rcu *RoomConnectionUpdate) {
 		r.mutex.Lock()
 		defer r.mutex.Unlock()
 		if rcu.Status {
-			r.connections[rcu.Userid] = rcu.Connection
+			r.connections[rcu.Sessionid] = rcu.Connection
 		} else {
-			if _, ok := r.connections[rcu.Userid]; ok {
-				delete(r.connections, rcu.Userid)
+			if _, ok := r.connections[rcu.Sessionid]; ok {
+				delete(r.connections, rcu.Sessionid)
 			}
 		}
 	}
