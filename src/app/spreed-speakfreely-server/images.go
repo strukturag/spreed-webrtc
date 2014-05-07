@@ -38,29 +38,29 @@ type Image struct {
 	updateIdx    int
 	lastChange   time.Time
 	lastChangeId string
-	userid       string
+	sessionid    string
 	mimetype     string
 	data         []byte
 }
 
 type ImageCache interface {
-	Update(userId string, image string) string
+	Update(sessionId string, image string) string
 
 	Get(imageId string) *Image
 
-	DeleteUserImage(userId string)
+	Delete(sessionId string)
 }
 
 type imageCache struct {
-	images     map[string]*Image
-	userImages map[string]string
-	mutex      sync.RWMutex
+	images        map[string]*Image
+	sessionImages map[string]string
+	mutex         sync.RWMutex
 }
 
 func NewImageCache() ImageCache {
 	result := &imageCache{}
 	result.images = make(map[string]*Image)
-	result.userImages = make(map[string]string)
+	result.sessionImages = make(map[string]string)
 	if imageFilenames == nil {
 		imageFilenames = map[string]string{
 			"image/png":  "picture.png",
@@ -71,7 +71,7 @@ func NewImageCache() ImageCache {
 	return result
 }
 
-func (self *imageCache) Update(userId string, image string) string {
+func (self *imageCache) Update(sessionId string, image string) string {
 	mimetype := "image/x-unknown"
 	pos := strings.Index(image, ";")
 	if pos != -1 {
@@ -98,7 +98,7 @@ func (self *imageCache) Update(userId string, image string) string {
 	}
 	var img *Image
 	self.mutex.RLock()
-	result, ok := self.userImages[userId]
+	result, ok := self.sessionImages[sessionId]
 	if !ok {
 		self.mutex.RUnlock()
 		imageId := make([]byte, 15, 15)
@@ -106,11 +106,11 @@ func (self *imageCache) Update(userId string, image string) string {
 			return ""
 		}
 		result = base64.URLEncoding.EncodeToString(imageId)
-		img = &Image{userid: userId}
+		img = &Image{sessionid: sessionId}
 		self.mutex.Lock()
-		resultTmp, ok := self.userImages[userId]
+		resultTmp, ok := self.sessionImages[sessionId]
 		if !ok {
-			self.userImages[userId] = result
+			self.sessionImages[sessionId] = result
 			self.images[result] = img
 		} else {
 			result = resultTmp
@@ -145,11 +145,11 @@ func (self *imageCache) Get(imageId string) *Image {
 	return image
 }
 
-func (self *imageCache) DeleteUserImage(userId string) {
+func (self *imageCache) Delete(sessionId string) {
 	self.mutex.Lock()
-	imageId, ok := self.userImages[userId]
+	imageId, ok := self.sessionImages[sessionId]
 	if ok {
-		delete(self.userImages, userId)
+		delete(self.sessionImages, sessionId)
 		delete(self.images, imageId)
 	}
 	self.mutex.Unlock()

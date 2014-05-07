@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed Speak Freely 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-04-14 16:16+0200\n"
+"POT-Creation-Date: 2014-05-05 16:53+0200\n"
 "PO-Revision-Date: 2014-03-31 23:26+0100\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -35,6 +35,12 @@ msgstr "系统设置"
 
 msgid "Your audio level"
 msgstr "您的通话音量"
+
+msgid "Standard view"
+msgstr ""
+
+msgid "Kiosk view"
+msgstr ""
 
 msgid "Start chat"
 msgstr "开始聊天"
@@ -136,6 +142,23 @@ msgstr "名字"
 msgid "Your picture and name are visible to others."
 msgstr "别人能看到您的图片及名字"
 
+msgid "Your ID"
+msgstr ""
+
+msgid "Register"
+msgstr ""
+
+msgid ""
+"Authenticated by certificate. To log out you have to remove your "
+"certificate from the browser."
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Only register an ID if this is your private browser."
+msgstr ""
+
 msgid "Microphone"
 msgstr "麦克风"
 
@@ -202,8 +225,13 @@ msgstr "隐藏高级设置"
 msgid "Remember settings"
 msgstr "记住设置"
 
-msgid "Apply"
-msgstr "适用"
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+
+msgid "Close"
+msgstr "关闭"
 
 msgid "Share by Email"
 msgstr "电子邮件共享"
@@ -417,9 +445,6 @@ msgstr "需要更多信息"
 
 msgid "Ok"
 msgstr "Ok"
-
-msgid "Close"
-msgstr "关闭"
 
 msgid "Access code required"
 msgstr "需要接入码"

@@ -21,12 +21,13 @@
 define([
     'jquery',
     'underscore',
+    'ua-parser',
     'mediastream/connector',
     'mediastream/api',
     'mediastream/webrtc',
     'mediastream/tokens'
 
-], function($, _, Connector, Api, WebRTC, tokens) {
+], function($, _, uaparser, Connector, Api, WebRTC, tokens) {
 
     return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce) {
 
@@ -40,20 +41,8 @@ define([
         var api = new Api(connector);
         var webrtc = new WebRTC(api);
 
-        var td = null;
-        $window.testDisconnect = function() {
-            if (td) {
-                $window.clearInterval(td);
-                td = null;
-                console.info("Stopped disconnector.");
-                return;
-            }
-            td = $window.setInterval(function() {
-                console.info("Test disconnect!");
-                connector.conn.close();
-            }, 10000);
-            console.info("Started disconnector.");
-        };
+        // Create encryption key from server token and browser name.
+        var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
 
         var mediaStream = {
             version: version,
@@ -73,6 +62,131 @@ define([
                 },
                 api: function(path) {
                     return (context.Cfg.B || "/") + "api/v1/" + path;
+                }
+            },
+            users: {
+                register: function(form, success_cb, error_cb) {
+                    var url = mediaStream.url.api("users");
+                    if (form) {
+                        // Form submit mode.
+                        $(form).attr("action", url).attr("method", "POST");
+                        var idE = $('<input name="id" type="hidden">');
+                        idE.val(mediaStream.api.id);
+                        var sidE = $('<input name="sid" type="hidden">');
+                        sidE.val(mediaStream.api.sid);
+                        $(form).append(idE);
+                        $(form).append(sidE);
+                        var iframe = $(form).find("iframe");
+                        form.submit();
+                        $timeout(function() {
+                            idE.remove();
+                            sidE.remove();
+                            idE=null;
+                            sidE=null;
+                        }, 0);
+                        var retries = 0;
+                        var authorize = function() {
+                            mediaStream.users.authorize({
+                                count: retries
+                            }, success_cb, function(data, status) {
+                                // Error handler retry.
+                                retries++;
+                                if (retries <= 10) {
+                                    $timeout(authorize, 2000);
+                                } else {
+                                    console.error("Failed to authorize session", status, data);
+                                    if (error_cb) {
+                                        error_cb(data, status)
+                                    }
+                                }
+                            });
+                        };
+                        $timeout(authorize, 1500);
+                    } else {
+                        // AJAX mode.
+                        var data = {
+                            id: mediaStream.api.id,
+                            sid: mediaStream.api.sid
+                        }
+                        $http({
+                            method: "POST",
+                            url: url,
+                            data: JSON.stringify(data),
+                            headers: {'Content-Type': 'application/json'}
+                        }).
+                        success(function(data, status) {
+                            if (data.userid !== "" && data.success) {
+                                success_cb(data, status);
+                            } else {
+                                if (error_cb) {
+                                    error_cb(data, status);
+                                }
+                            }
+                        }).
+                        error(function(data, status) {
+                            if (error_cb) {
+                                error_cb(data, status)
+                            }
+                        });
+                    }
+                },
+                authorize: function(data, success_cb, error_cb) {
+                    var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
+                    var login = _.clone(data);
+                    login.id = mediaStream.api.id;
+                    login.sid = mediaStream.api.sid;
+                    $http({
+                        method: "PATCH",
+                        url: url,
+                        data: JSON.stringify(login),
+                        headers: {'Content-Type': 'application/json'}
+                    }).
+                    success(function(data, status) {
+                        if (data.nonce !== "" && data.success) {
+                            success_cb(data, status);
+                        } else {
+                            if (error_cb) {
+                                error_cb(data, status);
+                            }
+                        }
+                    }).
+                    error(function(data, status) {
+                        if (error_cb) {
+                            error_cb(data, status)
+                        }
+                    });
+                },
+                store: function(data) {
+                    // So we store the stuff in localStorage for later use.
+                    var store = _.clone(data);
+                    store.v = 42; // No idea what number - so use 42.
+                    var login = sjcl.encrypt(secureKey, JSON.stringify(store));
+                    localStorage.setItem("mediastream-login-"+context.Cfg.UsersMode, login);
+                    return login;
+                },
+                load: function() {
+                    // Check if we have something in store.
+                    var login = localStorage.getItem("mediastream-login-"+context.Cfg.UsersMode);
+                    if (login) {
+                        try {
+                            login = sjcl.decrypt(secureKey, login);
+                            login = JSON.parse(login)
+                        } catch(err) {
+                            console.error("Failed to parse stored login data", err);
+                            login = {};
+                        }
+                        switch (login.v) {
+                        case 42:
+                            return login;
+                        default:
+                            console.warn("Unknown stored credentials", login.v);
+                            break
+                        }
+                    }
+                    return null;
+                },
+                forget: function() {
+                    localStorage.removeItem("mediastream-login-"+context.Cfg.UsersMode);
                 }
             },
             initialize: function($rootScope, translation) {
@@ -203,10 +317,16 @@ define([
                                     });
                                 }
                             }).
-                            error(function() {
-                                alertify.dialog.error(translation._("Error"), translation._("Failed to verify access code. Check your Internet connection and try again."), function() {
-                                    prompt();
-                                });
+                            error(function(data, status) {
+                                if ((status == 403 || status == 413) && data.success == false) {
+                                    alertify.dialog.error(translation._("Access denied"), translation._("Please provide a valid access code."), function() {
+                                        prompt();
+                                    });
+                                } else {
+                                    alertify.dialog.error(translation._("Error"), translation._("Failed to verify access code. Check your Internet connection and try again."), function() {
+                                        prompt();
+                                    });
+                                }
                             });
                         };
                         if (storedCode) {

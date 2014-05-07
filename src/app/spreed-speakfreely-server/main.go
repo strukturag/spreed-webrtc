@@ -263,6 +263,31 @@ func runner(runtime phoenix.Runtime) error {
 		defaultRoomEnabled = defaultRoomEnabledString == "true"
 	}
 
+	usersEnabled := false
+	usersEnabledString, err := runtime.GetString("users", "enabled")
+	if err == nil {
+		usersEnabled = usersEnabledString == "true"
+	}
+
+	usersAllowRegistration := false
+	usersAllowRegistrationString, err := runtime.GetString("users", "allowRegistration")
+	if err == nil {
+		usersAllowRegistration = usersAllowRegistrationString == "true"
+	}
+
+	serverToken, err := runtime.GetString("app", "serverToken")
+	if err != nil {
+		//TODO(longsleep): When we have a database, generate this once from random source and store it.
+		serverToken = "i-did-not-change-the-public-token-boo"
+	}
+
+	serverRealm, err := runtime.GetString("app", "serverRealm")
+	if err != nil {
+		serverRealm = "local"
+	}
+
+	usersMode, _ := runtime.GetString("users", "mode")
+
 	// Create token provider.
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
@@ -271,7 +296,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, basePath, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, plugin)
+	config = NewConfig(title, ver, runtimeVersion, basePath, serverToken, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, usersEnabled, usersAllowRegistration, usersMode, plugin)
 
 	// Load templates.
 	tt := template.New("")
@@ -295,8 +320,11 @@ func runner(runtime phoenix.Runtime) error {
 		log.Printf("Loaded extra templates from: %s", extraFolder)
 	}
 
+	// Create realm string from config.
+	computedRealm := fmt.Sprintf("%s.%s", serverRealm, serverToken)
+
 	// Create our hub instance.
-	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret)
+	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret, computedRealm)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
@@ -330,6 +358,12 @@ func runner(runtime phoenix.Runtime) error {
 	// Create router.
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
+
+	// Prepare listeners.
+	runtime.DefaultHTTPHandler(r)
+	runtime.DefaultHTTPSHandler(r)
+
+	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
 	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
@@ -342,7 +376,16 @@ func runner(runtime phoenix.Runtime) error {
 	api := sleepy.NewAPI()
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
+	api.AddResource(config, "/config")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+	if usersEnabled {
+		// Create Users handler.
+		users := NewUsers(hub, usersMode, serverRealm, runtime)
+		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
+		if usersAllowRegistration {
+			api.AddResource(users, "/users")
+		}
+	}
 	if statsEnabled {
 		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
@@ -356,9 +399,6 @@ func runner(runtime phoenix.Runtime) error {
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
-
-	runtime.DefaultHTTPHandler(r)
-	runtime.DefaultHTTPSHandler(r)
 
 	return runtime.Start()
 }

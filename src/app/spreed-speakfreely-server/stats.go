@@ -23,7 +23,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"runtime"
 	"time"
 )
@@ -73,9 +72,9 @@ type Stats struct {
 	hub *Hub
 }
 
-func (stats *Stats) Get(values url.Values, headers http.Header) (int, interface{}, http.Header) {
+func (stats *Stats) Get(request *http.Request) (int, interface{}, http.Header) {
 
-	details := values.Get("details") == "1"
+	details := request.Form.Get("details") == "1"
 	return 200, NewStat(details, stats.hub), http.Header{"Content-Type": {"application/json; charset=utf-8"}, "Access-Control-Allow-Origin": {"*"}}
 
 }

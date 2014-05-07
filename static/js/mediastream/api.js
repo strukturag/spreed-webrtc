@@ -26,6 +26,7 @@ define(['jquery', 'underscore'], function($, _) {
     var Api = function(connector) {
 
         this.id = null;
+        this.sid = null;
         this.session = {};
         this.connector = connector;
 
@@ -112,6 +113,7 @@ define(['jquery', 'underscore'], function($, _) {
                 this.connector.token = data.Token;
             }
             this.id = data.Id;
+            this.sid = data.Sid;
             this.e.triggerHandler("received.self", [data]);
             break;
         case "Offer":
@@ -222,6 +224,20 @@ define(['jquery', 'underscore'], function($, _) {
         }
 
         return this.send("Users", data);
+
+    };
+
+    Api.prototype.requestAuthentication = function(userid, nonce) {
+
+        var data = {
+            Type: "Authentication",
+            Authentication: {
+                Userid: userid,
+                Nonce: nonce
+            }
+        }
+
+        return this.send("Authentication", data);
 
     };
 

@@ -49,6 +49,7 @@ require.config({
     'humanize': 'libs/humanize',
     'sha': 'libs/sha',
     'dialogs': 'libs/angular/dialogs.min',
+    'sjcl': 'libs/sjcl',
 
     'partials': '../partials',
     'sounds': '../sounds',
@@ -110,9 +111,34 @@ require.config({
     'dialogs': {
         deps: ['angular', 'angular-sanitize'],
         exports: 'angular'
+    },
+    'sjcl': {
+        exports: 'sjcl'
     }
   }
 });
+
+(function() {
+    var debugDefault = window.location.href.match(/(\?|&)debug($|&|=)/);
+    // Overwrite console to not log stuff per default.
+    // Write debug(true) in console to enable or start with ?debug parameter.
+    window.consoleBackup = window.console;
+    window.debug = function(flag) {
+        if (!flag) {
+            window.console = {
+                log: function() {},
+                info: function() {},
+                warn: function() {},
+                error: function() {},
+                debug: function() {},
+                trace: function() {}
+            }
+        } else {
+            window.console = consoleBackup;
+        }
+    };
+    window.debug(debugDefault && true);
+}());
 
 require.onError = (function() {
     var retrying = false;
