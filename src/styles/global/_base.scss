@@ -72,7 +72,7 @@ a {
 }
 
 #background {
-  background: url("../img/bg-tiles.png") repeat;
+  background: $main-background repeat;
   bottom: 0;
   left: 0;
   position:fixed;
