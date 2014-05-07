@@ -1,0 +1,102 @@
+/*!
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+$theme-name: "Dark Theme";
+$theme-version: "0.0.1";
+
+@function branding-colors($base-lightness) {
+  @if($base-lightness == "light") {
+    @return "lighten";
+  }
+  @if($base-lightness == "dark") {
+    @return "darken";
+  }
+}
+
+$theme-lightness: branding-colors("dark");
+$theme-color: rgb(33, 33, 33);
+
+$contrasted-dark-default: rgb(38, 38, 38);  // compass
+$contrasted-light-default: rgba(252, 252, 252, 1);  // compass
+
+// background
+$main-background: url("../img/bg-tiles.png");
+$main-background-retina: url("../img/bg-tiles_x2.png");
+
+// menu background color
+$menu-background-color: $theme-color;
+$menu-background-color-accent: lighten($menu-background-color, 5%);
+
+$componentfg1: contrast-color($menu-background-color);
+$componentbg: $menu-background-color;
+$buddylist-tab-background: $menu-background-color;
+$chat-background: darken($menu-background-color, 5%);
+$input-bg-color: lighten($menu-background-color, 20%);
+$chat-msg-self-background: lighten($chat-background, 10%);
+$chat-msg-remote-background: lighten($chat-msg-self-background, 10%);
+$fileinfo-background: darken($chat-msg-self-background, 10%);
+$fileinfo-background-remote: darken($chat-msg-remote-background, 10%);
+$buddylist-action-background: transparent;
+$sidepanebg: $menu-background-color-accent;
+
+$fileinfo-icon-background-color: $chat-msg-self-background;
+$fileinfo-icon-background-color-remote: $chat-msg-remote-background;
+
+
+// font
+$base-font-size: 13px; // compass
+$base-line-height: 19px; // compass
+
+// font color
+$font-color: contrast-color($menu-background-color);
+$font-color-accent: darken($font-color, 20%);
+
+$chat-ctrl: $font-color;
+$bar-btn-action-color: $font-color;
+$input-text-color: $font-color;
+$chat-meta: $font-color-accent;
+$chat-timestamp: $font-color-accent;
+$form-help-text: $font-color-accent;
+$bar-logo-text-desc: $font-color-accent;
+$buddylist-browser: $font-color-accent;
+$buddylist-tab-color: $font-color-accent;
+$bar-btn-action-hover: darken($font-color, 20%);
+$bar-btn-action-border: darken($font-color, 50%);
+
+$bordercolor: lighten($menu-background-color, 10%);
+$chat-msg-border: lighten($chat-background, 5%);
+$input-border-color: $bar-btn-action-border;
+$fileinfo-border-remote: $chat-msg-remote-background;
+$fileinfo-border: $chat-msg-self-background;
+
+// boostrap vars
+$text-color: $font-color;
+$legend-color: $font-color;
+$legend-border-color: $bordercolor;
+$hr-border: $bordercolor;
+
+$list-group-bg: $menu-background-color-accent;
+$list-group-border: $bordercolor;
+$list-group-hover-bg: $menu-background-color;
+$list-group-link-color: $font-color-accent;
+
+$progress-bg: lighten($input-bg-color, 30%);
+

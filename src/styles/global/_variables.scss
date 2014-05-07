@@ -21,8 +21,8 @@
 
 // general
 $background: #e5e5e5;
-$componentbg: #f5f5f5;
-$componentfg1: #262626;
+$componentbg: #f5f5f5 !default;
+$componentfg1: #262626 !default;
 $componentfg2: rgba(0,0,0,.5);
 $componentfg3: rgba(0,0,0,.2); //#ccc
 $componentfg4: #737373;
