@@ -1,92 +1,102 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 .overlaybar {
-	position:absolute;
-	padding:3px 8px 0px 30px;
-	vertical-align:middle;
-	background: rgba(0,0,0,0.2);
-	min-height:36px;
-	color: #ccc;
-	text-shadow: 0 0 5px black;
-	input[type="radio"], input[type="checkbox"] {
-		margin-top:2px;
-	}
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+  background: $componentfg3;
+  color: $bordercolor;
+  min-height: 36px;
+  padding: 3px 8px 0 30px;
+  position: absolute;
+  text-shadow: 0 0 5px black;
+  user-select: none;
+  vertical-align: middle;
 }
 
-.overlaybar:hover {
-	background: rgba(0,0,0,0.5);
+.overlaybar {
+  &:hover {
+    background: $componentfg2;
+  }
+  .btn {
+    text-shadow: none;
+  }
+  .btn-link {
+    text-shadow: 0 0 5px black;
+  }
+  .form-group > * {
+    float: left;
+    padding-top: 0;
+  }
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin-top: 2px;
+  }
+  label {
+    padding-top: 7px !important;
+  }
 }
 
-.overlaybar.notvisible {
-	background: transparent;
-	pointer-events: none;
-}
-.overlaybar.notvisible:hover {
-	background: transparent;
-}
-
-.overlaybar .btn {
-	text-shadow: none;
-}
-
-.overlaybar .btn-link {
-	text-shadow: 0 0 5px black;
-}
-
-.overlaybar .overlaybarbutton {
-	font-size:20px;
-	vertical-align:middle;
-	position:absolute;
-	left: 3px;
-	top: 1px;
-	padding:6px;
-	display:block;
-	color:#ccc;
-	z-index:15;
-	opacity:0.7;
-	pointer-events: auto;
-}
-
-.overlaybar .overlaybarcontent {
-	display:inline-block;
-	margin-left:.5em;
-	margin-bottom:0px;
-	max-width:60%;
-}
-
-.overlaybarcontent > * {
-	padding-right:.5em;
-}
-
-.overlaybarcontent .input-group {
-	max-width:160px;
-}
-
-.overlaybar label {
-	padding-top:7px !important;
-}
-
-.overlaybar .overlaybaroverlay {
-	display:none;
-	opacity: 0.7;
-	text-align:left;
-	margin-left:0.5em;
-	padding-top:2px;
-}
-
-.overlaybar.notvisible {
-	.overlaybarcontent {
-		display: none;
-	}
-	.overlaybaroverlay {
-		display: block;
-	}
-}
-
-.overlaybar .form-group > * {
-	float: left;
-	padding-top: 0px;
+.overlaybar {
+  &.notvisible {
+    background: transparent;
+    pointer-events: none;
+    &:hover {
+      background: transparent;
+    }
+    .overlaybar-content {
+      display: none;
+    }
+    .overlaybar-overlay {
+      display: block;
+    }
+  }
+  .overlaybar-button {
+    color: $bordercolor;
+    display: block;
+    font-size: 20px;
+    left: 3px;
+    opacity: .7;
+    padding: 6px;
+    position: absolute;
+    pointer-events: auto;
+    top: 1px;
+    vertical-align: middle;
+    z-index: 15;
+  }
+  .overlaybar-content {
+    display: inline-block;
+    margin-left: .5em;
+    margin-bottom: 0;
+    max-width: 60%;
+    > * {
+      padding-right: .5em;
+    }
+    .input-group {
+      max-width: 160px;
+    }
+  }
+  .overlaybar-overlay {
+    display: none;
+    margin-left: .5em;
+    opacity: .7;
+    padding-top: 2px;
+    text-align: left;
+  }
 }

@@ -19,39 +19,45 @@
  *
  */
 
-.mainScreenshare #screenshare {
-	display: block;
-}
 .screenshare {
-	position:absolute;
-	left:0px;
-	right:0px;
-	top:0px;
-	bottom:0px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
+
+.mainScreenshare #screenshare {
+  display: block;
+}
+
 .screensharepane {
-	position:absolute;
-	left:0px;
-	right:0px;
-	bottom:0px;
-	top:0px;
-	overflow:auto;
-	background:black;
+  background: black;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
-.screensharepane .remotescreen {
-	position:relative;
+
+.screensharepane {
+  .remotescreen {
+    position: relative;
+  }
+  video {
+    max-height: 99%;
+    width: 100%;
+  }
 }
-.screensharepane video {
-	width: 100%;
-	max-height: 99%;
-}
+
 .remotesize .screensharepane video {
-	width: auto;
-	max-height: none;
+  max-height: none;
+  width: auto;
 }
 
 .screenshare .overlaybar {
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }

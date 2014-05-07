@@ -18,53 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #help {
-    position:absolute;
-    top:80px;
-    bottom:10px;
-    left:0px;
-    right:0px;
-    width:350px;
-    font-size:1.1em;
-    color:#aaa;
-    text-shadow: 0 0 5px black;
-    margin: 0 auto;
-    -webkit-transition: right 200ms ease-in-out;
-    -moz-transition: right 200ms ease-in-out;
-    -ms-transition: right 200ms ease-in-out;
-    -o-transition: right 200ms ease-in-out;
-    transition: right 200ms ease-in-out;
-    boder-top:1px solid $bordercolor;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+  bottom: 10px;
+  color: #aaa;
+  font-size: 1.1em;
+  left: 0;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  text-shadow: 0 0 5px black;
+  transition: right 200ms ease-in-out;
+  top: 80px;
+  user-select: none;
+  width: 350px;
 }
-.withChat #help, .withBuddylist #help {
-    right:260px;
+
+.withChat #help,
+.withBuddylist #help {
+  right: 260px;
 }
-.withChat.withBuddylist #help, .withSettings #help {
-    right:520px;
+
+.withChat.withBuddylist #help,
+.withSettings #help {
+  right: 520px;
 }
-#help > div {
-    margin:0 10px;
-}
-#help .help-subline {
-    padding:20px 0;
-    color:#888;
-}
-@media only screen and (max-width: 1020px) and (min-width: 400px) {
-    #help {
-        width:250px;
-        font-size:1em;
-    }
-    #help > div {
-        //margin-left:10px;
-    }
-}
-@media only screen and (max-width: 400px) {
-	#help {
-		display:none;
-	}
+
+#help {
+  > div {
+    margin: 0 10px;
+  }
+  .help-subline {
+    color: #888;
+    padding: 20px 0;
+  }
+  @include breakpt($breakpoint-useability-small, max-width, only screen){
+    display: none;
+  }
+  @include breakpt($breakpoint-useability-small, min-width, only screen, $breakpoint-useability-large){
+    font-size: 1em;
+    width: 250px;
+  }
 }
