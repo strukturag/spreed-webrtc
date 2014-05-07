@@ -40,13 +40,13 @@
       display: none;
     }
   }
-  @include breakpt-only-screen($breakpoint-video-small) {
+  @include breakpt($breakpoint-video-small, max-width, only screen) {
     right: 0;
   }
 }
 
 .mainScreenshare #audiovideo { 
-  @include breakpt-only-screen($breakpoint-video-medium) {
+  @include breakpt($breakpoint-video-medium, max-width, only screen) {
     display: none;
   }
 }

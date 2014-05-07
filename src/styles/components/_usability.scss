@@ -52,10 +52,10 @@
     color: #888;
     padding: 20px 0;
   }
-  @include breakpt-only-screen($breakpoint-useability-small){
+  @include breakpt($breakpoint-useability-small, max-width, only screen){
     display: none;
   }
-  @include breakpt-only-screen-with-min($breakpoint-useability-small, $breakpoint-useability-large){
+  @include breakpt($breakpoint-useability-small, min-width, only screen, $breakpoint-useability-large){
     font-size: 1em;
     width: 250px;
   }

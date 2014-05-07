@@ -21,6 +21,7 @@ install:
     # see https://github.com/npm/npm/issues/4379#issuecomment-31590254
   - sudo npm config set ca ""
   - sudo npm install -g po2json
+  - sudo npm install -g autoprefixer
 
 script:
   - make get
