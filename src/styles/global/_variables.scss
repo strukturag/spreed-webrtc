@@ -21,6 +21,8 @@
 
 // ** Custom Variables **
 // --------------------------------------------------
+
+// general
 $background: #e5e5e5;
 $componentbg: #f5f5f5;
 $componentfg1: #262626;
@@ -35,18 +37,26 @@ $actioncolor2: rgb(0,149,52);
 $light-text: #aaa;
 $lighter-text: #ddd;
 
-$grey3: rgba(0,0,0,.3);
-$grey4: rgba(0,0,0,.4);
-$dgrey: rgb(34,34,34);
-$red: rgb(219,79,57);
+$action-hover: rgba(0,0,0,.4);
+$action-mute: rgb(219,79,57);
+$action-enable: $actioncolor1;
+
+// nav bar
+$bar-logo-text-desc: rgb(34,34,34);
+$bar-btn-action: rgba(0,0,0,.3);
+$bar-btn-action-hover: $action-hover;
+$bar-btn-action-mute: $action-mute;
+$bar-btn-action-enable: $action-enable;
 
 $tap-highlight: rgba(0, 0, 0, 0);
 
+// video
 $video-background: rgba(0,0,0,.4);
 $video-onlyaudio-background: #666;
 $video-onlyaudio: rgba(255,255,255,.3);
 $video-overlayactions: rgba(0,0,0,.9);
 
+// buddylist
 $buddylist-background: rgba(0,0,0,.3);
 $buddylist-action-background: rgba(255,255,255,0.5);
 
@@ -114,9 +124,9 @@ $breakpoint-chat-small: 210px;
 
 $breakpoint-settings-medium: 630px;
 
+// font
 $font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
-
-// compass
+  // compass
 $base-font-size: 13px;
 $base-line-height: 19px;
 
@@ -125,10 +135,12 @@ $audiovideolevel: #9dd53a;
 //main navigation bar
 $minbarheight: 44px;
 
+
 // ** Fontawsome changed variables **
 // original at libs/fontawesome/_variables.scss
 // --------------------------
 $fa-css-prefix:       fa;
+
 
 // ** Bootstrap changed variables **
 // original at libs/bootstrap/_variables.scss
@@ -140,7 +152,6 @@ $fa-css-prefix:       fa;
 
 //** Background color for `<body>`.
 $body-bg:               $background;
-
 
 //== Typography
 //
