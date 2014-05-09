@@ -86,7 +86,9 @@ assets: styles javascript
 
 styles: SASSFLAGS = --style=expanded
 styles:
-		cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/ $(CURDIR)/static/fonts/
+		mkdir -p $(CURDIR)/static/css
+		mkdir -p $(CURDIR)/static/fonts
+		cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/font* $(CURDIR)/static/fonts
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
 		autoprefixer --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(CURDIR)/static/css/main.min.css
@@ -138,7 +140,8 @@ install:
 clean:
 		GOPATH=$(GOPATH) go clean -i $(PKG)
 		rm -rf $(CURDIR)/pkg
-		rm -f $(CURDIR)/static/css/main.min.css
+		rm -rf $(CURDIR)/static/css
+		rm -rf $(CURDIR)/static/fonts
 		rm -rf $(CURDIR)/build/out
 
 distclean: clean

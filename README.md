@@ -9,7 +9,7 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 ## Build prerequisites
 
   - [Go](http://golang.org) >= 1.1.0
-  - [NodeJS](http://nodejs.org/)
+  - [NodeJS](http://nodejs.org/) >= 0.8.0
   - [Sass](http://sass-lang.com/) >= 3.2.0
   - [Compass](http://compass-style.org/)
   - [Babel](http://babel.pocoo.org/)
