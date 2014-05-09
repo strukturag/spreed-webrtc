@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["jquery", "underscore"], function($, _) {
+define(["jquery", "underscore", "modernizr"], function($, _, Modernizr) {
 
-	var dynamicCSSContainer = "audiovideo-dynamic";
-	var renderers = {};
+    var dynamicCSSContainer = "audiovideo-dynamic";
+    var renderers = {};
 
-	var getRemoteVideoSize = function(videos, peers) {
-		var size = {
-			width: 1920,
-			height: 1080
-		}
-		if (videos.length) {
+    var getRemoteVideoSize = function(videos, peers) {
+        var size = {
+            width: 1920,
+            height: 1080
+        }
+        if (videos.length) {
             if (videos.length === 1) {
                 var remoteVideo = peers[videos[0]].element.find("video").get(0);
                 size.width = remoteVideo.videoWidth;
@@ -37,34 +37,36 @@ define(["jquery", "underscore"], function($, _) {
             }
         }
         return size;
-	}
+    }
 
-	// videoLayout
-	return ["$window", function($window) {
+    var objectFitSupport = Modernizr["object-fit"] && true;
 
-		// Video layout with all videos rendered the same size.
-		var OnePeople = function(container, scope, controller) {
-		};
+    // videoLayout
+    return ["$window", function($window) {
 
-		OnePeople.prototype.name = "onepeople";
+        // Video layout with all videos rendered the same size.
+        var OnePeople = function(container, scope, controller) {
+        };
 
-		OnePeople.prototype.render = function(container, size, scope, videos, peers) {
+        OnePeople.prototype.name = "onepeople";
 
-			if (this.closed) {
-				return;
-			}
+        OnePeople.prototype.render = function(container, size, scope, videos, peers) {
+
+            if (this.closed) {
+                return;
+            }
 
             var videoWidth;
             var videoHeight;
 
             if (videos.length) {
-            	var remoteSize = getRemoteVideoSize(videos, peers);
+                var remoteSize = getRemoteVideoSize(videos, peers);
                 videoWidth = remoteSize.width;
                 videoHeight = remoteSize.height;
             }
 
             if (!videoWidth) {
-            	// XXX(longsleep): Improve this condition - its crap to compare style opacity (tm)!
+                // XXX(longsleep): Improve this condition - its crap to compare style opacity (tm)!
                 if (scope.localVideo.style.opacity === '1') {
                     videoWidth = scope.localVideo.videoWidth;
                     videoHeight = scope.localVideo.videoHeight;
@@ -91,6 +93,17 @@ define(["jquery", "underscore"], function($, _) {
             //console.log("resize", innerHeight, innerWidth);
             //console.log("resize", container, videos.length, aspectRatio, innerHeight, innerWidth);
             var extraCSS = {};
+
+            if (!objectFitSupport) {
+                // Make mini video fit into available space on browsers with no object-fit support.
+                // http://caniuse.com/object-fit
+                var aspectRatioLocal = scope.localVideo.videoWidth/scope.localVideo.videoHeight;
+                extraCSS = {
+                    ".renderer-onepeople .miniVideo": {
+                        width: ($(scope.mini).height()*aspectRatioLocal)+"px"
+                    }
+                };
+            }
 
             if (videos.length === 1) {
                 var newVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
@@ -124,100 +137,100 @@ define(["jquery", "underscore"], function($, _) {
                 */
                 container.style.width = newContainerWidth + "px";
                 container.style.left = ((innerWidth - newContainerWidth) / 2) + 'px';
-                extraCSS = {
+                extraCSS = $.extend(extraCSS, {
                     ".renderer-onepeople .remoteVideos": {
                         ">div": {
                             width: singleVideoWidth+"px",
                             height: singleVideoHeight+"px"
                         }
                     }
-                };
+                });
             }
             $.injectCSS(extraCSS, {
                 truncateFirst: true,
                 containerName: dynamicCSSContainer
             });
 
-		};
+        };
 
-		OnePeople.prototype.close = function(container, scope, controller) {
+        OnePeople.prototype.close = function(container, scope, controller) {
 
-			this.closed = true;
+            this.closed = true;
 
-		};
+        };
 
 
-		// Smally inherits from OnePeople
-		var Smally = function(container, scope, controller) {
-			// Call super.
-			OnePeople.call(this, container, scope, controller);
-		}
-		Smally.prototype = Object.create(OnePeople.prototype);
-		Smally.prototype.constructor = Smally;
-		Smally.prototype.name = "smally";
+        // Smally inherits from OnePeople
+        var Smally = function(container, scope, controller) {
+            // Call super.
+            OnePeople.call(this, container, scope, controller);
+        }
+        Smally.prototype = Object.create(OnePeople.prototype);
+        Smally.prototype.constructor = Smally;
+        Smally.prototype.name = "smally";
 
-		// A view with one selectable large video. The others are small.
-		var ConferenceKiosk = function(container, scope, controller) {
+        // A view with one selectable large video. The others are small.
+        var ConferenceKiosk = function(container, scope, controller) {
 
-			this.remoteVideos = $(container).find(".remoteVideos");
-			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
-			this.remoteVideos.before(this.bigVideo);
+            this.remoteVideos = $(container).find(".remoteVideos");
+            this.bigVideo = $("<div>").addClass("bigVideo").get(0);
+            this.remoteVideos.before(this.bigVideo);
 
-			this.big = null;
-			this.remoteVideos.on("click", ".remoteVideo", _.bind(function(event) {
-				if ($(event.currentTarget).hasClass("remoteVideo")) {
-					event.stopPropagation();
-					this.makeBig($(event.currentTarget));
-				}
-			}, this));
+            this.big = null;
+            this.remoteVideos.on("click", ".remoteVideo", _.bind(function(event) {
+                if ($(event.currentTarget).hasClass("remoteVideo")) {
+                    event.stopPropagation();
+                    this.makeBig($(event.currentTarget));
+                }
+            }, this));
 
-		};
+        };
 
-		ConferenceKiosk.prototype.name = "conferencekiosk";
+        ConferenceKiosk.prototype.name = "conferencekiosk";
 
-		ConferenceKiosk.prototype.makeBig = function(remoteVideo) {
+        ConferenceKiosk.prototype.makeBig = function(remoteVideo) {
 
-			if (this.big === remoteVideo) {
-				return;
-			}
+            if (this.big === remoteVideo) {
+                return;
+            }
 
-			if (this.big) {
-				// Add old video back.
-				this.big.insertAfter(remoteVideo);
-				this.big.find("video").get(0).play();
-			}
+            if (this.big) {
+                // Add old video back.
+                this.big.insertAfter(remoteVideo);
+                this.big.find("video").get(0).play();
+            }
 
-			this.big = remoteVideo;
-			remoteVideo.appendTo(this.bigVideo);
-			remoteVideo.find("video").get(0).play();
+            this.big = remoteVideo;
+            remoteVideo.appendTo(this.bigVideo);
+            remoteVideo.find("video").get(0).play();
 
-		};
+        };
 
-		ConferenceKiosk.prototype.render = function(container, size, scope, videos, peers) {
+        ConferenceKiosk.prototype.render = function(container, size, scope, videos, peers) {
 
-			var big = this.big;
-			if (big) {
-				var currentbigpeerid = this.big.data("peerid");
-				if (!peers[currentbigpeerid]) {
-					console.log("Current big peer is no longer there", currentbigpeerid);
-					this.big = big = null;
-				}
-			}
-			if (!big) {
-				if (videos.length) {
-					this.makeBig(peers[videos[0]].element);
-					this.bigVideo.style.opacity = 1;
-				}
+            var big = this.big;
+            if (big) {
+                var currentbigpeerid = this.big.data("peerid");
+                if (!peers[currentbigpeerid]) {
+                    console.log("Current big peer is no longer there", currentbigpeerid);
+                    this.big = big = null;
+                }
+            }
+            if (!big) {
+                if (videos.length) {
+                    this.makeBig(peers[videos[0]].element);
+                    this.bigVideo.style.opacity = 1;
+                }
 
-			}
+            }
 
-			var remoteSize = getRemoteVideoSize(videos, peers);
-			var aspectRatio = remoteSize.width/remoteSize.height;
+            var remoteSize = getRemoteVideoSize(videos, peers);
+            var aspectRatio = remoteSize.width/remoteSize.height;
             var innerHeight = size.height - 110;
             var innerWidth = size.width;
             var extraCSS = {};
 
-			var bigVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
+            var bigVideoWidth = innerWidth < aspectRatio * innerHeight ? innerWidth : aspectRatio * innerHeight;
             var bigVideoHeight = innerHeight < innerWidth / aspectRatio ? innerHeight : innerWidth / aspectRatio;
 
             this.bigVideo.style.width = bigVideoWidth + 'px';
@@ -225,7 +238,7 @@ define(["jquery", "underscore"], function($, _) {
 
             // Make space for own video on the right if width goes low.
             if (((size.width - (videos.length-1) * 192) / 2) < 192) {
-            	extraCSS = {
+                extraCSS = {
                     ".renderer-conferencekiosk .remoteVideos": {
                         "margin-right": "192px",
                         "overflow-x": "auto",
@@ -239,65 +252,65 @@ define(["jquery", "underscore"], function($, _) {
                 containerName: dynamicCSSContainer
             });
 
-		};
+        };
 
-		ConferenceKiosk.prototype.close = function(container, scope, controller) {
-			this.closed = true;
-			if (this.big) {
-				this.remoteVideos.append(this.big);
-				this.big.find("video").get(0).play();
-			}
-			this.big = null;
-			this.bigVideo.remove()
-			this.bigVideo = null;
-			this.remoteVideos = null;
-		};
-
-
-		// Register renderers.
-		renderers[OnePeople.prototype.name] = OnePeople;
-		renderers[Smally.prototype.name] = Smally;
-		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
+        ConferenceKiosk.prototype.close = function(container, scope, controller) {
+            this.closed = true;
+            if (this.big) {
+                this.remoteVideos.append(this.big);
+                this.big.find("video").get(0).play();
+            }
+            this.big = null;
+            this.bigVideo.remove()
+            this.bigVideo = null;
+            this.remoteVideos = null;
+        };
 
 
-		// Public api.
-		var current = null;
-		return {
-			update: function(name, size, scope, controller) {
+        // Register renderers.
+        renderers[OnePeople.prototype.name] = OnePeople;
+        renderers[Smally.prototype.name] = Smally;
+        renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
 
-				var videos = _.keys(controller.peers);
-				var peers = controller.peers;
-				var container = scope.container;
-				var layoutparent = scope.layoutparent;
 
-				if (!current) {
-					current = new renderers[name](container, scope, controller)
-					console.log("Created new video layout renderer", name, current);
-					$(layoutparent).addClass("renderer-"+name);
-					return true;
-				} else {
-					if (current.name !== name) {
-						current.close(container, scope, controller);
-						$(container).removeAttr("style");
-						$(layoutparent).removeClass("renderer-"+current.name);
-						current = new renderers[name](container, scope, controller)
-						$(layoutparent).addClass("renderer-"+name);
-						console.log("Switched to new video layout renderer", name, current);
-						return true;
-					}
-				}
+        // Public api.
+        var current = null;
+        return {
+            update: function(name, size, scope, controller) {
 
-				return current.render(container, size, scope, videos, peers);
+                var videos = _.keys(controller.peers);
+                var peers = controller.peers;
+                var container = scope.container;
+                var layoutparent = scope.layoutparent;
 
-			},
-			register: function(name, impl) {
-				renderers[name] = impl;
-			},
-			layouts: function() {
-				return _.keys(renderers);
-			}
-		}
+                if (!current) {
+                    current = new renderers[name](container, scope, controller)
+                    console.log("Created new video layout renderer", name, current);
+                    $(layoutparent).addClass("renderer-"+name);
+                    return true;
+                } else {
+                    if (current.name !== name) {
+                        current.close(container, scope, controller);
+                        $(container).removeAttr("style");
+                        $(layoutparent).removeClass("renderer-"+current.name);
+                        current = new renderers[name](container, scope, controller)
+                        $(layoutparent).addClass("renderer-"+name);
+                        console.log("Switched to new video layout renderer", name, current);
+                        return true;
+                    }
+                }
 
-	}];
+                return current.render(container, size, scope, videos, peers);
+
+            },
+            register: function(name, impl) {
+                renderers[name] = impl;
+            },
+            layouts: function() {
+                return _.keys(renderers);
+            }
+        }
+
+    }];
 
 });

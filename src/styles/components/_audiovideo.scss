@@ -45,7 +45,7 @@
   }
 }
 
-.mainScreenshare #audiovideo { 
+.mainScreenshare #audiovideo {
   @include breakpt($breakpoint-video-medium, max-width, only screen) {
     display: none;
   }
@@ -96,6 +96,9 @@
     top: 0;
     transform: scale(-1, 1);
     z-index: 2;
+  }
+  video {
+    object-fit: contain;
   }
 }
 
