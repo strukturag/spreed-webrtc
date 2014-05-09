@@ -86,6 +86,7 @@ assets: styles javascript
 
 styles: SASSFLAGS = --style=expanded
 styles:
+		cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/ $(CURDIR)/static/fonts/
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
 		autoprefixer --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(CURDIR)/static/css/main.min.css
