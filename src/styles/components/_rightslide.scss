@@ -1,25 +1,44 @@
+/*
+ * Spreed Speak Freely.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed Speak Freely.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #rightslide {
-position: absolute;
-top: 44px;
-right: -260px;
-bottom: 0px;
-left: 0px;
-z-index:5;
--webkit-transition: right 200ms ease-in-out;
--moz-transition: right 200ms ease-in-out;
--ms-transition: right 200ms ease-in-out;
--o-transition: right 200ms ease-in-out;
-transition: right 200ms ease-in-out;
-pointer-events:none;
-overflow-x: auto;
-overflow-y: hidden;
+  bottom: 0;
+  left: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: -260px;
+  top: 44px;
+  transition: right 200ms ease-in-out;
+  z-index: 5;
 }
+
 .withBuddylist #rightslide {
-right:0px;
+  right: 0;
 }
+
 #rightslide .rightslidepane {
-position:relative;
-width:100%;
-height:100%;
-min-width:520px;
+  height: 100%;
+  min-width: 520px;
+  position: relative;
+  width: 100%;
 }

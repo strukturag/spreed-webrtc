@@ -18,168 +18,181 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #buddylist {
-position: absolute;
-top: 0px;
-right: 0px;
-bottom: 0px;
-width:285px;
-z-index:50;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 285px;
+  z-index: 50;
 }
+
 #buddylist:before {
-position:absolute;
-width:25px;
-height:55px;
-line-height:55px;
-margin: auto;
-left: 0px;
-top:0px;
-bottom:0px;
-content:"\f100";
-font-family: 'FontAwesome';
-color:rgba(0,0,0,0.3);
-font-size:1.8em;
-text-align:center;
-cursor:pointer;
-pointer-events:auto;
-background:$componentbg;
-border-left:1px solid $bordercolor;
-border-top:1px solid $bordercolor;
-border-bottom:1px solid $bordercolor;
--webkit-border-top-left-radius: 6px;
--webkit-border-bottom-left-radius: 6px;
--moz-border-radius-topleft: 6px;
--moz-border-radius-bottomleft: 6px;
-border-top-left-radius: 6px;
-border-bottom-left-radius: 6px;
-display:none;
+  background: $componentbg;
+  border-left: 1px solid $bordercolor;
+  border-top: 1px solid $bordercolor;
+  border-bottom: 1px solid $bordercolor;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  bottom: 0;
+  color: $buddylist-background;
+  content: "\f100";
+  cursor: pointer;
+  display: none;
+  font-family: FontAwesome;
+  font-size: 1.8em;
+  height: 55px;
+  left: 0;
+  line-height: 55px;
+  margin: auto;
+  pointer-events: auto;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 25px;
 }
+
 .withBuddylist #buddylist:before {
-content:"\f101";
+  content: "\f101";
 }
+
 .withBuddylistAutoHide #buddylist:before {
-display:block;
+  display: block;
 }
+
 .buddylist {
-position:absolute;
-left:25px;
-right:0px;
-top:0px;
-bottom:0px;
-overflow-x: hidden;
-overflow-y: auto;
-border-top: 1px solid $bordercolor;
-background: $componentbg;
-pointer-events:auto;
+  background: $componentbg;
+  border-top: 1px solid $bordercolor;
+  bottom: 0;
+  left: 25px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
-.buddylist .buddycontainer {
--webkit-user-select: none;
-position: relative;
-pointer-events:auto;
+
+.buddylist {
+  &.loading {
+    .buddylistloading {
+      display:block;
+    }
+  }
+  &.empty {
+    .buddylistempty {
+      display:block;
+    }
+  }
+  .buddycontainer {
+    pointer-events: auto;
+    position: relative;
+    user-select: none;
+  }
+  .buddylistloading,
+  .buddylistempty {
+    bottom: 0;
+    color: $buddylist-background;
+    display: none;
+    font-size: 1.4em;
+    height: 2em;
+    left: 0;
+    margin: auto;
+    padding:.4em;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+  }
 }
-.buddylist .buddylistloading, .buddylist .buddylistempty {
-padding:.4em;
-font-size:1.4em;
-text-align:center;
-display:none;
-position:absolute;
-left:0px;
-right:0px;
-bottom:0px;
-top:0px;
-margin:auto;
-height:2em;
-color:rgba(0,0,0,0.3);
-}
-.buddylist.loading .buddylistloading {
-display:block;
-}
-.buddylist.empty .buddylistempty {
-display:block;
-}
+
 .buddy {
-overflow: hidden;
-height: 66px;
-display: block;
-border-bottom: 1px solid $bordercolor;
-position: relative;
-cursor: pointer;
-text-align: left;
-width: 100%;
-font-size: 13px;
-background: $sidepanebg;
--webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background: $sidepanebg;
+  border-bottom: 1px solid $bordercolor;
+  cursor: pointer;
+  display: block;
+  font-size: 13px;
+  height: 66px;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  @include tap-highlight-color($tap-highlight);
 }
+
 .buddy:hover {
-background: $componentbg;
+  background: $componentbg;
 }
-.buddy > .buddyimage {
-float:left;
-height: 46px;
-width: 46px;
-overflow: hidden;
-margin: 10px;
-position: relative;
-border-radius: 2px;
-background: $actioncolor1;
-text-align:center;
+
+.buddy {
+  &.withSubline .display-name {
+    top: 15px;
+  }
+  &.hovered .buddyactions {
+    right: 0;
+  }
+  .avatar {
+    background: $actioncolor1;
+    border-radius: 2px;
+    float: left;
+    height: 46px;
+    margin: 10px;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    width: 46px;
+    .#{$fa-css-prefix} {
+      color: $actioncolor2;
+      line-height: 46px;
+    }
+    img {
+      bottom: 0;
+      display: block;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+  .display-name {
+    color: $componentfg1;
+    font-weight: bold;
+    font-size: 14px;
+    height: 28px;
+    left: 65px;
+    position: absolute;
+    overflow: hidden;
+    right: 4px;
+    text-overflow: ellipsis;
+    top: 24px;
+    white-space: nowrap;
+  }
+  .browser {
+    color: $componentfg2;
+    left: 65px;
+    overflow: hidden;
+    position: absolute;
+    right: 0px;
+    top: 33px;
+    white-space: nowrap;
+  }
 }
-.buddy > .buddyimage > i {
-line-height:46px;
-color:$actioncolor2;
-}
-.buddy > .buddyimage > img {
-position: absolute;
-left:0px;
-right:0px;
-bottom:0px;
-top:0px;
-display:block;
-}
-.buddy > .buddy1 {
-position: absolute;
-left: 65px;
-white-space: nowrap;
-overflow: hidden;
-right: 4px;
-height: 28px;
-color: $componentfg1;
-font-weight:bold;
-font-size:14px;
-top: 24px;
-text-overflow: ellipsis;
-}
-.buddy.withSubline > .buddy1 {
-top: 15px;
-}
-.buddy > .buddy2 {
-position: absolute;
-left: 65px;
-white-space: nowrap;
-overflow: hidden;
-right: 0px;
-color: $componentfg2;
-top: 33px;
-}
+
 .buddy .buddyactions {
-position:absolute;
-right:-125px;
-top:0px;
-bottom:0px;
-background:rgba(255,255,255,0.5);
-z-index:5;
-line-height:66px;
-padding:0 10px;
-transition-property: right;
--webkit-transition-property: right;
-transition-duration: .3s;
--webkit-transition-duration: .3s;
-white-space:nowrap;
-text-align:right;
-}
-.buddy .buddyactions i {
-font-size:2em;
-}
-.buddy.hovered .buddyactions {
-right:0px;
+  background: $buddylist-action-background;
+  bottom: 0px;
+  line-height: 66px;
+  position: absolute;
+  right: -125px;
+  padding: 0 10px;
+  text-align: right;
+  top: 0px;
+  transition-property: right;
+  transition-duration: .3s;
+  white-space: nowrap;
+  z-index: 5;
+  .#{$fa-css-prefix} {
+    font-size: 2em;
+  }
 }

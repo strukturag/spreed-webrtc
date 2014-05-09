@@ -1,4 +1,4 @@
-/*
+/*!
  * Spreed Speak Freely.
  * Copyright (C) 2013-2014 struktur AG
  *
@@ -19,11 +19,12 @@
  *
  */
 
+// must set custom compass variables before import of compass
+@import "global/variables";
 @import "compass";
-
 @import "libs/libs";
 
-@import "global/colors";
+@import "global/mixins";
 
 @import "global/base";
 @import "global/angular";

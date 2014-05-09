@@ -1,0 +1,44 @@
+
+// not handled by autoprefixer
+@mixin tap-highlight-color($color) {
+  -webkit-tap-highlight-color: $color;
+}
+
+/*  Supports media type and up to two expressions 
+    
+    ex output:
+    @media only screen and (min-width: 700px) and (max-width: 1280px) {
+      .bar .middle img {
+        display: none; 
+      }
+    }
+
+    @param $media-value1:   required - number/units
+    @param $media-feature1: optional - width,height,ect...
+    @param $media-type:     optional - screen,print,ect...
+    @param $media-value2:   optional - number/units
+    @param $media-feature2: optional - width,height,ect...
+*/
+@mixin breakpt($media-value1, $media-feature1: max-width, $media-type: null,
+               $media-value2: null, $media-feature2: max-width) {
+  @if($media-type and $media-value2) {
+    @media #{$media-type} and ($media-feature1: $media-value1) and ($media-feature2: $media-value2) {
+      @content;
+    }
+  }
+  @if(not $media-type and $media-value2) {
+    @media ($media-feature1: $media-value1) and ($media-feature2: $media-value2) {
+      @content;
+    }
+  }
+  @if($media-type and not $media-value2) {
+    @media #{$media-type} and ($media-feature1: $media-value1) {
+      @content;
+    }
+  }
+  @if(not $media-type and not $media-value2) {
+    @media ($media-feature1: $media-value1) {
+      @content;
+    }
+  }
+}

@@ -11,16 +11,14 @@ env:
   - GEM_HOME=/var/lib/gems/1.8
 
 before_install:
+  - sudo add-apt-repository -y ppa:chris-lea/node.js
   - sudo apt-get update
 
 install:
-  - sudo apt-get -y install nodejs npm rubygems python-babel
+  - sudo apt-get -y install nodejs rubygems python-babel
   - sudo gem install compass
-    # 'npm config set ca ""' required only for node 0.6
-    # which is installed on Travis CI
-    # see https://github.com/npm/npm/issues/4379#issuecomment-31590254
-  - sudo npm config set ca ""
   - sudo npm install -g po2json
+  - sudo npm install -g autoprefixer
 
 script:
   - make get

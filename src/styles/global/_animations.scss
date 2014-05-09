@@ -18,26 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 .fadetogglecontainer > div {
-position:absolute;
-width:100%;
+  position: absolute;
+  width: 100%;
 }
 
-.animate-show.ng-hide-add,
-.animate-show.ng-hide-remove {
--webkit-transition:all linear 0.5s;
--moz-transition:all linear 0.5s;
--o-transition:all linear 0.5s;
-transition:all linear 0.5s;
-display:block!important;
-}
-
-.animate-show.ng-hide-add.ng-hide-add-active,
-.animate-show.ng-hide-remove {
-opacity:0;
-}
-
-.animate-show.ng-hide-add,
-.animate-show.ng-hide-remove.ng-hide-remove-active {
-opacity:1;
+.animate-show {
+  &.ng-hide-add {
+    opacity: 1;
+    display: block !important;
+    transition: all linear 0.5s;
+    &.ng-hide-add-active {
+      opacity: 0;
+    }
+  }
+  &.ng-hide-remove {
+    opacity: 0;
+    display: block !important;
+    transition: all linear 0.5s;
+    &.ng-hide-remove-active {
+      opacity: 1;
+    }
+  }
 }

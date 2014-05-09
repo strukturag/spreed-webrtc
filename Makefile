@@ -25,6 +25,7 @@ CONFIG_PATH ?= /etc
 
 VENDOR = "$(CURDIR)/vendor"
 GOPATH = "$(VENDOR):$(CURDIR)"
+
 SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
@@ -48,6 +49,9 @@ NODEJS_BIN_EXISTS := $(shell [ -x "$(NODEJS_BIN)" ] && echo 1 || echo 0)
 ifneq ($(NODEJS_BIN_EXISTS), 1)
     $(error "Can't find node.js runtime, please install / check your PATH")
 endif
+
+# Tools
+AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 
 build: get binary assets
 
@@ -80,9 +84,18 @@ test: get
 
 assets: styles javascript
 
+styles: SASSFLAGS = --style=expanded
 styles:
+		mkdir -p $(CURDIR)/static/css
+		mkdir -p $(CURDIR)/static/fonts
+		cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/font* $(CURDIR)/static/fonts
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
+		autoprefixer --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(CURDIR)/static/css/main.min.css
+		sass --compass --scss $(SASSFLAGS) \
+			$(CURDIR)/src/styles/bootstrap.scss:$(CURDIR)/static/css/bootstrap.min.css
+		sass --compass --scss $(SASSFLAGS) \
+			$(CURDIR)/src/styles/font-awesome.scss:$(CURDIR)/static/css/font-awesome.min.css
 
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
 releaseassets: SASSFLAGS = --style=compressed --no-cache
@@ -127,7 +140,8 @@ install:
 clean:
 		GOPATH=$(GOPATH) go clean -i $(PKG)
 		rm -rf $(CURDIR)/pkg
-		rm -f $(CURDIR)/static/css/main.min.css
+		rm -rf $(CURDIR)/static/css
+		rm -rf $(CURDIR)/static/fonts
 		rm -rf $(CURDIR)/build/out
 
 distclean: clean
