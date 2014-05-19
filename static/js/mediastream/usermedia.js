@@ -33,7 +33,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
     // Audio level.
     this.audioLevel = 0;
-    if (!this.options.noaudio && context) {
+    if (!this.options.noaudio && context && context.createScriptProcessor) {
       this.audioSource = null;
       this.audioProcessor = context.createScriptProcessor(2048, 1, 1);
       this.audioProcessor.onaudioprocess = _.bind(function(event) {
