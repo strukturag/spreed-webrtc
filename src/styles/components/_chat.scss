@@ -341,11 +341,11 @@
 }
 
 .chat .message {
-  &.is_self .avatar {
+  &.is_self .buddyPicture {
     left: auto;
     right: 4px;
   }
-  .avatar {
+  .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;
     height: 46px;

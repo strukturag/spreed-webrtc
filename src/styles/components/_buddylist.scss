@@ -126,13 +126,13 @@
 }
 
 .buddy {
-  &.withSubline .display-name {
+  &.withSubline .buddy1 {
     top: 15px;
   }
   &.hovered .buddyactions {
     right: 0;
   }
-  .avatar {
+  .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;
     float: left;
@@ -155,7 +155,7 @@
       top: 0;
     }
   }
-  .display-name {
+  .buddy1 {
     color: $componentfg1;
     font-weight: bold;
     font-size: 14px;
@@ -168,7 +168,7 @@
     top: 24px;
     white-space: nowrap;
   }
-  .browser {
+  .buddy2 {
     color: $componentfg2;
     left: 65px;
     overflow: hidden;
