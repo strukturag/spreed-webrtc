@@ -299,7 +299,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                     title.html(displayName(from, true));
                     extra_css += "with_name ";
                     var imgSrc = buddyImageSrc(from);
-                    picture = $('<div class="avatar"><i class="fa fa-user fa-3x"/><img/></div>');
+                    picture = $('<div class="buddyPicture"><i class="fa fa-user fa-3x"/><img/></div>');
                     if (imgSrc) {
                         picture.find("img").attr("src", imgSrc);
                     }
