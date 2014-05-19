@@ -129,6 +129,9 @@
   &.withSubline .buddy1 {
     top: 15px;
   }
+  &.withSubline .buddy2 {
+    display: block;
+  }
   &.hovered .buddyactions {
     right: 0;
   }
@@ -176,6 +179,7 @@
     right: 0px;
     top: 33px;
     white-space: nowrap;
+    display: none;
   }
 }
 
