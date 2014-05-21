@@ -26,7 +26,7 @@
           <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
         </div>
       </div>
-      <div class="form-group" ng-if="withUsers || userid">
+      <div class="form-group" ng-if="(withUsers && withUsersRegistration) || userid">
         <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
         <div ng-switch="withUsersMode">
           <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
