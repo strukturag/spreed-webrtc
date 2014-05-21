@@ -122,9 +122,12 @@ require.config({
     var debugDefault = window.location.href.match(/(\?|&)debug($|&|=)/);
     // Overwrite console to not log stuff per default.
     // Write debug(true) in console to enable or start with ?debug parameter.
-    window.consoleBackup = window.console;
+    window.consoleBackup = null;
     window.debug = function(flag) {
         if (!flag) {
+            if (window.consoleBackup === null) {
+                window.consoleBackup = window.console;
+            }
             window.console = {
                 log: function() {},
                 info: function() {},
@@ -134,7 +137,9 @@ require.config({
                 trace: function() {}
             }
         } else {
-            window.console = consoleBackup;
+            if (window.consoleBackup) {
+                window.console = window.consoleBackup;
+            }
         }
     };
     window.debug(debugDefault && true);
