@@ -34,7 +34,7 @@
 #settings.show {
   right: 0;
   @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-    background: white;
+    background: $settings-background;
     left: 0;
     width: auto;
   }
@@ -52,7 +52,7 @@
 }
 
 .settings {
-  background: $sidepanebg;
+  background: $settings-background;
   bottom: 0;
   left: 0;
   overflow-x: hidden;

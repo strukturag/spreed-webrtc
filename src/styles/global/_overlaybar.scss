@@ -20,8 +20,8 @@
  */
 
 .overlaybar {
-  background: $componentfg3;
-  color: $bordercolor;
+  background: $overlaybar-background;
+  color: $overlaybar-color;
   min-height: 36px;
   padding: 3px 8px 0 30px;
   position: absolute;
@@ -68,7 +68,7 @@
     }
   }
   .overlaybar-button {
-    color: $bordercolor;
+    color: $overlaybar-btn;
     display: block;
     font-size: 20px;
     top: 0px;

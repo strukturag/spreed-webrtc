@@ -87,7 +87,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
 
 ## Branding
 
-  Insert logo in `static/img/`. Edit `src/styles/global/_branding.scss` to link 
+  Insert logo in `static/img/`. Edit `src/styles/global/_branding.scss` to link
   to desired custom logo. It is also possible to insert the raw svg data.
 
 
