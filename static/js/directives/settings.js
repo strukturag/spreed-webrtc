@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'text!partials/settings.html'], function(_, template) {
+define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, template) {
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
@@ -49,6 +49,13 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
             });
 
             var localStream = null;
+
+            // Make sure to save settings when they are open and the page is reloaded.
+            $(window).on("unload", function() {
+                if ($scope.layout.settings) {
+                    $scope.saveSettings();
+                }
+            });
 
             $scope.saveSettings = function() {
                 var user = $scope.user;
