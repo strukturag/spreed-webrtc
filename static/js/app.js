@@ -43,6 +43,25 @@ define([
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers, languages) {
 
+    // Simple and fast split based URL query parser based on location.search. We require this before the
+    // angular App is bootstrap to control initialization parameters like translation based on URL parameters.
+    var urlQuery = (function() {
+        return (function(a) {
+            if (a == "") {
+                return {};
+            }
+            var b = {};
+            for (var i = 0; i < a.length; ++i) {
+                var p = a[i].split('=');
+                if (p.length != 2) {
+                    continue;
+                }
+                b[p[0]] = window.decodeURIComponent(p[1].replace(/\+/g, " "));
+            }
+            return b;
+        })(window.location.search.substr(1).split("&"));
+    }());
+
     var initialize = function(ms) {
 
         var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs'];
@@ -83,33 +102,34 @@ define([
 
             // Configure language.
             var lang = (function() {
-                var lang;
+                var lang = "en";
+                var wanted = [];
                 var html = document.getElementsByTagName("html")[0];
+                // Get from storage.
                 if (modernizr.localstorage) {
-                    lang = localStorage.getItem("mediastream-language");
-                    if (!lang || lang === "undefined") {
-                        lang = null;
+                    var lsl = localStorage.getItem("mediastream-language");
+                    if (lsl && lsl !== "undefined") {
+                        wanted.push(lsl);
                     }
                 }
-                if (!lang) {
-                    var browserLanguages = [];
-                    // Expand browser languages with combined fallback.
-                    _.each(globalContext.Languages, function(l) {
-                        browserLanguages.push(l);
-                        if (l.indexOf("-") != -1) {
-                            browserLanguages.push(l.split("-")[0])
-                        }
-                    });
-                    // Loop through browser languages and use first one we got.
-                    for (var i=0; i<browserLanguages.length; i++) {
-                        if (languages.hasOwnProperty(browserLanguages[i])) {
-                            lang = browserLanguages[i];
-                            break;
-                        }
-                    }
+                // Get from query.
+                var qsl = urlQuery.lang;
+                if (qsl) {
+                    wanted.push(qsl);
                 }
-                if (!lang) {
-                    lang = "en";
+                // Expand browser languages with combined fallback.
+                _.each(globalContext.Languages, function(l) {
+                    wanted.push(l);
+                    if (l.indexOf("-") != -1) {
+                        wanted.push(l.split("-")[0])
+                    }
+                });
+                // Loop through browser languages and use first one we got.
+                for (var i=0; i<wanted.length; i++) {
+                    if (languages.hasOwnProperty(wanted[i])) {
+                        lang = wanted[i];
+                        break;
+                    }
                 }
                 html.setAttribute("lang", lang);
                 return lang;
