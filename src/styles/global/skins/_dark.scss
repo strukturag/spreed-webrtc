@@ -19,20 +19,20 @@
  *
  */
 
-$theme-name: "Dark Theme";
-$theme-version: "0.0.1";
+$skin-name: "Dark Theme";
+$skin-version: "0.0.1";
 
-$theme-color: rgb(33, 33, 33);
+$base-skin-color: #212121;
 
-$contrasted-dark-default: rgb(38, 38, 38);  // compass
-$contrasted-light-default: rgba(252, 252, 252, 1);  // compass
+$contrasted-dark-default: #262625;  // compass color utility
+$contrasted-light-default: #FCFCFC;  // compass color utility
 
 // background
 $main-background: url("../img/bg-tiles.png");
 $main-background-retina: url("../img/bg-tiles_x2.png");
 
 // menu background color
-$menu-background-color: $theme-color;
+$menu-background-color: $base-skin-color;
 $menu-background-color-accent: lighten($menu-background-color, 5%);
 
 $componentfg1: contrast-color($menu-background-color);
@@ -50,10 +50,9 @@ $sidepanebg: $menu-background-color-accent;
 $fileinfo-icon-background-color: $chat-msg-self-background;
 $fileinfo-icon-background-color-remote: $chat-msg-remote-background;
 
-
 // font
-$base-font-size: 13px; // compass
-$base-line-height: 19px; // compass
+$base-font-size: 13px; // compass vertical_rhythm mixin
+$base-line-height: 19px; // compass vertical_rhythm mixin
 
 // font color
 $font-color: contrast-color($menu-background-color);
@@ -89,4 +88,3 @@ $list-group-hover-bg: $menu-background-color;
 $list-group-link-color: $font-color-accent;
 
 $progress-bg: lighten($input-bg-color, 30%);
-
