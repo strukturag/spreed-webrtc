@@ -37,6 +37,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	this.peerconnection = null;
 	this.datachannels = {};
+	this.streams= {};
 
 	this.initiate = false;
 	this.closed = false;
@@ -124,6 +125,20 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	  if (cb) {
 		cb(sessionDescription, this);
 	  }
+	  // NOTE(longsleep): There are several szenarios where onaddstream is never fired, when
+      // the peer does not provide a certain stream type (eg. has no camera). See
+      // for example https://bugzilla.mozilla.org/show_bug.cgi?id=998546. For this
+      // reason we always trigger onRemoteStream added for all streams which are available
+      // after the remote SDP was set successfully.
+	  _.defer(_.bind(function() {
+	  	_.each(peerconnection.getRemoteStreams(), _.bind(function(stream) {
+	  		console.log("got stream after remote sdp", stream);
+	  		if (!this.streams.hasOwnProperty(stream)) {
+	  			console.log("adding stream", stream);
+	  			this.onRemoteStreamAdded(stream);
+	  		}
+	  	}, this));
+	  }, this));
 	}, this), _.bind(function(err) {
 		console.error("Set remote session description failed", err);
 		this.close();
@@ -161,6 +176,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
   PeerCall.prototype.onRemoteStreamAdded = function(stream) {
 
+  	this.streams[stream] = true;
 	this.e.triggerHandler("remoteStreamAdded", [stream, this]);
 
   };
@@ -168,6 +184,9 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
   PeerCall.prototype.onRemoteStreamRemoved = function(stream) {
 
 	this.e.triggerHandler("remoteStreamRemoved", [stream, this]);
+	if (stream) {
+  		delete this.streams[stream];
+  	}
 
   };
 
@@ -281,6 +300,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	  datachannel.close();
 	});
 	this.datachannels = {};
+	this.streams = {};
 
 	if (this.peerconnection) {
 	  this.peerconnection.close();

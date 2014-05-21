@@ -31,7 +31,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
     this.pc = null;
     this.datachannel = null;
     this.datachannelReady = false;
-    this.streams = {};
 
     if (currentcall) {
       this.createPeerConnection(currentcall);
@@ -66,6 +65,9 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
       // Bind peer connection events.
       pc.onicecandidate = _.bind(currentcall.onIceCandidate, currentcall);
       pc.oniceconnectionstatechange = _.bind(this.onIceConnectionStateChange, this)
+      // NOTE(longsleep): There are several szenarios where onaddstream is never fired, when
+      // the peer does not provide a certain stream type (eg. has no camera). See
+      // for example https://bugzilla.mozilla.org/show_bug.cgi?id=998546.
       pc.onaddstream = _.bind(this.onRemoteStreamAdded, this);
       pc.onremovestream = _.bind(this.onRemoteStreamRemoved, this);
       pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
@@ -202,7 +204,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
     var stream = event.stream;
     console.info('Remote stream added.', stream);
-    this.streams[stream] = true;
     this.currentcall.onRemoteStreamAdded(stream);
 
   };
@@ -212,7 +213,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
     var stream = event.stream;
     console.info('Remote stream removed.', stream);
     this.currentcall.onRemoteStreamRemoved(stream);
-    delete this.streams[stream];
 
   };
 
@@ -278,6 +278,24 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
   PeerConnection.prototype.createOffer = function() {
 
     return this.pc.createOffer.apply(this.pc, arguments);
+
+  };
+
+  PeerConnection.prototype.getRemoteStreams = function() {
+
+    return this.pc.getRemoteStreams.apply(this.pc, arguments);
+
+  };
+
+  PeerConnection.prototype.getLocalStreams = function() {
+
+    return this.pc.getRemoteStreams.apply(this.pc, arguments);
+
+  };
+
+  PeerConnection.prototype.getStreamById = function() {
+
+    return this.pc.getStreamById.appy(this.pc, arguments);
 
   };
 
