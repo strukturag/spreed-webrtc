@@ -53,7 +53,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
             ctrl.setInfo("denied");
           }
           // Check if we should show settings per default.
-          $scope.$parent.showSettings = $scope.loadedUser ? 0 : 1;
+          $scope.layout.settings = $scope.loadedUser ? false : true;
         });
       };
 

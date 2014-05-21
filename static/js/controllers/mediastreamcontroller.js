@@ -352,7 +352,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
             $scope.user = $.extend(true, {}, $scope.master, storedUser);
             $scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
             $scope.update($scope.user, true);
-            $scope.loadedUser = true;
+            $scope.loadedUser = storedUser.displayName && true;
             // Add room definition to root to be availale on initial connect.
             $rootScope.roomid = $scope.user.settings.defaultRoom || "";
         }
