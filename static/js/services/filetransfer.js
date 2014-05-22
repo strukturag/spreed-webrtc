@@ -118,7 +118,7 @@
 
 		// SCTP does not work properly in Chrome 31 when used with other Chrome versions.
 		// Thus we require Chrome 32 for now. Firefox 28 can interop with Chrome 32 data channels - yay.
-	 	var supported =
+		var supported =
 			($window.webrtcDetectedBrowser === "chrome" && $window.webrtcDetectedVersion >= 32 && !$window.webrtcDetectedAndroid) ||
 			($window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion >= 28 && !$window.webrtcDetectedAndroid);
 		if (!supported) {
@@ -140,7 +140,7 @@
 					return filechunk;
 				default:
 					console.warn("Unknow data version.");
-					break
+					break;
 				}
 			},
 			makeChunk: function(idx, data) {

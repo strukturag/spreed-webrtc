@@ -56,13 +56,15 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 					return;
 				}
 				// Control data request.
+				var msg;
 				try {
-					var msg = JSON.parse(data);
+					msg = JSON.parse(data);
 				} catch(e) {
 					// Invalid JSON.
 					console.warn("Invalid JSON received from file download request.", data);
-					xfer.cancel()
+					xfer.cancel();
 					delete this.connections[xfer.id];
+					return;
 				}
 				this.processRequest(scope, xfer, msg);
 

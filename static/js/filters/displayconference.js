@@ -27,11 +27,11 @@ define([], function() {
                 return "";
             }
             if (peers.length === 1) {
-            	return " " + translation._("and %s", safeDisplayName(peers[0]))
+                return " " + translation._("and %s", safeDisplayName(peers[0]));
             } else {
-            	return " " + translation._("and %d others", peers.length);
+                return " " + translation._("and %d others", peers.length);
             }
-        }
+        };
     }];
 
 });

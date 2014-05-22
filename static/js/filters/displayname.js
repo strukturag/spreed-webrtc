@@ -59,7 +59,7 @@ define([], function() {
                 }
                 return someone;
             }
-        }
+        };
     }];
 
 });

@@ -180,7 +180,7 @@ define([
                             return login;
                         default:
                             console.warn("Unknown stored credentials", login.v);
-                            break
+                            break;
                         }
                     }
                     return null;
@@ -236,7 +236,7 @@ define([
                     if (!ready && room !== defaultRoom && !room) {
                         // First start.
                         $location.path("/"+defaultRoom).replace();
-                        return
+                        return;
                     }
                     console.info("Selected room is:", [room]);
                     if (!ready || !cont) {
@@ -318,7 +318,7 @@ define([
                                 }
                             }).
                             error(function(data, status) {
-                                if ((status == 403 || status == 413) && data.success == false) {
+                                if ((status == 403 || status == 413) && data.success === false) {
                                     alertify.dialog.error(translation._("Access denied"), translation._("Please provide a valid access code."), function() {
                                         prompt();
                                     });

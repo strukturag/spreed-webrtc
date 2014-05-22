@@ -105,7 +105,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
     BuddyTree.prototype.clear = function() {
 
         this.tree.clear();
-        this.data + {};
+        this.data = {};
 
     };
 
@@ -291,7 +291,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
                     processed++;
                     refresh = true;
                     if (processed > 10) {
-                        break
+                        break;
                     }
 
                 }

@@ -312,10 +312,10 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                 showTitleAndPicture()
             }
 
-            var message = s.join(" ");
+            var strMessage = s.join(" ");
 
             if (!is_new_message) {
-                var element = this.append(message, nodes);
+                var element = this.append(strMessage, nodes);
                 if (element) {
                     return element;
                 }
@@ -336,7 +336,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                     nodes = ts;
                 }
             }
-            return $scope.display(message, nodes, extra_css, title, picture);
+            return $scope.display(strMessage, nodes, extra_css, title, picture);
 
         };
 
@@ -381,7 +381,6 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
                 $scope.showtime(new Date());
                 $scope.display(null, data.Log);
                 break;
-            case "Message":
             default:
 
                 // Definitions.

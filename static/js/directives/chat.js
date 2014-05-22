@@ -142,8 +142,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
                     return scope.showRoom(controller.group, stngs, options);
                 };
 
-                scope.showRoom = function(id, settings, options) {
-                    var options = $.extend({}, options);
+                scope.showRoom = function(id, settings, opts) {
+                    var options = $.extend({}, opts);
                     var subscope = controller.rooms[id];
                     var index = controller.visibleRooms.length;
                     if (!subscope) {

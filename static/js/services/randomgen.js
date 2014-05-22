@@ -59,13 +59,14 @@ define(["underscore"], function(_) {
                         } else {
                             return s;
                         }
-                    }
+                    };
                 } else {
                     return makeRandomId;
                 }
             }()),
             binStringToHex: binStringToHex
-        }
+        };
+
         return randomGen;
 
     }];

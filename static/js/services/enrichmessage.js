@@ -26,9 +26,9 @@ define([], function() {
         var linky = $filter("linky");
         var enrichMessage = {
             url: function(s) {
-                var s = linky(s);
+                s = linky(s);
                 s = s.replace(/<a/g, '<a rel="external"');
-                return s
+                return s;
             },
             multiline: function(s) {
                 s = s.replace(/\r\n/g, "<br/>");

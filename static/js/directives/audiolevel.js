@@ -65,7 +65,7 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 
 			this.meter = _.bind(function() {
 
- 				var talking;
+				var talking;
 				if (this.active) {
 					var level = Math.round(100 * webrtc.usermedia.audioLevel);
 					if (level < threshhold) {
@@ -80,25 +80,25 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 					this.audioActivityMeter = this.audioActivityHistory.reduce(function(a, b) {
 						return a + b;
 					}) / this.audioActivityHistory.length;
-	 				//console.log("audioActivityMeter", this.audioActivityMeter, $scope.talking);
-	 				if (!$scope.talking) {
-	 					talking = this.audioActivityMeter > activityThreshold ? true : false;
-	 				} else {
-	 					talking = this.audioActivityMeter > activityThresholdInactivity ? true : false;
-	 				}
- 				} else {
- 					// Clean up.
- 					//console.log("cleaning up");
- 					this.audioActivityHistory = [];
- 					this.audioActivityMeter = 0;
+					//console.log("audioActivityMeter", this.audioActivityMeter, $scope.talking);
+					if (!$scope.talking) {
+						talking = this.audioActivityMeter > activityThreshold ? true : false;
+					} else {
+						talking = this.audioActivityMeter > activityThresholdInactivity ? true : false;
+					}
+				} else {
+					// Clean up.
+					//console.log("cleaning up");
+					this.audioActivityHistory = [];
+					this.audioActivityMeter = 0;
 					talking = false;
- 				}
- 				if (talking !== $scope.talking) {
- 					// Apply to scope.
- 					//console.log("talking changed", talking);
- 					safeApply($scope, function() {
+				}
+				if (talking !== $scope.talking) {
+					// Apply to scope.
+					//console.log("talking changed", talking);
+					safeApply($scope, function() {
 						$scope.talking = talking;
- 					});
+					});
 				}
 
 				// Check peer changes and update state for peers and keep history.

@@ -136,7 +136,7 @@ define(['jquery', 'underscore'], function(jquery, _) {
 				var creator = this.handlers[obj.handlerKey];
 				if (!creator) {
 					console.warn("Incoming offer for unknown handler", obj.handlerKey);
-					return
+					return;
 				}
 				// Create new handler based on type.
 				handler = creator(webrtc, id, token, from);
@@ -163,7 +163,7 @@ define(['jquery', 'underscore'], function(jquery, _) {
 			break;
 		case "Candidate":
 			var candidate = new RTCIceCandidate({sdpMLineIndex: data.sdpMLineIndex, sdpMid: data.sdpMid, candidate: data.candidate});
-        	handler.addIceCandidate(candidate);
+			handler.addIceCandidate(candidate);
 			break;
 		default:
 			//console.log("Processing token message", type, token);

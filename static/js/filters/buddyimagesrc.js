@@ -24,14 +24,15 @@ define(["underscore"], function(_) {
     var dataURLToBlob = (function() {
         var is_base64 = ";base64,";
         return function(dataURL) {
+            var parts, ct;
             if (dataURL.indexOf(is_base64) === -1) {
                 // No base64.
-                var parts = dataURL.split(",");
-                var ct = parts[0].split(":")[1];
+                parts = dataURL.split(",");
+                ct = parts[0].split(":")[1];
                 return new Blob([parts[1]], {type: ct});
             }
-            var parts = dataURL.split(is_base64);
-            var ct = parts[0].split(":")[1];
+            parts = dataURL.split(is_base64);
+            ct = parts[0].split(":")[1];
             var data = window.atob(parts[1]);
             var length = data.length;
             var buffer = new Uint8Array(length);
@@ -101,7 +102,8 @@ define(["underscore"], function(_) {
                 }
             }
             return "";
-        }
+        };
+
     }];
 
 });

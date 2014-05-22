@@ -132,8 +132,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
       }
 
       this.roomid = roomid;
-      var roomid = this.roomid ? this.roomid : "";
-
+      roomid = this.roomid ? this.roomid : "";
 
       if (cb) {
         cb();

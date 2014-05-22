@@ -208,6 +208,8 @@ define([
       return;
     }
 
+    var targetcall;
+
     switch (type) {
     case "Offer":
         var busy = false;
@@ -239,7 +241,7 @@ define([
         }
         break;
     case "Candidate":
-        var targetcall = this.findTargetCall(from);
+        targetcall = this.findTargetCall(from);
         if (!targetcall) {
             console.warn("Received Candidate for unknown id -> ignore.", from);
             return;
@@ -249,7 +251,7 @@ define([
         //console.log("Got candidate", data.sdpMid, data.sdpMLineIndex, data.candidate);
         break;
     case "Answer":
-        var targetcall = this.findTargetCall(from);
+        targetcall = this.findTargetCall(from);
         if (!targetcall) {
             console.warn("Received Answer from unknown id -> ignore", from);
             return;
@@ -263,7 +265,7 @@ define([
         targetcall.setRemoteDescription(new RTCSessionDescription(data));
         break;
     case "Bye":
-        var targetcall = this.findTargetCall(from);
+        targetcall = this.findTargetCall(from);
         if (!targetcall) {
             console.warn("Received Bye from unknown id -> ignore.", from);
             return;
@@ -440,7 +442,7 @@ define([
       case "completed":
       case "connected":
         // Do nothing here, we wait for dataReady.
-        break
+        break;
       case "disconnected":
         opts.error(currentxfer);
         break;
@@ -514,7 +516,7 @@ define([
       case "completed":
       case "connected":
         opts.connected(currentscreenshare);
-        break
+        break;
       case "disconnected":
         opts.error(currentscreenshare);
         break;

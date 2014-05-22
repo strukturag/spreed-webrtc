@@ -44,9 +44,10 @@ define(['jquery', 'underscore'], function($, _) {
     var sdpLines = sdp.split('\r\n');
     var opusPayload = "";
     var fmtpLineIndex = null;
+    var i;
 
     // Find opus payload.
-    for (var i = 0; i < sdpLines.length; i++) {
+    for (i=0; i < sdpLines.length; i++) {
       if (sdpLines[i].search('opus/48000') !== -1) {
         opusPayload = this.extractSdp(sdpLines[i], /:(\d+) opus\/48000/i);
         break;
@@ -54,7 +55,7 @@ define(['jquery', 'underscore'], function($, _) {
     }
 
     // Find the payload in fmtp line.
-    for (var i = 0; i < sdpLines.length; i++) {
+    for (i=0; i < sdpLines.length; i++) {
       if (sdpLines[i].search('a=fmtp') !== -1) {
         var payload = this.extractSdp(sdpLines[i], /a=fmtp:(\d+)/ );
         if (payload === opusPayload) {
@@ -83,9 +84,10 @@ define(['jquery', 'underscore'], function($, _) {
 
     var sdpLines = sdp.split('\r\n');
     var mLineIndex = null;
+    var i;
 
     // Search for m line.
-    for (var i = 0; i < sdpLines.length; i++) {
+    for (i=0; i < sdpLines.length; i++) {
         if (sdpLines[i].search('m=audio') !== -1) {
           mLineIndex = i;
           break;
@@ -96,7 +98,7 @@ define(['jquery', 'underscore'], function($, _) {
     }
 
     // If Opus is available, set it as the default in m line.
-    for (var i = 0; i < sdpLines.length; i++) {
+    for (i=0; i < sdpLines.length; i++) {
       if (sdpLines[i].search('opus/48000') !== -1) {
         var opusPayload = this.extractSdp(sdpLines[i], /:(\d+) opus\/48000/i);
         if (opusPayload) {

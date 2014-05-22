@@ -48,12 +48,14 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						return;
 					}
 					// Control data request.
+					var msg;
 					try {
-						var msg = JSON.parse(data);
+						msg = JSON.parse(data);
 					} catch(e) {
 						// Invalid JSON.
 						console.warn("Invalid JSON received from screen share channel.", data);
-						peerscreenshare.close()
+						peerscreenshare.close();
+						return;
 					}
 
 					switch (msg.m) {
@@ -274,17 +276,17 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					} else {
 						BigScreen.toggle(pane.get(0));
 					}
-                }
+				}
 
 			};
 
-	        $scope.$watch("layout.screenshare", function(newval, oldval) {
-	            if (newval && !oldval) {
-	                $scope.doScreenshare();
-	            } else if(!newval && oldval) {
-	            	$scope.stopScreenshare();
-	            }
-	        });
+			$scope.$watch("layout.screenshare", function(newval, oldval) {
+				if (newval && !oldval) {
+					$scope.doScreenshare();
+				} else if(!newval && oldval) {
+					$scope.stopScreenshare();
+				}
+			});
 
 		}];
 

@@ -65,7 +65,7 @@ ngHumanize.filter("humanizeRelativeTime", function() {
  * http://en.wikipedia.org/wiki/Ordinal_number_(linguistics)
  */
 ngHumanize.filter("humanizeOrdinal", function() {
-	return function(input) {
+	return function(format) {
 		return humanize.ordinal(format);
 	}
 });

@@ -26,12 +26,12 @@ define(['toastr'], function(toastr) {
 		// set default options
 		toastr.options = {
 			"debug": false,
-		 	"positionClass": "toast-bottom-right",
-		  	"onclick": null,
-		 	"fadeIn": 500,
-		  	"fadeOut": 500,
-		  	"timeOut": 0,
-		  	"extendedTimeOut": 0
+			"positionClass": "toast-bottom-right",
+			"onclick": null,
+			"fadeIn": 500,
+			"fadeOut": 500,
+			"timeOut": 0,
+			"extendedTimeOut": 0
 		}
 
 		return toastr;

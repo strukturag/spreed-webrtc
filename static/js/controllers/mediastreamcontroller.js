@@ -484,13 +484,11 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
             switch (msgid) {
             case "failed_getusermedia":
                 message = translation._("Failed to access camera/microphone.");
-                break
+                break;
             case "failed_peerconnection_setup":
             case "failed_peerconnection":
                 message = translation._("Failed to establish peer connection.")
-                break
-            default:
-                break
+                break;
             }
             if (!message) {
                 message = msgid;
@@ -507,7 +505,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 
         var reconnect = function() {
             if (connected && autoreconnect) {
-                if (resurrect == null) {
+                if (resurrect === null) {
                     // Storage data at the resurrection shrine.
                     resurrect = {
                         status: $scope.getStatus(),

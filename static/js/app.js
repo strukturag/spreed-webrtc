@@ -47,7 +47,7 @@ define([
     // angular App is bootstrap to control initialization parameters like translation based on URL parameters.
     var urlQuery = (function() {
         return (function(a) {
-            if (a == "") {
+            if (a === "") {
                 return {};
             }
             var b = {};
@@ -121,7 +121,7 @@ define([
                 _.each(globalContext.Languages, function(l) {
                     wanted.push(l);
                     if (l.indexOf("-") != -1) {
-                        wanted.push(l.split("-")[0])
+                        wanted.push(l.split("-")[0]);
                     }
                 });
                 // Loop through browser languages and use first one we got.
@@ -151,7 +151,7 @@ define([
                             "lang": lang,
                             "plural_forms" : "nplurals=2; plural=(n != 1);"
                         }
-                    }
+                    };
                 }
                 // Set date language too.
                 moment.lang([lang, "en"]);
@@ -160,7 +160,7 @@ define([
                 // Bootstrap AngularJS app.
                 console.log("Bootstrapping ...");
                 angular.bootstrap(document, ['app']);
-            }
+            };
 
             if (lang !== "en") {
                 // Load translation file.
