@@ -118,7 +118,7 @@ javascript:
 			dir=$(OUTPUT_JS) $(RJSFLAGS)
 
 jshint:
-		find static/ -wholename static/js/libs -prune -o -name "*.js" -exec jshint {} \;
+		find static/ -wholename static/js/libs -prune -o -name "*.js" -print0 | xargs -0 -n1 jshint
 
 release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
