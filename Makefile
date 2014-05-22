@@ -121,7 +121,7 @@ jshint:
 		find static/ -wholename static/js/libs -prune -o -name "*.js" -print0 | xargs -0 -n1 jshint
 
 jsbeautify:
-		find static/ -wholename static/js/libs -prune -wholename static/translation -prune -o -name "*.js" -exec js-beautify -t -o {}.new {} \; -exec mv -f {}.new {} \;
+		find static/ \( -path static/js/libs -o -path static/translation \) -prune -o -name "*.js" -exec js-beautify -t -o {}.new {} \; -exec mv -f {}.new {} \;
 
 release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
