@@ -26,3 +26,23 @@ echo "==========================================================================
         exit 1
     fi
 done
+
+
+check_styles=0
+for file in `git diff-index --cached --name-only HEAD --diff-filter=ACMR| grep "\.scss$"` ; do
+    check_styles=1
+done
+
+if [ "${check_styles}" = "1" ]; then
+    make styles
+    r=$?
+    if [ $r != 0 ] ; then
+echo "================================================================================================="
+echo " Error in styles                                                                                 "
+echo "                                                                                                 "
+echo " Please fix before committing. Don't forget to run git add before trying to commit again.        "
+echo "                                                                                                 "
+echo "================================================================================================="
+        exit 1
+    fi
+fi
