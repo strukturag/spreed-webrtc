@@ -164,7 +164,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
         this.room(this.roomid, _.bind(function() {
           this.connected = true;
         }, this));
-        this.e.triggerHandler("open", [event])
+        this.e.triggerHandler("open", [event]);
 
         // Send out stuff which was previously queued.
         var data;
