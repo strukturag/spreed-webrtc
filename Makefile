@@ -118,7 +118,7 @@ javascript:
 			dir=$(OUTPUT_JS) $(RJSFLAGS)
 
 jshint:
-		find static/ -wholename static/js/libs -prune -o -name "*.js" -print0 | xargs -0 -n1 jshint
+		find static/ -wholename static/js/libs -prune -o -name "*.js" -print0 | xargs -0 -n1 jshint --config .jshint
 
 jsbeautify:
 		find static/ \( -path static/js/libs -o -path static/translation \) -prune -o -name "*.js" -exec js-beautify -t -o {}.new {} \; -exec mv -f {}.new {} \;
