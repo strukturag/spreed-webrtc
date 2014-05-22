@@ -114,6 +114,9 @@ javascript:
 			-o $(CURDIR)/build/build.js \
 			dir=$(OUTPUT_JS) $(RJSFLAGS)
 
+jshint:
+		find static/ -wholename static/js/libs -prune -o -name "*.js" -exec jshint {} \;
+
 release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
