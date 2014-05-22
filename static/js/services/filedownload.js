@@ -186,7 +186,7 @@ define(["jquery", "underscore"], function($, _) {
 			var idx = this.jobs.indexOf(job);
 			if (~idx) { // Yay i love fancy code which is hard to understand!
 				this.jobs.splice(idx, 1);
-			};
+			}
 			if (this.chunk >= this.end && this.jobs.length === 0) {
 				//console.log("File done.")
 				safeApply(this.scope, _.bind(function($scope) {

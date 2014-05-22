@@ -97,7 +97,7 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
 		if (this.aliases.hasOwnProperty(id)) {
 			return this.aliases[id];
-		};
+		}
 		return id;
 
 	};

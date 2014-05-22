@@ -43,7 +43,7 @@
  */
 define(["jquery"], function($) {
 
-	function dispatchClick(coords) {
+	var dispatchClick = function(coords) {
 		var event = document.createEvent('MouseEvent'),
 			elem = document.elementFromPoint(coords.x, coords.y);
 

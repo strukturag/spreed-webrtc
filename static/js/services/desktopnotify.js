@@ -82,7 +82,7 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _) {
 
 			if (!this.enabled()) {
 				return this.dummy;
-			};
+			}
 
 			var opts = {
 				body: body,

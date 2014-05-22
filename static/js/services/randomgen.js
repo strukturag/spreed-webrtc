@@ -34,8 +34,7 @@ define(["underscore"], function(_) {
 		};
 
 		// Fast binary to hex function.
-
-		function binStringToHex(s) {
+		var binStringToHex = function(s) {
 			var s2 = '',
 				c;
 			for (var i = 0, l = s.length; i < l; ++i) {

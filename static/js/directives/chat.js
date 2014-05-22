@@ -209,7 +209,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 								mid = randomGen.random({
 									hex: true
 								});
-							};
+							}
 							if (peercall && peercall.peerconnection.datachannelReady) {
 								subscope.p2p(true);
 								// Send out stuff through data channel.

@@ -26,7 +26,9 @@ define(['jquery', 'underscore'], function($, _) {
 		var merged = cons1;
 		var name;
 		for (name in cons2.mandatory) {
-			merged.mandatory[name] = cons2.mandatory[name];
+			if (cons2.mandatory.hasOwnProperty(name)) {
+				merged.mandatory[name] = cons2.mandatory[name];
+			}
 		}
 		merged.optional.concat(cons2.optional);
 		return merged;

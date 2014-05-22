@@ -165,7 +165,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 				if ($scope.layout.screenshare) {
 					$scope.stopScreenshare();
-				};
+				}
 
 				$scope.layout.screenshare = true;
 
