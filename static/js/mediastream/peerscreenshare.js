@@ -75,9 +75,9 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		// support in Chrome 31+. This needs to be enabled in flags:
 		// chrome://flags/#enable-usermedia-screen-capture
 		var mandatoryVideoConstraints = $.extend({
-		  chromeMediaSource: 'screen',
-		  maxWidth: screenWidth,
-		  maxHeight: screenHeight
+			chromeMediaSource: 'screen',
+			maxWidth: screenWidth,
+			maxHeight: screenHeight
 		}, options);
 		var mediaConstraints = {
 			audio: false,

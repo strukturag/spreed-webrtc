@@ -43,83 +43,84 @@
  */
 define(["jquery"], function($) {
 
-    function dispatchClick(coords) {
-        var event = document.createEvent('MouseEvent'),
-            elem = document.elementFromPoint(coords.x, coords.y);
+	function dispatchClick(coords) {
+		var event = document.createEvent('MouseEvent'),
+			elem = document.elementFromPoint(coords.x, coords.y);
 
-        event.initMouseEvent(
-            'click',
-            true /* bubble */, true /* cancelable */,
-            window, null,
-            coords.x, coords.y, 0, 0, /* coordinates */
-            false, false, false, false, /* modifier keys */
-            0 /*left*/, null
-        );
-        event.synthetic = true;
+		event.initMouseEvent(
+			'click',
+		true /* bubble */ , true /* cancelable */ ,
+		window, null,
+		coords.x, coords.y, 0, 0, /* coordinates */
+		false, false, false, false, /* modifier keys */
+		0 /*left*/ , null);
+		event.synthetic = true;
 
-        elem.dispatchEvent(event);
-    };
+		elem.dispatchEvent(event);
+	};
 
-    // fastScroll
-    return ["$window", function($window) {
+	// fastScroll
+	return ["$window", function($window) {
 
-        var fastScroll = {
-            apply: function(scroller, container) {
+		var fastScroll = {
+			apply: function(scroller, container) {
 
-                if (!container) {
-                    container = scroller;
-                }
+				if (!container) {
+					container = scroller;
+				}
 
-                var cover = $window.document.createElement('div'),
-                    coverStyle = cover.style,
-                    scrollStarted = false,
-                    timer,
-                    clicked = false,
-                    pos = { x: 0, y: 0 };
+				var cover = $window.document.createElement('div'),
+					coverStyle = cover.style,
+					scrollStarted = false,
+					timer,
+					clicked = false,
+					pos = {
+						x: 0,
+						y: 0
+					};
 
-                coverStyle.cssText = [
-                    '-webkit-transform: translate3d(0,0,0);',
-                    'transform: translate3d(0,0,0);',
-                    'position: absolute;',
-                    'top: 0;',
-                    'right: 0;',
-                    'left: 0;',
-                    'bottom: 0;',
-                    'opacity: 0;',
-                    'z-index: 9;',
-                    'pointer-events: none'
-                ].join('');
-                container.append(cover);
+				coverStyle.cssText = [
+					'-webkit-transform: translate3d(0,0,0);',
+					'transform: translate3d(0,0,0);',
+					'position: absolute;',
+					'top: 0;',
+					'right: 0;',
+					'left: 0;',
+					'bottom: 0;',
+					'opacity: 0;',
+					'z-index: 9;',
+					'pointer-events: none'].join('');
+				container.append(cover);
 
-                scroller.on("scroll", function scroll() {
-                    if(!scrollStarted) {
-                        coverStyle.pointerEvents = 'auto';
-                        scrollStarted = true;
-                    }
-                    $window.clearTimeout(timer);
-                    timer = $window.setTimeout(function(){
-                        coverStyle.pointerEvents = 'none';
-                        scrollStarted = false;
-                        if(clicked) {
-                            dispatchClick(pos);
-                            clicked = false;
-                        }
-                    }, 500);
-                });
+				scroller.on("scroll", function scroll() {
+					if (!scrollStarted) {
+						coverStyle.pointerEvents = 'auto';
+						scrollStarted = true;
+					}
+					$window.clearTimeout(timer);
+					timer = $window.setTimeout(function() {
+						coverStyle.pointerEvents = 'none';
+						scrollStarted = false;
+						if (clicked) {
+							dispatchClick(pos);
+							clicked = false;
+						}
+					}, 500);
+				});
 
-                // Capture all clicks and store x, y coords for later.
-                $(cover).on('click', function clickCatcher(event) {
-                    if(event.target === cover && !event.synthetic) {
-                        pos.x = event.clientX;
-                        pos.y = event.clientY;
-                        clicked = true;
-                    }
-                });
+				// Capture all clicks and store x, y coords for later.
+				$(cover).on('click', function clickCatcher(event) {
+					if (event.target === cover && !event.synthetic) {
+						pos.x = event.clientX;
+						pos.y = event.clientY;
+						clicked = true;
+					}
+				});
 
-            }
-        }
-        return fastScroll;
+			}
+		}
+		return fastScroll;
 
-    }];
+	}];
 
 });

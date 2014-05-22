@@ -59,7 +59,7 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 				var msg;
 				try {
 					msg = JSON.parse(data);
-				} catch(e) {
+				} catch (e) {
 					// Invalid JSON.
 					console.warn("Invalid JSON received from file download request.", data);
 					xfer.cancel();
@@ -97,30 +97,30 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 			var info = this.scope.info;
 
 			switch (msg.m) {
-			case "r":
-				// Request chunk.
-				//console.debug("Request a chunk", msg, xfer.id);
-				var chunk = parseInt(msg.i || 0, 10);
-				var file = fileData.getFile(info.id);
-				file.getChunk(chunk, _.bind(function(data) {
-					//console.log("Sending chunk", chunk, data.byteLength);
-					if (!this.running) {
-						return;
-					}
-					var filechunk = fileTransfer.makeChunk(chunk, data);
-					xfer.send(filechunk.raw());
-					safeApply(this.scope, function($scope) {
-						$scope.$emit("uploadedChunk", chunk, data.byteLength);
-					});
-				}, this));
-				break;
-			case "bye":
-				// Close this xfer.
-				xfer.cancel();
-				break;
-			default:
-				console.log("Unknown xfer control request", msg.m, msg);
-				break;
+				case "r":
+					// Request chunk.
+					//console.debug("Request a chunk", msg, xfer.id);
+					var chunk = parseInt(msg.i || 0, 10);
+					var file = fileData.getFile(info.id);
+					file.getChunk(chunk, _.bind(function(data) {
+						//console.log("Sending chunk", chunk, data.byteLength);
+						if (!this.running) {
+							return;
+						}
+						var filechunk = fileTransfer.makeChunk(chunk, data);
+						xfer.send(filechunk.raw());
+						safeApply(this.scope, function($scope) {
+							$scope.$emit("uploadedChunk", chunk, data.byteLength);
+						});
+					}, this));
+					break;
+				case "bye":
+					// Close this xfer.
+					xfer.cancel();
+					break;
+				default:
+					console.log("Unknown xfer control request", msg.m, msg);
+					break;
 			}
 
 		};
@@ -155,7 +155,7 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 				var dataTransfer = event.originalEvent.dataTransfer;
 				var files = [];
 				var i;
-				for (i = 0; i<dataTransfer.files.length; i++) {
+				for (i = 0; i < dataTransfer.files.length; i++) {
 					files.push(fileData.createFile(binder.namespace(), dataTransfer.files[i]));
 				}
 				//console.log("drop event", dataTransfer, files, files.length);

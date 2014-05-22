@@ -19,27 +19,26 @@
  *
  */
 define([
-  'underscore',
+	'underscore',
 
-  'filters/displayname',
-  'filters/buddyimagesrc',
-  'filters/displayconference'
-], function(_, displayName, buddyImageSrc, displayConference) {
+	'filters/displayname',
+	'filters/buddyimagesrc',
+	'filters/displayconference'], function(_, displayName, buddyImageSrc, displayConference) {
 
-  var filters = {
-      displayName: displayName,
-      buddyImageSrc: buddyImageSrc,
-      displayConference: displayConference
-  };
+	var filters = {
+		displayName: displayName,
+		buddyImageSrc: buddyImageSrc,
+		displayConference: displayConference
+	};
 
-  var initialize = function (angModule) {
-    _.each(filters, function(filter, name) {
-      angModule.filter(name, filter);
-    })
-  }
+	var initialize = function(angModule) {
+		_.each(filters, function(filter, name) {
+			angModule.filter(name, filter);
+		})
+	}
 
-  return {
-    initialize: initialize
-  };
+	return {
+		initialize: initialize
+	};
 
 });

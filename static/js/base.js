@@ -32,5 +32,4 @@ define([
 	'rAF',
 	'humanize',
 	'sha',
-	'sjcl'
-], function(){});
+	'sjcl'], function() {});

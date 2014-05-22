@@ -51,7 +51,7 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 				if (webrtc.usermedia.audioLevel) {
 					width = Math.round(100 * webrtc.usermedia.audioLevel);
 					// Hide low volumes.
-					if (width<threshhold) {
+					if (width < threshhold) {
 						width = 0;
 					}
 				}
@@ -71,7 +71,7 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 					if (level < threshhold) {
 						level = 0;
 					} else {
-						level = level*activityMuliplier;
+						level = level * activityMuliplier;
 					}
 					this.audioActivityHistory.push(level);
 					if (this.audioActivityHistory.length > activityHistorySize) {
@@ -110,7 +110,7 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 							if (!talkingStatus[peercall.id]) {
 								send = true;
 							}
-							talkingStatusNew[peercall.id]=talking;
+							talkingStatusNew[peercall.id] = talking;
 						} else if (!talking && talkingStatus[peercall.id]) {
 							send = true;
 						}

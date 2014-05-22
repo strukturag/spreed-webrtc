@@ -20,13 +20,13 @@
  */
 define([], function() {
 
-    // safeMessage
-    return ["$sanitize", "enrichMessage", function($sanitize, enrichMessage) {
+	// safeMessage
+	return ["$sanitize", "enrichMessage", function($sanitize, enrichMessage) {
 
-        return function(s) {
-            return $sanitize(enrichMessage.all(s));
-        }
+		return function(s) {
+			return $sanitize(enrichMessage.all(s));
+		}
 
-    }];
+	}];
 
 });

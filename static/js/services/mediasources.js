@@ -20,88 +20,91 @@
  */
 define(['jquery', 'underscore'], function($, _) {
 
-  return ["$window", function($window) {
+	return ["$window", function($window) {
 
-    var mediaSources = function() {
+		var mediaSources = function() {
 
-      this.supported = window.MediaStreamTrack && window.MediaStreamTrack.getSources
-      this.audio = [];
-      this.video = [];
+			this.supported = window.MediaStreamTrack && window.MediaStreamTrack.getSources
+			this.audio = [];
+			this.video = [];
 
-    };
+		};
 
-    mediaSources.prototype.refresh = function(cb) {
+		mediaSources.prototype.refresh = function(cb) {
 
-      if (!this.supported) {
-        if (cb) {
-            cb([], []);
-        }
-        return;
-      }
+			if (!this.supported) {
+				if (cb) {
+					cb([], []);
+				}
+				return;
+			}
 
-      // NOTE(longsleep): Put this in a try/catch to continue with
-      // broken implementation like in node-webkit 0.7.2.
-      try {
-        this._refresh(cb);
-      } catch(e) {
-        console.error("Failed to get media sources: "+e.message);
-        this.supported = false;
-        if (cb) {
-            cb([], []);
-        }
-      }
+			// NOTE(longsleep): Put this in a try/catch to continue with
+			// broken implementation like in node-webkit 0.7.2.
+			try {
+				this._refresh(cb);
+			} catch (e) {
+				console.error("Failed to get media sources: " + e.message);
+				this.supported = false;
+				if (cb) {
+					cb([], []);
+				}
+			}
 
-    };
+		};
 
-    mediaSources.prototype._refresh = function(cb) {
+		mediaSources.prototype._refresh = function(cb) {
 
-      MediaStreamTrack.getSources(_.bind(function(sources) {
-        var audio = this.audio = [];
-        var video = this.video = [];
-        _.each(sources, function(source) {
-          var o = {id: source.id, facing: source.facing};
-          if (source.kind === "audio") {
-            o.label = source.label ? source.label : "Microphone " + (audio.length+1);
-            audio.push(o);
-          } else if (source.kind === "video") {
-            o.label = source.label ? source.label : "Camera " + (video.length+1);
-            video.push(o);
-          }
-        });
-        if (cb) {
-          cb(audio, video);
-        }
-      }, this));
+			MediaStreamTrack.getSources(_.bind(function(sources) {
+				var audio = this.audio = [];
+				var video = this.video = [];
+				_.each(sources, function(source) {
+					var o = {
+						id: source.id,
+						facing: source.facing
+					};
+					if (source.kind === "audio") {
+						o.label = source.label ? source.label : "Microphone " + (audio.length + 1);
+						audio.push(o);
+					} else if (source.kind === "video") {
+						o.label = source.label ? source.label : "Camera " + (video.length + 1);
+						video.push(o);
+					}
+				});
+				if (cb) {
+					cb(audio, video);
+				}
+			}, this));
 
-    };
+		};
 
-    mediaSources.prototype.hasAudioId = function(id) {
+		mediaSources.prototype.hasAudioId = function(id) {
 
-      var i;
-      for (i=0; i<this.audio.length; i++) {
-        if (this.audio[i].id === id) {
-          return true;
-        }
-      }
-      return false;
+			var i;
+			for (i = 0; i < this.audio.length; i++) {
+				if (this.audio[i].id === id) {
+					return true;
+				}
+			}
+			return false;
 
-    };
+		};
 
-    mediaSources.prototype.hasVideoId = function(id) {
+		mediaSources.prototype.hasVideoId = function(id) {
 
-      var i;
-      for (i=0; i<this.video.length; i++) {
-        if (this.video[i].id === id) {
-          return true;
-        }
-      }
-      return false;
+			var i;
+			for (i = 0; i < this.video.length; i++) {
+				if (this.video[i].id === id) {
+					return true;
+				}
+			}
+			return false;
 
-    };
+		};
 
 
-    return new mediaSources();
+		return new mediaSources();
 
-  }];
+	}];
 
 });

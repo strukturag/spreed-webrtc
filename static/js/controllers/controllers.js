@@ -19,29 +19,28 @@
  *
  */
 define([
-  'underscore',
+	'underscore',
 
-  'controllers/mediastreamcontroller',
-  'controllers/statusmessagecontroller',
-  'controllers/chatroomcontroller',
-  'controllers/roomchangecontroller'
-], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController) {
+	'controllers/mediastreamcontroller',
+	'controllers/statusmessagecontroller',
+	'controllers/chatroomcontroller',
+	'controllers/roomchangecontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController) {
 
-  var controllers = {
-      MediastreamController: MediastreamController,
-      StatusmessageController: StatusmessageController,
-      ChatroomController: ChatroomController,
-      RoomchangeController: RoomchangeController
-  };
+	var controllers = {
+		MediastreamController: MediastreamController,
+		StatusmessageController: StatusmessageController,
+		ChatroomController: ChatroomController,
+		RoomchangeController: RoomchangeController
+	};
 
-  var initialize = function (angModule) {
-    _.each(controllers, function(controller, name) {
-      angModule.controller(name, controller);
-    })
-  }
+	var initialize = function(angModule) {
+		_.each(controllers, function(controller, name) {
+			angModule.controller(name, controller);
+		})
+	}
 
-  return {
-    initialize: initialize
-  };
+	return {
+		initialize: initialize
+	};
 
 });

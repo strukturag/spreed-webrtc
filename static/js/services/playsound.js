@@ -20,178 +20,178 @@
  */
 define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
-    var SoundInterval = function(sound, id, time) {
-        this.sound = sound;
-        this.id = id;
-        this.interval = null;
-        this.time = time;
-    };
-    SoundInterval.prototype.start = function() {
-        if (this.interval !== null) {
-            return;
-        }
-        var id = this.id;
-        var player = _.bind(function() {
-            return this.sound.play(id);
-        }, this);
-        player();
-        this.interval = setInterval(player, this.time);
-    };
-    SoundInterval.prototype.stop = function() {
-        clearInterval(this.interval);
-        this.interval = null;
-        delete this.sound.intervals[this.id];
-    };
+	var SoundInterval = function(sound, id, time) {
+		this.sound = sound;
+		this.id = id;
+		this.interval = null;
+		this.time = time;
+	};
+	SoundInterval.prototype.start = function() {
+		if (this.interval !== null) {
+			return;
+		}
+		var id = this.id;
+		var player = _.bind(function() {
+			return this.sound.play(id);
+		}, this);
+		player();
+		this.interval = setInterval(player, this.time);
+	};
+	SoundInterval.prototype.stop = function() {
+		clearInterval(this.interval);
+		this.interval = null;
+		delete this.sound.intervals[this.id];
+	};
 
-    var Sound = function(options, aliases) {
+	var Sound = function(options, aliases) {
 
-        this.sound = null;
-        this.intervals = {};
-        if (options) {
-            this.initialize(options, aliases);
-        }
+		this.sound = null;
+		this.intervals = {};
+		if (options) {
+			this.initialize(options, aliases);
+		}
 
-    };
+	};
 
-    Sound.prototype.initialize = function(options, aliases) {
+	Sound.prototype.initialize = function(options, aliases) {
 
-        // Kill all the existing stuff if any.
-        if (this.sound) {
-            this.sound.stop();
-        }
-        _.each(this.intervals, function(i) {
-            i.stop();
-        });
-        this.intervals = {};
+		// Kill all the existing stuff if any.
+		if (this.sound) {
+			this.sound.stop();
+		}
+		_.each(this.intervals, function(i) {
+			i.stop();
+		});
+		this.intervals = {};
 
-        // Add error handler.
-        var onloaderror = options.onloaderror;
-        options.onloaderror = function(event) {
-            console.error("Failed to load sounds", event);
-            if (onloaderror) {
-                onloaderror.apply(this, arguments);
-            }
-        };
+		// Add error handler.
+		var onloaderror = options.onloaderror;
+		options.onloaderror = function(event) {
+			console.error("Failed to load sounds", event);
+			if (onloaderror) {
+				onloaderror.apply(this, arguments);
+			}
+		};
 
-        // Replace urls with their require generated URLs.
-        var urls = options.urls;
-        if (urls) {
-            var new_urls = [];
-            _.each(urls, function(u) {
-                u = require.toUrl(u);
-                new_urls.push(u);
-            });
-            options.urls = new_urls;
-        }
+		// Replace urls with their require generated URLs.
+		var urls = options.urls;
+		if (urls) {
+			var new_urls = [];
+			_.each(urls, function(u) {
+				u = require.toUrl(u);
+				new_urls.push(u);
+			});
+			options.urls = new_urls;
+		}
 
-        // Create the new shit.
-        this.players = {};
-        this.aliases = _.extend({}, aliases);
-        this.sound = new Howler.Howl(options);
+		// Create the new shit.
+		this.players = {};
+		this.aliases = _.extend({}, aliases);
+		this.sound = new Howler.Howl(options);
 
-        return this;
+		return this;
 
-    };
+	};
 
-    Sound.prototype.getId = function(id) {
+	Sound.prototype.getId = function(id) {
 
-        if (this.aliases.hasOwnProperty(id)) {
-            return this.aliases[id];
-        };
-        return id;
+		if (this.aliases.hasOwnProperty(id)) {
+			return this.aliases[id];
+		};
+		return id;
 
-    };
+	};
 
 
-    Sound.prototype.play = function(id, interval, autostart) {
+	Sound.prototype.play = function(id, interval, autostart) {
 
-        if (!this.sound) {
-            console.log("Play sound but not initialized.", id);
-            return null;
-        }
+		if (!this.sound) {
+			console.log("Play sound but not initialized.", id);
+			return null;
+		}
 
-        id = this.getId(id);
+		id = this.getId(id);
 
-        if (interval) {
+		if (interval) {
 
-            if (this.intervals.hasOwnProperty(id)) {
-                return this.intervals[id];
-            }
-            var i = this.intervals[id] = new SoundInterval(this, id, interval);
-            if (autostart) {
-                i.start();
-            }
-            return i;
+			if (this.intervals.hasOwnProperty(id)) {
+				return this.intervals[id];
+			}
+			var i = this.intervals[id] = new SoundInterval(this, id, interval);
+			if (autostart) {
+				i.start();
+			}
+			return i;
 
-        } else {
+		} else {
 
-            var player = this.players[id];
-            var sound = this.sound;
-            if (!player) {
-                player = this.players[id] = (function(id) {
-                    var data = {};
-                    var cb = function(soundId) {
-                        data.soundId = soundId;
-                    };
-                    var play = _.debounce(function() {
-                        if (data.soundId) {
-                            sound.stop(data.soundId);
-                            data.soundId = null;
-                        }
-                        sound.play(id, cb);
-                    }, 10);
-                    return play;
-                }(id));
-            }
-            player()
+			var player = this.players[id];
+			var sound = this.sound;
+			if (!player) {
+				player = this.players[id] = (function(id) {
+					var data = {};
+					var cb = function(soundId) {
+						data.soundId = soundId;
+					};
+					var play = _.debounce(function() {
+						if (data.soundId) {
+							sound.stop(data.soundId);
+							data.soundId = null;
+						}
+						sound.play(id, cb);
+					}, 10);
+					return play;
+				}(id));
+			}
+			player()
 
-        }
+		}
 
-    };
+	};
 
-    // Active initialized sound instances are kept here.
-    var registry = {};
-    window.PLAYSOUND = registry; // make available for debug.
+	// Active initialized sound instances are kept here.
+	var registry = {};
+	window.PLAYSOUND = registry; // make available for debug.
 
-    // playSound
-    return [function() {
+	// playSound
+	return [function() {
 
-        return {
-            initialize: function(options, name, aliases) {
-                if (!name) {
-                    name = null;
-                }
-                var s = registry[name] = new Sound(options, aliases);
-                return s;
-            },
-            play: function(id, name) {
-                if (!name) {
-                    name = null;
-                }
-                var s = registry[name];
-                if (!s) {
-                    console.log("Play sound with unknown player", name);
-                    return null;
-                }
-                return s.play(id);
+		return {
+			initialize: function(options, name, aliases) {
+				if (!name) {
+					name = null;
+				}
+				var s = registry[name] = new Sound(options, aliases);
+				return s;
+			},
+			play: function(id, name) {
+				if (!name) {
+					name = null;
+				}
+				var s = registry[name];
+				if (!s) {
+					console.log("Play sound with unknown player", name);
+					return null;
+				}
+				return s.play(id);
 
-            },
-            interval: function(id, name, time) {
-                if (!name) {
-                    name = null;
-                }
-                var s = registry[name];
-                if (!s) {
-                    console.log("Play sound with unknown player", name);
-                    return null;
-                }
-                if (!time) {
-                    time = 1500;
-                }
-                return s.play(id, time);
-            }
-        }
+			},
+			interval: function(id, name, time) {
+				if (!name) {
+					name = null;
+				}
+				var s = registry[name];
+				if (!s) {
+					console.log("Play sound with unknown player", name);
+					return null;
+				}
+				if (!time) {
+					time = 1500;
+				}
+				return s.play(id, time);
+			}
+		}
 
-    }];
+	}];
 
 });

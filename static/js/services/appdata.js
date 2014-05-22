@@ -20,23 +20,23 @@
  */
 define([], function() {
 
-    // appData
-    return [function() {
+	// appData
+	return [function() {
 
-        var data = {
-            data: null
-        }
-        var appData = {
-            get: function() {
-                return data.data;
-            },
-            set: function(d) {
-                data.data = d;
-                return d;
-            }
-        }
-        return appData;
+		var data = {
+			data: null
+		}
+		var appData = {
+			get: function() {
+				return data.data;
+			},
+			set: function(d) {
+				data.data = d;
+				return d;
+			}
+		}
+		return appData;
 
-    }];
+	}];
 
 });

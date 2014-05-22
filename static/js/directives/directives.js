@@ -19,49 +19,48 @@
  *
  */
 define([
-  'underscore',
+	'underscore',
 
-  'directives/onenter',
-  'directives/onescape',
-  'directives/statusmessage',
-  'directives/buddylist',
-  'directives/settings',
-  'directives/chat',
-  'directives/audiovideo',
-  'directives/usability',
-  'directives/audiolevel',
-  'directives/fileinfo',
-  'directives/screenshare',
-  'directives/roombar',
-  'directives/socialshare',
-  'directives/page'
-], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page) {
+	'directives/onenter',
+	'directives/onescape',
+	'directives/statusmessage',
+	'directives/buddylist',
+	'directives/settings',
+	'directives/chat',
+	'directives/audiovideo',
+	'directives/usability',
+	'directives/audiolevel',
+	'directives/fileinfo',
+	'directives/screenshare',
+	'directives/roombar',
+	'directives/socialshare',
+	'directives/page'], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page) {
 
-  var directives = {
-    onEnter: onEnter,
-    onEscape: onEscape,
-    statusMessage: statusMessage,
-    buddyList: buddyList,
-    settings: settings,
-    chat: chat,
-    audioVideo: audioVideo,
-    usability: usability,
-    audioLevel: audioLevel,
-    fileInfo: fileInfo,
-    screenshare: screenshare,
-    roomBar: roomBar,
-    socialShare: socialShare,
-    page: page
-  };
+	var directives = {
+		onEnter: onEnter,
+		onEscape: onEscape,
+		statusMessage: statusMessage,
+		buddyList: buddyList,
+		settings: settings,
+		chat: chat,
+		audioVideo: audioVideo,
+		usability: usability,
+		audioLevel: audioLevel,
+		fileInfo: fileInfo,
+		screenshare: screenshare,
+		roomBar: roomBar,
+		socialShare: socialShare,
+		page: page
+	};
 
-  var initialize = function (angModule) {
-    _.each(directives, function(directive, name) {
-      angModule.directive(name, directive);
-    })
-  };
+	var initialize = function(angModule) {
+		_.each(directives, function(directive, name) {
+			angModule.directive(name, directive);
+		})
+	};
 
-  return {
-    initialize: initialize
-  };
+	return {
+		initialize: initialize
+	};
 
 });

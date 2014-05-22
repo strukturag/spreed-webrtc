@@ -50,11 +50,11 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 					var nw = $(event.currentTarget).data("nw");
 					var url = makeUrl(nw, $scope.roomlink);
 					if (url) {
-						if (nw==="email") {
+						if (nw === "email") {
 							// Hack our way to disable unload popup for mail links.
 							$scope.manualReloadApp(url);
 						} else {
-							$window.open(url, "social_"+nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
+							$window.open(url, "social_" + nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
 						}
 					}
 				});

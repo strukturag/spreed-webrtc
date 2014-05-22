@@ -19,91 +19,89 @@
  *
  */
 define([
-  'underscore',
+	'underscore',
 
-  'services/desktopnotify',
-  'services/playsound',
-  'services/safeapply',
-  'services/mediastream',
-  'services/appdata',
-  'services/buddydata',
-  'services/buddylist',
-  'services/enrichmessage',
-  'services/safemessage',
-  'services/alertify',
-  'services/toastr',
-  'services/visibility',
-  'services/translation',
-  'services/mediasources',
-  'services/fileupload',
-  'services/filedownload',
-  'services/filedata',
-  'services/filetransfer',
-  'services/safedisplayname',
-  'services/randomgen',
-  'services/fastscroll',
-  'services/videowaiter',
-  'services/videolayout'
-], function(_,
-  desktopNotify,
-  playSound,
-  safeApply,
-  mediaStream,
-  appData,
-  buddyData,
-  buddyList,
-  enrichMessage,
-  safeMessage,
-  alertify,
-  toastr,
-  visibility,
-  translation,
-  mediaSources,
-  fileUpload,
-  fileDownload,
-  fileData,
-  fileTransfer,
-  safeDisplayName,
-  randomGen,
-  fastScroll,
-  videoWaiter,
-  videoLayout
-) {
+	'services/desktopnotify',
+	'services/playsound',
+	'services/safeapply',
+	'services/mediastream',
+	'services/appdata',
+	'services/buddydata',
+	'services/buddylist',
+	'services/enrichmessage',
+	'services/safemessage',
+	'services/alertify',
+	'services/toastr',
+	'services/visibility',
+	'services/translation',
+	'services/mediasources',
+	'services/fileupload',
+	'services/filedownload',
+	'services/filedata',
+	'services/filetransfer',
+	'services/safedisplayname',
+	'services/randomgen',
+	'services/fastscroll',
+	'services/videowaiter',
+	'services/videolayout'], function(_,
+desktopNotify,
+playSound,
+safeApply,
+mediaStream,
+appData,
+buddyData,
+buddyList,
+enrichMessage,
+safeMessage,
+alertify,
+toastr,
+visibility,
+translation,
+mediaSources,
+fileUpload,
+fileDownload,
+fileData,
+fileTransfer,
+safeDisplayName,
+randomGen,
+fastScroll,
+videoWaiter,
+videoLayout) {
 
-  var services = {
-    desktopNotify: desktopNotify,
-    playSound: playSound,
-    safeApply: safeApply,
-    mediaStream: mediaStream,
-    appData: appData,
-    buddyData: buddyData,
-    buddyList: buddyList,
-    enrichMessage: enrichMessage,
-    safeMessage: safeMessage,
-    alertify: alertify,
-    toastr: toastr,
-    visibility: visibility,
-    translation: translation,
-    mediaSources: mediaSources,
-    fileUpload: fileUpload,
-    fileDownload: fileDownload,
-    fileData: fileData,
-    fileTransfer: fileTransfer,
-    safeDisplayName: safeDisplayName,
-    randomGen: randomGen,
-    fastScroll: fastScroll,
-    videoWaiter: videoWaiter,
-    videoLayout: videoLayout
-  };
+	var services = {
+		desktopNotify: desktopNotify,
+		playSound: playSound,
+		safeApply: safeApply,
+		mediaStream: mediaStream,
+		appData: appData,
+		buddyData: buddyData,
+		buddyList: buddyList,
+		enrichMessage: enrichMessage,
+		safeMessage: safeMessage,
+		alertify: alertify,
+		toastr: toastr,
+		visibility: visibility,
+		translation: translation,
+		mediaSources: mediaSources,
+		fileUpload: fileUpload,
+		fileDownload: fileDownload,
+		fileData: fileData,
+		fileTransfer: fileTransfer,
+		safeDisplayName: safeDisplayName,
+		randomGen: randomGen,
+		fastScroll: fastScroll,
+		videoWaiter: videoWaiter,
+		videoLayout: videoLayout
+	};
 
-  var initialize = function (angModule) {
-    _.each(services, function(service, name) {
-      angModule.factory(name, service);
-    })
-  }
+	var initialize = function(angModule) {
+		_.each(services, function(service, name) {
+			angModule.factory(name, service);
+		})
+	}
 
-  return {
-    initialize: initialize
-  };
+	return {
+		initialize: initialize
+	};
 
 });

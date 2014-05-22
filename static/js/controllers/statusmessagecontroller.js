@@ -20,25 +20,25 @@
  */
 define([], function() {
 
-    // StatusmessageController
+	// StatusmessageController
 	return ["$scope", "mediaStream", function($scope, mediaStream) {
 
-        $scope.doHangup = function() {
-            mediaStream.webrtc.doHangup();
-        }
-        $scope.doAbort = function() {
-            mediaStream.webrtc.doHangup("abort", $scope.dialing);
-        }
-        $scope.doReconnect = function() {
-            mediaStream.connector.reconnect();
-        }
-        $scope.doAccept = function() {
-            mediaStream.webrtc.doAccept();
-        }
-        $scope.doReject = function() {
-            mediaStream.webrtc.doHangup('reject');
-        }
+		$scope.doHangup = function() {
+			mediaStream.webrtc.doHangup();
+		}
+		$scope.doAbort = function() {
+			mediaStream.webrtc.doHangup("abort", $scope.dialing);
+		}
+		$scope.doReconnect = function() {
+			mediaStream.connector.reconnect();
+		}
+		$scope.doAccept = function() {
+			mediaStream.webrtc.doAccept();
+		}
+		$scope.doReject = function() {
+			mediaStream.webrtc.doHangup('reject');
+		}
 
-    }];
+	}];
 
 });
