@@ -104,6 +104,9 @@ styles:
 		sass --compass --scss $(SASSFLAGS) \
 			$(CURDIR)/src/styles/font-awesome.scss:$(CURDIR)/static/css/font-awesome.min.css
 
+styleshint:
+		find src/styles -maxdepth 1 -name "*.scss" -print0 | xargs -0 -n1 sass --compass --scss $(SASSFLAGS) -c
+
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
 releaseassets: SASSFLAGS = --style=compressed --no-cache
 releaseassets: dist_gopath assets
