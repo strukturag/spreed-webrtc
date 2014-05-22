@@ -53,7 +53,14 @@ endif
 # Tools
 AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 
-build: get binary assets
+build: hook get binary assets
+
+# the pre-commit hook checks for formatted Go files
+hook:
+		if test ! \( -x .git/hooks/pre-commit -a -L .git/hooks/pre-commit \); then \
+			rm -f .git/hooks/pre-commit; \
+			ln -s ../../src/hooks/pre-commit.hook .git/hooks/pre-commit; \
+		fi
 
 gopath:
 		@echo GOPATH=$(GOPATH)
@@ -171,4 +178,4 @@ tarball: distclean release install
 		echo -n $(VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME).tar.gz -C $(DIST) $(PACKAGE_NAME)
 
-.PHONY: clean distclean pristine get getupdate build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: hook clean distclean pristine get getupdate build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
