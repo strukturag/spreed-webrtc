@@ -66,6 +66,7 @@ func NewImageCache() ImageCache {
 			"image/png":  "picture.png",
 			"image/jpeg": "picture.jpg",
 			"image/gif":  "picture.gif",
+			"image/webp": "picture.webp",
 		}
 	}
 	return result
