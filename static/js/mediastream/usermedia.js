@@ -106,7 +106,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			this.stop();
 		}, this);
 
-		if (this.audioProcessor) {
+		if (this.audioProcessor && context.createMediaStreamSource) {
 			// Connect to audioProcessor.
 			this.audioSource = context.createMediaStreamSource(stream);
 			//console.log("got source", this.audioSource);
