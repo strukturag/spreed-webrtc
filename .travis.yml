@@ -1,5 +1,5 @@
 # stats available at
-# https://travis-ci.org/strukturag/spreed-speakfreely/
+# https://travis-ci.org/strukturag/spreed-webrtc/
 language: go
 
 go:
