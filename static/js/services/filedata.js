@@ -299,27 +299,6 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 		this.writeBuffer = [];
 	};
 
-	// Slices the file and calls callback with each slice as first argument.
-	File.prototype.parseFile = function(cb) {
-
-		var f = this.file;
-		var size = f.size;
-		var i;
-		for (i = 0; i < size; i += fileChunkSize) {
-			(function(file, position) {
-				var reader = new FileReader();
-				var blob = file.slice(position, position + fileChunkSize);
-				reader.onload = function(event) {
-					if (reader.readyState == FileReader.DONE) {
-						cb(event.target.result);
-					}
-				}
-				reader.readAsArrayBuffer(blob);
-			}(f, i));
-		}
-
-	};
-
 	File.prototype.getChunk = function(chunk_index, cb) {
 
 		var start = fileChunkSize * chunk_index;
