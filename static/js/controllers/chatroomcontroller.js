@@ -107,7 +107,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 						$window.open(elem.attr("href"), "_blank");
 					}
 				}
-			};
+			}
 		});
 
 		$scope.$watch("input", function(newvalue) {
