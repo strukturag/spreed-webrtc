@@ -24,7 +24,7 @@ AC_PREREQ([2.53])
 AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.com/strukturag/spreed-webrtc])
 
 # minimum required versions
-GO_VERSION_MIN=1.1.0
+GO_VERSION_MIN=1.1
 NODEJS_VERSION_MIN=0.8.0
 SASS_VERSION_MIN=3.2.0
 
