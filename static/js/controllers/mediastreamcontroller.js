@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			if (manualUnload && !$scope.peer) {
 				return;
 			}
-			return translation._("Quit from Spreed Speak Freely?");
+			return translation._("Close this window and disconnect?");
 		});
 
 		// Enable app full screen listener.

@@ -1,15 +1,15 @@
-# Translations template for Spreed Speak Freely.
+# Translations template for Spreed WebRTC.
 # Copyright (C) 2014 struktur AG
-# This file is distributed under the same license as the Spreed Speak Freely
+# This file is distributed under the same license as the Spreed WebRTC
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-05 16:53+0200\n"
+"POT-Creation-Date: 2014-05-23 10:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -362,7 +362,7 @@ msgstr ""
 msgid "Incoming file:"
 msgstr ""
 
-msgid "Quit from Spreed Speak Freely?"
+msgid "Close this window and disconnect?"
 msgstr ""
 
 msgid "Restart required to apply updates. Click ok to restart now."

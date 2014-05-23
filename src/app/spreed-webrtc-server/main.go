@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@
 package main
 
 import (
-	"app/spreed-speakfreely-server/sleepy"
+	"app/spreed-webrtc-server/sleepy"
 	"bytes"
 	"flag"
 	"fmt"
@@ -204,7 +204,7 @@ func runner(runtime phoenix.Runtime) error {
 
 	title, err := runtime.GetString("app", "title")
 	if err != nil {
-		title = "Spreed Speak Freely"
+		title = "Spreed WebRTC"
 	}
 
 	ver, err := runtime.GetString("app", "ver")

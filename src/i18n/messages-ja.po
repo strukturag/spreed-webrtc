@@ -1,14 +1,14 @@
-# Japanese translations for Spreed Speak Freely.
+# Japanese translations for Spreed WebRTC.
 # Copyright (C) 2014 struktur AG
-# This file is distributed under the same license as the Spreed Speak Freely
+# This file is distributed under the same license as the Spreed WebRTC
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# Curt Frisemo <curt.frisemo@spreed.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-05 16:53+0200\n"
+"POT-Creation-Date: 2014-05-23 10:35+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -362,8 +362,8 @@ msgstr "あなたの共有ファイル:"
 msgid "Incoming file:"
 msgstr "受信中ファイル:"
 
-msgid "Quit from Spreed Speak Freely?"
-msgstr "Spreed Speak Freelyを終了しますか?"
+msgid "Close this window and disconnect?"
+msgstr ""
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr "アップデート適用のため再起動してください.ここをクリックして再起動する."

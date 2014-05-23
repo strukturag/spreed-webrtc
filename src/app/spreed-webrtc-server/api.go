@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,35 +21,14 @@
 
 package main
 
-import (
-	"crypto/rand"
-	pseudoRand "math/rand"
-	"time"
-)
+import ()
 
-const (
-	dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW0123456789"
-)
-
-func NewRandomString(length int) string {
-
-	buf := make([]byte, length)
-	_, err := rand.Read(buf)
-	if err != nil {
-		// fallback to pseudo-random
-		for i := 0; i < length; i++ {
-			buf[i] = dict[pseudoRand.Intn(len(dict))]
-		}
-	} else {
-		for i := 0; i < length; i++ {
-			buf[i] = dict[int(buf[i])%len(dict)]
-		}
-	}
-	return string(buf)
-
+type ApiError struct {
+	Id      string `json:"code"`
+	Message string `json:"message"`
+	Success bool   `json:"success"`
 }
 
-func init() {
-	// Make sure to seed default random generator.
-	pseudoRand.Seed(time.Now().UTC().UnixNano())
+func NewApiError(id, message string) *ApiError {
+	return &ApiError{id, message, false}
 }

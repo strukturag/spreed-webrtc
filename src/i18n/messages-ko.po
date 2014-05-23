@@ -1,16 +1,16 @@
-# Korean translations for Spreed Speak Freely.
+# Korean translations for Spreed WebRTC.
 # Copyright (C) 2014 struktur AG
-# This file is distributed under the same license as the Spreed Speak Freely
+# This file is distributed under the same license as the Spreed WebRTC
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# Curt Frisemo <curt.frisemo@spreed.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-05 16:53+0200\n"
+"POT-Creation-Date: 2014-05-23 10:35+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
@@ -362,8 +362,8 @@ msgstr "공유 화일:"
 msgid "Incoming file:"
 msgstr "도착하는 화일:"
 
-msgid "Quit from Spreed Speak Freely?"
-msgstr "Spreed Speak Freely사용을 중지 하시겠습니까?"
+msgid "Close this window and disconnect?"
+msgstr ""
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr "업데이트를 적용하려면 재시작이 필요 합니다. 지금 재시작 하려면 ok를 클릭 하십시오"

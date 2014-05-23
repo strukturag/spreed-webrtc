@@ -1,4 +1,4 @@
-spreed-speakfreely-server (0.17.5) precise; urgency=low
+spreed-webrtc-server (0.17.5) precise; urgency=low
 
   * Implemented server side support for user authentication and authorization.
   * Added an REST API end point (see docs).
@@ -20,7 +20,7 @@ spreed-speakfreely-server (0.17.5) precise; urgency=low
 
  -- Simon Eisenmann <simon@struktur.de>  Thu, 22 May 2014 17:49:16 +0200
 
-spreed-speakfreely-server (0.17.4) precise; urgency=low
+spreed-webrtc-server (0.17.4) precise; urgency=low
 
   * Updated Japanese translation.
   * Allow Makefile variables CONFIG_FILE and CONFIG_PATH.
@@ -38,7 +38,7 @@ spreed-speakfreely-server (0.17.4) precise; urgency=low
 
  -- Simon Eisenmann <simon@struktur.de>  Thu, 24 Apr 2014 17:59:05 +0200
 
-spreed-speakfreely-server (0.17.3) precise; urgency=low
+spreed-webrtc-server (0.17.3) precise; urgency=low
 
   * Buddy images are now loaded with seperate URL calls.
   * Updated Korean (ko) language.
@@ -49,11 +49,11 @@ spreed-speakfreely-server (0.17.3) precise; urgency=low
   * File permission fixes.
   * Do not use sleepy as submodule but include it directly.
   * Refactored video layout renderer in seperate service.
-  * Implemented alternaitve conference view (not enabled yet). 
+  * Implemented alternaitve conference view (not enabled yet).
 
  -- Simon Eisenmann <simon@struktur.de>  Wed, 16 Apr 2014 17:41:13 +0200
 
-spreed-speakfreely-server (0.17.2) precise; urgency=low
+spreed-webrtc-server (0.17.2) precise; urgency=low
 
   * Fixed timeouts when there was a disconnect.
   * Use sleepy as submodule from external source.
@@ -64,10 +64,10 @@ spreed-speakfreely-server (0.17.2) precise; urgency=low
   * Added Japanese language.
   * Added Chinese Traditional language.
   * Updated Chinese language.
-  * Updated Korean language. 
-  * Fixed screen sharing scrolling. 
+  * Updated Korean language.
+  * Fixed screen sharing scrolling.
   * Fixed screen sharing hangup in conferences.
-  * Avoid spurious bye ping pong. 
+  * Avoid spurious bye ping pong.
   * Fixed hangup in conferences.
   * Fixed double click on Chrome OS.
   * Fixed buddy list visibility if it should auto hide.
@@ -76,7 +76,7 @@ spreed-speakfreely-server (0.17.2) precise; urgency=low
 
  -- Simon Eisenmann <simon@struktur.de>  Fri, 11 Apr 2014 19:42:10 +0200
 
-spreed-speakfreely-server (0.17.1) precise; urgency=low
+spreed-webrtc-server (0.17.1) precise; urgency=low
 
   * Added translations for Korean and Chinese.
   * Multiple updates to 3rd party js libraries.
@@ -86,7 +86,7 @@ spreed-speakfreely-server (0.17.1) precise; urgency=low
 
  -- Simon Eisenmann <simon@struktur.de>  Fri, 04 Apr 2014 18:46:56 +0200
 
-spreed-speakfreely-server (0.17.0) precise; urgency=low
+spreed-webrtc-server (0.17.0) precise; urgency=low
 
   * TURN user names now use expiration time stamp. This fixes compatibility
     with latest TURN REST specification and requires a reasonably recent
@@ -98,11 +98,11 @@ spreed-speakfreely-server (0.17.0) precise; urgency=low
   * HTML fixes.
   * Added method to generate URL-safe random string.
   * Use strong random number generator.
-  * Support configuring pprof HTTP server. 
+  * Support configuring pprof HTTP server.
 
  -- Simon Eisenmann <simon@struktur.de>  Fri, 28 Mar 2014 16:48:46 +0100
 
-spreed-speakfreely-server (0.16.1) precise; urgency=low
+spreed-webrtc-server (0.16.1) precise; urgency=low
 
   * Implemented chat session control UI.
   * Layout controller refactorization.
@@ -110,7 +110,7 @@ spreed-speakfreely-server (0.16.1) precise; urgency=low
 
  -- Simon Eisenmann <simon@struktur.de>  Fri, 21 Mar 2014 11:46:10 +0100
 
-spreed-speakfreely-server (0.16.0) precise; urgency=low
+spreed-webrtc-server (0.16.0) precise; urgency=low
 
   * Chat UI improvements.
   * Screen sharing is now a scroll pane and no longer scaled down.
@@ -119,13 +119,13 @@ spreed-speakfreely-server (0.16.0) precise; urgency=low
   * Server code was reviewed and fixed where required.
   * Changed Makefile to allow tarball and release builds with
     local third party sources in ./vendor too.
-  * Added configration for maxfd and automatically use the 
-    numer of cpus for GOMAXPROCS per default. 
+  * Added configration for maxfd and automatically use the
+    numer of cpus for GOMAXPROCS per default.
   * Added server helper for stats and profiling.
 
  -- Simon Eisenmann <simon@struktur.de>  Mon, 17 Mar 2014 18:35:08 +0100
 
-spreed-speakfreely-server (0.15.0) precise; urgency=low
+spreed-webrtc-server (0.15.0) precise; urgency=low
 
   * Initial public release.
 

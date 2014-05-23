@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,21 +22,34 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"crypto/rand"
+	pseudoRand "math/rand"
+	"time"
 )
 
-type Room struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
+const (
+	dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW0123456789"
+)
+
+func NewRandomString(length int) string {
+
+	buf := make([]byte, length)
+	_, err := rand.Read(buf)
+	if err != nil {
+		// fallback to pseudo-random
+		for i := 0; i < length; i++ {
+			buf[i] = dict[pseudoRand.Intn(len(dict))]
+		}
+	} else {
+		for i := 0; i < length; i++ {
+			buf[i] = dict[int(buf[i])%len(dict)]
+		}
+	}
+	return string(buf)
+
 }
 
-type Rooms struct {
-}
-
-func (rooms *Rooms) Post(request *http.Request) (int, interface{}, http.Header) {
-
-	name := NewRandomString(11)
-	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
-
+func init() {
+	// Make sure to seed default random generator.
+	pseudoRand.Seed(time.Now().UTC().UnixNano())
 }

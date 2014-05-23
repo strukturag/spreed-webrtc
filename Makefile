@@ -1,8 +1,8 @@
 #
-# Spreed Speak Freely.
+# Spreed WebRTC.
 # Copyright (C) 2013-2014 struktur AG
 #
-# This file is part of Spreed Speak Freely.
+# This file is part of Spreed WebRTC.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -18,9 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-PKG := app/spreed-speakfreely-server
-EXENAME := spreed-speakfreely-server
-CONFIG_FILE ?= spreed-speakfreely-server.conf
+PKG := app/spreed-webrtc-server
+EXENAME := spreed-webrtc-server
+CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 
 VENDOR = "$(CURDIR)/vendor"
@@ -34,7 +34,7 @@ VERSION := $(shell dpkg-parsechangelog | sed -n 's/^Version: //p')
 DESTDIR ?= /
 BIN := $(DESTDIR)/usr/sbin
 CONF := $(DESTDIR)/$(CONFIG_PATH)
-SHARE := $(DESTDIR)/usr/share/spreed-speakfreely-server
+SHARE := $(DESTDIR)/usr/share/spreed-webrtc-server
 
 BUILD_ARCH := $(shell go env GOARCH)
 DIST := $(CURDIR)/dist_$(BUILD_ARCH)

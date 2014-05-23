@@ -1,15 +1,15 @@
-# German translations for Spreed Speak Freely.
+# German translations for Spreed WebRTC.
 # Copyright (C) 2014 struktur AG
-# This file is distributed under the same license as Spreed Speak Freely.
+# This file is distributed under the same license as Spreed WebRTC
 # project.
 # Simon Eisenmann <simon@struktur.de>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed Speak Freely\n"
+"Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-05 16:53+0200\n"
-"PO-Revision-Date: 2014-05-05 16:54+0100\n"
+"POT-Creation-Date: 2014-05-23 10:35+0200\n"
+"PO-Revision-Date: 2014-05-23 10:39+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -372,8 +372,8 @@ msgstr "Sie geben eine Datei frei:"
 msgid "Incoming file:"
 msgstr "Eingehende Datei:"
 
-msgid "Quit from Spreed Speak Freely?"
-msgstr "Spreed Speak Freely beenden?"
+msgid "Close this window and disconnect?"
+msgstr "Fenster schließen und die Verbindung trennen?"
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""

@@ -16,11 +16,6 @@
 /tokens.txt
 /dist
 *~
-debian/*.debhelper
-debian/*.substvars
-debian/spreed-webcaller
-debian/files
-debian/tmp
 vendor/*
 /dist_*
 /build/out/

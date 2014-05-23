@@ -1,9 +1,9 @@
-Spreed Speak Freely
+Spreed WebRTC
 ===================
 
-The latest version of Spreed Speak Freely can be found on GitHub:
+The latest version of Spreed WebRTC can be found on GitHub:
 
-  https://github.com/strukturag/spreed-speakfreely
+  https://github.com/strukturag/webrtc
 
 
 ## Build prerequisites
@@ -43,7 +43,7 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 ## Server startup
 
   ```bash
-  spreed-speakfreely-server [OPTIONS]
+  spreed-webrtc-server [OPTIONS]
   ```
 
   Options
@@ -69,7 +69,7 @@ The latest version of Spreed Speak Freely can be found on GitHub:
   Copy the server.conf.in to server.conf.
 
   Build styles, javascript and binary using make. Then run
-  ``./spreed-speakfreely-server``
+  ``./spreed-webrtc-server``
 
   The server runs on http://localhost:8080/ per default.
 
@@ -79,7 +79,7 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 
 ## Production use
 
-  Spreed Speak Freely should be run through a SSL frontend proxy with
+  Spreed WebRTC should be run through a SSL frontend proxy with
   support for Websockets. Example configuration for Nginx can be
   found in `doc/NGINX.txt`.
 
@@ -101,4 +101,4 @@ The latest version of Spreed Speak Freely can be found on GitHub:
 
 ## License
 
-`Spreed Speak Freely` uses the AGPL license, see our `LICENSE` file.
+`Spreed WebRTC` uses the AGPL license, see our `LICENSE` file.
