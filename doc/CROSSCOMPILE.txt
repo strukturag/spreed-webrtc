@@ -1,0 +1,32 @@
+Linux:
+
+  Target linux/amd64
+    GOOS=linux GOARCH=amd64 make tarball
+
+  Target linux/386:
+    GOOS=linux GOARCH=386 make tarball
+
+  Target linux/armv5
+    GOOS=linux GOARCH=arm GOARM=5 make tarball
+
+  Target linux/armv6
+    GOOS=linux GOARCH=arm GOARM=6 make tarball
+
+  Target linux/armv7
+    GOOS=linux GOARCH=arm GOARM=7 make tarball
+
+
+Mac:
+
+  Target darwin/amd64
+    GOOS=darwin GOARCH=amd64 make tarball
+
+
+Windows:
+
+  Target windows/386
+    GOOS=windows GOARCH=386 make tarball
+
+  Target windows/amd64
+    GOOS=windows GOARCH=amd64 make tarball
+

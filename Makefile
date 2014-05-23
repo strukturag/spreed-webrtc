@@ -37,6 +37,7 @@ CONF := $(DESTDIR)/$(CONFIG_PATH)
 SHARE := $(DESTDIR)/usr/share/spreed-webrtc-server
 
 BUILD_ARCH := $(shell go env GOARCH)
+BUILD_OS := $(shell go env GOOS)
 DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
@@ -185,6 +186,6 @@ tarball: DOCS = $(CONF)/docs
 tarball: SHARE = $(TARPATH)/
 tarball: distclean release install
 		echo -n $(VERSION) > $(TARPATH)/version.txt
-		tar czf $(DIST)/$(PACKAGE_NAME).tar.gz -C $(DIST) $(PACKAGE_NAME)
+		tar czf $(DIST)/$(PACKAGE_NAME)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)
 
 .PHONY: hook clean distclean pristine get getupdate build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
