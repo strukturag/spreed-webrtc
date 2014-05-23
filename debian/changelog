@@ -1,3 +1,12 @@
+spreed-webrtc-server (0.18.0) precise; urgency=low
+
+  * The project is now named Spreed WebRTC. All reference to the old
+    name Spreed Speak Freely have been replaced.
+  * Cleanup of Javascript code to match coding guide lines.
+  * Added various new targets to make to check javascript and scss code. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 23 May 2014 10:46:51 +0200
+
 spreed-webrtc-server (0.17.5) precise; urgency=low
 
   * Implemented server side support for user authentication and authorization.
