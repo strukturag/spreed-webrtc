@@ -3,7 +3,7 @@ Spreed WebRTC
 
 The latest version of Spreed WebRTC can be found on GitHub:
 
-  https://github.com/strukturag/webrtc
+  https://github.com/strukturag/spreed-webrtc
 
 
 ## Build prerequisites
