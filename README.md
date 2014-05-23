@@ -24,7 +24,12 @@ The latest version of Spreed WebRTC can be found on GitHub:
 
   Go, Sass and NodeJS need to be in your $PATH.
 
+  If you got spreed-webrtc from the git repository, you will first need
+  to run the included `autogen.sh` script to generate the `configure`
+  script.
+
   ```bash
+  $ ./configure
   $ make
   ```
 

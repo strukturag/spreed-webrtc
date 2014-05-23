@@ -21,6 +21,8 @@ install:
   - sudo npm install -g autoprefixer
 
 script:
+  - ./autogen.sh
+  - ./configure
   - make get
   - make styles
   - make javascript
