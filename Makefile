@@ -51,6 +51,8 @@ ifneq ($(NODEJS_BIN_EXISTS), 1)
     $(error "Can't find node.js runtime, please install / check your PATH")
 endif
 
+SASSFLAGS = --style=expanded
+
 # Tools
 AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 
@@ -92,7 +94,6 @@ test: get
 
 assets: styles javascript
 
-styles: SASSFLAGS = --style=expanded
 styles:
 		mkdir -p $(CURDIR)/static/css
 		mkdir -p $(CURDIR)/static/fonts
