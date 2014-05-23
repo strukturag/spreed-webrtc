@@ -27,4 +27,6 @@ type Context struct {
 	Host      string
 	Ssl       bool
 	Languages []string
+	Room      string `json:"-"`
+	Scheme    string `json:"-"`
 }
