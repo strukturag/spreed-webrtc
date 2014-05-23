@@ -22,11 +22,12 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-        var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation) {
+        var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', '$timeout',function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, $timeout) {
 
             $scope.layout.settings = false;
             $scope.showAdvancedSettings = true;
             $scope.showTakePicture = false;
+            $scope.previewPicture = false;
             $scope.showTakePictureReady = true;
             $scope.rememberSettings = true;
             $scope.desktopNotify = desktopNotify;
@@ -72,59 +73,92 @@ define(['underscore', 'text!partials/settings.html'], function(_, template) {
                     safeApply($scope);
                 });
             };
-            $scope.takePicture = function(element, stop) {
+            $scope.takePicture = function(element, take, retake, stop) {
+                var delayToTakePicture = 3000;
+                var takePictureCountFrom = 3;
+                var takePictureCountDown = function() {
+                    $scope.countdown = {};
+                    $scope.countdown.num = 3;
+                    $timeout(function() {
+                        $scope.countdown.num = 2;
+                    }, delayToTakePicture/takePictureCountFrom*1);
+                    $timeout(function() {
+                        $scope.countdown.num = 1;
+                    }, delayToTakePicture/takePictureCountFrom*2);
+                    $timeout(function() {
+                        $scope.countdown.num = null;
+                    }, delayToTakePicture/takePictureCountFrom*3);
+                };
+
                 if (stop) {
                     $scope.showTakePicture = false;
+                    $scope.previewPicture = false;
                     if (localStream) {
                         localStream.stop();
                         localStream = null;
                     }
-                } else {
-                    var video = $(element).parent().find("video").get(0);
-                    if (!$scope.showTakePicture) {
-                        $scope.showTakePictureReady = false;
-                        var videoConstraints = true;
-                        if ($scope.user.settings.cameraId) {
-                            videoConstraints = {
-                                optional: [{sourceId: $scope.user.settings.cameraId}]
-                            }
-                        }
-                        getUserMedia({video: videoConstraints}, function(stream) {
-                            if ($scope.showTakePictureReady) {
-                                stream.stop()
-                                return;
-                            }
-                            $scope.showTakePicture = true;
-                            localStream = stream;
-                            $scope.showTakePictureReady = true;
-                            attachMediaStream(video, stream);
-                            safeApply($scope);
-                        }, function(error) {
-                            console.error('Failed to get access to local media. Error code was ' + error.code);
-                            $scope.showTakePictureReady = true;
-                            safeApply($scope);
-                        });
-                        return;
-                    } else {
-                        var canvas = $(element).parent().find("canvas").get(0);
-                        var videoWidth = video.videoWidth;
-                        var videoHeight = video.videoHeight;
-                        var aspectRatio = videoWidth/videoHeight;
-                        if (!aspectRatio) {
-                            // NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
-                            console.warn("Unable to compute aspectRatio", aspectRatio);
-                            aspectRatio = 1.3333333333333333;
-                        }
-                        var x = (46*aspectRatio-46)/-2
-                        canvas.getContext("2d").drawImage(video, x, 0, 46*aspectRatio, 46);
-                        $scope.user.buddyPicture = canvas.toDataURL("image/jpeg");
-                        console.info("Image size", $scope.user.buddyPicture.length);
-                        localStream.stop();
-                        localStream = null;
-                        $scope.showTakePictureReady = true;
-                        $scope.showTakePicture = false;
-                        safeApply($scope);
+                    return;
+                }
+
+                var video = $(element).parent().parent().find("video").get(0);
+                var makePicture = function() {
+                    takePictureCountDown();
+                    $timeout(function() {
+                        $scope.previewPicture = true;
+                        video.pause();
+                    }, delayToTakePicture);
+                };
+
+                if (!$scope.showTakePicture) {
+                    $scope.showTakePictureReady = false;
+                    var videoConstraints = true;
+                    if ($scope.user.settings.cameraId) {
+                        videoConstraints = {
+                            optional: [{sourceId: $scope.user.settings.cameraId}]
+                        };
                     }
+                    getUserMedia({video: videoConstraints}, function(stream) {
+                        if ($scope.showTakePictureReady) {
+                            stream.stop();
+                            return;
+                        }
+                        $scope.showTakePicture = true;
+                        localStream = stream;
+                        $scope.showTakePictureReady = true;
+                        attachMediaStream(video, stream);
+                        safeApply($scope);
+                    }, function(error) {
+                        console.error('Failed to get access to local media. Error code was ' + error.code);
+                        $scope.showTakePictureReady = true;
+                        safeApply($scope);
+                    });
+                    return;
+                } else if (take) {
+                    makePicture();
+                } else if (retake) {
+                    video.play();
+                    $scope.previewPicture = false;
+                    makePicture();
+                } else {
+                    var canvas = $(element).parent().parent().find("canvas").get(0);
+                    var videoWidth = video.videoWidth;
+                    var videoHeight = video.videoHeight;
+                    var aspectRatio = videoWidth/videoHeight;
+                    if (!aspectRatio) {
+                        // NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
+                        console.warn("Unable to compute aspectRatio", aspectRatio);
+                        aspectRatio = 1.3333333333333333;
+                    }
+                    var x = (46*aspectRatio-46)/-2;
+                    canvas.getContext("2d").drawImage(video, x, 0, 46*aspectRatio, 46);
+                    $scope.user.buddyPicture = canvas.toDataURL("image/jpeg");
+                    console.info("Image size", $scope.user.buddyPicture.length);
+                    localStream.stop();
+                    localStream = null;
+                    $scope.showTakePictureReady = true;
+                    $scope.showTakePicture = false;
+                    $scope.previewPicture = false;
+                    safeApply($scope);
                 }
             };
 

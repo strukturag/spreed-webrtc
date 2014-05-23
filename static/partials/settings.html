@@ -11,11 +11,25 @@
             <div style="margin-bottom:5px">
               <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
             </div>
-            <div class="collapse" collapse="!showTakePicture">
+            <div class="collapse showTakePicture" collapse="!showTakePicture">
+              <div class="countdownToTakePicture" ng-show="countdown.num">
+                  <span ng-bind="countdown.num"></span>
+              </div>
               <video autoplay="autoplay" width="200"></video>
               <canvas style="display:none" width="46" height="46"></canvas>
+              <a class="btn btn-xs btn-success btn-takePicture" ng-show="!previewPicture" ng-click="takePicture($event.target, true)"> {{_('Take')}}</a>
+              <a class="btn btn-xs btn-success btn-takePicture" ng-show="previewPicture" ng-click="takePicture($event.target, false, true)"> {{_('Retake')}}</a>
+              <div>
+                  <a class="btn btn-small btn-default" ng-click="takePicture($event.target, false, false, true)"> {{_('Cancel')}}</a>
+                  <a class="btn btn-small btn-primary" ng-disabled="!previewPicture" ng-click="takePicture($event.target)"> {{_('Set as Profile Picture')}}</a>
+              </div>
             </div>
-            <a class="btn btn-small btn-success" ng-disabled="!showTakePictureReady" ng-click="takePicture($event.target)"> {{_('Take picture')}}</a> <span ng-show="!showTakePictureReady"><i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}</span><a class="btn btn-small btn-default" ng-show="showTakePicture" ng-click="takePicture($event.target, true)"> {{_('Cancel')}}</a>
+            <div>
+               <a class="btn btn-small btn-success" ng-show="!showTakePicture" ng-disabled="!showTakePictureReady" ng-click="takePicture($event.target)"> {{_('Take picture')}}</a>
+               <span ng-show="!showTakePictureReady">
+                  <i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}
+               </span>
+            </div>
           </label>
         </div>
       </div>
