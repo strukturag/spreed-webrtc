@@ -31,9 +31,11 @@ define(["jquery", "underscore", "modernizr"], function($, _, Modernizr) {
 		if (videos.length) {
 			if (videos.length === 1) {
 				var remoteVideo = peers[videos[0]].element.find("video").get(0);
-				size.width = remoteVideo.videoWidth;
-				size.height = remoteVideo.videoHeight;
-				console.log("Remote video size: ", size);
+				if (remoteVideo) {
+					size.width = remoteVideo.videoWidth;
+					size.height = remoteVideo.videoHeight;
+					console.log("Remote video size: ", size);
+				}
 			}
 		}
 		return size;
