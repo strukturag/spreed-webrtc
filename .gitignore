@@ -26,3 +26,15 @@ server.key
 server.csr
 server.crt
 server.pem
+INSTALL
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.h
+config.h.in
+config.status
+configure
+install-sh
+missing
+stamp-h1
