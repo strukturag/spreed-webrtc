@@ -137,11 +137,18 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 				s.Broadcast(c, msg.Chat)
 			}
 		} else {
+			if msg.Chat.Chat.Status.ContactRequest != nil {
+				err = s.ContactRequest(c, msg.Chat.To, msg.Chat.Chat.Status.ContactRequest)
+				if err != nil {
+					log.Println("Ignoring invalid contact request.", err)
+					return
+				}
+			}
 			atomic.AddUint64(&c.h.unicastChatMessages, 1)
 			s.Unicast(c, msg.Chat.To, msg.Chat)
 			if msg.Chat.Chat.Mid != "" {
 				// Send out delivery confirmation status chat message.
-				s.Unicast(c, c.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatMessageStatus{State: "sent"}}})
+				s.Unicast(c, c.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatStatus{State: "sent"}}})
 			}
 		}
 	case "Conference":
@@ -191,6 +198,12 @@ func (s *Server) UpdateSession(c *Connection, su *SessionUpdate) uint64 {
 
 	su.Id = c.Id
 	return c.h.sessionupdateHandler(su)
+
+}
+
+func (s *Server) ContactRequest(c *Connection, to string, cr *DataContactRequest) (err error) {
+
+	return c.h.contactrequestHandler(c, to, cr)
 
 }
 

@@ -92,16 +92,34 @@ type DataChat struct {
 }
 
 type DataChatMessage struct {
-	Mid     string
 	Message string
 	Time    string
-	NoEcho  bool `json:"NoEcho,omitempty"`
-	Status  interface{}
+	NoEcho  bool   `json:",omitempty"`
+	Mid     string `json:",omitempty"`
+	Status  *DataChatStatus
 }
 
-type DataChatMessageStatus struct {
-	State string
-	Mid   string
+type DataChatStatus struct {
+	Typing         string              `json:",omitempty"`
+	State          string              `json:",omitempty"`
+	Mid            string              `json:",omitempty"`
+	SeenMids       []string            `json:",omitempty"`
+	FileInfo       *DataFileInfo       `json:",omitempty"`
+	ContactRequest *DataContactRequest `json:",omitempty"`
+}
+
+type DataFileInfo struct {
+	Id     string `json:"id"`
+	Chunks uint64 `json:"chunks"`
+	Name   string `json:"name"`
+	Size   uint64 `json:"size"`
+	Type   string `json:"type"`
+}
+
+type DataContactRequest struct {
+	Id      string
+	Success bool
+	Token   string `json:",omitempty"`
 }
 
 type DataIncoming struct {

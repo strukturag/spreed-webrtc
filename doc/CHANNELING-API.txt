@@ -303,11 +303,7 @@ Additional types for session listing and notifications
   Users (Request uses empty data)
 
     {
-        "Type": "Users",
-        "Users": {
-            "Type": "Users",
-            "Users": {}
-        }
+        "Type": "Users"
     }
 
   Users (Response with data)
@@ -385,6 +381,37 @@ User authorization and session authentication
     the session (disconnect) and forget the token.
 
 
+Information retrieval
+
+  Sessions (Request uses Id, Token and Type)
+
+    {
+        "Type": "Sessions",
+        "Sessions": {
+            "Id": "Client generated request ID",
+            "Token": "Request token",
+            "TokenType": "Token type"
+        }
+    }
+
+    Valid known token types are: "contact", "token".
+
+  Sesions (Response with Id, Token and Type from request and
+  populated Session list).
+
+    {
+        "Type": "Sessions",
+        "Sessions": {
+            "Id": "ID as from request",
+            "Token": "Token as from request",
+            "TokenType": "Type as from request",
+            "Sessions": [
+                "1", "2", "3", ...
+            ]
+        }
+    }
+
+
 Chat messages and status information
 
   The chat is used to transfer simple messages ore more complex structures
@@ -456,6 +483,48 @@ Chat messages and status information
     a token peer connection for file transfer. It is up to the UI if the
     message is shown or not. For file transfer information the message is
     always "File".
+
+  Chat with contact request/confirm information
+
+    Request to create a contact token with Id.
+
+    {
+        "Message": "Some message",
+        "Time": "2013-11-20T16:28:42+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "client-generated-id"
+            }
+        }
+    }
+
+    Reply with success (Sever generates and inserts token).
+
+    {
+        "Message": "Some response message",
+        "Time": "2013-11-20T16:28:59+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "request-id",
+                "Success": true,
+                "Token": "server-generated-token-on-success"
+            }
+        }
+    }
+
+    Or reject (no reply is also possible).
+
+    {
+        "Message": "Some response message",
+        "Time": "2013-11-20T16:28:59+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "request-id",
+                "Success": false
+            }
+        }
+    }
+
 
   Chat message deliver status extensions
 
