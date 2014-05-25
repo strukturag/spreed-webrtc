@@ -36,12 +36,22 @@ define(['jquery', 'underscore'], function($, _) {
 			};
 
 			$scope.doContact = function(success) {
-				var request = $scope.request;
-				request.Success = !!success;
+				var r = $scope.request;
+				r.Success = !!success;
 				$scope.sendChat($scope.id, "Contact request answer", {
-					ContactRequest: request
+					ContactRequest: r
 				});
 			};
+
+			$scope.addContact = function(request) {
+				console.log("AAAAAAAA", request);
+			};
+
+			// Add support for contacts on controller creation.
+			var request = $scope.request;
+			if (request.Success && request.Userid && request.Token) {
+				$scope.addContact(request);
+			}
 
 		}];
 
