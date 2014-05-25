@@ -192,7 +192,9 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 				}
 				lastMessageContainer = $("<ul>").appendTo(container);
 				if ($.trim(s)) {
-					element = $("<li>").html(s).appendTo(lastMessageContainer);
+					element = $("<li>").html(s);
+					element.prepend('<div class="timestamp-space">');
+					element.appendTo(lastMessageContainer);
 				}
 			}
 			if (nodes) {
