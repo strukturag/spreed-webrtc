@@ -137,7 +137,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 				s.Broadcast(c, msg.Chat)
 			}
 		} else {
-			if msg.Chat.Chat.Status.ContactRequest != nil {
+			if msg.Chat.Chat.Status != nil && msg.Chat.Chat.Status.ContactRequest != nil {
 				err = s.ContactRequest(c, msg.Chat.To, msg.Chat.Chat.Status.ContactRequest)
 				if err != nil {
 					log.Println("Ignoring invalid contact request.", err)
