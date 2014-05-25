@@ -439,7 +439,7 @@ func (h *Hub) contactrequestHandler(c *Connection, to string, cr *DataContactReq
 		if err != nil {
 			return err
 		}
-		if contact.ok {
+		if contact.Ok {
 			return errors.New("received success with ok state set")
 		}
 		bSessionData := c.Session.Data()
@@ -456,13 +456,13 @@ func (h *Hub) contactrequestHandler(c *Connection, to string, cr *DataContactReq
 		if aSessionData.Userid == "" {
 			return errors.New("to has no userid for confirm")
 		}
-		if aSessionData.Userid != contact.a {
+		if aSessionData.Userid != contact.A {
 			return errors.New("contact mismatch in a")
 		}
-		if bSessionData.Userid != contact.b {
+		if bSessionData.Userid != contact.B {
 			return errors.New("contact mismatch in b")
 		}
-		contact.ok = true
+		contact.Ok = true
 		cr.Token, err = h.contacts.Encode("contactConfirmed", contact)
 	} else {
 		if cr.Token != "" {

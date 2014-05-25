@@ -18,13 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+define(['jquery', 'underscore'], function($, _) {
 
-package main
+	return ["translation", function(translation) {
 
-import ()
+		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-type Contact struct {
-	A  string
-	B  string
-	Ok bool
-}
+			$scope.state = "request";
+			$scope.doAccept = function() {
+				$scope.state = "accepted";
+				$scope.doContact(true);
+			};
+
+			$scope.doReject = function() {
+				$scope.state = "rejected";			
+				$scope.doContact(false);
+			};
+
+			$scope.doContact = function(success) {
+				var request = $scope.request;
+				request.Success = !!success;
+				$scope.sendChat($scope.id, "Contact request answer", {
+					ContactRequest: request
+				});
+			};
+
+		}];
+
+		return {
+			scope: true,
+			restrict: 'EAC',
+			controller: controller,
+			replace: false
+		}
+
+	}];
+
+});

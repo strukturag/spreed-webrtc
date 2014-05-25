@@ -119,6 +119,7 @@ type DataFileInfo struct {
 type DataContactRequest struct {
 	Id      string
 	Success bool
+	Userid  string `json:",omitempty"`
 	Token   string `json:",omitempty"`
 }
 

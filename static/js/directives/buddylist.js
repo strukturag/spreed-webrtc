@@ -46,6 +46,15 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
+			$scope.doContact = function(id) {
+
+				//console.log("doContact", id);
+				$scope.$emit("requestcontact", id, {
+					restore: true
+				});
+
+			};
+
 			$scope.doAudioConference = function(id) {
 
 				$scope.updateAutoAccept(id);

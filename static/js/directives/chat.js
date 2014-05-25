@@ -138,6 +138,23 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
 			});
 
+			$scope.$parent.$on("requestcontact", function(event, id, options) {
+
+				if (id !== group_chat_id) {
+					var subscope = $scope.showRoom(id, {
+						title: translation._("Chat with")
+					}, options);
+					$timeout(function() {
+						subscope.sendChat(id, "Contact request", {
+							ContactRequest: {
+								Id: randomGen.random({hex: true})
+							}
+						});
+					}, 0);
+				}
+
+			});
+
 		}];
 
 		var compile = function(tElement, tAttrs) {

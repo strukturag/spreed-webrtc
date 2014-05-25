@@ -144,6 +144,11 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				var buddyElement = $(event.currentTarget);
 				buddyElement.scope().doDefault();
 			}, this));
+			$element.on("click", ".fa-star-o", _.bind(function(event) {
+				event.stopPropagation();
+				var buddyElement = $(event.currentTarget);
+				buddyElement.scope().doDefaultContact();
+			}, this));
 			$element.attr("data-xthreshold", "10");
 			$element.on("swipeleft", ".buddy", _.bind(function(event) {
 				event.preventDefault();
@@ -194,6 +199,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					return scope.doAudioConference(id);
 				}
 				return scope.doCall(id);
+			};
+			scope.doDefaultContact = function() {
+				var id = scope.session.Id;
+				return scope.doContact(id);
 			};
 			scope.$on("$destroy", function() {
 				scope.element = null;

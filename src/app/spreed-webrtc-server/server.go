@@ -143,6 +143,8 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 					log.Println("Ignoring invalid contact request.", err)
 					return
 				}
+				msg.Chat.Chat.Status.ContactRequest.Userid = c.Session.Userid
+				log.Println("CCCCCCCC", msg.Chat.Chat.Status.ContactRequest)
 			}
 			atomic.AddUint64(&c.h.unicastChatMessages, 1)
 			s.Unicast(c, msg.Chat.To, msg.Chat)
