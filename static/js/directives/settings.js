@@ -80,19 +80,19 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			};
 			$scope.takePicture = function(element, take, retake, stop) {
 				var delayToTakePicture = 3000;
-				var takePictureCountFrom = 3;
-				var takePictureCountDown = function() {
+				var countDownFrom = 3;
+				// Counts down from start to 1
+				var takePictureCountDown = function(start, delayTotal) {
 					$scope.countdown = {};
-					$scope.countdown.num = 3;
-					$timeout(function() {
-						$scope.countdown.num = 2;
-					}, delayToTakePicture/takePictureCountFrom*1);
-					$timeout(function() {
-						$scope.countdown.num = 1;
-					}, delayToTakePicture/takePictureCountFrom*2);
-					$timeout(function() {
-						$scope.countdown.num = null;
-					}, delayToTakePicture/takePictureCountFrom*3);
+					$scope.countdown.num = start;
+					var decrementNum = function(num) {
+						$timeout(function() {
+							$scope.countdown.num--;
+						}, delayTotal/start*num);
+					}
+					for(var i = 1; i <= start; i++) {
+						decrementNum(i);
+					}
 				};
 
 				if (stop) {
@@ -107,7 +107,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 				var video = $(element).parent().parent().find("video").get(0);
 				var makePicture = function() {
-					takePictureCountDown();
+					takePictureCountDown(countDownFrom, delayToTakePicture);
 					$timeout(function() {
 						$scope.previewPicture = true;
 						video.pause();
