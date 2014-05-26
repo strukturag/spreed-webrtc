@@ -40,7 +40,7 @@
           <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
         </div>
       </div>
-      <div class="form-group" ng-if="withUsers || userid">
+      <div class="form-group" ng-if="(withUsers && withUsersRegistration) || userid">
         <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
         <div ng-switch="withUsersMode">
           <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
@@ -70,20 +70,22 @@
           <span class="help-block">{{_('Only register an ID if this is your private browser.')}}</span>
         </div>
       </div>
-      <hr/>
-      <div ng-show="mediaSources.supported" class="form-group">
-        <label class="col-xs-4 control-label">{{_('Microphone')}}</label>
-        <div class="col-xs-8">
-          <select class="form-control" ng-model="user.settings.microphoneId" ng-options="mic.id as mic.label for mic in mediaSources.audio"></select>
+      <div ng-show="mediaSources.supported">
+        <hr/>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Microphone')}}</label>
+          <div class="col-xs-8">
+            <select class="form-control" ng-model="user.settings.microphoneId" ng-options="mic.id as mic.label for mic in mediaSources.audio"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Camera')}}</label>
+          <div class="col-xs-8">
+            <select class="form-control" ng-model="user.settings.cameraId" ng-options="vid.id as vid.label for vid in mediaSources.video"></select>
+          </div>
         </div>
       </div>
-      <div ng-show="mediaSources.supported" class="form-group">
-        <label class="col-xs-4 control-label">{{_('Camera')}}</label>
-        <div class="col-xs-8">
-          <select class="form-control" ng-model="user.settings.cameraId" ng-options="vid.id as vid.label for vid in mediaSources.video"></select>
-        </div>
-      </div>
-      <div class="form-group" ng-show="isChrome">
+      <div ng-show="isChrome" class="form-group">
         <label class="col-xs-4 control-label">{{_('Video quality')}}</label>
         <div class="col-xs-8">
           <div class="btn-group">

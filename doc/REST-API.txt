@@ -1,5 +1,5 @@
 
-               Spreed Speak Freely REST API v1.0.0
+                   Spreed WebRTC REST API v1.0.0
             ===============================================
                         (c)2014 struktur AG
 
@@ -150,8 +150,8 @@ Available end points with request methods and content-type:
 
 End of REST API.
 
-For latest version of Spreed Speak Freely check
-https://github.com/strukturag/spreed-speakfreely
+For latest version of Spreed WebRTC check
+https://github.com/strukturag/spreed-webrtc
 
 For questions, contact mailto:opensource@struktur.de.
 

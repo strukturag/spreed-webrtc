@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,13 +49,13 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		};
 		this.sdpConstraints = {
 			mandatory: {
-             	OfferToReceiveAudio: false,
-             	OfferToReceiveVideo: true
-          	}
+				OfferToReceiveAudio: false,
+				OfferToReceiveVideo: true
+			}
 		};
 		// SCTP is supported from Chrome M31.
-        // No need to pass DTLS constraint as it is on by default in Chrome M31.
-        // For SCTP, reliable and ordered is true by default.
+		// No need to pass DTLS constraint as it is on by default in Chrome M31.
+		// For SCTP, reliable and ordered is true by default.
 		this.pcConstraints = {};
 
 		// Inject token into sessiondescription and ice candidate data.
@@ -75,16 +75,16 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		// support in Chrome 31+. This needs to be enabled in flags:
 		// chrome://flags/#enable-usermedia-screen-capture
 		var mandatoryVideoConstraints = $.extend({
-          chromeMediaSource: 'screen',
-          maxWidth: screenWidth,
-          maxHeight: screenHeight
-        }, options);
+			chromeMediaSource: 'screen',
+			maxWidth: screenWidth,
+			maxHeight: screenHeight
+		}, options);
 		var mediaConstraints = {
 			audio: false,
 			video: {
-		        mandatory: mandatoryVideoConstraints,
-	        	optional: []
-	      	}
+				mandatory: mandatoryVideoConstraints,
+				optional: []
+			}
 		}
 		console.log("Setting screen sharing media constraints", mandatoryVideoConstraints);
 		return mediaConstraints;

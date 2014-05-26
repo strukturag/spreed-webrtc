@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -126,13 +126,16 @@
 }
 
 .buddy {
-  &.withSubline .display-name {
+  &.withSubline .buddy1 {
     top: 15px;
+  }
+  &.withSubline .buddy2 {
+    display: block;
   }
   &.hovered .buddyactions {
     right: 0;
   }
-  .avatar {
+  .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;
     float: left;
@@ -155,7 +158,7 @@
       top: 0;
     }
   }
-  .display-name {
+  .buddy1 {
     color: $componentfg1;
     font-weight: bold;
     font-size: 14px;
@@ -168,7 +171,7 @@
     top: 24px;
     white-space: nowrap;
   }
-  .browser {
+  .buddy2 {
     color: $componentfg2;
     left: 65px;
     overflow: hidden;
@@ -176,6 +179,7 @@
     right: 0px;
     top: 33px;
     white-space: nowrap;
+    display: none;
   }
 }
 

@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,88 +20,93 @@
  */
 define(["underscore"], function(_) {
 
-    // Simple function which converts data urls to blobs, both base64 or not.
-    var dataURLToBlob = (function() {
-        var is_base64 = ";base64,";
-        return function(dataURL) {
-            if (dataURL.indexOf(is_base64) === -1) {
-                // No base64.
-                var parts = dataURL.split(",");
-                var ct = parts[0].split(":")[1];
-                return new Blob([parts[1]], {type: ct});
-            }
-            var parts = dataURL.split(is_base64);
-            var ct = parts[0].split(":")[1];
-            var data = window.atob(parts[1]);
-            var length = data.length;
-            var buffer = new Uint8Array(length);
-            for (var i = 0; i < length; i++) {
-                buffer[i] = data.charCodeAt(i);
-            }
-            return new Blob([buffer], {type: ct});
-        };
-    }());
+	// Simple function which converts data urls to blobs, both base64 or not.
+	var dataURLToBlob = (function() {
+		var is_base64 = ";base64,";
+		return function(dataURL) {
+			var parts, ct;
+			if (dataURL.indexOf(is_base64) === -1) {
+				// No base64.
+				parts = dataURL.split(",");
+				ct = parts[0].split(":")[1];
+				return new Blob([parts[1]], {
+					type: ct
+				});
+			}
+			parts = dataURL.split(is_base64);
+			ct = parts[0].split(":")[1];
+			var data = window.atob(parts[1]);
+			var length = data.length;
+			var buffer = new Uint8Array(length);
+			for (var i = 0; i < length; i++) {
+				buffer[i] = data.charCodeAt(i);
+			}
+			return new Blob([buffer], {
+				type: ct
+			});
+		};
+	}());
 
-    // Create URLs for blobs.
-    var blobToObjectURL = function(blob) {
-        return URL.createObjectURL(blob);
-    };
+	// Create URLs for blobs.
+	var blobToObjectURL = function(blob) {
+		return URL.createObjectURL(blob);
+	};
 
-    var revokeBlobURL = function(url) {
-        return URL.revokeObjectURL(url);
-    };
+	var revokeBlobURL = function(url) {
+		return URL.revokeObjectURL(url);
+	};
 
-    // buddyImageSrc
-    return ["buddyData", "appData", function(buddyData, appData) {
+	// buddyImageSrc
+	return ["buddyData", "appData", function(buddyData, appData) {
 
-        // Cache created blob urls.
-        var urls = {};
-        var revokeURL = function(id, url) {
-            delete urls[id];
-            revokeBlobURL(url);
-        };
+		// Cache created blob urls.
+		var urls = {};
+		var revokeURL = function(id, url) {
+			delete urls[id];
+			revokeBlobURL(url);
+		};
 
-        // Cleanup helper.
-        window.setInterval(function() {
-            _.each(urls, function(url, id) {
-                if (!buddyData.get(id)) {
-                    revokeURL(id, url);
-                }
-            });
-        }, 5000);
+		// Cleanup helper.
+		window.setInterval(function() {
+			_.each(urls, function(url, id) {
+				if (!buddyData.get(id)) {
+					revokeURL(id, url);
+				}
+			});
+		}, 5000);
 
-        return function(id) {
+		return function(id) {
 
-            var scope = buddyData.lookup(id);
-            if (scope) {
-                var status = scope.status;
-                if (status) {
-                    if (status.buddyPictureLocalUrl) {
-                        return status.buddyPictureLocalUrl;
-                    }
-                    else if (status.buddyPicture) {
-                        var url = urls[id];
-                        if (url) {
-                            revokeURL(id, url);
-                        }
-                        // New data -> new url.
-                        var blob = dataURLToBlob(status.buddyPicture);
-                        url = status.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
-                        return url;
-                    }
-                }
-            } else {
-                var data = appData.get();
-                if (data) {
-                    if (id === data.id) {
-                        if (data.master.buddyPicture) {
-                            return data.master.buddyPicture;
-                        }
-                    }
-                }
-            }
-            return "";
-        }
-    }];
+			var scope = buddyData.lookup(id);
+			if (scope) {
+				var status = scope.status;
+				if (status) {
+					if (status.buddyPictureLocalUrl) {
+						return status.buddyPictureLocalUrl;
+					} else if (status.buddyPicture) {
+						var url = urls[id];
+						if (url) {
+							revokeURL(id, url);
+						}
+						// New data -> new url.
+						var blob = dataURLToBlob(status.buddyPicture);
+						url = status.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
+						return url;
+					}
+				}
+			} else {
+				var data = appData.get();
+				if (data) {
+					if (id === data.id) {
+						if (data.master.buddyPicture) {
+							return data.master.buddyPicture;
+						}
+					}
+				}
+			}
+			return "";
+		};
+
+	}];
 
 });

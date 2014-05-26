@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,22 @@
 
 package main
 
-type Context struct {
-	App       string // Main client script
-	Cfg       *Config
-	Host      string
-	Ssl       bool
-	Languages []string
+import (
+	"fmt"
+	"net/http"
+)
+
+type Room struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+
+type Rooms struct {
+}
+
+func (rooms *Rooms) Post(request *http.Request) (int, interface{}, http.Header) {
+
+	name := NewRandomString(11)
+	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
+
 }

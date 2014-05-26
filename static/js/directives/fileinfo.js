@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,10 +46,10 @@ define(['jquery', 'underscore'], function($, _) {
 			var progressBar = progressBars[0];
 			var progressBarDownload = progressBars[1];
 			$scope.$watch("progress", function() {
-				progressBar.style.width=($scope.progress)+"%";
+				progressBar.style.width = ($scope.progress) + "%";
 			});
 			$scope.$watch("progressDownload", function() {
-				progressBarDownload.style.width=($scope.progressDownload)+"%";
+				progressBarDownload.style.width = ($scope.progressDownload) + "%";
 			});
 
 			$scope.$watch("error", function() {
@@ -85,7 +85,7 @@ define(['jquery', 'underscore'], function($, _) {
 				}
 
 				// Compute left bytes for eta.
-				var bytesLeft = $scope.info.size - ($scope.info.size * ($scope.progress/100));
+				var bytesLeft = $scope.info.size - ($scope.info.size * ($scope.progress / 100));
 
 				$scope.$apply(function(scope) {
 					scope.bytesPerSecond = _.reduce(bytesPerSecond, function(memo, num) {
@@ -177,8 +177,8 @@ define(['jquery', 'underscore'], function($, _) {
 				if ($scope.cancelled) {
 					return;
 				}
-				$scope.progress = Math.ceil((written / ($scope.info.chunks-1)) * 100);
-				if (written >= $scope.info.chunks-1) {
+				$scope.progress = Math.ceil((written / ($scope.info.chunks - 1)) * 100);
+				if (written >= $scope.info.chunks - 1) {
 					$scope.progress = 100;
 				}
 			});
@@ -189,7 +189,7 @@ define(['jquery', 'underscore'], function($, _) {
 					return;
 				}
 				bytesIn.push(bytesLength);
-				$scope.progressDownload = Math.ceil((chunk / ($scope.info.chunks-1)) * 100);
+				$scope.progressDownload = Math.ceil((chunk / ($scope.info.chunks - 1)) * 100);
 				chunk++;
 			});
 

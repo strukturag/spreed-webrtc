@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -131,44 +131,48 @@ define(['jquery', 'underscore'], function(jquery, _) {
 		var handler = obj.getHandler(this.makeId(from, id));
 
 		switch (type) {
-		case "Offer":
-			if (!handler) {
-				var creator = this.handlers[obj.handlerKey];
-				if (!creator) {
-					console.warn("Incoming offer for unknown handler", obj.handlerKey);
-					return
+			case "Offer":
+				if (!handler) {
+					var creator = this.handlers[obj.handlerKey];
+					if (!creator) {
+						console.warn("Incoming offer for unknown handler", obj.handlerKey);
+						return;
+					}
+					// Create new handler based on type.
+					handler = creator(webrtc, id, token, from);
+					obj.addHandler(handler, from, id);
+					handler.createPeerConnection(function() {
+						obj.e.triggerHandler("created", [token, to, data, type, to2, from, handler]);
+					});
+					// Set message implementation.
+					handler.messageHandler = _.bind(obj.trigger, obj);
 				}
-				// Create new handler based on type.
-				handler = creator(webrtc, id, token, from);
-				obj.addHandler(handler, from, id);
-				handler.createPeerConnection(function() {
-					obj.e.triggerHandler("created", [token, to, data, type, to2, from, handler]);
-				});
-				// Set message implementation.
-				handler.messageHandler = _.bind(obj.trigger, obj);
-			}
-			handler.setRemoteDescription(new RTCSessionDescription(data), _.bind(function() {
-				handler.createAnswer(_.bind(function(sessionDescription, currenthandler) {
-					//console.log("Sending handler answer", sessionDescription, currenthandler.id);
-					webrtc.api.sendAnswer(from, sessionDescription);
+				handler.setRemoteDescription(new RTCSessionDescription(data), _.bind(function() {
+					handler.createAnswer(_.bind(function(sessionDescription, currenthandler) {
+						//console.log("Sending handler answer", sessionDescription, currenthandler.id);
+						webrtc.api.sendAnswer(from, sessionDescription);
+					}, this));
 				}, this));
-			}, this));
-			break;
-		case "Answer":
-			console.log("Token answer process.");
-			if (!handler.messageHandler) {
-				handler.messageHandler = _.bind(obj.trigger, obj);
-			}
-			handler.setRemoteDescription(new RTCSessionDescription(data));
-			break;
-		case "Candidate":
-			var candidate = new RTCIceCandidate({sdpMLineIndex: data.sdpMLineIndex, sdpMid: data.sdpMid, candidate: data.candidate});
-        	handler.addIceCandidate(candidate);
-			break;
-		default:
-			//console.log("Processing token message", type, token);
-			obj.e.triggerHandler("message", [token, to, data, type, to2, from, handler]);
-			break;
+				break;
+			case "Answer":
+				console.log("Token answer process.");
+				if (!handler.messageHandler) {
+					handler.messageHandler = _.bind(obj.trigger, obj);
+				}
+				handler.setRemoteDescription(new RTCSessionDescription(data));
+				break;
+			case "Candidate":
+				var candidate = new RTCIceCandidate({
+					sdpMLineIndex: data.sdpMLineIndex,
+					sdpMid: data.sdpMid,
+					candidate: data.candidate
+				});
+				handler.addIceCandidate(candidate);
+				break;
+			default:
+				//console.log("Processing token message", type, token);
+				obj.e.triggerHandler("message", [token, to, data, type, to2, from, handler]);
+				break;
 		}
 
 	};

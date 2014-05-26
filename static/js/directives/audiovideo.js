@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,300 +20,303 @@
  */
 define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'injectCSS', 'webrtc.adapter', 'rAF'], function($, _, template, templatePeer, BigScreen) {
 
-    return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout) {
+	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout) {
 
-        var requestAnimationFrame = $window.requestAnimationFrame;
-        var peerTemplate = $compile(templatePeer);
+		var requestAnimationFrame = $window.requestAnimationFrame;
+		var peerTemplate = $compile(templatePeer);
 
-        var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-            var peers = {};
-            var events = $({});
+			var peers = {};
+			var events = $({});
 
-            $scope.container = $element.get(0);
-            $scope.layoutparent = $element.parent();
+			$scope.container = $element.get(0);
+			$scope.layoutparent = $element.parent();
 
-            $scope.remoteVideos = $element.find(".remoteVideos").get(0);
-            $scope.localVideo = $element.find(".localVideo").get(0);
-            $scope.miniVideo = $element.find(".miniVideo").get(0);
-            $scope.mini = $element.find(".miniContainer").get(0);
+			$scope.remoteVideos = $element.find(".remoteVideos").get(0);
+			$scope.localVideo = $element.find(".localVideo").get(0);
+			$scope.miniVideo = $element.find(".miniVideo").get(0);
+			$scope.mini = $element.find(".miniContainer").get(0);
 
-            $scope.hasUsermedia = false;
-            $scope.isActive = false;
+			$scope.hasUsermedia = false;
+			$scope.isActive = false;
 
-            $scope.rendererName = $scope.defaultRendererName = "onepeople";
+			$scope.rendererName = $scope.defaultRendererName = "onepeople";
 
-            //console.log("audiovideo", localVideo, miniVideo);
+			//console.log("audiovideo", localVideo, miniVideo);
 
-            $scope.addRemoteStream = function(stream, currentcall) {
+			$scope.addRemoteStream = function(stream, currentcall) {
 
-                //console.log("Add remote stream to scope", pc.id, stream);
-                var subscope = $scope.$new(true);
-                var peerid = subscope.peerid = currentcall.id;
-                buddyData.push(peerid);
-                subscope.withvideo = false;
-                subscope.onlyaudio = false;
-                subscope.talking = false;
-                subscope.applyTalking = function(talking) {
-                    subscope.talking = !!talking;
-                    safeApply(subscope);
-                };
-                subscope.$on("active", function() {
-                    console.log("Stream scope is now active", peerid);
-                    events.triggerHandler("active."+peerid, [subscope, currentcall, stream]);
-                });
-                console.log("Created stream scope", peerid);
+				//console.log("Add remote stream to scope", pc.id, stream);
+				var subscope = $scope.$new(true);
+				var peerid = subscope.peerid = currentcall.id;
+				buddyData.push(peerid);
+				subscope.withvideo = false;
+				subscope.onlyaudio = false;
+				subscope.talking = false;
+				subscope.applyTalking = function(talking) {
+					subscope.talking = !! talking;
+					safeApply(subscope);
+				};
+				subscope.$on("active", function() {
+					console.log("Stream scope is now active", peerid);
+					events.triggerHandler("active." + peerid, [subscope, currentcall, stream]);
+				});
+				console.log("Created stream scope", peerid);
 
-                peerTemplate(subscope, function(clonedElement, scope) {
-                    $($scope.remoteVideos).append(clonedElement);
-                    clonedElement.data("peerid", scope.peerid);
-                    scope.element = clonedElement;
-                    var video = clonedElement.find("video").get(0);
-                    $window.attachMediaStream(video, stream);
-                    // Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
-                    videoWaiter.wait(video, stream, function(withvideo) {
-                        peers[peerid] = scope;
-                        if (withvideo) {
-                            scope.$apply(function($scope) {
-                                $scope.withvideo = true;
-                            });
-                        } else {
-                            console.info("Incoming stream has no video tracks.");
-                            scope.$apply(function($scope) {
-                                $scope.onlyaudio = true;
-                            });
-                        }
-                        scope.$emit("active", currentcall);
-                        $scope.redraw();
-                    }, function() {
-                        peers[peerid] = scope;
-                        console.warn("We did not receive video data for remote stream", currentcall, stream, video);
-                        scope.$emit("active", currentcall);
-                        $scope.redraw();
-                    });
-                    scope.doChat = function() {
-                        $scope.$emit("startchat", currentcall.id, {autofocus: true, restore: true});
-                    };
-                });
+				peerTemplate(subscope, function(clonedElement, scope) {
+					$($scope.remoteVideos).append(clonedElement);
+					clonedElement.data("peerid", scope.peerid);
+					scope.element = clonedElement;
+					var video = clonedElement.find("video").get(0);
+					$window.attachMediaStream(video, stream);
+					// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
+					videoWaiter.wait(video, stream, function(withvideo) {
+						peers[peerid] = scope;
+						if (withvideo) {
+							scope.$apply(function($scope) {
+								$scope.withvideo = true;
+							});
+						} else {
+							console.info("Incoming stream has no video tracks.");
+							scope.$apply(function($scope) {
+								$scope.onlyaudio = true;
+							});
+						}
+						scope.$emit("active", currentcall);
+						$scope.redraw();
+					}, function() {
+						peers[peerid] = scope;
+						console.warn("We did not receive video data for remote stream", currentcall, stream, video);
+						scope.$emit("active", currentcall);
+						$scope.redraw();
+					});
+					scope.doChat = function() {
+						$scope.$emit("startchat", currentcall.id, {
+							autofocus: true,
+							restore: true
+						});
+					};
+				});
 
-            };
+			};
 
-            $scope.removeRemoteStream = function(stream, currentcall) {
+			$scope.removeRemoteStream = function(stream, currentcall) {
 
-                var subscope = peers[currentcall.id];
-                if (subscope) {
-                    buddyData.pop(currentcall.id);
-                    delete peers[currentcall.id];
-                    //console.log("remove scope", subscope);
-                    if (subscope.element) {
-                        subscope.element.remove();
-                    }
-                    subscope.$destroy();
-                    $scope.redraw();
-                }
+				var subscope = peers[currentcall.id];
+				if (subscope) {
+					buddyData.pop(currentcall.id);
+					delete peers[currentcall.id];
+					//console.log("remove scope", subscope);
+					if (subscope.element) {
+						subscope.element.remove();
+					}
+					subscope.$destroy();
+					$scope.redraw();
+				}
 
-            };
+			};
 
-            // Talking updates receiver.
-            mediaStream.api.e.on("received.talking", function(event, id, from, talking) {
-                var scope = peers[from];
-                //console.log("received.talking", talking, scope);
-                if (scope) {
-                    scope.applyTalking(talking);
-                } else {
-                    console.log("Received talking state without scope -> adding event.", from, talking);
-                    events.one("active."+from, function(event, scope) {
-                        console.log("Applying previously received talking state", from, talking);
-                        scope.applyTalking(talking);
-                    });
-                }
-            });
+			// Talking updates receiver.
+			mediaStream.api.e.on("received.talking", function(event, id, from, talking) {
+				var scope = peers[from];
+				//console.log("received.talking", talking, scope);
+				if (scope) {
+					scope.applyTalking(talking);
+				} else {
+					console.log("Received talking state without scope -> adding event.", from, talking);
+					events.one("active." + from, function(event, scope) {
+						console.log("Applying previously received talking state", from, talking);
+						scope.applyTalking(talking);
+					});
+				}
+			});
 
-            $scope.$on("active", function(currentcall) {
+			$scope.$on("active", function(currentcall) {
 
-                //console.log("active 2");
-                if (!$scope.isActive) {
-                    $scope.isActive = true;
-                    $scope.remoteVideos.style.opacity = 1;
-                    $element.addClass("active");
-                    //console.log("active 3");
-                    _.delay(function() {
-                        $scope.localVideo.style.opacity = 0;
-                        $scope.localVideo.src = "";
-                    }, 500);
-                    _.delay(function() {
-                        //console.log("active 4", $scope.mini);
-                        $($scope.mini).addClass("visible");
-                    }, 1000);
-                }
+				//console.log("active 2");
+				if (!$scope.isActive) {
+					$scope.isActive = true;
+					$scope.remoteVideos.style.opacity = 1;
+					$element.addClass("active");
+					//console.log("active 3");
+					_.delay(function() {
+						$scope.localVideo.style.opacity = 0;
+						$scope.localVideo.src = "";
+					}, 500);
+					_.delay(function() {
+						//console.log("active 4", $scope.mini);
+						$($scope.mini).addClass("visible");
+					}, 1000);
+				}
 
-            });
+			});
 
-            $scope.toggleFullscreen = function() {
-                //console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
-                if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
-                    $scope.layoutparent.toggleClass("fullscreen");
-                    BigScreen.toggle($scope.layoutparent.get(0));
-                }
-            };
+			$scope.toggleFullscreen = function() {
+				//console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
+				if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
+					$scope.layoutparent.toggleClass("fullscreen");
+					BigScreen.toggle($scope.layoutparent.get(0));
+				}
+			};
 
-            mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
+			mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
 
-                //console.log("XXXXXXXXXXXXXXXXXXXXXXXXX usermedia event", usermedia);
-                $scope.hasUsermedia = true;
-                usermedia.attachMediaStream($scope.localVideo);
-                var count = 0;
-                var waitForLocalVideo = function() {
-                    if (!$scope.hasUsermedia) {
-                      return;
-                    }
-                    if ($scope.localVideo.videoWidth > 0) {
-                        $scope.localVideo.style.opacity = 1;
-                        $scope.redraw();
-                    } else {
-                        count++;
-                        if (count < 100) {
-                            setTimeout(waitForLocalVideo, 100);
-                        } else {
-                            console.warn("Timeout while waiting for local video.")
-                        }
-                    }
-                };
-                waitForLocalVideo();
+				//console.log("XXXXXXXXXXXXXXXXXXXXXXXXX usermedia event", usermedia);
+				$scope.hasUsermedia = true;
+				usermedia.attachMediaStream($scope.localVideo);
+				var count = 0;
+				var waitForLocalVideo = function() {
+					if (!$scope.hasUsermedia) {
+						return;
+					}
+					if ($scope.localVideo.videoWidth > 0) {
+						$scope.localVideo.style.opacity = 1;
+						$scope.redraw();
+					} else {
+						count++;
+						if (count < 100) {
+							setTimeout(waitForLocalVideo, 100);
+						} else {
+							console.warn("Timeout while waiting for local video.")
+						}
+					}
+				};
+				waitForLocalVideo();
 
-            });
+			});
 
-            mediaStream.webrtc.e.on("done", function() {
+			mediaStream.webrtc.e.on("done", function() {
 
-                $scope.hasUsermedia = false;
-                $scope.isActive = false;
-                if (BigScreen.enabled) {
-                    BigScreen.exit();
-                }
-                _.delay(function() {
-                    if ($scope.isActive) {
-                        return;
-                    }
-                    $scope.localVideo.src = '';
-                    $scope.miniVideo.src = '';
-                    $($scope.remoteVideos).empty();
-                }, 1500);
-                $($scope.mini).removeClass("visible");
-                $scope.localVideo.style.opacity = 0;
-                $scope.remoteVideos.style.opacity = 0;
-                $element.removeClass('active');
-                _.each(peers, function(scope, k) {
-                    scope.$destroy();
-                    delete peers[k];
-                });
-                $scope.rendererName = $scope.defaultRendererName;
+				$scope.hasUsermedia = false;
+				$scope.isActive = false;
+				if (BigScreen.enabled) {
+					BigScreen.exit();
+				}
+				_.delay(function() {
+					if ($scope.isActive) {
+						return;
+					}
+					$scope.localVideo.src = '';
+					$scope.miniVideo.src = '';
+					$($scope.remoteVideos).empty();
+				}, 1500);
+				$($scope.mini).removeClass("visible");
+				$scope.localVideo.style.opacity = 0;
+				$scope.remoteVideos.style.opacity = 0;
+				$element.removeClass('active');
+				_.each(peers, function(scope, k) {
+					scope.$destroy();
+					delete peers[k];
+				});
+				$scope.rendererName = $scope.defaultRendererName;
 
-            });
+			});
 
-            mediaStream.webrtc.e.on("streamadded", function(event, stream, currentcall) {
+			mediaStream.webrtc.e.on("streamadded", function(event, stream, currentcall) {
 
-                console.log("Remote stream added.", stream, currentcall);
-                if (_.isEmpty(peers)) {
-                    //console.log("First stream");
-                    $window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
-                }
-                $scope.addRemoteStream(stream, currentcall);
+				console.log("Remote stream added.", stream, currentcall);
+				if (_.isEmpty(peers)) {
+					//console.log("First stream");
+					$window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
+				}
+				$scope.addRemoteStream(stream, currentcall);
 
-            });
+			});
 
-            mediaStream.webrtc.e.on("streamremoved", function(event, stream, currentcall) {
+			mediaStream.webrtc.e.on("streamremoved", function(event, stream, currentcall) {
 
-                console.log("Remote stream removed.", stream, currentcall);
-                $scope.removeRemoteStream(stream, currentcall);
+				console.log("Remote stream removed.", stream, currentcall);
+				$scope.removeRemoteStream(stream, currentcall);
 
-            });
+			});
 
-            return {
-                peers: peers
-            };
+			return {
+				peers: peers
+			};
 
-        }];
+		}];
 
-        var compile = function(tElement, tAttr) {
+		var compile = function(tElement, tAttr) {
 
-            return function(scope, iElement, iAttrs, controller) {
+			return function(scope, iElement, iAttrs, controller) {
 
-                //console.log("compile", arguments)
+				//console.log("compile", arguments)
 
-                iElement.on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
+				iElement.on("doubletap dblclick", _.debounce(scope.toggleFullscreen, 100, true));
 
-                var rendererName = null;
-                var getRendererName = function() {
-                    // Return name of current renderer.
-                    if (rendererName !== null) {
-                        return rendererName;
-                    } else {
-                        return scope.rendererName;
-                    }
-                };
+				var rendererName = null;
+				var getRendererName = function() {
+					// Return name of current renderer.
+					if (rendererName !== null) {
+						return rendererName;
+					} else {
+						return scope.rendererName;
+					}
+				};
 
-                scope.setRenderer = function(name) {
-                    scope.rendererName = name;
-                };
+				scope.setRenderer = function(name) {
+					scope.rendererName = name;
+				};
 
-                var needsRedraw = false;
-                scope.redraw = function() {
-                    needsRedraw = true;
-                };
+				var needsRedraw = false;
+				scope.redraw = function() {
+					needsRedraw = true;
+				};
 
-                var redraw = function() {
-                    var size = {
-                        width: scope.layoutparent.width(),
-                        height: scope.layoutparent.height()
-                    }
-                    var again = videoLayout.update(getRendererName(), size, scope, controller);
-                    if (again) {
-                        // Layout needs a redraw.
-                        needsRedraw = true;
-                    }
-                };
+				var redraw = function() {
+					var size = {
+						width: scope.layoutparent.width(),
+						height: scope.layoutparent.height()
+					}
+					var again = videoLayout.update(getRendererName(), size, scope, controller);
+					if (again) {
+						// Layout needs a redraw.
+						needsRedraw = true;
+					}
+				};
 
-                // Make sure we draw on resize.
-                $($window).on("resize", scope.redraw);
-                scope.$on("mainresize", function(event, main) {
-                    if (main) {
-                        // Force smally renderer when we have a main view.
-                        rendererName = "smally"
-                    } else if (rendererName) {
-                        rendererName = null;
-                    }
-                    _.defer(scope.redraw);
-                });
-                scope.redraw();
+				// Make sure we draw on resize.
+				$($window).on("resize", scope.redraw);
+				scope.$on("mainresize", function(event, main) {
+					if (main) {
+						// Force smally renderer when we have a main view.
+						rendererName = "smally"
+					} else if (rendererName) {
+						rendererName = null;
+					}
+					_.defer(scope.redraw);
+				});
+				scope.redraw();
 
-                // Make sure we draw when the renderer was changed.
-                scope.$watch("rendererName", function() {
-                    _.defer(scope.redraw);
-                });
+				// Make sure we draw when the renderer was changed.
+				scope.$watch("rendererName", function() {
+					_.defer(scope.redraw);
+				});
 
-                // Update function run in rendering thread.
-                var update = function() {
-                    if (needsRedraw) {
-                        needsRedraw =false;
-                        redraw();
-                    }
-                    requestAnimationFrame(update);
-                }
-                _.defer(update);
+				// Update function run in rendering thread.
+				var update = function() {
+					if (needsRedraw) {
+						needsRedraw = false;
+						redraw();
+					}
+					requestAnimationFrame(update);
+				}
+				_.defer(update);
 
-            }
+			}
 
-        };
+		};
 
-        return {
-            restrict: 'E',
-            replace: true,
-            scope: true,
-            template: template,
-            controller: controller,
-            compile: compile
-        }
+		return {
+			restrict: 'E',
+			replace: true,
+			scope: true,
+			template: template,
+			controller: controller,
+			compile: compile
+		}
 
-    }];
+	}];
 
 });

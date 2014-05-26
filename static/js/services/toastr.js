@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,12 +26,12 @@ define(['toastr'], function(toastr) {
 		// set default options
 		toastr.options = {
 			"debug": false,
-		 	"positionClass": "toast-bottom-right",
-		  	"onclick": null,
-		 	"fadeIn": 500,
-		  	"fadeOut": 500,
-		  	"timeOut": 0,
-		  	"extendedTimeOut": 0
+			"positionClass": "toast-bottom-right",
+			"onclick": null,
+			"fadeIn": 500,
+			"fadeOut": 500,
+			"timeOut": 0,
+			"extendedTimeOut": 0
 		}
 
 		return toastr;

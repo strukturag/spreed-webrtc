@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@
 package main
 
 import (
-	"app/spreed-speakfreely-server/sleepy"
+	"app/spreed-webrtc-server/sleepy"
 	"bytes"
 	"flag"
 	"fmt"
@@ -117,15 +117,20 @@ func makeImageHandler(hub *Hub, expires time.Duration) http.HandlerFunc {
 
 func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 
+	var err error
+
 	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 	w.Header().Set("Expires", "-1")
 	w.Header().Set("Cache-Control", "private, max-age=0")
+
+	scheme := "http"
 
 	// Detect if the request was made with SSL.
 	ssl := r.TLS != nil
 	proto, ok := r.Header["X-Forwarded-Proto"]
 	if ok {
 		ssl = proto[0] == "https"
+		scheme = "https"
 	}
 
 	// Get languages from request.
@@ -134,11 +139,22 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 		langs = append(langs, "en")
 	}
 
-	// Prepare context to deliver to Javascript.
-	context := &Context{Cfg: config, App: "main", Host: r.Host, Ssl: ssl, Languages: langs}
+	// Prepare context to deliver to HTML..
+	context := &Context{Cfg: config, App: "main", Host: r.Host, Scheme: scheme, Ssl: ssl, Languages: langs, Room: room}
 
-	// Render the template.
-	err := templates.ExecuteTemplate(w, "mainPage", &context)
+	// Get URL parameters.
+	r.ParseForm()
+
+	// Check if incoming request is a crawler which supports AJAX crawling.
+	// See https://developers.google.com/webmasters/ajax-crawling/docs/getting-started for details.
+	if _, ok := r.Form["_escaped_fragment_"]; ok {
+		// Render crawlerPage template..
+		err = templates.ExecuteTemplate(w, "crawlerPage", &context)
+	} else {
+		// Render mainPage template.
+		err = templates.ExecuteTemplate(w, "mainPage", &context)
+	}
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -204,7 +220,7 @@ func runner(runtime phoenix.Runtime) error {
 
 	title, err := runtime.GetString("app", "title")
 	if err != nil {
-		title = "Spreed Speak Freely"
+		title = "Spreed WebRTC"
 	}
 
 	ver, err := runtime.GetString("app", "ver")

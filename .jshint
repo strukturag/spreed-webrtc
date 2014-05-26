@@ -1,0 +1,8 @@
+{
+	"smarttabs": true,
+	"onecase": true,
+	"curly": true,
+	"forin": true,
+	"trailing": true,
+	"asi": true
+}

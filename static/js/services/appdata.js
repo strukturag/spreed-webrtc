@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,23 +20,23 @@
  */
 define([], function() {
 
-    // appData
-    return [function() {
+	// appData
+	return [function() {
 
-        var data = {
-            data: null
-        }
-        var appData = {
-            get: function() {
-                return data.data;
-            },
-            set: function(d) {
-                data.data = d;
-                return d;
-            }
-        }
-        return appData;
+		var data = {
+			data: null
+		}
+		var appData = {
+			get: function() {
+				return data.data;
+			},
+			set: function(d) {
+				data.data = d;
+				return d;
+			}
+		}
+		return appData;
 
-    }];
+	}];
 
 });

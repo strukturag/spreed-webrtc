@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,157 +19,177 @@
  *
  */
 define([
-    'require',
-    'jquery',
-    'underscore',
-    'angular',
-    'modernizr',
-    'moment',
+	'require',
+	'jquery',
+	'underscore',
+	'angular',
+	'modernizr',
+	'moment',
 
-    'services/services',
-    'directives/directives',
-    'filters/filters',
-    'controllers/controllers',
+	'services/services',
+	'directives/directives',
+	'filters/filters',
+	'controllers/controllers',
 
-    'translation/languages',
+	'translation/languages',
 
-    'ui-bootstrap',
-    'angular-sanitize',
-    'angular-animate',
-    'angular-humanize',
-    'angular-route',
-    'mobile-events',
-    'dialogs'
+	'ui-bootstrap',
+	'angular-sanitize',
+	'angular-animate',
+	'angular-humanize',
+	'angular-route',
+	'mobile-events',
+	'dialogs'
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers, languages) {
 
-    var initialize = function(ms) {
+	// Simple and fast split based URL query parser based on location.search. We require this before the
+	// angular App is bootstrap to control initialization parameters like translation based on URL parameters.
+	var urlQuery = (function() {
+		return (function(a) {
+			if (a === "") {
+				return {};
+			}
+			var b = {};
+			for (var i = 0; i < a.length; ++i) {
+				var p = a[i].split('=');
+				if (p.length != 2) {
+					continue;
+				}
+				b[p[0]] = window.decodeURIComponent(p[1].replace(/\+/g, " "));
+			}
+			return b;
+		})(window.location.search.substr(1).split("&"));
+	}());
 
-        var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs'];
-        if (ms && ms.length) {
-            _.each(ms, function(module) {
-                modules.push(module);
-            });
-        }
+	var initialize = function(ms) {
 
-        var app = angular.module('app', modules);
-        services.initialize(app);
-        directives.initialize(app);
-        filters.initialize(app);
-        controllers.initialize(app);
+		var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs'];
+		if (ms && ms.length) {
+			_.each(ms, function(module) {
+				modules.push(module);
+			});
+		}
 
-        app.config(["$compileProvider", "$locationProvider", "$routeProvider", function($compileProvider, $locationProvider, $routeProvider) {
-            // Allow angular to use filesystem: hrefs which would else be prefixed with unsafe:.
-            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|filesystem|blob):/);
-            $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem|blob):|data:image\//);
-            // Setup routing
-            $routeProvider.when("/:room", {});
-            // Use HTML5 routing.
-            $locationProvider.html5Mode(true);
-        }]);
+		var app = angular.module('app', modules);
+		services.initialize(app);
+		directives.initialize(app);
+		filters.initialize(app);
+		controllers.initialize(app);
 
-        app.run(["$rootScope", "mediaStream", "translation", function($rootScope, mediaStream, translation) {
-            translation.inject($rootScope);
-            console.log("Initializing ...");
-            mediaStream.initialize($rootScope, translation);
-        }]);
+		app.config(["$compileProvider", "$locationProvider", "$routeProvider", function($compileProvider, $locationProvider, $routeProvider) {
+			// Allow angular to use filesystem: hrefs which would else be prefixed with unsafe:.
+			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|filesystem|blob):/);
+			$compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem|blob):|data:image\//);
+			// Setup routing
+			$routeProvider.when("/:room", {});
+			// Use HTML5 routing.
+			$locationProvider.html5Mode(true);
+		}]);
 
-        app.constant("availableLanguages", languages);
+		app.run(["$rootScope", "mediaStream", "translation", function($rootScope, mediaStream, translation) {
+			translation.inject($rootScope);
+			console.log("Initializing ...");
+			mediaStream.initialize($rootScope, translation);
+		}]);
 
-        angular.element(document).ready(function() {
+		app.constant("availableLanguages", languages);
 
-            var globalContext = JSON.parse($("#globalcontext").text());
-            app.constant("globalContext", globalContext);
+		angular.element(document).ready(function() {
 
-            // Configure language.
-            var lang = (function() {
-                var lang;
-                var html = document.getElementsByTagName("html")[0];
-                if (modernizr.localstorage) {
-                    lang = localStorage.getItem("mediastream-language");
-                    if (!lang || lang === "undefined") {
-                        lang = null;
-                    }
-                }
-                if (!lang) {
-                    var browserLanguages = [];
-                    // Expand browser languages with combined fallback.
-                    _.each(globalContext.Languages, function(l) {
-                        browserLanguages.push(l);
-                        if (l.indexOf("-") != -1) {
-                            browserLanguages.push(l.split("-")[0])
-                        }
-                    });
-                    // Loop through browser languages and use first one we got.
-                    for (var i=0; i<browserLanguages.length; i++) {
-                        if (languages.hasOwnProperty(browserLanguages[i])) {
-                            lang = browserLanguages[i];
-                            break;
-                        }
-                    }
-                }
-                if (!lang) {
-                    lang = "en";
-                }
-                html.setAttribute("lang", lang);
-                return lang;
-            }());
+			var globalContext = JSON.parse($("#globalcontext").text());
+			app.constant("globalContext", globalContext);
 
-            // Prepare bootstrap function with injected locale data.
-            var domain = "messages";
-            var catalog = domain + "-" + lang;
-            var bootstrap = function(translationData) {
-                if (!translationData) {
-                    // Fallback catalog in case translation could not be loaded.
-                    lang = "en";
-                    translationData = {};
-                    translationData.locale_data = {};
-                    translationData.domain = domain;
-                    translationData.locale_data[domain] = {
-                        "": {
-                            "domain": domain,
-                            "lang": lang,
-                            "plural_forms" : "nplurals=2; plural=(n != 1);"
-                        }
-                    }
-                }
-                // Set date language too.
-                moment.lang([lang, "en"]);
-                // Inject translation data globally.
-                app.constant("translationData", translationData);
-                // Bootstrap AngularJS app.
-                console.log("Bootstrapping ...");
-                angular.bootstrap(document, ['app']);
-            }
+			// Configure language.
+			var lang = (function() {
+				var lang = "en";
+				var wanted = [];
+				var html = document.getElementsByTagName("html")[0];
+				// Get from storage.
+				if (modernizr.localstorage) {
+					var lsl = localStorage.getItem("mediastream-language");
+					if (lsl && lsl !== "undefined") {
+						wanted.push(lsl);
+					}
+				}
+				// Get from query.
+				var qsl = urlQuery.lang;
+				if (qsl) {
+					wanted.push(qsl);
+				}
+				// Expand browser languages with combined fallback.
+				_.each(globalContext.Languages, function(l) {
+					wanted.push(l);
+					if (l.indexOf("-") != -1) {
+						wanted.push(l.split("-")[0]);
+					}
+				});
+				// Loop through browser languages and use first one we got.
+				for (var i = 0; i < wanted.length; i++) {
+					if (languages.hasOwnProperty(wanted[i])) {
+						lang = wanted[i];
+						break;
+					}
+				}
+				html.setAttribute("lang", lang);
+				return lang;
+			}());
 
-            if (lang !== "en") {
-                // Load translation file.
-                //console.log("Loading translation data: " + lang);
-                $.ajax({
-                    dataType: "json",
-                    url: require.toUrl('translation/'+catalog+'.json'),
-                    success: function(data) {
-                        //console.log("Loaded translation data.");
-                        bootstrap(data);
-                    },
-                    error: function(err, textStatus, errorThrown)  {
-                        console.warn("Failed to load translation data " + catalog + ": "+ errorThrown);
-                        bootstrap(null);
-                    }
-                });
-            } else {
-                // No need to load english as this is built in.
-                bootstrap();
-            }
+			// Prepare bootstrap function with injected locale data.
+			var domain = "messages";
+			var catalog = domain + "-" + lang;
+			var bootstrap = function(translationData) {
+				if (!translationData) {
+					// Fallback catalog in case translation could not be loaded.
+					lang = "en";
+					translationData = {};
+					translationData.locale_data = {};
+					translationData.domain = domain;
+					translationData.locale_data[domain] = {
+						"": {
+							"domain": domain,
+							"lang": lang,
+							"plural_forms": "nplurals=2; plural=(n != 1);"
+						}
+					};
+				}
+				// Set date language too.
+				moment.lang([lang, "en"]);
+				// Inject translation data globally.
+				app.constant("translationData", translationData);
+				// Bootstrap AngularJS app.
+				console.log("Bootstrapping ...");
+				angular.bootstrap(document, ['app']);
+			};
 
-        });
+			if (lang !== "en") {
+				// Load translation file.
+				//console.log("Loading translation data: " + lang);
+				$.ajax({
+					dataType: "json",
+					url: require.toUrl('translation/' + catalog + '.json'),
+					success: function(data) {
+						//console.log("Loaded translation data.");
+						bootstrap(data);
+					},
+					error: function(err, textStatus, errorThrown) {
+						console.warn("Failed to load translation data " + catalog + ": " + errorThrown);
+						bootstrap(null);
+					}
+				});
+			} else {
+				// No need to load english as this is built in.
+				bootstrap();
+			}
 
-        return app;
+		});
 
-    };
+		return app;
 
-    return {
-        initialize: initialize
-    };
+	};
+
+	return {
+		initialize: initialize
+	};
 
 });

@@ -1,14 +1,14 @@
-# Chinese (Taiwan) translations for Spreed Speak Freely.
+# Chinese (Taiwan) translations for Spreed WebRTC.
 # Copyright (C) 2014 struktur AG
-# This file is distributed under the same license as the Spreed Speak Freely
+# This file is distributed under the same license as the Spreed WebRTC
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# Curt Frisemo <curt.frisemo@spreed.com>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed Speak Freely 1.0\n"
+"Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-05 16:53+0200\n"
+"POT-Creation-Date: 2014-05-23 10:35+0200\n"
 "PO-Revision-Date: 2014-04-07 18:09+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -363,8 +363,8 @@ msgstr "分享文件："
 msgid "Incoming file:"
 msgstr "發來文件："
 
-msgid "Quit from Spreed Speak Freely?"
-msgstr "退出 Spreed Speak Freely？"
+msgid "Close this window and disconnect?"
+msgstr ""
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr "適用更新需重啟，現在點擊Ok重新啟動。"

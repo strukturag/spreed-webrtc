@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,22 +48,24 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						return;
 					}
 					// Control data request.
+					var msg;
 					try {
-						var msg = JSON.parse(data);
-					} catch(e) {
+						msg = JSON.parse(data);
+					} catch (e) {
 						// Invalid JSON.
 						console.warn("Invalid JSON received from screen share channel.", data);
-						peerscreenshare.close()
+						peerscreenshare.close();
+						return;
 					}
 
 					switch (msg.m) {
-					case "bye":
-						// Close this screen share.
-						peerscreenshare.close();
-						break;
-					default:
-						console.log("Unknown screen share control request", msg.m, msg);
-						break;
+						case "bye":
+							// Close this screen share.
+							peerscreenshare.close();
+							break;
+						default:
+							console.log("Unknown screen share control request", msg.m, msg);
+							break;
 					}
 
 				} else {
@@ -163,7 +165,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 
 				if ($scope.layout.screenshare) {
 					$scope.stopScreenshare();
-				};
+				}
 
 				$scope.layout.screenshare = true;
 
@@ -193,15 +195,15 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						scope.usermedia = usermedia;
 						// Create token to register with us and send token out to all peers.
 						// Peers when connect to us with the token and we answer.
-						var token = "screenshare_"+scope.id+"_"+(screenCount++);
+						var token = "screenshare_" + scope.id + "_" + (screenCount++);
 
 						// Updater function to bring in new calls.
 						var updater = function(event, state, currentcall) {
 							switch (state) {
-							case "completed":
-							case "connected":
-								connector(token, currentcall);
-								break;
+								case "completed":
+								case "connected":
+									connector(token, currentcall);
+									break;
 							}
 						};
 
@@ -227,7 +229,9 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 							updated = null;
 							// Send by to all connected peers.
 							_.each(screenshares, function(peerscreenshare) {
-								peerscreenshare.send({m: "bye"});
+								peerscreenshare.send({
+									m: "bye"
+								});
 								$timeout(function() {
 									peerscreenshare.close();
 								}, 0);
@@ -274,17 +278,17 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					} else {
 						BigScreen.toggle(pane.get(0));
 					}
-                }
+				}
 
 			};
 
-	        $scope.$watch("layout.screenshare", function(newval, oldval) {
-	            if (newval && !oldval) {
-	                $scope.doScreenshare();
-	            } else if(!newval && oldval) {
-	            	$scope.stopScreenshare();
-	            }
-	        });
+			$scope.$watch("layout.screenshare", function(newval, oldval) {
+				if (newval && !oldval) {
+					$scope.doScreenshare();
+				} else if (!newval && oldval) {
+					$scope.stopScreenshare();
+				}
+			});
 
 		}];
 

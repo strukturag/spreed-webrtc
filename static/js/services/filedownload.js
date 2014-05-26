@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -61,7 +61,9 @@ define(["jquery", "underscore"], function($, _) {
 			_.each(this.xfer_all, function(xfer) {
 				// Implement own clean up message.
 				// NOTE(longsleep): See https://code.google.com/p/webrtc/issues/detail?id=1676 for reason.
-				xfer.send({m: "bye"});
+				xfer.send({
+					m: "bye"
+				});
 				$timeout(function() {
 					xfer.cancel();
 				}, 0);
@@ -82,7 +84,7 @@ define(["jquery", "underscore"], function($, _) {
 			this.running = true;
 
 			// Make file.
-			var file = this.file = fileData.generateFile(""+(downloads++)+".file", this.scope.info);
+			var file = this.file = fileData.generateFile("" + (downloads++) + ".file", this.scope.info);
 			// Bind file events.
 			file.e.bind("complete", _.bind(function() {
 				safeApply(this.scope, function($scope) {
@@ -122,7 +124,7 @@ define(["jquery", "underscore"], function($, _) {
 			this.interval = $window.setInterval(_.bind(function() {
 				//console.log("download session running", this.xfer_all.length, this.concurrent, this.chunk, this.scope.info.chunks, this.scope.info.chunks / this.fragments);
 				this.process();
-				if (this.running && this.xfer_all.length < this.concurrent && this.chunk <= this.end && (this.end+1) / this.fragments >= this.xfer_all.length-2) {
+				if (this.running && this.xfer_all.length < this.concurrent && this.chunk <= this.end && (this.end + 1) / this.fragments >= this.xfer_all.length - 2) {
 					// Start more if file is large enough (about 10 MB).
 					this.addXfer(this.known_peer_id);
 				}
@@ -156,7 +158,7 @@ define(["jquery", "underscore"], function($, _) {
 				if (job.end > this.end) {
 					job.end = this.end;
 				}
-				this.chunk = job.end+1;
+				this.chunk = job.end + 1;
 				job.next = _.bind(function() {
 					if (this.stop) {
 						this.next = null;
@@ -184,7 +186,7 @@ define(["jquery", "underscore"], function($, _) {
 			var idx = this.jobs.indexOf(job);
 			if (~idx) { // Yay i love fancy code which is hard to understand!
 				this.jobs.splice(idx, 1);
-			};
+			}
 			if (this.chunk >= this.end && this.jobs.length === 0) {
 				//console.log("File done.")
 				safeApply(this.scope, _.bind(function($scope) {

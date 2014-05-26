@@ -1,5 +1,5 @@
 VERSION := "1.0"
-PROJECT := "Spreed Speak Freely"
+PROJECT := "Spreed WebRTC"
 COPYRIGHT := "struktur AG"
 EMAIL := "simon@struktur.de"
 ROOT := "$(CURDIR)/../.."

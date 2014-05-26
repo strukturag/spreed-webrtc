@@ -1,0 +1,2 @@
+#!/bin/bash
+exec ./bin/spreed-webrtc-server $*

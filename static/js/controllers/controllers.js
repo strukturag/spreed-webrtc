@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,29 +19,28 @@
  *
  */
 define([
-  'underscore',
+	'underscore',
 
-  'controllers/mediastreamcontroller',
-  'controllers/statusmessagecontroller',
-  'controllers/chatroomcontroller',
-  'controllers/roomchangecontroller'
-], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController) {
+	'controllers/mediastreamcontroller',
+	'controllers/statusmessagecontroller',
+	'controllers/chatroomcontroller',
+	'controllers/roomchangecontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController) {
 
-  var controllers = {
-      MediastreamController: MediastreamController,
-      StatusmessageController: StatusmessageController,
-      ChatroomController: ChatroomController,
-      RoomchangeController: RoomchangeController
-  };
+	var controllers = {
+		MediastreamController: MediastreamController,
+		StatusmessageController: StatusmessageController,
+		ChatroomController: ChatroomController,
+		RoomchangeController: RoomchangeController
+	};
 
-  var initialize = function (angModule) {
-    _.each(controllers, function(controller, name) {
-      angModule.controller(name, controller);
-    })
-  }
+	var initialize = function(angModule) {
+		_.each(controllers, function(controller, name) {
+			angModule.controller(name, controller);
+		})
+	}
 
-  return {
-    initialize: initialize
-  };
+	return {
+		initialize: initialize
+	};
 
 });

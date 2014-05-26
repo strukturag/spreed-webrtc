@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,25 +20,25 @@
  */
 define([], function() {
 
-    // StatusmessageController
+	// StatusmessageController
 	return ["$scope", "mediaStream", function($scope, mediaStream) {
 
-        $scope.doHangup = function() {
-            mediaStream.webrtc.doHangup();
-        }
-        $scope.doAbort = function() {
-            mediaStream.webrtc.doHangup("abort", $scope.dialing);
-        }
-        $scope.doReconnect = function() {
-            mediaStream.connector.reconnect();
-        }
-        $scope.doAccept = function() {
-            mediaStream.webrtc.doAccept();
-        }
-        $scope.doReject = function() {
-            mediaStream.webrtc.doHangup('reject');
-        }
+		$scope.doHangup = function() {
+			mediaStream.webrtc.doHangup();
+		}
+		$scope.doAbort = function() {
+			mediaStream.webrtc.doHangup("abort", $scope.dialing);
+		}
+		$scope.doReconnect = function() {
+			mediaStream.connector.reconnect();
+		}
+		$scope.doAccept = function() {
+			mediaStream.webrtc.doAccept();
+		}
+		$scope.doReject = function() {
+			mediaStream.webrtc.doHangup('reject');
+		}
 
-    }];
+	}];
 
 });

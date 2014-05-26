@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,58 +20,58 @@
  */
 define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 
-    // roomBar
-    return ["$window", "$rootScope", "$location", function($window, $rootScope, $location) {
+	// roomBar
+	return ["$window", "$rootScope", "$location", function($window, $rootScope, $location) {
 
-        var link = function($scope) {
+		var link = function($scope) {
 
-            //console.log("roomBar directive link", arguments);
-            $scope.newroomid = $rootScope.roomid;
-            $scope.hideRoomBar = true;
+			//console.log("roomBar directive link", arguments);
+			$scope.newroomid = $rootScope.roomid;
+			$scope.hideRoomBar = true;
 
-            $scope.save = function() {
-                var roomid = $scope.changeRoomToId($scope.newroomid);
-                if (roomid !== $rootScope.roomid) {
-                    $scope.roombarform.$setPristine();
-                }
-                $scope.hideRoomBar = true;
-            };
+			$scope.save = function() {
+				var roomid = $scope.changeRoomToId($scope.newroomid);
+				if (roomid !== $rootScope.roomid) {
+					$scope.roombarform.$setPristine();
+				}
+				$scope.hideRoomBar = true;
+			};
 
-            $scope.hitEnter = function(evt){
-                if(angular.equals(evt.keyCode, 13)) {
-                    $scope.save();
-                }
-            };
+			$scope.hitEnter = function(evt) {
+				if (angular.equals(evt.keyCode, 13)) {
+					$scope.save();
+				}
+			};
 
-            $scope.exit = function() {
-                $scope.newroomid = "";
-                $scope.save();
-            };
+			$scope.exit = function() {
+				$scope.newroomid = "";
+				$scope.save();
+			};
 
-            $rootScope.$watch("roomid", function(newroomid, roomid) {
-                if (!newroomid) {
-                    newroomid = "";
-                }
-                $scope.newroomid = newroomid;
-            });
+			$rootScope.$watch("roomid", function(newroomid, roomid) {
+				if (!newroomid) {
+					newroomid = "";
+				}
+				$scope.newroomid = newroomid;
+			});
 
-            $scope.$watch("newroomid", function(newroomid) {
-                if (newroomid === $rootScope.roomid) {
-                    $scope.roombarform.$setPristine();
-                }
-            });
+			$scope.$watch("newroomid", function(newroomid) {
+				if (newroomid === $rootScope.roomid) {
+					$scope.roombarform.$setPristine();
+				}
+			});
 
-        };
+		};
 
-        return {
-            restrict: 'E',
-            replace: true,
-            scope: true,
-            template: template,
-            controller: "RoomchangeController",
-            link: link
-        }
+		return {
+			restrict: 'E',
+			replace: true,
+			scope: true,
+			template: template,
+			controller: "RoomchangeController",
+			link: link
+		}
 
-    }];
+	}];
 
 });

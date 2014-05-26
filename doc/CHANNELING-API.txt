@@ -1,7 +1,7 @@
 
-               Spreed Speak Freely Channeling API v1.3.0
+                 Spreed WebRTC Channeling API v1.3.0
             =================================================
-                        (c)2014 struktur AG
+                          (c)2014 struktur AG
 
 The server provides a Websocket connection end point as channeling API to
 share peer information for peer to peer connectivity.
@@ -340,7 +340,7 @@ Additional types for session listing and notifications
         "Batch": 0
     }
 
-    Note: The Userid field is only present, if that session belongs to a known user. 
+    Note: The Userid field is only present, if that session belongs to a known user.
 
   Alive
 
@@ -745,8 +745,8 @@ File sharing data channel protocol
 
 End of Channeling API.
 
-For latest version of Spreed Speak Freely check
-https://github.com/strukturag/spreed-speakfreely
+For latest version of Spreed WebRTC check
+https://github.com/strukturag/spreed-webrtc
 
 For questions, contact mailto:opensource@struktur.de.
 

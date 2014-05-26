@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,218 +20,218 @@
  */
 define(['underscore', 'mediastream/peercall'], function(_, PeerCall) {
 
-    //NOTE(longsleep): This id should be changed to something undeterministic.
-    var conferences = 0;
+	//NOTE(longsleep): This id should be changed to something undeterministic.
+	var conferences = 0;
 
-    var PeerConference = function(webrtc, currentcall, id) {
+	var PeerConference = function(webrtc, currentcall, id) {
 
-        this.webrtc = webrtc;
-        this.currentcall = currentcall;
-        this.calls = {};
-        this.callsIn = {};
+		this.webrtc = webrtc;
+		this.currentcall = currentcall;
+		this.calls = {};
+		this.callsIn = {};
 
-        this.e = $({});
+		this.e = $({});
 
-        if (!id) {
-            this.id = webrtc.api.id + "_" + (++conferences);
-        } else {
-            this.id = id;
-        }
+		if (!id) {
+			this.id = webrtc.api.id + "_" + (++conferences);
+		} else {
+			this.id = id;
+		}
 
-        console.log("Created conference", this.id);
+		console.log("Created conference", this.id);
 
-    };
+	};
 
-    PeerConference.prototype.createCall = function(id, from, to) {
+	PeerConference.prototype.createCall = function(id, from, to) {
 
-        var currentcall = new PeerCall(this.webrtc, id, from, to);
-        currentcall.e.on("closed", _.bind(function() {
-            delete this.calls[id];
-            if (this.callsIn.hasOwnProperty(id)) {
-                delete this.callsIn[id];
-            }
-            console.log("Cleaned up conference call", id);
-            if (_.isEmpty(this.calls)) {
-                console.log("Conference is now empty -> cleaning up.");
-                this.e.triggerHandler("finished");
-            }
-        }, this));
-        currentcall.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
-            this.onConnectionStateChange(iceConnectionState, currentcall);
-        }, this));
-        currentcall.e.on("remoteStreamAdded", _.bind(function(event, stream, currentcall) {
-          this.webrtc.onRemoteStreamAdded(stream, currentcall);
-        }, this));
-        currentcall.e.on("remoteStreamRemoved", _.bind(function(event, stream, currentcall) {
-          this.webrtc.onRemoteStreamRemoved(stream, currentcall);
-        }, this));
+		var currentcall = new PeerCall(this.webrtc, id, from, to);
+		currentcall.e.on("closed", _.bind(function() {
+			delete this.calls[id];
+			if (this.callsIn.hasOwnProperty(id)) {
+				delete this.callsIn[id];
+			}
+			console.log("Cleaned up conference call", id);
+			if (_.isEmpty(this.calls)) {
+				console.log("Conference is now empty -> cleaning up.");
+				this.e.triggerHandler("finished");
+			}
+		}, this));
+		currentcall.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
+			this.onConnectionStateChange(iceConnectionState, currentcall);
+		}, this));
+		currentcall.e.on("remoteStreamAdded", _.bind(function(event, stream, currentcall) {
+			this.webrtc.onRemoteStreamAdded(stream, currentcall);
+		}, this));
+		currentcall.e.on("remoteStreamRemoved", _.bind(function(event, stream, currentcall) {
+			this.webrtc.onRemoteStreamRemoved(stream, currentcall);
+		}, this));
 
-        return currentcall;
+		return currentcall;
 
-    };
+	};
 
-    PeerConference.prototype.doCall = function(id, autocall) {
+	PeerConference.prototype.doCall = function(id, autocall) {
 
-        if (id === this.currentcall.id || this.calls.hasOwnProperty(id)) {
-            // Ignore calls which we already have.
-            //console.debug("Already got a call to this id (doCall)", id, this.calls, this.currentcall);
-            return;
-        }
+		if (id === this.currentcall.id || this.calls.hasOwnProperty(id)) {
+			// Ignore calls which we already have.
+			//console.debug("Already got a call to this id (doCall)", id, this.calls, this.currentcall);
+			return;
+		}
 
-        var call = this.calls[id] = this.createCall(id, null, id);
-        call.setInitiate(true);
-        call.e.on("sessiondescription", _.bind(function(event, sessionDescription) {
-            console.log("Injected conference id into sessionDescription", this.id);
-            sessionDescription._conference = this.id;
-        }, this));
+		var call = this.calls[id] = this.createCall(id, null, id);
+		call.setInitiate(true);
+		call.e.on("sessiondescription", _.bind(function(event, sessionDescription) {
+			console.log("Injected conference id into sessionDescription", this.id);
+			sessionDescription._conference = this.id;
+		}, this));
 
-        if (!autocall) {
-            this.webrtc.e.triggerHandler("connecting", [call]);
-        }
+		if (!autocall) {
+			this.webrtc.e.triggerHandler("connecting", [call]);
+		}
 
-        console.log("Creating PeerConnection", call);
-        call.createPeerConnection(_.bind(function(peerconnection) {
-            // Success call.
-            if (this.webrtc.usermedia) {
-                this.webrtc.usermedia.addToPeerConnection(peerconnection);
-            }
-            call.createOffer(_.bind(function(sessionDescription, extracall) {
-                console.log("Sending offer with sessionDescription", sessionDescription, extracall.id);
-                this.webrtc.api.sendOffer(extracall.id, sessionDescription);
-            }, this));
-        }, this), _.bind(function() {
-            // Error call.
-            console.error("Failed to create peer connection for conference call.");
-        }, this));
+		console.log("Creating PeerConnection", call);
+		call.createPeerConnection(_.bind(function(peerconnection) {
+			// Success call.
+			if (this.webrtc.usermedia) {
+				this.webrtc.usermedia.addToPeerConnection(peerconnection);
+			}
+			call.createOffer(_.bind(function(sessionDescription, extracall) {
+				console.log("Sending offer with sessionDescription", sessionDescription, extracall.id);
+				this.webrtc.api.sendOffer(extracall.id, sessionDescription);
+			}, this));
+		}, this), _.bind(function() {
+			// Error call.
+			console.error("Failed to create peer connection for conference call.");
+		}, this));
 
-    };
+	};
 
-    PeerConference.prototype.handOver = function() {
+	PeerConference.prototype.handOver = function() {
 
-        // Use a new call as currentcall and return this one.
-        var calls = _.keys(this.callsIn);
-        if (calls.length) {
-            var id = calls[0];
-            var currentcall = this.currentcall = this.calls[id];
-            delete this.calls[id];
-            delete this.callsIn[id];
-            console.log("Handed over conference to", id, currentcall);
-            if (_.isEmpty(this.calls)) {
-                console.log("Conference is now empty -> cleaning up.");
-                this.e.triggerHandler("finished");
-            }
-            return currentcall;
-        }
-        return null;
+		// Use a new call as currentcall and return this one.
+		var calls = _.keys(this.callsIn);
+		if (calls.length) {
+			var id = calls[0];
+			var currentcall = this.currentcall = this.calls[id];
+			delete this.calls[id];
+			delete this.callsIn[id];
+			console.log("Handed over conference to", id, currentcall);
+			if (_.isEmpty(this.calls)) {
+				console.log("Conference is now empty -> cleaning up.");
+				this.e.triggerHandler("finished");
+			}
+			return currentcall;
+		}
+		return null;
 
-    };
+	};
 
-    PeerConference.prototype.autoAnswer = function(from, rtcsdp) {
+	PeerConference.prototype.autoAnswer = function(from, rtcsdp) {
 
-        if (from === this.currentcall.id || this.calls.hasOwnProperty(from)) {
-            console.warn("Already got a call to this id (autoAnswer)", from, this.calls);
-            return;
-        }
+		if (from === this.currentcall.id || this.calls.hasOwnProperty(from)) {
+			console.warn("Already got a call to this id (autoAnswer)", from, this.calls);
+			return;
+		}
 
-        var call = this.calls[from] = this.createCall(from, this.webrtc.api.id, from);
-        console.log("Creating PeerConnection", call);
-        call.createPeerConnection(_.bind(function(peerconnection) {
-            // Success call.
-            call.setRemoteDescription(rtcsdp, _.bind(function() {
-                if (this.webrtc.usermedia) {
-                    this.webrtc.usermedia.addToPeerConnection(peerconnection);
-                }
-                call.createAnswer(_.bind(function(sessionDescription, extracall) {
-                    console.log("Sending answer", sessionDescription, extracall.id);
-                    this.webrtc.api.sendAnswer(extracall.id, sessionDescription);
-                }, this));
-            }, this));
-        }, this), _.bind(function() {
-            // Error call.
-            console.error("Failed to create peer connection for auto answer.");
-        }, this));
+		var call = this.calls[from] = this.createCall(from, this.webrtc.api.id, from);
+		console.log("Creating PeerConnection", call);
+		call.createPeerConnection(_.bind(function(peerconnection) {
+			// Success call.
+			call.setRemoteDescription(rtcsdp, _.bind(function() {
+				if (this.webrtc.usermedia) {
+					this.webrtc.usermedia.addToPeerConnection(peerconnection);
+				}
+				call.createAnswer(_.bind(function(sessionDescription, extracall) {
+					console.log("Sending answer", sessionDescription, extracall.id);
+					this.webrtc.api.sendAnswer(extracall.id, sessionDescription);
+				}, this));
+			}, this));
+		}, this), _.bind(function() {
+			// Error call.
+			console.error("Failed to create peer connection for auto answer.");
+		}, this));
 
-    };
+	};
 
-    PeerConference.prototype.getCall = function(id) {
+	PeerConference.prototype.getCall = function(id) {
 
-        var call = this.calls[id];
-        if (!call) {
-            call = null;
-        }
+		var call = this.calls[id];
+		if (!call) {
+			call = null;
+		}
 
-        return call;
+		return call;
 
-    };
+	};
 
-    PeerConference.prototype.close = function() {
+	PeerConference.prototype.close = function() {
 
-        this.currentcall = null;
-        var api = this.webrtc.api;
-        _.each(this.calls, function(c) {
-            c.close();
-            var id = c.id;
-            if (id) {
-                api.sendBye(id);
-            }
-        });
-        this.calls = {};
+		this.currentcall = null;
+		var api = this.webrtc.api;
+		_.each(this.calls, function(c) {
+			c.close();
+			var id = c.id;
+			if (id) {
+				api.sendBye(id);
+			}
+		});
+		this.calls = {};
 
-    };
+	};
 
-    PeerConference.prototype.onConnectionStateChange = function(iceConnectionState, currentcall) {
+	PeerConference.prototype.onConnectionStateChange = function(iceConnectionState, currentcall) {
 
-        console.log("Conference peer connection state changed", iceConnectionState, currentcall);
-        switch (iceConnectionState) {
-        case "completed":            
-        case "connected":
-            if (!this.callsIn.hasOwnProperty(currentcall.id)) {
-                this.callsIn[currentcall.id] = true;
-                this.pushUpdate();
-            }
-            break;
-        case "failed":
-            console.warn("Conference peer connection state failed", currentcall);
-            break;
-        }
-        this.webrtc.onConnectionStateChange(iceConnectionState, currentcall);
+		console.log("Conference peer connection state changed", iceConnectionState, currentcall);
+		switch (iceConnectionState) {
+			case "completed":
+			case "connected":
+				if (!this.callsIn.hasOwnProperty(currentcall.id)) {
+					this.callsIn[currentcall.id] = true;
+					this.pushUpdate();
+				}
+				break;
+			case "failed":
+				console.warn("Conference peer connection state failed", currentcall);
+				break;
+		}
+		this.webrtc.onConnectionStateChange(iceConnectionState, currentcall);
 
-    };
+	};
 
-    PeerConference.prototype.pushUpdate = function() {
+	PeerConference.prototype.pushUpdate = function() {
 
-        var calls = _.keys(this.callsIn);
-        if (calls) {
-            if (this.currentcall) {
-                calls.push(this.currentcall.id);
-                calls.push(this.webrtc.api.id);
-            }
-        }
-        console.log("Calls in conference: ", calls);
-        this.webrtc.api.sendConference(this.id, calls);
+		var calls = _.keys(this.callsIn);
+		if (calls) {
+			if (this.currentcall) {
+				calls.push(this.currentcall.id);
+				calls.push(this.webrtc.api.id);
+			}
+		}
+		console.log("Calls in conference: ", calls);
+		this.webrtc.api.sendConference(this.id, calls);
 
-    };
+	};
 
-    PeerConference.prototype.applyUpdate = function(ids) {
+	PeerConference.prototype.applyUpdate = function(ids) {
 
-        console.log("Applying conference update", this.id, ids);
-        var myid = this.webrtc.api.id;
-        _.each(ids, _.bind(function(id) {
-            var res = myid < id ? -1 : myid > id ? 1 : 0;
-            console.log("Considering conference peers to call", res, id);
-            if (res === -1) {
-                this.doCall(id, true);
-            }
-        }, this));
+		console.log("Applying conference update", this.id, ids);
+		var myid = this.webrtc.api.id;
+		_.each(ids, _.bind(function(id) {
+			var res = myid < id ? -1 : myid > id ? 1 : 0;
+			console.log("Considering conference peers to call", res, id);
+			if (res === -1) {
+				this.doCall(id, true);
+			}
+		}, this));
 
-    };
+	};
 
-    PeerConference.prototype.peerIds = function() {
+	PeerConference.prototype.peerIds = function() {
 
-        return _.keys(this.calls);
+		return _.keys(this.calls);
 
-    };
+	};
 
-    return PeerConference;
+	return PeerConference;
 
 });

@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,14 +50,14 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 				$window.testCreateSuseridLocal = function(key, userid) {
 
 					var k = sjcl.codec.utf8String.toBits(key);
-					var foo = new sjcl.misc.hmac(k, sjcl.hash.sha256)
-					var expiration = parseInt(((new Date).getTime()/1000)+3600, 10);
+					var foo = new sjcl.misc.hmac(k, sjcl.hash.sha256);
+					var expiration = parseInt(((new Date()).getTime()/1000)+3600, 10);
 					var useridCombo = ""+expiration+":"+userid;
 					var secret = foo.mac(useridCombo);
 					var data = {
 						useridcombo: useridCombo,
 						secret: sjcl.codec.base64.fromBits(secret)
-					}
+					};
 					lastData = data;
 					return data;
 
@@ -86,7 +86,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 				$window.testLastAuthenticate = function() {
 					if (!lastNonce || !lastUserid) {
 						console.log("Run testAuthorize first.");
-						return
+						return;
 					}
 					mediaStream.api.requestAuthentication(lastUserid, lastNonce);
 				};
@@ -94,7 +94,7 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 				$window.testLastAuthorize = function() {
 					if (lastData === null) {
 						console.log("Run testCreateSuseridServer fist.");
-						return
+						return;
 					}
 					$window.testAuthorize(lastData);
 				};
@@ -103,6 +103,6 @@ define(['angular', 'sjcl'], function(angular, sjcl) {
 
 		}
 
-	}
+	};
 
 });

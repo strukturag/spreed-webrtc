@@ -1,10 +1,10 @@
-; Spreed Speak Freely server example configuration
+; Spreed WebRTC server example configuration
 
 [http]
 ; HTTP listener in format ip:port.
 listen = 127.0.0.1:8080
 ; Full path to directory where to find the server web assets.
-;root = /usr/share/spreed-speakfreely-server/www
+;root = /usr/share/spreed-webrtc-server/www
 ; HTTP socket read timeout in seconds.
 ;readtimeout = 10
 ; HTTP socket write timeout in seconds.
@@ -35,7 +35,7 @@ listen = 127.0.0.1:8080
 
 [app]
 ; HTML page title
-;title = Spreed Speak Freely
+;title = Spreed WebRTC
 ; Version string to use for static resources. This defaults to the server
 ; version and should only be changed when you use your own way to invalidate
 ; long cached static resources.
@@ -84,7 +84,7 @@ sessionSecret = the-default-secret-do-not-keep-me
 ; extra-* template slots. If the extra folder has a sub folder "static", the
 ; resources in this static folder will be available as /extra/static/filename
 ; relative to your servers base URL.
-;extra = /usr/share/spreed-speakfreely-server/extra
+;extra = /usr/share/spreed-webrtc-server/extra
 ; URL relative to the servers base path for a plugin javascript file which is
 ; automatically loaded on web client start for all users. You can put your
 ; plugin in the extra/static folder (see above) or provide another folder using
@@ -93,7 +93,7 @@ sessionSecret = the-default-secret-do-not-keep-me
 ;plugin = extra/static/myplugin.js
 
 [log]
-;logfile = /var/log/spreed-speakfreely-server.log
+;logfile = /var/log/spreed-webrtc-server.log
 
 [users]
 ; Set to true to enable user functionality.

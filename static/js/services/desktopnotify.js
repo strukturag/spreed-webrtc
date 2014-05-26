@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,88 +22,88 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _) {
 
 	return ["$window", function($window) {
 
-        var helper = notify;
+		var helper = notify;
 
-        var desktopNotify = function() {
+		var desktopNotify = function() {
 
-            this.asked = false;
-            this.windowHasFocus = true;
-            this.dummy = {
-                close: function() {}
-            };
-            this.refresh();
-            this.enabled();
+			this.asked = false;
+			this.windowHasFocus = true;
+			this.dummy = {
+				close: function() {}
+			};
+			this.refresh();
+			this.enabled();
 
-            $($window).on("focus blur", _.bind(function(event) {
-                this.windowHasFocus = event.type === "focus" ? true : false;
-            }, this));
+			$($window).on("focus blur", _.bind(function(event) {
+				this.windowHasFocus = event.type === "focus" ? true : false;
+			}, this));
 
-        };
+		};
 
-        desktopNotify.prototype.enabled = function() {
+		desktopNotify.prototype.enabled = function() {
 
-            if (this.level === "default") {
-                this.asked = true;
-                this.requestPermission();
-            }
-            return (this.supported && this.level === "granted") ? true : false;
+			if (this.level === "default") {
+				this.asked = true;
+				this.requestPermission();
+			}
+			return (this.supported && this.level === "granted") ? true : false;
 
-        };
+		};
 
-        desktopNotify.prototype.refresh = function() {
+		desktopNotify.prototype.refresh = function() {
 
-            this.supported = helper.isSupported;
-            this.level = helper.permissionLevel();
+			this.supported = helper.isSupported;
+			this.level = helper.permissionLevel();
 
-        };
+		};
 
-        desktopNotify.prototype.requestPermission = function(cb) {
+		desktopNotify.prototype.requestPermission = function(cb) {
 
-            //console.log("request permission");
-            return helper.requestPermission(_.bind(function() {
+			//console.log("request permission");
+			return helper.requestPermission(_.bind(function() {
 
-                //console.log("requestPermission result", arguments);
-                this.refresh();
-                if (cb) {
-                    cb.apply(helper, arguments);
-                }
+				//console.log("requestPermission result", arguments);
+				this.refresh();
+				if (cb) {
+					cb.apply(helper, arguments);
+				}
 
-            }, this));
+			}, this));
 
-        };
+		};
 
-        desktopNotify.prototype.createNotification = function(title, options) {
+		desktopNotify.prototype.createNotification = function(title, options) {
 
-            return helper.createNotification(title, options);
+			return helper.createNotification(title, options);
 
-        };
+		};
 
-        desktopNotify.prototype.notify = function(title, body, options) {
+		desktopNotify.prototype.notify = function(title, body, options) {
 
-            if (!this.enabled()) {
-                return this.dummy;
-            };
+			if (!this.enabled()) {
+				return this.dummy;
+			}
 
-            var opts = {
-                body: body,
-                icon: "static/img/notify.ico",
-                timeout: 7000
-            }
-            $.extend(opts, options);
-            var timeout = opts.timeout;
-            delete opts.timeout;
-            var n = this.createNotification(title, opts);
-            if (timeout) {
-                $window.setTimeout(function() {
-                    n.close();
-                }, timeout);
-            }
-            return n;
+			var opts = {
+				body: body,
+				icon: "static/img/notify.ico",
+				timeout: 7000
+			}
+			$.extend(opts, options);
+			var timeout = opts.timeout;
+			delete opts.timeout;
+			var n = this.createNotification(title, opts);
+			if (timeout) {
+				$window.setTimeout(function() {
+					n.close();
+				}, timeout);
+			}
+			return n;
 
-        };
+		};
 
-        return new desktopNotify();
+		return new desktopNotify();
 
-    }];
+	}];
 
 });

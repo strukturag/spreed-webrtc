@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,30 +20,30 @@
  */
 define([], function() {
 
-    // enrichMessage
-    return ["$filter", function($filter) {
+	// enrichMessage
+	return ["$filter", function($filter) {
 
-        var linky = $filter("linky");
-        var enrichMessage = {
-            url: function(s) {
-                var s = linky(s);
-                s = s.replace(/<a/g, '<a rel="external"');
-                return s
-            },
-            multiline: function(s) {
-                s = s.replace(/\r\n/g, "<br/>");
-                s = s.replace(/\n/g, "<br/>");
-                s = s.replace(/&#10;/g, "<br/>"); // Also supported quoted newlines.
-                return s;
-            },
-            all: function(s) {
-                s = enrichMessage.url(s);
-                s = enrichMessage.multiline(s);
-                return s;
-            }
-        };
-        return enrichMessage;
+		var linky = $filter("linky");
+		var enrichMessage = {
+			url: function(s) {
+				s = linky(s);
+				s = s.replace(/<a/g, '<a rel="external"');
+				return s;
+			},
+			multiline: function(s) {
+				s = s.replace(/\r\n/g, "<br/>");
+				s = s.replace(/\n/g, "<br/>");
+				s = s.replace(/&#10;/g, "<br/>"); // Also supported quoted newlines.
+				return s;
+			},
+			all: function(s) {
+				s = enrichMessage.url(s);
+				s = enrichMessage.multiline(s);
+				return s;
+			}
+		};
+		return enrichMessage;
 
-    }];
+	}];
 
 });

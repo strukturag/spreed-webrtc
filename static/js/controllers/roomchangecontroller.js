@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,58 +20,59 @@
  */
 define([], function() {
 
-    // RoomchangeController
-    return ["$scope", "$element", "$window", "$location", "mediaStream", "$http", "$timeout", function($scope, $element, $window, $location, mediaStream, $http, $timeout) {
+	// RoomchangeController
+	return ["$scope", "$element", "$window", "$location", "mediaStream", "$http", "$timeout", function($scope, $element, $window, $location, mediaStream, $http, $timeout) {
 
-        //console.log("Room change controller", $element, $scope.roomdata);
+		//console.log("Room change controller", $element, $scope.roomdata);
 
-        var url = mediaStream.url.api("rooms");
+		var url = mediaStream.url.api("rooms");
 
-        var ctrl = this;
-        ctrl.enabled = true;
+		var ctrl = this;
+		ctrl.enabled = true;
 
-        ctrl.getRoom = function(cb) {
-            $http({
-                method: "POST",
-                url: url,
-                data: $.param({
-                }),
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).
-            success(function(data, status) {
-                cb(data);
-            }).
-            error(function() {
-                console.error("Failed to retrieve room link.");
-                cb({});
-            });
-        };
+		ctrl.getRoom = function(cb) {
+			$http({
+				method: "POST",
+				url: url,
+				data: $.param({}),
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			}).
+			success(function(data, status) {
+				cb(data);
+			}).
+			error(function() {
+				console.error("Failed to retrieve room link.");
+				cb({});
+			});
+		};
 
-        $scope.changeRoomToId = function(id) {
-            var roomid = $window.encodeURIComponent(id);
-            $location.path("/"+roomid);
-            return roomid;
-        };
+		$scope.changeRoomToId = function(id) {
+			var roomid = $window.encodeURIComponent(id);
+			$location.path("/" + roomid);
+			return roomid;
+		};
 
-        $scope.$on("$destroy", function() {
-            //console.log("Room change controller destroyed");
-            ctrl.enabled = false;
-        });
+		$scope.$on("$destroy", function() {
+			//console.log("Room change controller destroyed");
+			ctrl.enabled = false;
+		});
 
-        var roomDataLinkInput = $element.find(".roomdata-link-input");
-        if (roomDataLinkInput.length) {
-            $scope.roomdata = {};
-            $timeout(function() {
-                if (ctrl.enabled) {
-                    ctrl.getRoom(function(roomdata) {
-                        console.info("Retrieved room data", roomdata);
-                        $scope.roomdata = roomdata;
-                        roomdata.link = $scope.roomlink = mediaStream.url.room(roomdata.name);
-                    });
-                }
-            }, 100);
-        }
+		var roomDataLinkInput = $element.find(".roomdata-link-input");
+		if (roomDataLinkInput.length) {
+			$scope.roomdata = {};
+			$timeout(function() {
+				if (ctrl.enabled) {
+					ctrl.getRoom(function(roomdata) {
+						console.info("Retrieved room data", roomdata);
+						$scope.roomdata = roomdata;
+						roomdata.link = $scope.roomlink = mediaStream.url.room(roomdata.name);
+					});
+				}
+			}, 100);
+		}
 
-    }];
+	}];
 
 });

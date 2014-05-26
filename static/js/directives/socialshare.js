@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,11 +50,11 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 					var nw = $(event.currentTarget).data("nw");
 					var url = makeUrl(nw, $scope.roomlink);
 					if (url) {
-						if (nw==="email") {
+						if (nw === "email") {
 							// Hack our way to disable unload popup for mail links.
 							$scope.manualReloadApp(url);
 						} else {
-							$window.open(url, "social_"+nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
+							$window.open(url, "social_" + nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
 						}
 					}
 				});

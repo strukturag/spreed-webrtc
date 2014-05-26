@@ -1,8 +1,8 @@
 /*
- * Spreed Speak Freely.
+ * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
- * This file is part of Spreed Speak Freely.
+ * This file is part of Spreed WebRTC.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,9 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 				return d[1];
 			});
 			// Create.
-			var data = new Blob(dataBuffer, {type: this.owner.info.type||"application/octet-stream"});
+			var data = new Blob(dataBuffer, {
+				type: this.owner.info.type || "application/octet-stream"
+			});
 			this.file = {
 				toURL: function() {
 					return URL.createObjectURL(data);
@@ -86,13 +88,16 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 
 	};
 
-	FileWriterFileSystem.prototype.supported = !!requestFileSystem;
+	FileWriterFileSystem.prototype.supported = !! requestFileSystem;
 	FileWriterFileSystem.prototype.filesystem = null;
 
 	FileWriterFileSystem.prototype.create = function() {
 
 		var generator = _.bind(function() {
-			FileWriterFileSystem.prototype.filesystem.root.getFile(this.owner.id, {create: true, exclusive: true}, _.bind(function(fileEntry) {
+			FileWriterFileSystem.prototype.filesystem.root.getFile(this.owner.id, {
+				create: true,
+				exclusive: true
+			}, _.bind(function(fileEntry) {
 				console.log("Generate file", this.owner, fileEntry);
 				this.setup(fileEntry);
 				this.flush();
@@ -117,7 +122,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 
 		if (!size) {
 			// Default size.
-			size = 5*1024*1024;
+			size = 5 * 1024 * 1024;
 		}
 		requestFileSystem(window.TEMPORARY, size, _.bind(function(fs) {
 			// Success call.
@@ -150,7 +155,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 				}
 			}, this);
 			fileWriter.onwriteend = _.bind(function(e) {
-				this.written+=this.writing_written;
+				this.written += this.writing_written;
 				this.writing_written = 0;
 				this.writing = false;
 				//console.log("Done file writing.", e, fileWriter.position, fileWriter.length);
@@ -199,7 +204,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 			var d;
 			var s;
 			var tmp
-			while(true) {
+			while (true) {
 
 				// Grab next item.
 				next = writeBuffer.shift();
@@ -213,7 +218,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 					}
 				}
 
-				if (pos!==s || !next) {
+				if (pos !== s || !next) {
 
 					// We have a gap or nothing more to write, seek and write the shit.
 					//console.log("eyikes gap or finished", s, pos, next, this.writer.position, tmp.length);
@@ -225,7 +230,9 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 
 					// Write to file system.
 					this.writing_written = tmp.length;
-					this.writer.write(new Blob(tmp, {type: this.owner.info.type||"application/octet-stream"}));
+					this.writer.write(new Blob(tmp, {
+						type: this.owner.info.type || "application/octet-stream"
+					}));
 
 					tmp = null;
 					if (next) {
@@ -290,27 +297,6 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 		this.stopped = false;
 		this.writer = null;
 		this.writeBuffer = [];
-	};
-
-	// Slices the file and calls callback with each slice as first argument.
-	File.prototype.parseFile = function(cb) {
-
-		var f = this.file;
-		var size = f.size;
-		var i;
-		for (i=0; i < size; i+=fileChunkSize) {
-			(function(file, position) {
-				var reader = new FileReader();
-				var blob = file.slice(position, position+fileChunkSize);
-				reader.onload = function(event) {
-					if (reader.readyState == FileReader.DONE) {
-						cb(event.target.result);
-					}
-				}
-				reader.readAsArrayBuffer(blob);
-			}(f, i));
-		}
-
 	};
 
 	File.prototype.getChunk = function(chunk_index, cb) {
@@ -411,7 +397,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 		// public API.
 		var fileData = {
 			generateFile: function(id, info) {
-				id = filenamePrefix+id;
+				id = filenamePrefix + id;
 				var file = filesTable[id] = new File(id, null, info);
 				file.createWriter();
 				return file;
