@@ -43,6 +43,8 @@ DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
 
+SASSFLAGS = --style=expanded
+
 # Tools
 AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 
@@ -79,7 +81,6 @@ test: get
 
 assets: styles javascript
 
-styles: SASSFLAGS = --style=expanded
 styles:
 	$(MKDIR_P) $(CURDIR)/static/css
 	$(MKDIR_P) $(CURDIR)/static/fonts
