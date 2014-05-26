@@ -60,4 +60,4 @@
 			inlineText: true,
 		}
 	]
-});
+})
