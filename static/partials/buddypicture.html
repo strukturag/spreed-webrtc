@@ -1,20 +1,18 @@
 <div class="buddyPicture">
-   <img class="picture" ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
-   <div class="collapse showTakePicture" collapse="!showTakePicture">
-     <div class="countdownPicture" ng-show="countdown.num">
-         <span ng-bind="countdown.num"></span>
-     </div>
-     <video autoplay="autoplay" width="200"></video>
-     <canvas style="display:none" width="46" height="46"></canvas>
-     <a class="btn btn-xs btn-success btn-takePicture" ng-disabled="countingDown" ng-show="!previewPicture" ng-click="takePicture()"> {{_('Take')}}</a>
-     <a class="btn btn-xs btn-success btn-takePicture" ng-show="previewPicture" ng-click="retakePicture()"> {{_('Retake')}}</a>
-     <div>
-         <a class="btn btn-small btn-default" ng-click="cancelPicture()"> {{_('Cancel')}}</a>
-         <a class="btn btn-small btn-primary" ng-disabled="!previewPicture" ng-click="setAsProfilePicture()"> {{_('Set as Profile Picture')}}</a>
-     </div>
-   </div>
-   <a class="btn btn-small btn-success" ng-show="!showTakePicture" ng-disabled="!showTakePictureReady" ng-click="initPicture()"> {{_('Take picture')}}</a>
-   <span ng-show="!showTakePictureReady">
-      <i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}
-   </span>
+	<img class="picture" ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
+	<div class="collapse showTakePicture" collapse="!showTakePicture">
+		<div class="videoPicture">
+			<div class="countdownPicture" ng-show="countdown.num" ng-bind="countdown.num"></div>
+			<video autoplay="autoplay" width="200"></video>
+			<canvas style="display:none" width="46" height="46"></canvas>
+			<a class="btn btn-xs btn-success btn-takePicture" ng-disabled="countingDown" ng-show="!previewPicture" ng-click="takePicture()"> {{_('Take')}}</a>
+			<a class="btn btn-xs btn-success btn-retakePicture" ng-show="previewPicture" ng-click="retakePicture()"> {{_('Retake')}}</a>
+		</div>
+		<a class="btn btn-small btn-default" ng-click="cancelPicture()"> {{_('Cancel')}}</a>
+		<a class="btn btn-small btn-primary" ng-disabled="!previewPicture" ng-click="setAsProfilePicture()"> {{_('Set as Profile Picture')}}</a>
+	</div>
+	<a class="btn btn-small btn-success" ng-show="!showTakePicture" ng-disabled="!showTakePictureReady" ng-click="initPicture()"> {{_('Take picture')}}</a>
+	<span ng-show="!showTakePictureReady">
+		<i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}
+	</span>
 </div>

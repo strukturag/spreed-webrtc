@@ -24,21 +24,24 @@
     display: block;
     margin-bottom: 5px;
   }
-  .showTakePicture {
+  .videoPicture {
     position: relative;
+  }
+  .showTakePicture {
     .btn {
       margin: 5px 0px;
     }
   }
-  .btn-takePicture {
+  .btn-takePicture,
+  .btn-retakePicture {
     position: absolute;
-    right: 90px;
+    left: 85px;
     top: 110px;
   }
   .countdownPicture {
     color: $componentbg;
     font-size: 45px;
-    left: 95px;
+    left: 90px;
     position: absolute;
     top: 55px;
   }
