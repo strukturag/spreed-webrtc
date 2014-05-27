@@ -71,24 +71,6 @@
     right: 10px;
     top: 10px;
   }
-  .showTakePicture {
-    position: relative;
-    .btn {
-      margin: 5px 0px;
-    }
-  }
-  .btn-takePicture {
-    position: absolute;
-    top: 110px;
-    right: 90px;
-  }
-  .countdownToTakePicture {
-    font-size: 45px;
-    color: $componentbg;
-    position: absolute;
-    top: 55px;
-    left: 95px;
-  }
   .form-horizontal {
     .controls {
       @include breakpt($breakpoint-settings-medium, max-width, only screen) {

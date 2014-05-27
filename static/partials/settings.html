@@ -5,31 +5,10 @@
 
       <legend>{{_('Settings')}}</legend>
       <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+      <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
         <div class="col-xs-8">
           <label>
-            <div style="margin-bottom:5px">
-              <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
-            </div>
-            <div class="collapse showTakePicture" collapse="!showTakePicture">
-              <div class="countdownToTakePicture" ng-show="countdown.num">
-                  <span ng-bind="countdown.num"></span>
-              </div>
-              <video autoplay="autoplay" width="200"></video>
-              <canvas style="display:none" width="46" height="46"></canvas>
-              <a class="btn btn-xs btn-success btn-takePicture" ng-show="!previewPicture" ng-click="takePicture($event.target, true)"> {{_('Take')}}</a>
-              <a class="btn btn-xs btn-success btn-takePicture" ng-show="previewPicture" ng-click="takePicture($event.target, false, true)"> {{_('Retake')}}</a>
-              <div>
-                  <a class="btn btn-small btn-default" ng-click="takePicture($event.target, false, false, true)"> {{_('Cancel')}}</a>
-                  <a class="btn btn-small btn-primary" ng-disabled="!previewPicture" ng-click="takePicture($event.target)"> {{_('Set as Profile Picture')}}</a>
-              </div>
-            </div>
-            <div>
-               <a class="btn btn-small btn-success" ng-show="!showTakePicture" ng-disabled="!showTakePictureReady" ng-click="takePicture($event.target)"> {{_('Take picture')}}</a>
-               <span ng-show="!showTakePictureReady">
-                  <i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}
-               </span>
-            </div>
+            <buddy-picture/>
           </label>
         </div>
       </div>

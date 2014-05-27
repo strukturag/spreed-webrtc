@@ -1,4 +1,4 @@
-/*!
+/*
  * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
@@ -19,31 +19,27 @@
  *
  */
 
-// must set custom compass variables before import of compass
-@import "global/variables";
-@import "compass";
-@import "libs/libs";
-
-@import "global/mixins";
-
-@import "global/base";
-@import "global/angular";
-@import "global/nicescroll";
-@import "global/animations";
-@import "global/overlaybar";
-
-@import "components/rightslide";
-@import "components/bar";
-@import "components/buddylist";
-@import "components/buddypicture";
-@import "components/settings";
-@import "components/chat";
-@import "components/usability";
-@import "components/audiolevel";
-@import "components/fileinfo";
-@import "components/audiovideo";
-@import "components/screenshare";
-@import "components/roombar";
-@import "components/social";
-
-@import "shame";
+.buddyPicture {
+  .picture {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .showTakePicture {
+    position: relative;
+    .btn {
+      margin: 5px 0px;
+    }
+  }
+  .btn-takePicture {
+    position: absolute;
+    right: 90px;
+    top: 110px;
+  }
+  .countdownPicture {
+    color: $componentbg;
+    font-size: 45px;
+    left: 95px;
+    position: absolute;
+    top: 55px;
+  }
+}

@@ -22,13 +22,10 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', '$timeout', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, $timeout) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
-			$scope.showTakePicture = false;
-			$scope.showTakePictureReady = true;
-			$scope.previewPicture = false;
 			$scope.rememberSettings = true;
 			$scope.desktopNotify = desktopNotify;
 			$scope.mediaSources = mediaSources;
@@ -46,8 +43,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					name: name
 				});
 			});
-
-			var localStream = null;
 
 			// Make sure to save settings when they are open and the page is reloaded.
 			$(window).on("unload", function() {
@@ -77,98 +72,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$scope.desktopNotify.requestPermission(function() {
 					safeApply($scope);
 				});
-			};
-			$scope.takePicture = function(element, take, retake, stop) {
-				var delayToTakePicture = 3000;
-				var countDownFrom = 3;
-				// Counts down from start to 1
-				var takePictureCountDown = function(start, delayTotal) {
-					$scope.countdown = {};
-					$scope.countdown.num = start;
-					var decrementNum = function(num) {
-						$timeout(function() {
-							$scope.countdown.num--;
-						}, delayTotal/start*num);
-					}
-					for(var i = 1; i <= start; i++) {
-						decrementNum(i);
-					}
-				};
-
-				if (stop) {
-					$scope.showTakePicture = false;
-					$scope.previewPicture = false;
-					if (localStream) {
-						localStream.stop();
-						localStream = null;
-					}
-					return;
-				}
-
-				var video = $(element).parent().parent().find("video").get(0);
-				var makePicture = function() {
-					takePictureCountDown(countDownFrom, delayToTakePicture);
-					$timeout(function() {
-						$scope.previewPicture = true;
-						video.pause();
-					}, delayToTakePicture);
-				};
-
-				if (!$scope.showTakePicture) {
-					$scope.showTakePictureReady = false;
-					var videoConstraints = true;
-					if ($scope.user.settings.cameraId) {
-						videoConstraints = {
-							optional: [{
-								sourceId: $scope.user.settings.cameraId
-							}]
-						};
-					}
-					getUserMedia({
-						video: videoConstraints
-					}, function(stream) {
-						if ($scope.showTakePictureReady) {
-							stream.stop();
-							return;
-						}
-						$scope.showTakePicture = true;
-						localStream = stream;
-						$scope.showTakePictureReady = true;
-						attachMediaStream(video, stream);
-						safeApply($scope);
-					}, function(error) {
-						console.error('Failed to get access to local media. Error code was ' + error.code);
-						$scope.showTakePictureReady = true;
-						safeApply($scope);
-					});
-					return;
-				} else if (take) {
-					makePicture();
-				} else if (retake) {
-					video.play();
-					$scope.previewPicture = false;
-					makePicture();
-				} else {
-					var canvas = $(element).parent().parent().find("canvas").get(0);
-					var videoWidth = video.videoWidth;
-					var videoHeight = video.videoHeight;
-					var aspectRatio = videoWidth/videoHeight;
-					if (!aspectRatio) {
-						// NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
-						console.warn("Unable to compute aspectRatio", aspectRatio);
-						aspectRatio = 1.3333333333333333;
-					}
-					var x = (46 * aspectRatio - 46) / -2;
-					canvas.getContext("2d").drawImage(video, x, 0, 46 * aspectRatio, 46);
-					$scope.user.buddyPicture = canvas.toDataURL("image/jpeg");
-					console.info("Image size", $scope.user.buddyPicture.length);
-					localStream.stop();
-					localStream = null;
-					$scope.showTakePictureReady = true;
-					$scope.showTakePicture = false;
-					$scope.previewPicture = false;
-					safeApply($scope);
-				}
 			};
 
 			$scope.registerUserid = function(btn) {

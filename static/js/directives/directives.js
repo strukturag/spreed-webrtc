@@ -25,6 +25,7 @@ define([
 	'directives/onescape',
 	'directives/statusmessage',
 	'directives/buddylist',
+	'directives/buddypicture',
 	'directives/settings',
 	'directives/chat',
 	'directives/audiovideo',
@@ -34,13 +35,14 @@ define([
 	'directives/screenshare',
 	'directives/roombar',
 	'directives/socialshare',
-	'directives/page'], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page) {
+	'directives/page'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page) {
 
 	var directives = {
 		onEnter: onEnter,
 		onEscape: onEscape,
 		statusMessage: statusMessage,
 		buddyList: buddyList,
+		buddyPicture: buddyPicture,
 		settings: settings,
 		chat: chat,
 		audioVideo: audioVideo,
