@@ -1,3 +1,10 @@
+spreed-webrtc-server (0.18.1) precise; urgency=low
+
+  * Added autoconf/automake support.
+  * Build SCSS compressed in release mode. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 27 May 2014 11:16:22 +0200
+
 spreed-webrtc-server (0.18.0) precise; urgency=low
 
   * The project is now named Spreed WebRTC. All reference to the old
