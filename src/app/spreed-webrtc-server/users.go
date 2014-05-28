@@ -422,20 +422,20 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 
 	var snr *SessionNonceRequest
 
-	switch request.Header.Get("Content-Type") {
-	case "application/json":
+	ct := request.Header.Get("Content-Type")
+	if strings.HasPrefix(ct, "application/json") {
 		snr = &SessionNonceRequest{}
 		decoder := json.NewDecoder(request.Body)
 		err := decoder.Decode(snr)
 		if err != nil {
 			return 400, NewApiError("users_bad_request", "Failed to parse request"), http.Header{"Content-Type": {"application/json"}}
 		}
-	case "application/x-www-form-urlencoded":
+	} else if strings.HasPrefix(ct, "application/x-www-form-urlencoded") {
 		snr = &SessionNonceRequest{
 			Id:  request.Form.Get("id"),
 			Sid: request.Form.Get("sid"),
 		}
-	default:
+	} else {
 		return 400, NewApiError("users_invalid_request", "Invalid request type"), http.Header{"Content-Type": {"application/json"}}
 	}
 
