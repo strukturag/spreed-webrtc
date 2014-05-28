@@ -59,8 +59,10 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 				$scope.updateAutoAccept(id);
 				mediaStream.api.sendChat(id, null, {
-					type: "conference",
-					id: mediaStream.connector.roomid
+					AutoCall: {
+						Type: "conference",
+						Id: mediaStream.connector.roomid
+					}
 				})
 
 			};

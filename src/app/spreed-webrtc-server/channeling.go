@@ -106,6 +106,7 @@ type DataChatStatus struct {
 	SeenMids       []string            `json:",omitempty"`
 	FileInfo       *DataFileInfo       `json:",omitempty"`
 	ContactRequest *DataContactRequest `json:",omitempty"`
+	AutoCall       *DataAutoCall       `json:",omitempty"`
 }
 
 type DataFileInfo struct {
@@ -121,6 +122,11 @@ type DataContactRequest struct {
 	Success bool
 	Userid  string `json:",omitempty"`
 	Token   string `json:",omitempty"`
+}
+
+type DataAutoCall struct {
+	Id   string
+	Type string
 }
 
 type DataIncoming struct {

@@ -464,7 +464,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				} else {
 					var scope = buddyData.get(id);
 					var template = buddyActions;
-					if (scope.status.isMixer) {
+					if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
 						template = buddyActionsForAudioMixer;
 					}
 					//console.log("scope", scope, id);

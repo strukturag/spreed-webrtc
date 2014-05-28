@@ -605,22 +605,24 @@ Chat messages and status information
     }
 
 
-  Request being called from audio mixer
+  Request an automatic callback, by sending a chat message with the AutoCall
+  document in Status.
 
     {
         "Type": "Chat",
         "Chat": {
-            "Message": null,
+            "Message": "Call me back",
             "Status": {
-                "type": "conference",
-                "id": "my-conference-room"
+              "AutoCall": {
+                "Type": "conference",
+                "Id": "my-conference-room"
             }
         }
     }
 
-    This can be sent to any participant that has a "Status" containing the "isMixer"
-    flag with a "true" value. The peer will then try to establish a peer connection
-    to the caller which it needs to pick up to join an audio conference.
+    For example this can be sent to sessions which have "autoCalls" set in session
+    status. The peer will then try to establish a peer connection  to the caller which
+    the client eeds to pick up automatically.
 
 
 Data channel only messages
