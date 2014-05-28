@@ -492,6 +492,9 @@ func (h *Hub) contactrequestHandler(c *Connection, to string, cr *DataContactReq
 			if bSessionData.Userid == "" {
 				return errors.New("to has no userid")
 			}
+			if bSessionData.Userid == aSessionData.Userid {
+				return errors.New("to userid cannot be the same as own userid")
+			}
 			// Create object.
 			contact := &Contact{aSessionData.Userid, bSessionData.Userid, false}
 			// Serialize.
