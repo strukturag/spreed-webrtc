@@ -31,14 +31,14 @@ define(['jquery', 'underscore'], function($, _) {
 			};
 
 			$scope.doReject = function() {
-				$scope.state = "rejected";			
+				$scope.state = "rejected";
 				$scope.doContact(false);
 			};
 
 			$scope.doContact = function(success) {
 				var r = $scope.request;
 				r.Success = !!success;
-				$scope.sendChat($scope.id, "Contact request answer", {
+				$scope.sendChatServer($scope.id, "Contact request answer", {
 					ContactRequest: r
 				});
 			};

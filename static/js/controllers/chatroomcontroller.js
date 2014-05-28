@@ -286,17 +286,17 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 
 		$scope.showmessage = function(from, timestamp, message, nodes) {
 
-			var userid = $scope.$parent.$parent.id;
+			var sessonid = $scope.$parent.$parent.id;
 
 			// Prepare message to display.
 			var s = [];
 			if (message) {
 				s.push(message);
-				$scope.$emit("incoming", message, from, userid);
+				$scope.$emit("incoming", message, from, sessonid);
 			}
 
 			var is_new_message = lastSender !== from;
-			var is_self = from === userid;
+			var is_self = from === sessonid;
 
 			var extra_css = "";
 			var title = null;
@@ -374,7 +374,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 
 		$scope.$on("received", function(event, from, data) {
 
-			var userid = $scope.$parent.$parent.id;
+			var sessionid = $scope.$parent.$parent.id;
 			var mid = data.Mid || null;
 
 			switch (data.Type) {
@@ -395,7 +395,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 					// Definitions.
 					var message = null;
 					var nodes = null;
-					var fromself = from === userid;
+					var fromself = from === sessionid;
 					var noop = false;
 					var element = null;
 					var subscope;

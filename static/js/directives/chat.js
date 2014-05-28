@@ -20,7 +20,7 @@
  */
 define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function(_, templateChat, templateChatroom) {
 
-	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "$timeout", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, $timeout) {
+	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout) {
 
 		var displayName = safeDisplayName;
 		var group_chat_id = "";
@@ -141,16 +141,26 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 			$scope.$parent.$on("requestcontact", function(event, id, options) {
 
 				if (id !== group_chat_id) {
+					// Make sure the contact id is valid.
+					var ad = appData.get();
+					if (!ad.userid) {
+						// Unable to add contacts as we have no own userid.
+						console.log("You need to log in to add contacts.");
+						return;
+					}
+					var bd = buddyData.get(id);
+					if (!bd || !bd.session || !bd.session.Userid || ad.userid === bd.session.Userid) {
+						console.log("This contact cannot be added.");
+						return;
+					}
 					var subscope = $scope.showRoom(id, {
 						title: translation._("Chat with")
 					}, options);
-					$timeout(function() {
-						subscope.sendChat(id, "Contact request", {
-							ContactRequest: {
-								Id: randomGen.random({hex: true})
-							}
-						});
-					}, 0);
+					subscope.sendChatServer(id, "Contact request", {
+						ContactRequest: {
+							Id: randomGen.random({hex: true})
+						}
+					});
 				}
 
 			});
@@ -222,47 +232,59 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 						subscope.sendChat = function(to, message, status, mid, noloop) {
 							//console.log("send chat", to, scope.peer);
 							var peercall = mediaStream.webrtc.findTargetCall(to);
+							if (peercall && peercall.peerconnection.datachannelReady) {
+								subscope.p2p(true);
+								// Send out stuff through data channel.
+								return subscope.sendChatPeer2Peer(peercall, to, message, status, mid, noloop);
+							} else {
+								subscope.p2p(false);
+								return subscope.sendChatServer(to, message, status, mid, noloop);
+							}
+							return mid;
+						};
+						subscope.sendChatPeer2Peer = function(peercall, to, message, status, mid, noloop) {
 							if (message && !mid) {
 								mid = randomGen.random({
 									hex: true
 								});
 							}
-							if (peercall && peercall.peerconnection.datachannelReady) {
-								subscope.p2p(true);
-								// Send out stuff through data channel.
-								_.delay(function() {
-									mediaStream.api.apply("sendChat", {
-										send: function(type, data) {
-											// We also send to self, to display our own stuff.
-											if (!noloop) {
-												mediaStream.api.received({
-													Type: data.Type,
-													Data: data,
-													From: mediaStream.api.id,
-													To: peercall.id
-												});
-											}
-											return peercall.peerconnection.send(data);
-										}
-									})(to, message, status, mid);
-								}, 100);
-
-							} else {
-								subscope.p2p(false);
-								_.delay(function() {
-									mediaStream.api.send2("sendChat", function(type, data) {
+							_.delay(function() {
+								mediaStream.api.apply("sendChat", {
+									send: function(type, data) {
+										// We also send to self, to display our own stuff.
 										if (!noloop) {
-											//console.log("looped to self", type, data);
 											mediaStream.api.received({
 												Type: data.Type,
 												Data: data,
 												From: mediaStream.api.id,
-												To: to
+												To: peercall.id
 											});
 										}
-									})(to, message, status, mid);
-								}, 100);
+										return peercall.peerconnection.send(data);
+									}
+								})(to, message, status, mid);
+							}, 100);
+							return mid;
+						};
+						subscope.sendChatServer = function(to, message, status, mid, noloop) {
+							if (message && !mid) {
+								mid = randomGen.random({
+									hex: true
+								});
 							}
+							_.delay(function() {
+								mediaStream.api.send2("sendChat", function(type, data) {
+									if (!noloop) {
+										//console.log("looped to self", type, data);
+										mediaStream.api.received({
+											Type: data.Type,
+											Data: data,
+											From: mediaStream.api.id,
+											To: to
+										});
+									}
+								})(to, message, status, mid);
+							}, 100);
 							return mid;
 						};
 						subscope.p2p = function(state) {
@@ -312,8 +334,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 							}
 							safeApply(subscope);
 						});
-						subscope.$on("incoming", function(event, message, from, userid) {
-							if (from !== userid) {
+						subscope.$on("incoming", function(event, message, from, sessionid) {
+							if (from !== sessionid) {
 								subscope.pending++;
 								scope.$emit("chatincoming", subscope.id);
 							}
@@ -321,7 +343,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 								var room = event.targetScope.id;
 								// Make sure we are not in group chat or the message is from ourselves
 								// before we beep and shout.
-								if (!subscope.isgroupchat && from !== userid) {
+								if (!subscope.isgroupchat && from !== sessionid) {
 									playSound.play("message1");
 									desktopNotify.notify(translation._("Message from ") + displayName(from), message);
 								}
