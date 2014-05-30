@@ -21,7 +21,7 @@
 define(['underscore'], function(underscore) {
 
 	// buddyData
-	return [function() {
+	return ["contactData", function(contactData) {
 
 		var scopes = {};
 		var brain = {};
@@ -61,7 +61,7 @@ define(['underscore'], function(underscore) {
 				}
 				return 0;
 			},
-			get: function(id, createInParent, afterCreateCallback) {
+			get: function(id, createInParent, afterCreateCallback, userid) {
 				if (scopes.hasOwnProperty(id)) {
 					return scopes[id];
 				} else if (!createInParent && pushed.hasOwnProperty(id)) {
@@ -71,6 +71,11 @@ define(['underscore'], function(underscore) {
 						// If we have a parent we can create a new scope.
 						var scope = scopes[id] = createInParent.$new();
 						scope.buddyIndex = ++count;
+						if (userid) {
+							scope.contact = contactData.get(userid);
+						} else {
+							scope.contact = null;
+						}
 						scope.buddyIndexSortable = ("0000000" + scope.buddyIndex).slice(-7);
 						if (pushed.hasOwnProperty(id)) {
 							// Refresh pushed scope reference.

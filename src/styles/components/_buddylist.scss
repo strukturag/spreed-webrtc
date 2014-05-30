@@ -135,6 +135,12 @@
   &.hovered .buddyactions {
     right: 0;
   }
+  & .fa.contact:before {
+    content: "\f006";
+  }
+  &.contact .fa.contact:before {
+    content: "\f005";
+  }
   .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;

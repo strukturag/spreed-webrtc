@@ -43,7 +43,9 @@ define([
 	'services/randomgen',
 	'services/fastscroll',
 	'services/videowaiter',
-	'services/videolayout'], function(_,
+	'services/videolayout',
+	'services/contactdata',
+	'services/contacts'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -66,7 +68,9 @@ safeDisplayName,
 randomGen,
 fastScroll,
 videoWaiter,
-videoLayout) {
+videoLayout,
+contactData,
+contacts) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -91,7 +95,9 @@ videoLayout) {
 		randomGen: randomGen,
 		fastScroll: fastScroll,
 		videoWaiter: videoWaiter,
-		videoLayout: videoLayout
+		videoLayout: videoLayout,
+		contactData: contactData,
+		contacts: contacts
 	};
 
 	var initialize = function(angModule) {

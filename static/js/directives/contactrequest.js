@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore'], function($, _) {
 
-	return ["translation", function(translation) {
+	return ["translation", "buddyData", "contacts", function(translation, buddyData, contacts) {
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -43,14 +43,14 @@ define(['jquery', 'underscore'], function($, _) {
 				});
 			};
 
-			$scope.addContact = function(request) {
-				console.log("AAAAAAAA", request);
+			$scope.addContact = function(request, status) {
+				contacts.add(request, status)
 			};
 
 			// Add support for contacts on controller creation.
 			var request = $scope.request;
 			if (request.Success && request.Userid && request.Token) {
-				$scope.addContact(request);
+				$scope.addContact(request, buddyData.lookup($scope.id).status || null);
 			}
 
 		}];

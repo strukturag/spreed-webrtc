@@ -21,7 +21,7 @@
 define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 	// buddyList
-	return ["$compile", "buddyList", "mediaStream", function($compile, buddyList, mediaStream) {
+	return ["$compile", "buddyList", "mediaStream", "contacts", function($compile, buddyList, mediaStream, contacts) {
 
 		//console.log("buddyList directive");
 
@@ -84,6 +84,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			var onJoined = _.bind(buddylist.onJoined, buddylist);
 			var onLeft = _.bind(buddylist.onLeft, buddylist);
 			var onStatus = _.bind(buddylist.onStatus, buddylist);
+			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);
@@ -108,10 +109,13 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				$scope.setRoomStatus(false);
 				buddylist.onClosed();
 			});
-
-			// Request user list whenever the connection comes ready.
+ 			// Request user list whenever the connection comes ready.
 			mediaStream.connector.ready(function() {
 				mediaStream.api.requestUsers();
+			});
+			// Contacts.
+			contacts.e.on("contactadded", function(event, data) {
+				onContactAdded(data);
 			});
 
 		}];

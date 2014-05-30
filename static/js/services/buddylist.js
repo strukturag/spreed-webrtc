@@ -102,6 +102,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	};
 
+	BuddyTree.prototype.traverse = function(cb) {
+
+		return this.tree.inOrderTraverse(cb);
+
+	};
+
 	BuddyTree.prototype.clear = function() {
 
 		this.tree.clear();
@@ -144,7 +150,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				var buddyElement = $(event.currentTarget);
 				buddyElement.scope().doDefault();
 			}, this));
-			$element.on("click", ".fa-star-o", _.bind(function(event) {
+			$element.on("click", ".fa.contact", _.bind(function(event) {
 				event.stopPropagation();
 				var buddyElement = $(event.currentTarget);
 				buddyElement.scope().doDefaultContact();
@@ -348,7 +354,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			//console.log("onStatus", status);
 			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this));
+			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this), data.Userid);
 			// Update session.
 			scope.session.Userid = data.Userid;
 			scope.session.Rev = data.Rev;
@@ -377,7 +383,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			//console.log("Joined", data);
 			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this));
+			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this), data.Userid);
 			// Create session.
 			scope.session = {
 				Id: data.Id,
@@ -402,6 +408,27 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.queue.push(["joined", id, before]);
 				this.playSoundJoined = true;
 			}
+
+		};
+
+		Buddylist.prototype.onContactAdded = function(contact) {
+
+			console.log("onContactAdded", contact);
+			var userid = contact.Userid;
+			// TODO(longsleep): Traversing the whole tree is stupid. Implement key/value map for this.
+			this.tree.traverse(function(record) {
+				var scope = buddyData.lookup(record.id, true);
+				var sessionUserid = scope.session.Userid;
+				if (sessionUserid === userid) {
+					scope.contact = contact;
+				}
+			});
+
+		};
+
+		Buddylist.prototype.onContactRemoved = function(data) {
+
+			console.log("onContactRemoved", data);
 
 		};
 
