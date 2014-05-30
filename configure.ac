@@ -23,13 +23,14 @@ AC_PREREQ([2.53])
 
 AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.com/strukturag/spreed-webrtc])
 
-# minimum required versions (actually one version before)
-GO_VERSION_MIN=1.0.9        # actually 1.1
-NODEJS_VERSION_MIN=0.7.9    # actually 0.8.0
-SASS_VERSION_MIN=3.1.9      # actually 3.2.0
+# minimum required versions
+GO_VERSION_MIN=1.1
+NODEJS_VERSION_MIN=0.8.0
+SASS_VERSION_MIN=3.2.0
 
 AC_CONFIG_SRCDIR([src/app/spreed-webrtc-server/main.go])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 dnl required version of automake
 AM_INIT_AUTOMAKE([1.10])
@@ -60,9 +61,8 @@ if test x"${GO}" == x"" ; then
     AC_MSG_ERROR([Please install Go before trying to build spreed-webrtc.])
 fi
 GO_VERSION=`$GO version | sed 's/^go version go//' | $SED 's/ .*//'`
-if test "$GO_VERSION" == "`echo -e "$GO_VERSION\n$GO_VERSION_MIN" | sort -V | head -n1`" ; then
-    AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])
-fi
+AX_COMPARE_VERSION([$GO_VERSION], [lt], [$GO_VERSION_MIN],
+    [AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])])
 AC_SUBST(GO)
 
 AC_PATH_PROGS([NODEJS],[nodejs node])
@@ -70,9 +70,8 @@ if test x"${NODEJS}" == x"" ; then
     AC_MSG_ERROR([Please install node.js before trying to build spreed-webrtc.])
 fi
 NODEJS_VERSION=`$NODEJS --version | $SED 's/^v//'`
-if test "$NODEJS_VERSION" == "`echo -e "$NODEJS_VERSION\n$NODEJS_VERSION_MIN" | sort -V | head -n1`" ; then
-    AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])
-fi
+AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
+    [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
 AC_SUBST(NODEJS)
 
 AC_PATH_PROGS([SASS],[sass])
@@ -80,9 +79,8 @@ if test x"${SASS}" == x"" ; then
     AC_MSG_ERROR([Please install sass before trying to build spreed-webrtc.])
 fi
 SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
-if test "$SASS_VERSION" == "`echo -e "$SASS_VERSION\n$SASS_VERSION_MIN" | sort -V | head -n1`" ; then
-    AC_MSG_ERROR([Please install sass $SASS_VERSION_MIN or newer before trying to build spreed-webrtc (found sass $SASS_VERSION).])
-fi
+AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
+    [AC_MSG_ERROR([Please install sass $SASS_VERSION_MIN or newer before trying to build spreed-webrtc (found sass $SASS_VERSION).])])
 AC_SUBST(SASS)
 
 AC_PATH_PROGS([COMPASS],[compass])

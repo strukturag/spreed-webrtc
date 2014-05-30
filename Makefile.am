@@ -19,6 +19,7 @@
 #
 
 AUTOMAKE_OPTIONS = -Wno-portability
+ACLOCAL_AMFLAGS = -I m4
 
 PKG := app/spreed-webrtc-server
 EXENAME := spreed-webrtc-server
