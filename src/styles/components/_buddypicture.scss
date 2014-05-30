@@ -27,13 +27,10 @@
   .videoPicture {
     position: relative;
   }
-  video#prim {
-    //nothing
-  }
-  video#sec {
+  .preview {
+    left: 0;
     position: absolute;
     top: 0;
-    left: 0;
     &.previewPicture {
       position: relative;
     }
@@ -45,8 +42,8 @@
   }
   .btn-takePicture,
   .btn-retakePicture {
-    position: absolute;
     left: 85px;
+    position: absolute;
     top: 110px;
   }
   .countdownPicture {

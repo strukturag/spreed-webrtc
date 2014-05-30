@@ -28,9 +28,9 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 			$scope.waitingForPermission = false;
 			$scope.previewPicture = false;
 			$scope.countingDown = false;
-			$scope.videoPrim = null;
-			$scope.videoSec = null;
-			$scope.canvas = null;
+			$scope.video = null;
+			$scope.canvasPic = null;
+			$scope.canvasPrev = null;
 
 			var localStream = null;
 			var delayToTakePicture = 3000;
@@ -54,19 +54,35 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 				}
 			};
 
+			var getCanvasAspectRatio = function() {
+				var videoWidth = $scope.video.videoWidth;
+				var videoHeight = $scope.video.videoHeight;
+				var aspectRatio = videoWidth/videoHeight;
+				if (!aspectRatio) {
+					// NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
+					console.warn("Unable to compute aspectRatio", aspectRatio);
+					aspectRatio = 1.3333333333333333;
+				}
+				return aspectRatio;
+			};
+
+			var writePreviewPic = function() {
+				$scope.canvasPrev.getContext("2d").drawImage($scope.video, 0, 0, $scope.video.width, $scope.video.width/getCanvasAspectRatio());
+				$scope.preview = $scope.canvasPrev.toDataURL("image/jpeg");
+			};
+
 			var makePicture = function(stream, cntFrom, delayTotal) {
 				takePictureCountDown(cntFrom, delayTotal);
-				reattachMediaStream($scope.videoSec, $scope.videoPrim);
 				$timeout(function() {
+					videoStop(stream, $scope.video);
+					writePreviewPic();
 					$scope.previewPicture = true;
-					videoStop(stream, $scope.videoPrim, $scope.videoSec);
 				}, delayTotal);
 			};
 
-			var videoStop = function(stream, video1, video2) {
+			var videoStop = function(stream, video) {
 				if (stream) {
-					video1.pause();
-					video2.pause();
+					video.pause();
 					stream.stop();
 					stream = null;
 				}
@@ -89,7 +105,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 					$scope.showTakePicture = true;
 					localStream = stream;
 					$scope.waitingForPermission = false;
-					attachMediaStream($scope.videoPrim, stream);
+					attachMediaStream($scope.video, stream);
 					safeApply($scope);
 					videoAllowed.resolve(true);
 				}, function(error) {
@@ -108,7 +124,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 			$scope.cancelPicture = function() {
 				$scope.showTakePicture = false;
 				$scope.previewPicture = false;
-				videoStop(localStream, $scope.videoPrim, $scope.videoSec);
+				videoStop(localStream, $scope.video);
 			};
 
 			$scope.retakePicture = function() {
@@ -126,17 +142,9 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 			};
 
 			$scope.setAsProfilePicture = function() {
-				var videoWidth = $scope.videoSec.videoWidth;
-				var videoHeight = $scope.videoSec.videoHeight;
-				var aspectRatio = videoWidth/videoHeight;
-				if (!aspectRatio) {
-					// NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
-					console.warn("Unable to compute aspectRatio", aspectRatio);
-					aspectRatio = 1.3333333333333333;
-				}
-				var x = (46 * aspectRatio - 46) / -2;
-				$scope.canvas.getContext("2d").drawImage($scope.videoSec, x, 0, 46 * aspectRatio, 46);
-				$scope.user.buddyPicture = $scope.canvas.toDataURL("image/jpeg");
+				var x = (46 * getCanvasAspectRatio() - 46) / -2;
+				$scope.canvasPic.getContext("2d").drawImage($scope.video, x, 0, 46 * getCanvasAspectRatio(), 46);
+				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
 				console.info("Image size", $scope.user.buddyPicture.length);
 				$scope.cancelPicture();
 				safeApply($scope);
@@ -145,9 +153,9 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 		}];
 
 		var link = function($scope, $element) {
-			$scope.videoPrim = $element.find("video#prim").get(0);
-			$scope.videoSec = $element.find("video#sec").get(0);
-			$scope.canvas = $element.find("canvas").get(0);
+			$scope.video = $element.find("video").get(0);
+			$scope.canvasPic = $element.find("canvas#pic").get(0);
+			$scope.canvasPrev = $element.find("canvas#prev").get(0);
 		};
 
 		return {
