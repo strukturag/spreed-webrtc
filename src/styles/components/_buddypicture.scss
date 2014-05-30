@@ -27,6 +27,17 @@
   .videoPicture {
     position: relative;
   }
+  video#prim {
+    //nothing
+  }
+  video#sec {
+    position: absolute;
+    top: 0;
+    left: 0;
+    &.previewPicture {
+      position: relative;
+    }
+  }
   .showTakePicture {
     .btn {
       margin: 5px 0px;
