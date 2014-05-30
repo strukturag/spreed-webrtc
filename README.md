@@ -15,18 +15,21 @@ The latest version of Spreed WebRTC can be found on GitHub:
   - [Babel](http://babel.pocoo.org/)
   - [po2json](https://github.com/mikeedwards/po2json)
   - [autoprefixer](https://www.npmjs.org/package/autoprefixer)
-  - make
+  - [autoconf](http://www.gnu.org/software/autoconf/)
+  - [automake](http://www.gnu.org/software/automake/)
 
 
 ## Building
 
   [![Build Status](https://travis-ci.org/strukturag/spreed-webrtc.png?branch=master)](https://travis-ci.org/strukturag/spreed-webrtc)
 
-  Go, Sass and NodeJS need to be in your $PATH.
-
   If you got spreed-webrtc from the git repository, you will first need
   to run the included `autogen.sh` script to generate the `configure`
   script.
+
+  Configure does try to find all the tools on your system at the standard
+  locations. If the dependencies are somewhere else, add the corresponding
+  parameters to the ./configure call.
 
   ```bash
   $ ./configure
