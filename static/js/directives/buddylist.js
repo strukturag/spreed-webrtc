@@ -109,7 +109,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				$scope.setRoomStatus(false);
 				buddylist.onClosed();
 			});
- 			// Request user list whenever the connection comes ready.
+			// Request user list whenever the connection comes ready.
 			mediaStream.connector.ready(function() {
 				mediaStream.api.requestUsers();
 			});

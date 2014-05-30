@@ -352,16 +352,19 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onStatus = function(data) {
 
-			//console.log("onStatus", status);
+			//console.log("onStatus", data);
 			var id = data.Id;
 			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this), data.Userid);
 			// Update session.
-			scope.session.Userid = data.Userid;
-			scope.session.Rev = data.Rev;
+			if (scope.session.Userid !== data.Userid) {
+				scope.session.Userid = data.Userid;
+				console.log("onStatus session is now userid", id, data.Userid);
+			}
 			// Update status.
-			if (scope.status && scope.status.Rev >= data.Rev) {
-				console.warn("Received old status update in status", data.Rev, scope.status.Rev);
-			} else {
+			if (true) {
+				if (data.Rev) {
+					scope.session.Rev = data.Rev;
+				}
 				scope.status = data.Status;
 				this.updateBuddyPicture(scope.status);
 				var displayName = scope.displayName;
@@ -394,9 +397,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			// Add status.
 			buddyCount++;
 			if (data.Status) {
-				if (scope.status && scope.status.Rev >= data.Status.Rev) {
-					console.warn("Received old status update in join", data.Status.Rev, scope.status.Rev);
-				} else {
+				if (true) {
+					if (data.Rev) {
+						scope.session.Rev = data.Rev;
+					}
 					scope.status = data.Status;
 					scope.displayName = scope.status.displayName;
 					this.updateBuddyPicture(scope.status);
