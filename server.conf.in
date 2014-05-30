@@ -44,7 +44,7 @@ listen = 127.0.0.1:8080
 ; space. If you do not have one use a public one like stun.l.google.com:19302.
 ; If you have a TURN server you do not need to set an STUN server as the TURN
 ; server will normally do STUN too.
-;stunURIs = stun.l.google.com:19302
+;stunURIs = stun:stun.l.google.com:19302
 ; TURN server URIs in format host:port?transport=udp|tcp. You can provide
 ; multiple seperated by space. If you do not have at least one TURN server then
 ; some users will not be able to use the server as the peer to peer connection
