@@ -179,7 +179,7 @@ define([
 				});
 			} else {
 				// No need to load english as this is built in.
-				bootstrap();
+				_.defer(bootstrap);
 			}
 
 		});
