@@ -89,6 +89,17 @@ if test x"${COMPASS}" == x"" ; then
 fi
 AC_SUBST(COMPASS)
 
+AC_MSG_CHECKING([for compass support in sass])
+tempfile=`mktemp`
+$SASS --compass $tempfile > /dev/null 2> /dev/null
+sass_compass=$?
+rm $tempfile
+if test x"${sass_compass}" != x"0" ; then
+    AC_MSG_RESULT([not available])
+    AC_MSG_ERROR([Please install compass so it can be used using "sass --compass ...".])
+fi
+AC_MSG_RESULT([ok])
+
 AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
 if test x"${AUTOPREFIXER}" == x"" ; then
     AC_MSG_ERROR([Please install autoprefixer before trying to build spreed-webrtc.])
