@@ -67,9 +67,20 @@ define(['underscore'], function(underscore) {
 				} else if (!createInParent && pushed.hasOwnProperty(id)) {
 					return pushed[id].scope;
 				} else {
+					var scope;
+					if (userid && scopes.hasOwnProperty(userid)) {
+						scope = scopes[userid];
+						if (createInParent) {
+							scopes[id] = scope;
+						}
+						return scope;
+					}
 					if (createInParent) {
 						// If we have a parent we can create a new scope.
-						var scope = scopes[id] = createInParent.$new();
+						scope = scopes[id] = createInParent.$new();
+						if (userid) {
+							scopes[userid] = scope;
+						}
 						scope.buddyIndex = ++count;
 						if (userid) {
 							scope.contact = contactData.get(userid);
@@ -107,12 +118,17 @@ define(['underscore'], function(underscore) {
 				var scope = scopes[id];
 				if (scope) {
 					scope.$destroy();
-					brain[id] = scope;
+					if (!hard) {
+						brain[id] = scope;
+					}
 					delete scopes[id];
 					return scope;
 				} else {
 					return null;
 				}
+			},
+			set: function(id, scope) {
+				scopes[id] = scope;
 			}
 		};
 		return buddyData;

@@ -116,7 +116,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "fastScroll", "mediaStream", function($window, $compile, playSound, buddyData, fastScroll, mediaStream) {
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream) {
 
 		var requestAnimationFrame = $window.requestAnimationFrame;
 
@@ -196,7 +196,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.onBuddyScope = function(scope) {
+		Buddylist.prototype.onBuddyScopeCreated = function(scope) {
 
 			scope.element = null;
 			scope.doDefault = function() {
@@ -214,6 +214,28 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				scope.element = null;
 				scope.killed = true;
 			});
+
+		};
+
+		Buddylist.prototype.onBuddySessionUserid = function(scope, sourceSession) {
+
+			var targetScope = buddyData.get(sourceSession.Userid);
+			if (targetScope === scope) {
+				// No action.
+				return;
+			}
+			// Merge sessions.
+			targetScope.session.merge(sourceSession);
+			// Cleanup old from tree and DOM.
+			var id = sourceSession.Id;
+			this.tree.remove(id);
+			if (scope.element) {
+				this.lefts[id] = scope.element;
+				scope.element = null;
+			}
+			scope.$destroy();
+			buddyData.set(id, targetScope);
+			delete this.actionElements[id];
 
 		};
 
@@ -354,22 +376,21 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			//console.log("onStatus", data);
 			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this), data.Userid);
+			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
+				this.onBuddyScopeCreated(scope);
+				scope.session = buddySession.create(data);
+			}, this), data.Userid);
 			// Update session.
-			if (scope.session.Userid !== data.Userid) {
-				scope.session.Userid = data.Userid;
-				console.log("onStatus session is now userid", id, data.Userid);
-			}
-			// Update status.
-			if (true) {
-				if (data.Rev) {
-					scope.session.Rev = data.Rev;
-				}
-				scope.status = data.Status;
-				this.updateBuddyPicture(scope.status);
+			var sessionData = scope.session.update(id, data, _.bind(function(session) {
+				//console.log("Session is now authenticated", session);
+				this.onBuddySessionUserid(scope, session);
+			}, this));
+			if (sessionData) {
+				// onStatus for main session.
+				scope.status = sessionData.Status;
 				var displayName = scope.displayName;
-				if (scope.status.displayName) {
-					scope.displayName = scope.status.displayName;
+				if (sessionData.Status.displayName) {
+					scope.displayName = sessionData.Status.displayName;
 				} else {
 					scope.displayName = null;
 				}
@@ -377,8 +398,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					var before = this.tree.update(id, scope);
 					this.queue.push(["status", id, before]);
 				}
-				scope.$apply();
+				this.updateBuddyPicture(sessionData.Status);
 			}
+			scope.$apply();
 
 		};
 
@@ -386,31 +408,24 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			//console.log("Joined", data);
 			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this), data.Userid);
-			// Create session.
-			scope.session = {
-				Id: data.Id,
-				Userid: data.Userid,
-				Ua: data.Ua,
-				Rev: 0
-			};
-			// Add status.
+			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
+				this.onBuddyScopeCreated(scope);
+				scope.session = buddySession.create(data); 
+			}, this), data.Userid);
+			// Update session.
 			buddyCount++;
-			if (data.Status) {
-				if (true) {
-					if (data.Rev) {
-						scope.session.Rev = data.Rev;
-					}
-					scope.status = data.Status;
-					scope.displayName = scope.status.displayName;
-					this.updateBuddyPicture(scope.status);
+			var sessionData = scope.session.update(id, data);
+			if (sessionData && sessionData.Status) {
+				scope.status = sessionData.Status;
+				scope.displayName = sessionData.Status.displayName;
+				this.updateBuddyPicture(sessionData.Status);
+				if (!scope.element) {
+					var before = this.tree.add(id, scope);
+					this.queue.push(["joined", id, before]);
+					this.playSoundJoined = true;
 				}
-			}
-			//console.log("Joined scope", scope, scope.element);
-			if (!scope.element) {
-				var before = this.tree.add(id, scope);
-				this.queue.push(["joined", id, before]);
-				this.playSoundJoined = true;
+			} else {
+				scope.$apply();
 			}
 
 		};
@@ -438,9 +453,8 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onLeft = function(data) {
 
-			//console.log("Left", session);
+			//console.log("Left", data);
 			var id = data.Id;
-			this.tree.remove(id);
 			var scope = buddyData.get(id);
 			if (!scope) {
 				//console.warn("Trying to remove buddy with no registered scope", session);
@@ -449,12 +463,21 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (buddyCount > 0) {
 				buddyCount--;
 			}
-			if (scope.element) {
-				this.lefts[id] = scope.element;
-				this.playSoundLeft = true;
+			if (scope.session.remove(id)) {
+				// No session left. Cleanup.
+				this.tree.remove(id);
+				if (scope.element) {
+					this.lefts[id] = scope.element;
+					this.playSoundLeft = true;
+				}
+				buddyData.del(id);
+				if (scope.session.Userid) {
+					buddyData.del(scope.session.Userid);
+				}
+				delete this.actionElements[id];
+			} else {
+				scope.$apply();
 			}
-			buddyData.del(id);
-			delete this.actionElements[id];
 
 		};
 

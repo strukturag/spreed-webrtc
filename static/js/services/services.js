@@ -45,7 +45,8 @@ define([
 	'services/videowaiter',
 	'services/videolayout',
 	'services/contactdata',
-	'services/contacts'], function(_,
+	'services/contacts',
+	'services/buddysession'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -70,7 +71,8 @@ fastScroll,
 videoWaiter,
 videoLayout,
 contactData,
-contacts) {
+contacts,
+buddySession) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -97,7 +99,8 @@ contacts) {
 		videoWaiter: videoWaiter,
 		videoLayout: videoLayout,
 		contactData: contactData,
-		contacts: contacts
+		contacts: contacts,
+		buddySession: buddySession
 	};
 
 	var initialize = function(angModule) {
