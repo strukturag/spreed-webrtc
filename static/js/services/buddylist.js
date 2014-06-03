@@ -219,7 +219,18 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onBuddySessionUserid = function(scope, sourceSession) {
 
-			var targetScope = buddyData.get(sourceSession.Userid);
+			var userid = sourceSession.Userid;
+			/*
+			if (userid === scope.userid) {
+				// The source session has our own userid, ignore it.
+
+			}*/
+			var targetScope = buddyData.get(userid);
+			if (!targetScope) {
+				// No scope for this userid yet - set us.
+				buddyData.set(userid, scope);
+				return;
+			}
 			if (targetScope === scope) {
 				// No action.
 				return;
@@ -410,7 +421,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			var id = data.Id;
 			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
 				this.onBuddyScopeCreated(scope);
-				scope.session = buddySession.create(data); 
+				scope.session = buddySession.create(data);
 			}, this), data.Userid);
 			// Update session.
 			buddyCount++;
