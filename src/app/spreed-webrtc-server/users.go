@@ -75,6 +75,9 @@ func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest, request *
 
 	// Parse UseridCombo.
 	useridCombo := strings.SplitN(snr.UseridCombo, ":", 2)
+	if len(useridCombo) != 2 {
+		return "", errors.New("invalid useridcombo")
+	}
 	expirationString, userid := useridCombo[0], useridCombo[1]
 
 	expiration, err := strconv.ParseInt(expirationString, 10, 64)
