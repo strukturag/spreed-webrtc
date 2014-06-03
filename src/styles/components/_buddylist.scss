@@ -113,7 +113,7 @@
   cursor: pointer;
   display: block;
   font-size: 13px;
-  height: 66px;
+  min-height: 66px;
   overflow: hidden;
   position: relative;
   text-align: left;
@@ -164,6 +164,16 @@
       top: 0;
     }
   }
+  .buddyPictureSmall {
+    margin:0px;
+    margin-left:-4px;
+    height:30px;
+    width:30px;
+    margin-right:4px;
+    .#{$fa-css-prefix} {
+      line-height: 30px;
+    }
+  }
   .buddy1 {
     color: $componentfg1;
     font-weight: bold;
@@ -187,11 +197,19 @@
     white-space: nowrap;
     display: none;
   }
+  .buddy3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width:160px;
+    text-align:left;
+  }
 }
 
 .buddy .buddyactions {
   background: $buddylist-action-background;
-  bottom: 0px;
+  height: 66px;
   line-height: 66px;
   position: absolute;
   right: -125px;
@@ -205,4 +223,28 @@
   .#{$fa-css-prefix} {
     font-size: 2em;
   }
+}
+
+.buddy .buddysessions {
+  margin-top: 56px;
+  display:none;
+  ul {
+    padding-top: 10px;
+    margin-left: 20px;
+    padding-left: 0px;
+    border-left: 1px dotted $bordercolor;
+  }
+  ul li {
+    margin-bottom: 1px;
+    margin-top: 1px;
+    margin-left: -4px;
+    list-style-type: none;
+  }
+  .currentsession .buddy3 {
+    font-weight: bold;
+  }
+}
+
+.buddy.hovered .buddysessions {
+  display: block;
 }
