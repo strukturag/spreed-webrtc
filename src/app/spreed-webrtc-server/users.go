@@ -284,6 +284,7 @@ func (un *UserNonce) Response() (int, interface{}, http.Header) {
 		header.Set("Content-Type", un.contentType)
 		return 200, un.raw, header
 	} else {
+		header.Set("Content-Type", "application/json")
 		return 200, un, header
 	}
 }
