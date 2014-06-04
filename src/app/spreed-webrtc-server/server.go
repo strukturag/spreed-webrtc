@@ -110,7 +110,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 			s.Users(c)
 		}
 	case "Authentication":
-		if s.Authenticate(c, msg.Authentication.Authentication) {
+		if msg.Authentication.Authentication != nil && s.Authenticate(c, msg.Authentication.Authentication) {
 			s.OnRegister(c)
 			if c.Hello {
 				s.Broadcast(c, c.Session.DataSessionStatus())
