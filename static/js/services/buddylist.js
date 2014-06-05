@@ -471,26 +471,6 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.onContactAdded = function(contact) {
-
-			console.log("onContactAdded", contact);
-			var userid = contact.Userid;
-			// TODO(longsleep): Traversing the whole tree is stupid. Implement key/value map for this.
-			this.tree.traverse(function(record) {
-				var scope = buddyData.lookup(record.id, true);
-				var sessionUserid = scope.session.Userid;
-				if (sessionUserid === userid) {
-					scope.contact = contact;
-				}
-			});
-
-		};
-
-		Buddylist.prototype.onContactRemoved = function(data) {
-
-			console.log("onContactRemoved", data);
-
-		};
 
 		Buddylist.prototype.onLeft = function(data) {
 
@@ -504,10 +484,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (buddyCount > 0) {
 				buddyCount--;
 			}
+			// Remove current id from tree.
+			this.tree.remove(id);
+			// Remove session.
 			var session = scope.session;
 			if (session.remove(id)) {
 				// No session left. Cleanup.
-				this.tree.remove(id);
 				if (scope.element) {
 					this.lefts[id] = scope.element;
 					this.playSoundLeft = true;
@@ -520,7 +502,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			} else {
 				// Update display stuff if session left.
 				var sessionData = session.get();
-				this.setDisplay(id, scope, sessionData, "status");
+				this.updateDisplay(sessionData.Id, scope, sessionData, "status");
 				scope.$apply();
 			}
 
@@ -535,6 +517,24 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			this.tree.clear();
 			this.actionElements = {};
 			this.queue = [];
+
+		};
+
+		Buddylist.prototype.onContactAdded = function(contact) {
+
+			console.log("onContactAdded", contact);
+			var userid = contact.Userid;
+
+			var scope = buddyData.get(userid);
+			if (scope) {
+				scope.contact = contact;
+			}
+
+		};
+
+		Buddylist.prototype.onContactRemoved = function(data) {
+
+			console.log("onContactRemoved", data);
 
 		};
 
