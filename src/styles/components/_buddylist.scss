@@ -227,7 +227,10 @@
 
 .buddy .buddysessions {
   margin-top: 56px;
-  display:none;
+  max-height:0px;
+  transition-property: max-height;
+  transition-duration: 1s;
+  transition-delay: .1s;
   ul {
     padding-top: 10px;
     margin-left: 20px;
@@ -246,5 +249,5 @@
 }
 
 .buddy.hovered .buddysessions {
-  display: block;
+  max-height:999px;
 }
