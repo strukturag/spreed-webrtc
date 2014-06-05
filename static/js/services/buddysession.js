@@ -97,8 +97,9 @@ define(["underscore"], function(_) {
 				}
 			}
 			if (data.Rev) {
-				sessionData.Rev = data.Rev; 
+				sessionData.Rev = data.Rev;
 			}
+
 			if (data.Status) {
 				sessionData.Status = data.Status;
 			}

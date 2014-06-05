@@ -31,7 +31,8 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	BuddyTree.prototype.create = function(id, scope) {
 
-		var sort = scope.displayName ? scope.displayName : "session " + scope.buddyIndexSortable + " " + id;
+		var display = scope.display || {};
+		var sort = display.displayName ? display.displayName : "session " + scope.buddyIndexSortable + " " + id;
 		var data = {
 			id: id,
 			sort: sort + "z" + id
@@ -196,9 +197,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.onBuddyScopeCreated = function(scope) {
+		Buddylist.prototype.onBuddyScopeCreated = function(scope, data) {
 
 			scope.element = null;
+			scope.display = {};
+			scope.session = buddySession.create(data);
+
 			scope.doDefault = function() {
 				var id = scope.session.Id;
 				if (scope.status.isMixer) {
@@ -383,13 +387,58 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
+		Buddylist.prototype.setDisplay = function(id, scope, data, queueName) {
+
+			var status = data.Status;
+			var display = scope.display;
+			// Set display.name.
+			display.displayName = status.displayName;
+			// Set display.picture.
+			display.buddyPicture = status.buddyPicture;
+			this.updateBuddyPicture(display);
+			// Set display subline.
+			display.subLine = data.Ua;
+			// Add to render queue when no element exists.
+			if (!scope.element) {
+				var before = this.tree.add(id, scope);
+				this.queue.push([queueName, id, before]);
+				this.playSoundJoined = true;
+			}
+
+		};
+
+		Buddylist.prototype.updateDisplay = function(id, scope, data, queueName) {
+
+			var status = data.Status;
+			var display = scope.display;
+			// Update display name.
+			var displayName = display.displayName;
+			if (status.displayName) {
+				display.displayName = status.displayName;
+			} else {
+				display.displayName = null;
+			}
+			// Add to status queue if sorting has changed.
+			if (displayName !== status.displayName) {
+				var before = this.tree.update(id, scope);
+				this.queue.push([queueName, id, before]);
+			}
+			// Update display subline.
+			if (data.Ua) {
+				display.subLine = data.Ua;
+			}
+			// Update display picture.
+			display.buddyPicture = status.buddyPicture || null;
+			this.updateBuddyPicture(display);
+
+		};
+
 		Buddylist.prototype.onStatus = function(data) {
 
 			//console.log("onStatus", data);
 			var id = data.Id;
 			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
-				this.onBuddyScopeCreated(scope);
-				scope.session = buddySession.create(data);
+				this.onBuddyScopeCreated(scope, data);
 			}, this), data.Userid);
 			// Update session.
 			var sessionData = scope.session.update(id, data, _.bind(function(session) {
@@ -398,18 +447,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}, this));
 			if (sessionData) {
 				// onStatus for main session.
-				scope.status = sessionData.Status;
-				var displayName = scope.displayName;
-				if (sessionData.Status.displayName) {
-					scope.displayName = sessionData.Status.displayName;
-				} else {
-					scope.displayName = null;
-				}
-				if (displayName !== scope.displayName) {
-					var before = this.tree.update(id, scope);
-					this.queue.push(["status", id, before]);
-				}
-				this.updateBuddyPicture(sessionData.Status);
+				this.updateDisplay(id, scope, sessionData, "status");
 			}
 			scope.$apply();
 
@@ -420,21 +458,13 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			//console.log("Joined", data);
 			var id = data.Id;
 			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
-				this.onBuddyScopeCreated(scope);
-				scope.session = buddySession.create(data);
+				this.onBuddyScopeCreated(scope, data);
 			}, this), data.Userid);
 			// Update session.
 			buddyCount++;
 			var sessionData = scope.session.update(id, data);
 			if (sessionData && sessionData.Status) {
-				scope.status = sessionData.Status;
-				scope.displayName = sessionData.Status.displayName;
-				this.updateBuddyPicture(sessionData.Status);
-				if (!scope.element) {
-					var before = this.tree.add(id, scope);
-					this.queue.push(["joined", id, before]);
-					this.playSoundJoined = true;
-				}
+				this.setDisplay(id, scope, sessionData, "joined");
 			} else {
 				scope.$apply();
 			}
@@ -474,7 +504,8 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (buddyCount > 0) {
 				buddyCount--;
 			}
-			if (scope.session.remove(id)) {
+			var session = scope.session;
+			if (session.remove(id)) {
 				// No session left. Cleanup.
 				this.tree.remove(id);
 				if (scope.element) {
@@ -482,11 +513,14 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					this.playSoundLeft = true;
 				}
 				buddyData.del(id);
-				if (scope.session.Userid) {
-					buddyData.del(scope.session.Userid);
+				if (session.Userid) {
+					buddyData.del(session.Userid);
 				}
 				delete this.actionElements[id];
 			} else {
+				// Update display stuff if session left.
+				var sessionData = session.get();
+				this.setDisplay(id, scope, sessionData, "status");
 				scope.$apply();
 			}
 

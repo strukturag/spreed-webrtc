@@ -79,18 +79,18 @@ define(["underscore"], function(_) {
 
 			var scope = buddyData.lookup(id);
 			if (scope) {
-				var status = scope.status;
-				if (status) {
-					if (status.buddyPictureLocalUrl) {
-						return status.buddyPictureLocalUrl;
-					} else if (status.buddyPicture) {
+				var display = scope.display;
+				if (display) {
+					if (display.buddyPictureLocalUrl) {
+						return display.buddyPictureLocalUrl;
+					} else if (display.buddyPicture) {
 						var url = urls[id];
 						if (url) {
 							revokeURL(id, url);
 						}
 						// New data -> new url.
-						var blob = dataURLToBlob(status.buddyPicture);
-						url = status.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
+						var blob = dataURLToBlob(display.buddyPicture);
+						url = display.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
 						return url;
 					}
 				}

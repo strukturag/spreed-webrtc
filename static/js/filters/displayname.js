@@ -35,8 +35,8 @@ define([], function() {
 			}
 			var scope = buddyData.lookup(id);
 			if (scope) {
-				if (scope.displayName) {
-					return scope.displayName;
+				if (scope.display.displayName) {
+					return scope.display.displayName;
 				}
 				return user_text + " " + scope.buddyIndex;
 			} else {
