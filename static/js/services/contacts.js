@@ -128,12 +128,12 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 			console.log("Load contacts from storage", database);
 			database.all(_.bind(function(data) {
 				var contact = contactData.addByData(data.contact);
+				// TODO(longsleep): Convert buddyImage string to Blob.
 				this.e.triggerHandler("contactadded", contact);
 			}, this));
 		};
 
 		Contacts.prototype.add = function(request, status) {
-
 			var contact = contactData.addByRequest(request, status);
 			this.e.triggerHandler("contactadded", contact);
 			if (database) {
@@ -142,11 +142,9 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 					contact: contact
 				})
 			}
-
 		};
 
 		Contacts.prototype.remove = function(userid) {
-
 			var contact = contactData.get(userid);
 			console.log("contacts remove", userid, contact);
 			if (contact) {
@@ -156,7 +154,6 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 				}
 				this.e.triggerHandler("contactremoved", contact);
 			}
-
 		};
 
 		return new Contacts();

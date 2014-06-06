@@ -415,6 +415,42 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
+		Buddylist.prototype.dumpBuddyPictureToBlob = function(scope, data) {
+
+			if (!data) {
+				data = this.dumpBuddyPictureToString(scope);
+				if (!data) {
+					return null;
+				}
+			}
+			// NOTE(longsleep): toBlob is not widely supported narf ..
+			// see: https://code.google.com/p/chromium/issues/detail?id=67587
+			var parts = data.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+			var binStr = atob(parts[3]);
+			var buf = new ArrayBuffer(binStr.length);
+			var view = new Uint8Array(buf);
+			for (var i = 0; i < view.length; i++) {
+				view[i] = binStr.charCodeAt(i);
+			}
+			return new Blob([view], {'type': parts[1]});
+
+		};
+
+		Buddylist.prototype.dumpBuddyPictureToString = function(scope) {
+
+			var img = scope.element.find(".buddyPicture img").get(0);
+			if (img) {
+				var canvas = $window.document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(img, 0, 0);
+				return canvas.toDataURL("image/jpeg");
+			}
+			return null;
+
+		};
+
 		Buddylist.prototype.setDisplay = function(id, scope, data, queueName) {
 
 			var status = data.Status;
@@ -586,7 +622,15 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				if (sessionData) {
 					if (contact.Status === null && sessionData.Status) {
 						// Update contact status with session.Status
-						contact.Status = _.extend({}, sessionData.Status);
+						var status = contact.Status = _.extend({}, sessionData.Status);
+						if (status.buddyPicture) {
+							var img = this.dumpBuddyPictureToString(scope);
+							if (img) {
+								status.buddyPicture = img;
+							} else {
+								delete status.buddyPicture;
+							}
+						}
 						console.log("Injected status into contact", contact);
 					}
 					this.updateDisplay(sessionData.Id, scope, contact, "status");
