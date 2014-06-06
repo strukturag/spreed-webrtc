@@ -23,12 +23,27 @@ define(["underscore"], function(_) {
 	// buddySession
 	return [function() {
 
+		var sessions = {};
+		var serials = 0;
+
 		var BuddySession = function(data) {
+			this.serial = serials++;
 			this.sessions = {};
 			this.count = 0;
+			//console.log("creating session", this.serial, this);
+			var id = data.Id;
 			if (data.Id) {
-				this.add(data.Id, data);
-				this.Userid = data.Userid || null;
+				var userid = data.Userid || null;
+				if (id === userid) {
+					// Add as default with userid.
+					this.use(userid, data);
+				} else {
+					// Add as session.
+					var sessionData = this.add(id, data);
+					if (userid) {
+						this.auth(userid, sessionData);
+					}
+				}
 			} else {
 				this.set({});
 			}
@@ -40,12 +55,14 @@ define(["underscore"], function(_) {
 				this.use(id, data);
 			}
 			this.count++;
+			sessions[id] = this;
 			return data;
 		};
 
 		BuddySession.prototype.rm = function(id) {
 			delete this.sessions[id];
 			this.count--;
+			delete sessions[id];
 		};
 
 		BuddySession.prototype.get = function(id) {
@@ -61,7 +78,7 @@ define(["underscore"], function(_) {
 			} else {
 				this.Id = null;
 			}
-			console.log("Use session as default", id, data);
+			console.log("Use session as default", id, data, this);
 		};
 
 		BuddySession.prototype.remove = function(id, onEmptyCallback) {
@@ -95,18 +112,16 @@ define(["underscore"], function(_) {
 
 		BuddySession.prototype.update = function(id, data, onUseridCallback) {
 
-			var sessionData = this.sessions[id];
+			var sessionData = this.get(id);
 			if (!sessionData) {
 				sessionData = this.add(id, data);
 			}
 
-			if (data.Userid && !this.Userid) {
-				this.Userid = data.Userid;
-				console.log("Session now has a user id", this.Id, data.Userid);
-				if (onUseridCallback) {
-					onUseridCallback(this);
-				}
+			var userid = data.Userid;
+			if (userid) {
+				this.auth(userid, sessionData, onUseridCallback);
 			}
+
 			if (data.Rev) {
 				sessionData.Rev = data.Rev;
 			}
@@ -119,6 +134,20 @@ define(["underscore"], function(_) {
 				return sessionData;
 			} else {
 				return null;
+			}
+
+		};
+
+		BuddySession.prototype.auth = function(userid, sessionData, onUseridCallback) {
+
+			if (!this.Userid) {
+				this.Userid = userid;
+				console.log("Session now has a user id", this.Id, userid);
+			}
+			// Trigger callback if defined and not triggered before.
+			if (onUseridCallback && !sessionData.auth) {
+				onUseridCallback(this);
+				sessionData.auth = true;
 			}
 
 		};
@@ -144,6 +173,9 @@ define(["underscore"], function(_) {
 		return {
 			create: function(data) {
 				return new BuddySession(data);
+			},
+			sessions: function() {
+				return sessions;
 			}
 		};
 

@@ -109,6 +109,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	};
 
+	BuddyTree.prototype.keys = function() {
+
+		return _.keys(this.data);
+
+	};
+
 	BuddyTree.prototype.clear = function() {
 
 		this.tree.clear();
@@ -202,7 +208,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			scope.element = null;
 			scope.contact = null;
 			scope.display = {};
-			scope.session = buddySession.create(data);
+			var session = scope.session = buddySession.create(data);
 
 			scope.doDefault = function() {
 				var id = scope.session.Id;
@@ -221,13 +227,18 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				}
 			};
 			scope.$on("$destroy", function() {
+				//console.log("destroyed");
 				scope.element = null;
 				scope.killed = true;
 			});
 
+			//console.log("on buddy scope", session.Userid, session);
+
 		};
 
 		Buddylist.prototype.onBuddySessionUserid = function(scope, sourceSession) {
+
+			//console.log("session with userid", sourceSession);
 
 			var userid = sourceSession.Userid;
 			/*
@@ -239,24 +250,29 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (!targetScope) {
 				// No scope for this userid yet - set us.
 				buddyData.set(userid, scope);
+				//console.log("set scope with userid", sourceSession);
 				return;
 			}
-			if (targetScope === scope) {
+			var session = targetScope.session;
+			if (sourceSession === session) {
 				// No action.
+				//console.log("source session same as target");
 				return;
 			}
 			// Merge sessions.
-			targetScope.session.merge(sourceSession);
+			session.merge(sourceSession);
 			// Cleanup old from tree and DOM.
 			var id = sourceSession.Id;
 			this.tree.remove(id);
-			if (scope.element) {
-				this.lefts[id] = scope.element;
-				scope.element = null;
+			if (targetScope !== scope) {
+				if (scope.element) {
+					this.lefts[id] = scope.element;
+					//console.log("destroying", id, scope.element);
+					scope.$destroy();
+				}
+				buddyData.set(id, targetScope);
+				delete this.actionElements[id];
 			}
-			scope.$destroy();
-			buddyData.set(id, targetScope);
-			delete this.actionElements[id];
 
 		};
 
@@ -456,10 +472,11 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.updateDisplay(id, scope, sessionData, "status");
 			}
 			scope.$apply();
+			return scope;
 
 		};
 
-		Buddylist.prototype.onJoined = function(data) {
+		Buddylist.prototype.onJoined = function(data, noApply) {
 
 			//console.log("Joined", data);
 			var id = data.Id;
@@ -468,17 +485,21 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}, this), data.Userid);
 			// Update session.
 			buddyCount++;
-			var sessionData = scope.session.update(id, data);
+			var sessionData = scope.session.update(id, data, _.bind(function(session) {
+				//console.log("Session is now authenticated", session);
+				this.onBuddySessionUserid(scope, session);
+			}, this));
 			if (sessionData && sessionData.Status) {
 				this.setDisplay(id, scope, sessionData, "joined");
-			} else {
+			} else if (!noApply) {
 				scope.$apply();
 			}
+			return scope;
 
 		};
 
 
-		Buddylist.prototype.onLeft = function(data, force) {
+		Buddylist.prototype.onLeft = function(data, force, noApply) {
 
 			//console.log("Left", data);
 			var id = data.Id;
@@ -492,6 +513,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}
 			// Remove current id from tree.
 			this.tree.remove(id);
+			buddyData.del(id);
 			// Remove session.
 			var session = scope.session;
 			if ((session.remove(id) && scope.contact === null) || force) {
@@ -500,32 +522,58 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					this.lefts[id] = scope.element;
 					this.playSoundLeft = true;
 				}
-				buddyData.del(id);
 				if (session.Userid) {
-					buddyData.del(session.Userid);
+					buddyData.del(session.Userid, true);
 				}
 				delete this.actionElements[id];
+				scope.$destroy();
 			} else {
-				// Update display stuff if session left. This can
+				// Update display stuff if a session is left. This can
 				// return no session in case when we got this as contact.
 				var sessionData = session.get();
 				if (sessionData) {
 					this.updateDisplay(sessionData.Id, scope, sessionData, "status");
+				} else if (scope.contact) {
+					// Use it with userid as id in tree.
+					this.tree.add(session.Userid, scope);
 				}
-				scope.$apply();
+				if (!noApply) {
+					scope.$apply();
+				}
 			}
+			return scope;
 
 		};
 
 		Buddylist.prototype.onClosed = function() {
 
-			//console.log("Closed");
+			console.log("Closed");
+
+			this.queue = [];
+
+			var data = {};
+			var sessions = buddySession.sessions();
+			for (var id in sessions) {
+				if (sessions.hasOwnProperty(id)) {
+					console.log("close id", id);
+					data.Id = id;
+					this.onLeft(data, false, true);
+				}
+			}
+
+			console.log("buddyCount after close", buddyCount, this.tree.keys());
+
+			/*
 			this.$element.empty();
 			buddyCount = 0;
 			buddyData.clear();
 			this.tree.clear();
 			this.actionElements = {};
 			this.queue = [];
+			*/
+
+
+
 
 		};
 
@@ -595,6 +643,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					buddy.addClass("hovered");
 				} else {
 					var scope = buddyData.get(id);
+					if (!scope) {
+						console.warn("No scope for buddy", id);
+						return;
+					}
 					var template = buddyActions;
 					//if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
 					//	template = buddyActionsForAudioMixer;

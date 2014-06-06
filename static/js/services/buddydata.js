@@ -63,6 +63,7 @@ define(['underscore'], function(underscore) {
 			},
 			get: function(id, createInParent, afterCreateCallback, userid) {
 				if (scopes.hasOwnProperty(id)) {
+					//console.log("found id scope", id);
 					return scopes[id];
 				} else if (!createInParent && pushed.hasOwnProperty(id)) {
 					return pushed[id].scope;
@@ -73,9 +74,11 @@ define(['underscore'], function(underscore) {
 						if (createInParent) {
 							scopes[id] = scope;
 						}
+						//console.log("found userid scope", userid);
 						return scope;
 					}
 					if (createInParent) {
+						//console.log("creating scope", id, userid);
 						// If we have a parent we can create a new scope.
 						scope = scopes[id] = createInParent.$new();
 						if (userid) {
@@ -117,7 +120,6 @@ define(['underscore'], function(underscore) {
 			del: function(id, hard) {
 				var scope = scopes[id];
 				if (scope) {
-					scope.$destroy();
 					if (!hard) {
 						brain[id] = scope;
 					}
