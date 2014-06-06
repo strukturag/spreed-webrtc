@@ -4,5 +4,6 @@
 	"curly": true,
 	"forin": true,
 	"trailing": true,
-	"asi": true
+	"asi": true,
+	"es5": true
 }

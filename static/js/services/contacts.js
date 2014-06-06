@@ -86,7 +86,7 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 		var cursorRequest = store.openCursor(keyRange);
 		cursorRequest.onsuccess = function(event) {
 			var result = event.target.result;
-			if (!!result === false) {
+			if (!result) {
 				return;
 			}
 			//console.log("read data idb", result, event);
