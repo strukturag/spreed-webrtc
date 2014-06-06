@@ -28,7 +28,6 @@ define(["underscore"], function(_) {
 			this.count = 0;
 			if (data.Id) {
 				this.add(data.Id, data);
-				this.use(data);
 				this.Userid = data.Userid || null;
 			} else {
 				this.set({});
@@ -37,6 +36,9 @@ define(["underscore"], function(_) {
 
 		BuddySession.prototype.add = function(id, data) {
 			this.sessions[id] = data;
+			if (this.count === 0) {
+				this.use(id, data);
+			}
 			this.count++;
 			return data;
 		};
@@ -53,9 +55,13 @@ define(["underscore"], function(_) {
 			return this.sessions[id];
 		};
 
-		BuddySession.prototype.use = function(data) {
-			this.Id = data.Id || null;
-			this.Ua = data.Ua || "";
+		BuddySession.prototype.use = function(id, data) {
+			if (id) {
+				this.Id = id;
+			} else {
+				this.Id = null;
+			}
+			console.log("Use session as default", id, data);
 		};
 
 		BuddySession.prototype.remove = function(id, onEmptyCallback) {
@@ -71,10 +77,15 @@ define(["underscore"], function(_) {
 					}
 				}
 				if (sessionData) {
-					//console.log("remove session", sessionData);
-					this.use(sessionData);
+					this.use(sessionData.Id, sessionData);
 				} else {
 					console.log("Last session removed", sessions);
+					if (this.Userid) {
+						console.log("Using userid as session id");
+						this.use(this.Userid);
+					} else {
+						this.use(null);
+					}
 					return true;
 				}
 			}

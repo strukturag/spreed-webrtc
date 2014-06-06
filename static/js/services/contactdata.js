@@ -44,7 +44,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 					Id: "contact-"+id,
 					Userid: userid,
 					Token: token,
-					Status: $.extend({}, status)
+					Status: null
 				}
 				// TODO(longsleep): Trigger this to somewhere.
 				return contact;
@@ -55,6 +55,9 @@ define(['underscore', 'jquery'], function(underscore, $) {
 					return contacts[id];
 				}
 				return null;
+			},
+			remove: function(userid) {
+				delete users[userid];
 			},
 			getById: function(id) {
 				if (id.indexOf("contact-") === 0) {

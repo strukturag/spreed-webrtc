@@ -34,6 +34,17 @@ define(['underscore', 'jquery'], function(underscore, $) {
 
 		};
 
+		Contacts.prototype.remove = function(userid) {
+
+			var contact = contactData.get(userid);
+			//console.log("contacts remove", userid, contact);
+			if (contact) {
+				contactData.remove(userid);
+				this.e.triggerHandler("contactremoved", contact);
+			}
+
+		};
+
 		return new Contacts();
 
 	}];

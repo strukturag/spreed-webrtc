@@ -200,19 +200,25 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 		Buddylist.prototype.onBuddyScopeCreated = function(scope, data) {
 
 			scope.element = null;
+			scope.contact = null;
 			scope.display = {};
 			scope.session = buddySession.create(data);
 
 			scope.doDefault = function() {
 				var id = scope.session.Id;
-				if (scope.status.isMixer) {
-					return scope.doAudioConference(id);
-				}
+				//if (scope.status.isMixer) {
+				//	return scope.doAudioConference(id);
+				//}
 				return scope.doCall(id);
 			};
 			scope.doDefaultContact = function() {
-				var id = scope.session.Id;
-				return scope.doContact(id);
+				var contact = scope.contact;
+				if (contact) {
+					return scope.doContactRemove(contact.Userid);
+				} else {
+					var id = scope.session.Id;
+					return scope.doContactRequest(id);
+				}
 			};
 			scope.$on("$destroy", function() {
 				scope.element = null;
@@ -472,7 +478,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 		};
 
 
-		Buddylist.prototype.onLeft = function(data) {
+		Buddylist.prototype.onLeft = function(data, force) {
 
 			//console.log("Left", data);
 			var id = data.Id;
@@ -488,7 +494,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			this.tree.remove(id);
 			// Remove session.
 			var session = scope.session;
-			if (session.remove(id)) {
+			if ((session.remove(id) && scope.contact === null) || force) {
 				// No session left. Cleanup.
 				if (scope.element) {
 					this.lefts[id] = scope.element;
@@ -500,9 +506,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				}
 				delete this.actionElements[id];
 			} else {
-				// Update display stuff if session left.
+				// Update display stuff if session left. This can
+				// return no session in case when we got this as contact.
 				var sessionData = session.get();
-				this.updateDisplay(sessionData.Id, scope, sessionData, "status");
+				if (sessionData) {
+					this.updateDisplay(sessionData.Id, scope, sessionData, "status");
+				}
 				scope.$apply();
 			}
 
@@ -528,13 +537,37 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			var scope = buddyData.get(userid);
 			if (scope) {
 				scope.contact = contact;
+				var sessionData = scope.session.get();
+				if (sessionData) {
+					if (contact.Status === null && sessionData.Status) {
+						// Update contact status with session.Status
+						contact.Status = _.extend({}, sessionData.Status);
+						console.log("Injected status into contact", contact);
+					}
+					this.updateDisplay(sessionData.Id, scope, contact, "status");
+				}
+			} else {
+				// TODO(longsleep): Implement rendering of contacts without scope.
+				console.log("No scope for contact", userid);
 			}
 
 		};
 
-		Buddylist.prototype.onContactRemoved = function(data) {
+		Buddylist.prototype.onContactRemoved = function(contact) {
 
-			console.log("onContactRemoved", data);
+			console.log("onContactRemoved", contact);
+			var userid = contact.Userid;
+
+			var scope = buddyData.get(userid);
+			if (scope) {
+				scope.contact = null;
+				// Remove with left when no session for this userid.
+				var sessionData = scope.session.get();
+				if (!sessionData) {
+					// Force left.
+					this.onLeft({Id: userid}, true);
+				}
+			}
 
 		};
 
@@ -563,9 +596,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				} else {
 					var scope = buddyData.get(id);
 					var template = buddyActions;
-					if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
-						template = buddyActionsForAudioMixer;
-					}
+					//if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
+					//	template = buddyActionsForAudioMixer;
+					//}
 					//console.log("scope", scope, id);
 					template(scope, _.bind(function(clonedElement, $scope) {
 						actionElements[id] = clonedElement;

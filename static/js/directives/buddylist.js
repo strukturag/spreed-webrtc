@@ -46,12 +46,18 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
-			$scope.doContact = function(id) {
+			$scope.doContactRequest = function(id) {
 
 				//console.log("doContact", id);
 				$scope.$emit("requestcontact", id, {
 					restore: true
 				});
+
+			};
+
+			$scope.doContactRemove = function(userid) {
+
+				contacts.remove(userid);
 
 			};
 
@@ -85,6 +91,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			var onLeft = _.bind(buddylist.onLeft, buddylist);
 			var onStatus = _.bind(buddylist.onStatus, buddylist);
 			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
+			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);
@@ -116,6 +123,9 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			// Contacts.
 			contacts.e.on("contactadded", function(event, data) {
 				onContactAdded(data);
+			});
+			contacts.e.on("contactremoved", function(event, data) {
+				onContactRemoved(data);
 			});
 
 		}];
