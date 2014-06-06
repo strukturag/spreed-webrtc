@@ -126,10 +126,10 @@
 }
 
 .buddy {
-  &.withSubline .buddy1 {
+  &.withSubline .buddy1, &.contact .buddy1 {
     top: 15px;
   }
-  &.withSubline .buddy2 {
+  &.withSubline .buddy2, &.contact .buddy2 {
     display: block;
   }
   &.hovered .buddyactions {

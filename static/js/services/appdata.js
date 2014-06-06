@@ -18,13 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([], function() {
+define(["jquery"], function($) {
+
+	// appData.e events
+	// - authenticationChanged(userid)
 
 	// appData
 	return [function() {
 
 		var data = {
-			data: null
+			data: null,
+			e: $({})
 		}
 		var appData = {
 			get: function() {
@@ -33,7 +37,8 @@ define([], function() {
 			set: function(d) {
 				data.data = d;
 				return d;
-			}
+			},
+			e: data.e
 		}
 		return appData;
 

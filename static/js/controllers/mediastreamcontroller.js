@@ -624,6 +624,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			if (userid) {
 				console.info("Session is now authenticated:", userid);
 			}
+			appData.e.triggerHandler("authenticationChanged", [userid]);
 		});
 
 		// Apply all layout stuff as classes to our element.

@@ -67,6 +67,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	};
 
+	BuddyTree.prototype.check = function(id) {
+
+		return this.data.hasOwnProperty(id);
+
+	};
+
 	/**
 	 * Returns undefined when no change required. Position result otherwise.
 	 */
@@ -535,7 +541,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					this.updateDisplay(sessionData.Id, scope, sessionData, "status");
 				} else if (scope.contact) {
 					// Use it with userid as id in tree.
-					this.tree.add(session.Userid, scope);
+					if (!this.tree.check(session.Userid)) {
+						this.tree.add(session.Userid, scope);
+						buddyCount++;
+					}
 				}
 				if (!noApply) {
 					scope.$apply();
@@ -567,7 +576,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onContactAdded = function(contact) {
 
-			console.log("onContactAdded", contact);
+			//console.log("onContactAdded", contact);
 			var userid = contact.Userid;
 
 			var scope = buddyData.get(userid);
@@ -581,17 +590,23 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 						console.log("Injected status into contact", contact);
 					}
 					this.updateDisplay(sessionData.Id, scope, contact, "status");
+					scope.$apply();
 				}
 			} else {
-				// TODO(longsleep): Implement rendering of contacts without scope.
-				console.log("No scope for contact", userid);
+				// Create new scope for contact.
+				scope = this.onJoined({
+					Id: contact.Userid,
+					Userid: contact.Userid,
+					Status: contact.Status
+				});
+				scope.contact = contact;
 			}
 
 		};
 
 		Buddylist.prototype.onContactRemoved = function(contact) {
 
-			console.log("onContactRemoved", contact);
+			//console.log("onContactRemoved", contact);
 			var userid = contact.Userid;
 
 			var scope = buddyData.get(userid);

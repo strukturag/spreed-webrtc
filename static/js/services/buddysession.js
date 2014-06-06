@@ -30,7 +30,7 @@ define(["underscore"], function(_) {
 			this.serial = serials++;
 			this.sessions = {};
 			this.count = 0;
-			//console.log("creating session", this.serial, this);
+			//console.log("creating session", this.serial, data.Id, data.Userid, this);
 			var id = data.Id;
 			if (data.Id) {
 				var userid = data.Userid || null;
@@ -78,7 +78,7 @@ define(["underscore"], function(_) {
 			} else {
 				this.Id = null;
 			}
-			console.log("Use session as default", id, data, this);
+			//console.log("Use session as default", id, data, this);
 		};
 
 		BuddySession.prototype.remove = function(id, onEmptyCallback) {
@@ -96,9 +96,9 @@ define(["underscore"], function(_) {
 				if (sessionData) {
 					this.use(sessionData.Id, sessionData);
 				} else {
-					console.log("Last session removed", sessions);
+					//console.log("Last session removed", sessions);
 					if (this.Userid) {
-						console.log("Using userid as session id");
+						//console.log("Using userid as session id");
 						this.use(this.Userid);
 					} else {
 						this.use(null);
@@ -112,22 +112,29 @@ define(["underscore"], function(_) {
 
 		BuddySession.prototype.update = function(id, data, onUseridCallback) {
 
-			var sessionData = this.get(id);
-			if (!sessionData) {
-				sessionData = this.add(id, data);
-			}
-
 			var userid = data.Userid;
+			//console.log("session update", id, userid, this, data);
+
+			var sessionData
+			if (id === userid) {
+				// Fake updates from userid ids.
+				sessionData = data;
+			} else {
+				sessionData = this.get(id);
+				if (!sessionData) {
+					sessionData = this.add(id, data);
+				}
+			}
 			if (userid) {
 				this.auth(userid, sessionData, onUseridCallback);
 			}
-
-			if (data.Rev) {
-				sessionData.Rev = data.Rev;
-			}
-
-			if (data.Status) {
-				sessionData.Status = data.Status;
+			if (data !== sessionData) {
+				if (data.Rev) {
+					sessionData.Rev = data.Rev;
+				}
+				if (data.Status) {
+					sessionData.Status = data.Status;
+				}
 			}
 
 			if (id === this.Id) {
@@ -142,7 +149,7 @@ define(["underscore"], function(_) {
 
 			if (!this.Userid) {
 				this.Userid = userid;
-				console.log("Session now has a user id", this.Id, userid);
+				//console.log("Session now has a user id", this.Id, userid);
 			}
 			// Trigger callback if defined and not triggered before.
 			if (onUseridCallback && !sessionData.auth) {

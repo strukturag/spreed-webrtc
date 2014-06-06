@@ -29,7 +29,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 
 		var contactData = {
 			addByRequest: function(request, status) {
-				console.log("addByRequest", request, status);
+				//console.log("addByRequest", request, status);
 				var userid = request.Userid;
 				var token = request.Token;
 				var id;
@@ -46,7 +46,19 @@ define(['underscore', 'jquery'], function(underscore, $) {
 					Token: token,
 					Status: null
 				}
-				// TODO(longsleep): Trigger this to somewhere.
+				return contact;
+			},
+			addByData: function(data) {
+				//console.log("addByData", data.Userid, data);
+				var userid = data.Userid;
+				if (users.hasOwnProperty(userid)) {
+					id = users[userid]
+				} else {
+					id = String(count++);
+					users[userid] = id;
+				}
+				var contact = contacts[id] = data;
+				contact.Id = id;
 				return contact;
 			},
 			get: function(userid) {
