@@ -547,33 +547,21 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onClosed = function() {
 
-			console.log("Closed");
+			//console.log("Closed");
 
+			// Remove pending stuff from queue.
 			this.queue = [];
 
+			// Trigger left events for all sessions.
 			var data = {};
 			var sessions = buddySession.sessions();
 			for (var id in sessions) {
 				if (sessions.hasOwnProperty(id)) {
-					console.log("close id", id);
+					//console.log("close id", id);
 					data.Id = id;
 					this.onLeft(data, false, true);
 				}
 			}
-
-			console.log("buddyCount after close", buddyCount, this.tree.keys());
-
-			/*
-			this.$element.empty();
-			buddyCount = 0;
-			buddyData.clear();
-			this.tree.clear();
-			this.actionElements = {};
-			this.queue = [];
-			*/
-
-
-
 
 		};
 
