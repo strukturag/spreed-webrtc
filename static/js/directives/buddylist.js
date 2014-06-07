@@ -61,6 +61,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
+			/*
 			$scope.doAudioConference = function(id) {
 
 				$scope.updateAutoAccept(id);
@@ -71,7 +72,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 					}
 				})
 
-			};
+			};*/
 
 			$scope.setRoomStatus = function(status) {
 				if (status !== $scope.enabled) {
@@ -82,9 +83,6 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 					$scope.layout.buddylist = true
 				}
 			};
-
-			//XXX(longsleep): Debug leftover ?? Remove this.
-			window.doAudioConference = $scope.doAudioConference;
 
 			var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
 			var onJoined = _.bind(buddylist.onJoined, buddylist);

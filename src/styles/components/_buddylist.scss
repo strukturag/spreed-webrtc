@@ -223,6 +223,9 @@
   .#{$fa-css-prefix} {
     font-size: 2em;
   }
+  i.fa {
+    pointer-events: none;
+  }
 }
 
 .buddy .buddysessions {

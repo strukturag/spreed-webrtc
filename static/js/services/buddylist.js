@@ -157,22 +157,24 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			$element.on("mouseenter mouseleave", ".buddy", _.bind(function(event) {
 				// Hover handler for on Buddy actions.
 				var buddyElement = $(event.currentTarget);
-				this.hover(buddyElement, event.type === "mouseenter" ? true : false, buddyElement.scope().session.Id);
+				this.hover(buddyElement, event.type === "mouseenter" ? true : false);
 			}, this));
 			$element.on("click", ".buddy", _.bind(function(event) {
+				console.log("click event", event);
 				var buddyElement = $(event.currentTarget);
-				buddyElement.scope().doDefault();
+				//buddyElement.scope().doDefault();
+				this.click(buddyElement, event.target);
 			}, this));
-			$element.on("click", ".fa.contact", _.bind(function(event) {
+			/*$element.on("click", ".fa.contact", _.bind(function(event) {
 				event.stopPropagation();
 				var buddyElement = $(event.currentTarget);
 				buddyElement.scope().doDefaultContact();
-			}, this));
+			}, this));*/
 			$element.attr("data-xthreshold", "10");
 			$element.on("swipeleft", ".buddy", _.bind(function(event) {
 				event.preventDefault();
 				var buddyElement = $(event.currentTarget);
-				this.hover(buddyElement, !buddyElement.hasClass("hovered"), buddyElement.scope().session.Id);
+				this.hover(buddyElement, !buddyElement.hasClass("hovered"));
 			}, this));
 
 			$window.setInterval(_.bind(this.soundLoop, this), 500);
@@ -211,34 +213,16 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.onBuddyScopeCreated = function(scope, data) {
 
+			// Init scope with our stuff.
 			scope.element = null;
 			scope.contact = null;
 			scope.display = {};
-			var session = scope.session = buddySession.create(data);
-
-			scope.doDefault = function() {
-				var id = scope.session.Id;
-				//if (scope.status.isMixer) {
-				//	return scope.doAudioConference(id);
-				//}
-				return scope.doCall(id);
-			};
-			scope.doDefaultContact = function() {
-				var contact = scope.contact;
-				if (contact) {
-					return scope.doContactRemove(contact.Userid);
-				} else {
-					var id = scope.session.Id;
-					return scope.doContactRequest(id);
-				}
-			};
+			scope.session = buddySession.create(data);
 			scope.$on("$destroy", function() {
 				//console.log("destroyed");
 				scope.element = null;
 				scope.killed = true;
 			});
-
-			//console.log("on buddy scope", session.Userid, session);
 
 		};
 
@@ -666,9 +650,50 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.hover = function(buddyElement, hover, id) {
+		Buddylist.prototype.click = function(buddyElement, target) {
 
-			//console.log("hover handler", event, hover, id);
+			//console.log("click handler", buddyElement, target);
+			var action = $(target).data("action");
+			if (!action) {
+				// Make call the default action.
+				action = "call";
+			}
+
+			var scope = buddyElement.scope();
+			var session = scope.session;
+			var sessionData = session.get()
+			var contact = scope.contact;
+			var id;
+			if (!sessionData) {
+				// TODO(longsleep): Find session with help of contact.
+				console.log("No sessions for this buddy.", session, contact);
+			} else {
+				id = sessionData.Id;
+			}
+			//console.log("id", id);
+			switch (action) {
+			case "call":
+				scope.doCall(id);
+				break;
+			case "chat":
+				scope.doChat(id);
+				break;
+			case "contact":
+				if (contact) {
+					scope.doContactRemove(contact.Userid);
+				} else {
+					scope.doContactRequest(id);
+				}
+				break;
+			}
+
+		};
+
+		Buddylist.prototype.hover = function(buddyElement, hover) {
+
+			//console.log("hover handler", buddyElement, hover);
+			var scope = buddyElement.scope();
+			var id = scope.session.Id;
 			var buddy = $(buddyElement);
 			var actionElements = this.actionElements;
 			var elem;
@@ -689,11 +714,6 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				if (elem) {
 					buddy.addClass("hovered");
 				} else {
-					var scope = buddyData.get(id);
-					if (!scope) {
-						console.warn("No scope for buddy", id);
-						return;
-					}
 					var template = buddyActions;
 					//if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
 					//	template = buddyActionsForAudioMixer;
