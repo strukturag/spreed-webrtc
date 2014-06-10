@@ -54,9 +54,9 @@ $welcome: #aaa;
 $loading: #ddd;
 
 // font
-$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$base-font-size: 13px; // compass
-$base-line-height: 1.53846156; // compass
+$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif !default;
+$base-font-size: 13px !default; // compass vertical_rhythm mixin
+$base-line-height: 1.53846156 !default; // compass vertical_rhythm mixin
 
 // audio video
 $audiovideolevel: $action-enable;
