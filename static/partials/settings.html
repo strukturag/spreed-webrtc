@@ -19,34 +19,34 @@
           <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
         </div>
       </div>
-      <div class="form-group" ng-if="(withUsers && withUsersRegistration) || userid">
-        <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
-        <div ng-switch="withUsersMode">
-          <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
-            <div ng-if="!userid">
-              <keygen style="display:none" name="pubkey"/>
+      <div ng-controller="UsersettingsController as usersettings">
+        <div class="form-group" ng-if="(withUsers && withUsersRegistration) || userid">
+          <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
+          <div ng-switch="withUsersMode">
+            <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
+              <div ng-if="!userid">
+                <keygen style="display:none" name="pubkey"/>
+                <label ng-if="!userid && withUsersRegistration">
+                  <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                </label>
+                <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+              </div>
+              <div ng-if="userid">
+                <pre class="small">{{userid}}</pre>
+                <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
+              </div>
+            </form>
+            <div ng-switch-default class="col-xs-8">
               <label ng-if="!userid && withUsersRegistration">
-                <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
+                <button ng-if="usersettings.loginUserid" class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
+                <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
               </label>
-              <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+              <pre class="small" ng-if="userid">{{userid}}</pre>
+              <label ng-if="userid && withUsersForget">
+                <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
+              </label>
             </div>
-            <div ng-if="userid">
-              <pre class="small">{{userid}}</pre>
-              <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
-            </div>
-          </form>
-          <div ng-switch-default class="col-xs-8">
-            <label ng-if="!userid && withUsersRegistration">
-              <button class="btn btn-small btn-primary" ng-click="registerUserid($event.target)">{{_('Register')}}</button>
-            </label>
-            <pre class="small" ng-if="userid">{{userid}}</pre>
-            <label ng-if="userid && loadedUserlogin">
-              <button class="btn btn-small btn-default" ng-click="forgetUserid()">{{_('Log out')}}</button>
-            </label>
           </div>
-        </div>
-        <div class="col-xs-8 col-xs-offset-4" ng-if="!userid && withUsersRegistration">
-          <span class="help-block">{{_('Only register an ID if this is your private browser.')}}</span>
         </div>
       </div>
       <div ng-show="mediaSources.supported">

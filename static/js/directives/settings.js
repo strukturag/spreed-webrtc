@@ -74,42 +74,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				});
 			};
 
-			$scope.registerUserid = function(btn) {
-
-				var successHandler = function(data) {
-					console.info("Created new userid:", data.userid);
-					// If the server provided us a nonce, we can do everthing on our own.
-					mediaStream.users.store(data);
-					$scope.loadedUserlogin = true;
-					safeApply($scope);
-					// Directly authenticate ourselves with the provided nonce.
-					mediaStream.api.requestAuthentication(data.userid, data.nonce);
-					delete data.nonce;
-				};
-
-				console.log("No userid - creating one ...");
-				mediaStream.users.register(btn.form, function(data) {
-					if (data.nonce) {
-						successHandler(data);
-					} else {
-						// No nonce received. So this means something we cannot do on our own.
-						// Make are GET request and retrieve nonce that way and let the
-						// browser/server do the rest.
-						mediaStream.users.authorize(data, successHandler, function(data, status) {
-							console.error("Failed to get nonce after create", status, data);
-						});
-					}
-				}, function(data, status) {
-					console.error("Failed to create userid", status, data);
-				});
-
-			};
-
-			$scope.forgetUserid = function() {
-				mediaStream.users.forget();
-				mediaStream.connector.forgetAndReconnect();
-			};
-
 			$scope.checkDefaultMediaSources = function() {
 				if ($scope.master.settings.microphoneId && !$scope.mediaSources.hasAudioId($scope.master.settings.microphoneId)) {
 					$scope.master.settings.microphoneId = null;
