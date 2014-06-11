@@ -402,6 +402,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 						delete data.nonce;
 					}, function(data, status) {
 						console.error("Failed to authorize session", status, data);
+						mediaStream.users.forget();
 					});
 				}
 			}
