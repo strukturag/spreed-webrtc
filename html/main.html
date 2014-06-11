@@ -14,6 +14,7 @@
         </div>
         <status-message></status-message>
         <div class="ng-cloak right">
+           <button title="{{_('PDF')}}" class="btn aenablebtn" ng-show="status=='connected' || status=='conference' || layout.pdfviewer" ng-model="layout.pdfviewer" btn-checkbox><i class="fa fa-file-o"></i></button>
            <button title="{{_('Share your screen')}}" class="btn aenablebtn" ng-show="isChrome && webrtcDetectedVersion >= 32 && (status=='connected' || status=='conference' || layout.screenshare)" ng-model="layout.screenshare" btn-checkbox><i class="fa fa-desktop"></i></button>
            <button title="{{_('Chat')}}" class="btn" ng-class="{messagesunseen: chatMessagesUnseen>0}" ng-model="layout.chat" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><i class="fa fa-comments-o"></i><span class="badge" ng-show="chatMessagesUnseen">{{chatMessagesUnseen}}</span></button>
            <button title="{{_('Mute microphone')}}" class="btn amutebtn" ng-model="microphoneMute" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false"><i class="fa fa-microphone-slash"></i></button>
@@ -33,6 +34,9 @@
 </div>
 <div id="screenshare" class="ng-cloak mainview">
     <screenshare/>
+</div>
+<div id="pdfviewer" class="ng-cloak mainview">
+    <pdfviewer/>
 </div>
 <div class="ng-cloak" id="rightslide">
     <div class="rightslidepane">
