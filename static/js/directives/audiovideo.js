@@ -48,12 +48,14 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.addRemoteStream = function(stream, currentcall) {
 
 				//console.log("Add remote stream to scope", pc.id, stream);
+				// Create scope.
 				var subscope = $scope.$new(true);
 				var peerid = subscope.peerid = currentcall.id;
 				buddyData.push(peerid);
 				subscope.withvideo = false;
 				subscope.onlyaudio = false;
 				subscope.talking = false;
+				subscope.destroyed = false;
 				subscope.applyTalking = function(talking) {
 					subscope.talking = !! talking;
 					safeApply(subscope);
@@ -62,8 +64,16 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					console.log("Stream scope is now active", peerid);
 					events.triggerHandler("active." + peerid, [subscope, currentcall, stream]);
 				});
+				subscope.$on("$destroy", function() {
+					console.log("Destroyed scope for audiovideo", subscope);
+					subscope.destroyed = true;
+				});
 				console.log("Created stream scope", peerid);
 
+				// Add created scope.
+				peers[peerid] = subscope;
+
+				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {
 					$($scope.remoteVideos).append(clonedElement);
 					clonedElement.data("peerid", scope.peerid);
@@ -72,7 +82,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					$window.attachMediaStream(video, stream);
 					// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
 					videoWaiter.wait(video, stream, function(withvideo) {
-						peers[peerid] = scope;
+						if (scope.destroyed) {
+							console.log("Abort wait for video on destroyed scope.");
+							return;
+						}
 						if (withvideo) {
 							scope.$apply(function($scope) {
 								$scope.withvideo = true;
@@ -86,7 +99,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						scope.$emit("active", currentcall);
 						$scope.redraw();
 					}, function() {
-						peers[peerid] = scope;
+						if (scope.destroyed) {
+							console.log("No longer wait for video on destroyed scope.");
+							return;
+						}
 						console.warn("We did not receive video data for remote stream", currentcall, stream, video);
 						scope.$emit("active", currentcall);
 						$scope.redraw();
