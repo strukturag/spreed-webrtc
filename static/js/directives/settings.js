@@ -22,7 +22,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;

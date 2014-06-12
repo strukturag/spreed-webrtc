@@ -24,7 +24,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
 	return ["mediaStream", function(mediaStream) {
 
-		var controller = ['$scope', "mediaStream", "safeApply", "$timeout", function($scope, mediaStream, safeApply, $timeout) {
+		var controller = ['$scope', "mediaStream", "safeApply", "$timeout", "localStorage", function($scope, mediaStream, safeApply, $timeout, localStorage) {
 
 			var pending = true;
 			var complete = false;

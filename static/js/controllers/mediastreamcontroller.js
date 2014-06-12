@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -344,7 +344,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		});
 
 		// Load stuff from localStorage.
-		// TODO(longsleep): Put localStorage into Angular service.
 		var storedUser = localStorage.getItem("mediastream-user");
 		console.log("Found stored user data:", storedUser);
 		if (storedUser) {
