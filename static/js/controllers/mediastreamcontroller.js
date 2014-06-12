@@ -427,6 +427,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				}, 0);
 			}
 
+			appData.e.triggerHandler("selfReceived", data);
+
 		});
 
 		mediaStream.webrtc.e.on("peercall", function(event, peercall) {
