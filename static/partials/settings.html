@@ -26,7 +26,7 @@
             <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
               <div ng-if="!userid">
                 <keygen style="display:none" name="pubkey"/>
-                <label ng-if="!userid && withUsersRegistration">
+                <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
                   <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
                 </label>
                 <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
@@ -37,12 +37,16 @@
               </div>
             </form>
             <div ng-switch-default class="col-xs-8">
-              <label ng-if="!userid && withUsersRegistration">
-                <button ng-if="usersettings.loginUserid" class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
-                <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
-              </label>
+              <div ng-if="!userid && withUsersRegistration">
+                <label ng-if="usersettings.loginUserid">
+                  <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
+                </label>
+                <label ng-if="usersettings.registerUserid">
+                  <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                </label>
+              </div>
               <pre class="small" ng-if="userid">{{userid}}</pre>
-              <label ng-if="userid && withUsersForget">
+              <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
                 <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
               </label>
             </div>
