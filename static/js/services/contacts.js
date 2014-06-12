@@ -18,31 +18,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr) {
+define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Modernizr, sjcl) {
 
-	var Database = function(name, version) {
+	var Database = function(name) {
+		this.version = 3;
 		this.ready = false;
 		this.db = null;
 		this.name = name;
 		this.e = $({});
-		var request = indexedDB.open("mediastream", version);
+		var request = indexedDB.open(this.name, this.version);
 		var that = this;
 		request.onupgradeneeded = function(event) {
 			var db = event.target.result;
 			var transaction = event.target.transaction;
 			transaction.onerror = _.bind(that.onerror, that);
-			if (db.objectStoreNames.contains(name)) {
-				// TODO(longsleep): Database upgrade should keep the data and migrate it.
-				db.deleteObjectStore("contacts")
-				console.warn("Removed contacts database with old format.")
-			}
-			db.createObjectStore(name, {
-				// We use id field as our unique identifier.
-				keyPath: "id"
-			});
+			that.init(db);
 			console.log("Created contacts database.")
 		};
 		request.onsuccess = _.bind(that.onsuccess, that);
+	};
+	Database.prototype.init = function(db) {
+		var createOrUpdateStore = function(name, obj) {
+			if (db.objectStoreNames.contains(name)) {
+				// TODO(longsleep): Migrate data.
+				db.deleteObjectStore(name);
+			}
+			db.createObjectStore(name, obj);
+		}
+		// Create our object stores.
+		createOrUpdateStore("contacts", {
+			// We use id field as our unique identifier.
+			keyPath: "id"
+		});
 	};
 	Database.prototype.onerror = function(event) {
 		console.log("IndexDB database error", event);
@@ -50,12 +57,12 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 	Database.prototype.onsuccess = function(event) {
 		this.db = event.target.result;
 		this.ready = true;
-		console.log("Openend database for contacts", this.db);
+		console.log("Openend database", this.db);
 		this.e.triggerHandler("ready");
 	};
-	Database.prototype.put = function(data, successCallback, errorCallback) {
-		var transaction = this.db.transaction(this.name, "readwrite");
-		var store = transaction.objectStore(this.name);
+	Database.prototype.put = function(store, data, successCallback, errorCallback) {
+		var transaction = this.db.transaction(store, "readwrite");
+		var store = transaction.objectStore(store);
 		var request = store.put(data);
 		if (!errorCallback) {
 			errorCallback = _.bind(this.onerror, this);
@@ -66,9 +73,9 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 		}
 		return request;
 	};
-	Database.prototype.delete = function(id, successCallback, errorCallback) {
-		var transaction = this.db.transaction(this.name, "readwrite");
-		var store = transaction.objectStore(this.name);
+	Database.prototype.delete = function(store, id, successCallback, errorCallback) {
+		var transaction = this.db.transaction(store, "readwrite");
+		var store = transaction.objectStore(store);
 		var request = store.delete(id);
 		if (!errorCallback) {
 			errorCallback = _.bind(this.onerror, this);
@@ -79,9 +86,9 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 		}
 		return request;
 	};
-	Database.prototype.all = function(iteratorCallback, errorCallback) {
-		var transaction = this.db.transaction(this.name);
-		var store = transaction.objectStore(this.name);
+	Database.prototype.all = function(store, iteratorCallback, errorCallback) {
+		var transaction = this.db.transaction(store);
+		var store = transaction.objectStore(store);
 		var keyRange = IDBKeyRange.lowerBound(0);
 		var cursorRequest = store.openCursor(keyRange);
 		cursorRequest.onsuccess = function(event) {
@@ -99,45 +106,98 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 		transaction.onerror = cursorRequest.onerror = errorCallback;
 		return cursorRequest;
 	};
-
-	var database;
-	if (Modernizr.indexeddb) {
-		database = new Database("contacts", 1);
-	}
+	Database.prototype.close = function() {
+		// TODO(longsleep): Database close.
+		this.e.off();
+		if (this.db) {
+			this.db.close();
+			this.db = null;
+			this.ready = false;
+		}
+		_.defer(_.bind(function() {
+			this.e.triggerHandler("closed");
+		}, this));
+	};
 
 	// contacts
 	return ["appData", "contactData", function(appData, contactData) {
 
 		var Contacts = function() {
+
 			this.e = $({});
 			this.userid = null;
+			this.database = null;
+
 			appData.e.on("authenticationChanged", _.bind(function(event, userid) {
-				this.userid = userid;
+				var database = this.open(userid);
 				if (database && userid) {
 					// TODO(longsleep): This needs to be delayed util self has ha userid.
 					if (database.ready) {
-						_.defer(_.bind(this.load, this));
+						_.defer(_.bind(function() {
+							if (this.database === database) {
+								this.load();
+							}
+						}, this));
 					} else {
-						database.e.one("ready", _.bind(this.load, this));
+						database.e.one("ready", _.bind(function() {
+							if (this.database === database) {
+								this.load();
+							}
+						}, this));
 					}
 				}
 			}, this));
+
+		};
+
+		Contacts.prototype.open = function(userid) {
+
+			if (this.database && (!userid || this.userid !== userid)) {
+				// Unload existing contacts.
+				this.unload();
+				// Close existing database.
+				this.database.close();
+				this.database = null;
+			}
+			if (userid) {
+				if (!Modernizr.indexeddb) {
+					return;
+				}
+				// Create HMAC database name for user.
+				var hmac = new sjcl.misc.hmac('mediastream');
+				var id = "mediastream-"+sjcl.codec.base64.fromBits(hmac.encrypt(userid));
+				console.log("Open of database:", id);
+				var database = this.database = new Database(id);
+				return database;
+			} else {
+				this.database = null;
+				return null;
+			}
+
 		};
 
 		Contacts.prototype.load = function() {
-			console.log("Load contacts from storage", database);
-			database.all(_.bind(function(data) {
-				var contact = contactData.addByData(data.contact);
-				// TODO(longsleep): Convert buddyImage string to Blob.
-				this.e.triggerHandler("contactadded", contact);
+			if (this.database) {
+				console.log("Load contacts from storage", this);
+				this.database.all("contacts", _.bind(function(data) {
+					var contact = contactData.addByData(data.contact);
+					// TODO(longsleep): Convert buddyImage string to Blob.
+					this.e.triggerHandler("contactadded", contact);
+				}, this));
+			}
+		};
+
+		Contacts.prototype.unload = function() {
+			contactData.clear(_.bind(function(contact) {
+				this.e.triggerHandler("contactremoved", contact);
 			}, this));
 		};
 
 		Contacts.prototype.add = function(request, status) {
 			var contact = contactData.addByRequest(request, status);
 			this.e.triggerHandler("contactadded", contact);
-			if (database) {
-				database.put({
+			if (this.database) {
+				this.database.put("contacts", {
 					id: contact.Userid,
 					contact: contact
 				})
@@ -149,8 +209,8 @@ define(['underscore', 'jquery', 'modernizr'], function(underscore, $, Modernizr)
 			console.log("contacts remove", userid, contact);
 			if (contact) {
 				contactData.remove(userid);
-				if (database) {
-					database.delete(userid);
+				if (this.database) {
+					this.database.delete("contacts", userid);
 				}
 				this.e.triggerHandler("contactremoved", contact);
 			}

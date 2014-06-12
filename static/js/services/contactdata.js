@@ -28,6 +28,16 @@ define(['underscore', 'jquery'], function(underscore, $) {
 		var count = 0;
 
 		var contactData = {
+			clear: function(cb) {
+				_.each(users, _.bind(function(idx, userid) {
+					var contact = contacts[idx];
+					if (cb && contact) {
+						cb(contact);
+					}
+					this.remove(userid);
+				}, this));
+				count = 0;
+			},
 			addByRequest: function(request, status) {
 				//console.log("addByRequest", request, status);
 				var userid = request.Userid;
@@ -69,6 +79,10 @@ define(['underscore', 'jquery'], function(underscore, $) {
 				return null;
 			},
 			remove: function(userid) {
+				if (users.hasOwnProperty(userid)) {
+					var id = users[userid];
+					delete contacts[id];
+				}
 				delete users[userid];
 			},
 			getById: function(id) {
@@ -81,6 +95,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 				return null
 			}
 		};
+
 		return contactData;
 
 	}];

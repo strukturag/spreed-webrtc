@@ -50,7 +50,12 @@ define(['jquery', 'underscore'], function($, _) {
 			// Add support for contacts on controller creation.
 			var request = $scope.request;
 			if (request.Success && request.Userid && request.Token) {
-				$scope.addContact(request, buddyData.lookup($scope.id).status || null);
+				var buddy = buddyData.lookup($scope.id);
+				var status = {};
+				if (buddy) {
+					$.extend(status, buddy.status);
+				}
+				$scope.addContact(request, status);
 			}
 
 		}];
