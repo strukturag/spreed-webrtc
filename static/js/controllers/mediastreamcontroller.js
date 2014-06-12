@@ -556,7 +556,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					break;
 				case "close":
 					reconnect();
-					break;
+					return;
 			}
 			$scope.setStatus(t);
 		});

@@ -197,7 +197,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.connecting_timeout = timeout;
 
 		//console.log("onclose", event);
-		console.info("Connector on connection close.", event);
+		console.info("Connector on connection close.", event, this.error);
 		this.close();
 		if (!this.error) {
 			this.e.triggerHandler("close", [event]);
