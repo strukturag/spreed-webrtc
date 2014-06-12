@@ -409,7 +409,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}
 			// NOTE(longsleep): toBlob is not widely supported narf ..
 			// see: https://code.google.com/p/chromium/issues/detail?id=67587
-			var parts = data.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+			var parts = data.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+\/]+)/);
 			var binStr = atob(parts[3]);
 			var buf = new ArrayBuffer(binStr.length);
 			var view = new Uint8Array(buf);

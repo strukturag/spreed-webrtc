@@ -60,9 +60,9 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 		console.log("Openend database", this.db);
 		this.e.triggerHandler("ready");
 	};
-	Database.prototype.put = function(store, data, successCallback, errorCallback) {
-		var transaction = this.db.transaction(store, "readwrite");
-		var store = transaction.objectStore(store);
+	Database.prototype.put = function(storename, data, successCallback, errorCallback) {
+		var transaction = this.db.transaction(storename, "readwrite");
+		var store = transaction.objectStore(storename);
 		var request = store.put(data);
 		if (!errorCallback) {
 			errorCallback = _.bind(this.onerror, this);
@@ -73,9 +73,9 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 		}
 		return request;
 	};
-	Database.prototype.delete = function(store, id, successCallback, errorCallback) {
-		var transaction = this.db.transaction(store, "readwrite");
-		var store = transaction.objectStore(store);
+	Database.prototype.delete = function(storename, id, successCallback, errorCallback) {
+		var transaction = this.db.transaction(storename, "readwrite");
+		var store = transaction.objectStore(storename);
 		var request = store.delete(id);
 		if (!errorCallback) {
 			errorCallback = _.bind(this.onerror, this);
@@ -86,9 +86,9 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 		}
 		return request;
 	};
-	Database.prototype.all = function(store, iteratorCallback, errorCallback) {
-		var transaction = this.db.transaction(store);
-		var store = transaction.objectStore(store);
+	Database.prototype.all = function(storename, iteratorCallback, errorCallback) {
+		var transaction = this.db.transaction(storename);
+		var store = transaction.objectStore(storename);
 		var keyRange = IDBKeyRange.lowerBound(0);
 		var cursorRequest = store.openCursor(keyRange);
 		cursorRequest.onsuccess = function(event) {
