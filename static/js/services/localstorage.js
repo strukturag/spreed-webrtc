@@ -49,7 +49,7 @@ define(["modernizr"], function(Modernizr) {
 		};
 
 		var storage;
-		if (Modernizr.localStorage) {
+		if (Modernizr.localstorage) {
 			storage = $window.localStorage;
 		} else {
 			storage = new PersistentStorage();
