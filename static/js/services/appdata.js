@@ -22,6 +22,7 @@ define(["jquery"], function($) {
 
 	// appData.e events
 	// - authenticationChanged(userid)
+	// - selfReceived(self)
 
 	// appData
 	return [function() {
