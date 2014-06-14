@@ -21,7 +21,7 @@
 define([], function() {
 
 	// UsersettingsController
-	return ["$scope", "$element", "mediaStream", function($scope, $element, mediaStream) {
+	return ["$scope", "$element", "mediaStream", "safeApply", function($scope, $element, mediaStream, safeApply) {
 
 		$scope.withUsersForget = true;
 
