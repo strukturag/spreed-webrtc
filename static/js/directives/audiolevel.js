@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'rAF'], function($, _) {
+define(['jquery', 'underscore'], function($, _) {
 
-	return ["$window", "mediaStream", "safeApply", function($window, mediaStream, safeApply) {
+	return ["$window", "mediaStream", "safeApply", "animationFrame", function($window, mediaStream, safeApply, animationFrame) {
 
-		var requestAnimationFrame = $window.requestAnimationFrame;
 		var webrtc = mediaStream.webrtc;
 
 		// Consider anyting lower than this % as no audio.
@@ -43,21 +42,22 @@ define(['jquery', 'underscore', 'rAF'], function($, _) {
 
 			// Own audio level indicator.
 			var element = $element[0];
+			var width = 0;
 			this.update = _.bind(function() {
-				if (this.active) {
-					requestAnimationFrame(this.update);
-				}
-				var width = 0;
-				if (webrtc.usermedia.audioLevel) {
-					width = Math.round(100 * webrtc.usermedia.audioLevel);
-					// Hide low volumes.
-					if (width < threshhold) {
+				if (this.active || width > 0) {	
+					if (webrtc.usermedia.audioLevel) {
+						width = Math.round(100 * webrtc.usermedia.audioLevel);
+						// Hide low volumes.
+						if (width < threshhold) {
+							width = 0;
+						}
+					} else {
 						width = 0;
 					}
+					element.style.width = width + '%';
 				}
-				element.style.width = width + '%';
 			}, this);
-			this.update();
+			animationFrame.register(this.update);
 
 			// Talking state.
 			this.audioActivityHistory = [];

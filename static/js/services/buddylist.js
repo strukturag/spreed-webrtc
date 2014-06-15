@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
+define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
 
 	var BuddyTree = function() {
 
@@ -129,9 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream) {
-
-		var requestAnimationFrame = $window.requestAnimationFrame;
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", "animationFrame", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream, animationFrame) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -180,9 +178,8 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			$window.setInterval(_.bind(this.soundLoop, this), 500);
 			var update = _.bind(function refreshBuddies() {
 				this.refreshBuddies();
-				requestAnimationFrame(update);
 			}, this);
-			requestAnimationFrame(update);
+			animationFrame.register(update);
 
 		};
 
