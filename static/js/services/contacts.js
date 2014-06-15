@@ -130,9 +130,10 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 			this.database = null;
 
 			appData.e.on("authenticationChanged", _.bind(function(event, userid, suserid) {
+				// TODO(longsleep): Avoid creating empty databases. Create db on store only.
 				var database = this.open(userid, suserid);
 				if (database && userid) {
-					// TODO(longsleep): This needs to be delayed util self has ha userid.
+					// Load when database is ready and userid is available.
 					if (database.ready) {
 						_.defer(_.bind(function() {
 							if (this.database === database) {
