@@ -432,16 +432,25 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 			log.Println("Failed to decode incoming contact token", err)
 			return
 		}
-		if contact.A != c.Session.Userid && contact.B != c.Session.Userid {
-			log.Println("Ignoring foreign contact token")
+		// Use the userid which is not ours from the contact data.
+		var userid string
+		if contact.A == c.Session.Userid {
+			userid = contact.B
+		} else if contact.B == c.Session.Userid {
+			userid = contact.A
+		}
+		if userid == "" {
+			log.Println("Ignoring foreign contact token", contact.A, contact.B)
 			return
 		}
+		// Find foreign user.
 		h.mutex.RLock()
 		defer h.mutex.RUnlock()
-		user, ok := h.userTable[c.Session.Userid]
+		user, ok := h.userTable[userid]
 		if !ok {
 			return
 		}
+		// Add sessions for forein user.
 		sessions.Users = user.SessionsData()
 		reply = true
 	default:
@@ -449,7 +458,6 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 	}
 
 	if reply {
-
 		sessionsJson := h.buffers.New()
 		encoder := json.NewEncoder(sessionsJson)
 		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions})
@@ -460,7 +468,6 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 		}
 		c.send(sessionsJson)
 		sessionsJson.Decref()
-
 	}
 
 }
