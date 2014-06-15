@@ -664,6 +664,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (!sessionData) {
 				// TODO(longsleep): Find session with help of contact.
 				console.log("No sessions for this buddy.", session, contact);
+				if (contact && contact.Token) {
+					mediaStream.api.sendSessions(contact.Token, "contact");
+				}
+				return;
 			} else {
 				id = sessionData.Id;
 			}

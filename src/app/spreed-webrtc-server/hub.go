@@ -424,12 +424,12 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 
 	reply := false
 
-	switch sessions.Type {
+	switch sessions.TokenType {
 	case "contact":
 		contact := &Contact{}
-		err := h.contacts.Decode("contactConfirmed", sessions.Token, contact)
+		err := h.contacts.Decode("contactRequest", sessions.Token, contact)
 		if err != nil {
-			log.Println("Failed to decode incoming contact token", err)
+			log.Println("Failed to decode incoming contact token", err, sessions.Token)
 			return
 		}
 		// Use the userid which is not ours from the contact data.
@@ -454,7 +454,7 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 		sessions.Users = user.SessionsData()
 		reply = true
 	default:
-		log.Println("Unkown incoming sessions request type", sessions.Type)
+		log.Println("Unkown incoming sessions request type", sessions.TokenType)
 	}
 
 	if reply {

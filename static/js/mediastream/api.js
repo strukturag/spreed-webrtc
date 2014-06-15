@@ -321,6 +321,19 @@ define(['jquery', 'underscore'], function($, _) {
 		return this.send("Alive", data);
 	};
 
+	Api.prototype.sendSessions = function(token, type) {
+
+		var data = {
+			Type: "Sessions",
+			Id: "some-random-whatever",
+			Token: token,
+			TokenType: type
+		}
+
+		return this.send("Sessions", data);
+
+	};
+
 	return Api;
 
 });

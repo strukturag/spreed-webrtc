@@ -389,11 +389,9 @@ Information retrieval
 
     {
         "Type": "Sessions",
-        "Sessions": {
-            "Id": "Client generated request ID",
-            "Token": "Request token",
-            "Type": "Token type"
-        }
+        "Id": "Client generated request ID",
+        "Token": "Request token",
+        "TokenType": "Token type"
     }
 
     Valid known token types are: "contact".
@@ -403,26 +401,24 @@ Information retrieval
 
     {
         "Type": "Sessions",
-        "Sessions": {
-            "Id": "ID as from request",
-            "Token": "Token as in request",
-            "Type": "Type as in request",
-            "Users": [
-              {
-                "Type": "Online",
-                "Id": "1",
-                "Ua": "Firefox 27",
-                "Status": {...}
-              },
-              {
-                  "Type": "Online",
-                  "Id": "3",
-                  "Userid": "u3",
-                  "Ua": "Chrome 28",
-                  "Status": {...}
-              }, ...
-            ]
-        }
+        "Id": "ID as from request",
+        "Token": "Token as in request",
+        "TokenType": "Type as in request",
+        "Users": [
+          {
+            "Type": "Online",
+            "Id": "1",
+            "Ua": "Firefox 27",
+            "Status": {...}
+          },
+          {
+              "Type": "Online",
+              "Id": "3",
+              "Userid": "u3",
+              "Ua": "Chrome 28",
+              "Status": {...}
+          }, ...
+        ]
     }
 
 

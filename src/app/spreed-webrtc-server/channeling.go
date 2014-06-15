@@ -65,13 +65,13 @@ type DataTurn struct {
 }
 
 type DataSession struct {
-	Type    string
 	Id      string
-	Userid  string `json:"Userid,omitempty"`
-	Ua      string `json:"Ua,omitempty"`
-	Token   string `json:"Token,omitempty"`
-	Version string `json:"Version,omitempty"`
-	Rev     uint64 `json:"Rev,omitempty"`
+	Type    string `json:",omitempty"`
+	Userid  string `json:",omitempty"`
+	Ua      string `json:",omitempty"`
+	Token   string `json:",omitempty"`
+	Version string `json:",omitempty"`
+	Rev     uint64 `json:",omitempty"`
 	Status  interface{}
 }
 
@@ -157,12 +157,13 @@ type DataOutgoing struct {
 }
 
 type DataSessions struct {
-	Type  string
-	Users []*DataSession
-	Id    string `json:",omitempty"`
-	Token string `json:",omitempty"`
-	Index uint64 `json:",omitempty"`
-	Batch uint64 `json:",omitempty"`
+	Type      string
+	Users     []*DataSession
+	Id        string `json:",omitempty"`
+	Token     string `json:",omitempty"`
+	TokenType string `json:",omitempty"`
+	Index     uint64 `json:",omitempty"`
+	Batch     uint64 `json:",omitempty"`
 }
 
 type DataConference struct {
