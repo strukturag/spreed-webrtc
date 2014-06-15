@@ -45,6 +45,7 @@ func (s *Server) OnRegister(c *Connection) {
 			Id:      c.Id,
 			Sid:     c.Session.Sid,
 			Userid:  c.Session.Userid,
+			Suserid: c.h.CreateSuserid(c.Session),
 			Token:   token,
 			Version: c.h.version,
 			Turn:    c.h.CreateTurnData(c.Id),

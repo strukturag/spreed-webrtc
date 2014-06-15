@@ -76,19 +76,6 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 }
 
-func (s *Session) Apply(st *SessionToken) uint64 {
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	s.Id = st.Id
-	s.Sid = st.Sid
-	s.Userid = st.Userid
-
-	s.UpdateRev++
-	return s.UpdateRev
-
-}
-
 func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 	s.mutex.Lock()

@@ -50,6 +50,7 @@ type DataSelf struct {
 	Id      string
 	Sid     string
 	Userid  string
+	Suserid string
 	Token   string
 	Version string
 	Turn    *DataTurn

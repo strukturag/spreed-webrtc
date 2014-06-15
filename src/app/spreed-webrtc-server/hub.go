@@ -177,6 +177,15 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
+func (h *Hub) CreateSuserid(session *Session) (suserid string) {
+	if session.Userid != "" {
+		m := hmac.New(sha256.New, h.encryptionSecret)
+		m.Write([]byte(session.Userid))
+		suserid = base64.StdEncoding.EncodeToString(m.Sum(nil))
+	}
+	return suserid
+}
+
 func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
 	// NOTE(longsleep): Is it required to make this a secure cookie,

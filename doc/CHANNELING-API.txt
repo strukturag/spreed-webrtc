@@ -87,6 +87,7 @@ Special purpose documents for channling
         "Id": "4",
         "Sid": "5157",
         "Userid": "",
+        "Suserid": "",
         "Token": "some-very-long-string",
         "Version": "server-version-number",
         "Turn": {
@@ -108,20 +109,21 @@ Special purpose documents for channling
 
     Keys:
 
-        Type   : Self (string)
-        Id     : Public Session id for this connection (string).
-        Sid    : Secure (non public) id for this session (string).
-        Userid : User id if this session belongs to an authenticated user. Else empty.
-        Token  : Security token (string), to restablish connection with the same
+        Type    : Self (string)
+        Id      : Public Session id for this connection (string).
+        Sid     : Secure (non public) id for this session (string).
+        Userid  : User id if this session belongs to an authenticated user. Else empty.
+        Suserid : Secure (non public) user id if session has an user id. Else empty.
+        Token   : Security token (string), to restablish connection with the same
                  session. Pass the value as URL query parameter t, to the websocket URL.
-        Version: Server version number. Use this to detect server upgrades.
-        Turn   : Mapping (interface{}) to contain TURN server details, like
-                 urls, password and username. See
-                 http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
-                 and TURN REST API section in
-                 https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
-                 for details.
-        Stun   : Array with STUN server URLs.
+        Version : Server version number. Use this to detect server upgrades.
+        Turn    : Mapping (interface{}) to contain TURN server details, like
+                  urls, password and username. See
+                  http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+                  and TURN REST API section in
+                  https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
+                  for details.
+        Stun    : Array with STUN server URLs.
 
     You can also send an empty Self document to the server to make the server
     transmit a fresh Self document (eg. to refresh when ttl was reached). Please
