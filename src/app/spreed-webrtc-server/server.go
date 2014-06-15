@@ -168,6 +168,8 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		}
 	case "Alive":
 		s.Alive(c, msg.Alive)
+	case "Sessions":
+		s.Sessions(c, msg.Sessions)
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
@@ -193,6 +195,12 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 func (s *Server) Alive(c *Connection, alive *DataAlive) {
 
 	c.h.aliveHandler(c, alive)
+
+}
+
+func (s *Server) Sessions(c *Connection, sessions *DataSessions) {
+
+	c.h.sessionsHandler(c, sessions)
 
 }
 
@@ -243,9 +251,9 @@ func (s *Server) Users(c *Connection) {
 
 func (s *Server) Authenticate(c *Connection, st *SessionToken) bool {
 
-	err := c.Session.Authenticate(c.h.realm, st)
+	err := c.h.authenticateHandler(c.Session, st, "")
 	if err == nil {
-		log.Println("Authentication success", c.Id, c.Idx, st.Userid)
+		log.Println("Authentication success", c.Id, c.Idx, c.Session.Userid)
 		return true
 	} else {
 		log.Println("Authentication failed", err, c.Id, c.Idx, st.Userid, st.Nonce)

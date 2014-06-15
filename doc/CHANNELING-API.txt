@@ -392,23 +392,35 @@ Information retrieval
         "Sessions": {
             "Id": "Client generated request ID",
             "Token": "Request token",
-            "TokenType": "Token type"
+            "Type": "Token type"
         }
     }
 
-    Valid known token types are: "contact", "token".
+    Valid known token types are: "contact".
 
-  Sesions (Response with Id, Token and Type from request and
+  Sessions (Response with Id, Token and Type from request and
   populated Session list).
 
     {
         "Type": "Sessions",
         "Sessions": {
             "Id": "ID as from request",
-            "Token": "Token as from request",
-            "TokenType": "Type as from request",
-            "Sessions": [
-                "1", "2", "3", ...
+            "Token": "Token as in request",
+            "Type": "Type as in request",
+            "Users": [
+              {
+                "Type": "Online",
+                "Id": "1",
+                "Ua": "Firefox 27",
+                "Status": {...}
+              },
+              {
+                  "Type": "Online",
+                  "Id": "3",
+                  "Userid": "u3",
+                  "Ua": "Chrome 28",
+                  "Status": {...}
+              }, ...
             ]
         }
     }

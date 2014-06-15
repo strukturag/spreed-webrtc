@@ -42,12 +42,11 @@ type Session struct {
 	mutex     sync.RWMutex
 }
 
-func NewSession(id, sid, userid string) *Session {
+func NewSession(id, sid string) *Session {
 
 	return &Session{
-		Id:     id,
-		Sid:    sid,
-		Userid: userid,
+		Id:  id,
+		Sid: sid,
 	}
 
 }
@@ -96,7 +95,7 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 }
 
-func (s *Session) Authenticate(realm string, st *SessionToken) error {
+func (s *Session) Authenticate(realm string, st *SessionToken, userid string) error {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -104,20 +103,21 @@ func (s *Session) Authenticate(realm string, st *SessionToken) error {
 	if s.Userid != "" {
 		return errors.New("session already authenticated")
 	}
-	if s.Nonce == "" || s.Nonce != st.Nonce {
-		return errors.New("nonce validation failed")
-	}
-	var userid string
-	err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
-	if err != nil {
-		return err
-	}
-	if st.Userid != userid {
-		return errors.New("user id mismatch")
+	if userid == "" {
+		if s.Nonce == "" || s.Nonce != st.Nonce {
+			return errors.New("nonce validation failed")
+		}
+		err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
+		if err != nil {
+			return err
+		}
+		if st.Userid != userid {
+			return errors.New("user id mismatch")
+		}
+		s.Nonce = ""
 	}
 
-	s.Nonce = ""
-	s.Userid = st.Userid
+	s.Userid = userid
 	s.UpdateRev++
 	return nil
 

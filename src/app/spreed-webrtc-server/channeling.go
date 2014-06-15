@@ -75,6 +75,11 @@ type DataSession struct {
 	Status  interface{}
 }
 
+type DataUser struct {
+	Id       string
+	Sessions int
+}
+
 type DataBye struct {
 	Type string
 	To   string
@@ -142,6 +147,7 @@ type DataIncoming struct {
 	Conference     *DataConference
 	Alive          *DataAlive
 	Authentication *DataAuthentication
+	Sessions       *DataSessions
 }
 
 type DataOutgoing struct {
@@ -153,8 +159,10 @@ type DataOutgoing struct {
 type DataSessions struct {
 	Type  string
 	Users []*DataSession
-	Index uint64
-	Batch uint64
+	Id    string `json:",omitempty"`
+	Token string `json:",omitempty"`
+	Index uint64 `json:",omitempty"`
+	Batch uint64 `json:",omitempty"`
 }
 
 type DataConference struct {
