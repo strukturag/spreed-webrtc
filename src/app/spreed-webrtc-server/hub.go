@@ -23,6 +23,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
 	"crypto/hmac"
 	"crypto/sha1"
 	"crypto/sha256"
@@ -72,6 +73,7 @@ type Hub struct {
 	version               string
 	config                *Config
 	sessionSecret         []byte
+	encryptionSecret      []byte
 	turnSecret            []byte
 	tickets               *securecookie.SecureCookie
 	count                 uint64
@@ -86,29 +88,35 @@ type Hub struct {
 	contacts              *securecookie.SecureCookie
 }
 
-func NewHub(version string, config *Config, sessionSecret, turnSecret, realm string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, encryptionSecret, turnSecret, realm string) *Hub {
 
 	h := &Hub{
-		connectionTable: make(map[string]*Connection),
-		sessionTable:    make(map[string]*Session),
-		roomTable:       make(map[string]*RoomWorker),
-		version:         version,
-		config:          config,
-		sessionSecret:   []byte(sessionSecret),
-		turnSecret:      []byte(turnSecret),
-		realm:           realm,
+		connectionTable:  make(map[string]*Connection),
+		sessionTable:     make(map[string]*Session),
+		roomTable:        make(map[string]*RoomWorker),
+		version:          version,
+		config:           config,
+		sessionSecret:    []byte(sessionSecret),
+		encryptionSecret: []byte(encryptionSecret),
+		turnSecret:       []byte(turnSecret),
+		realm:            realm,
 	}
 
 	if len(h.sessionSecret) < 32 {
 		log.Printf("Weak sessionSecret (only %d bytes). It is recommended to use a key with 32 or 64 bytes.\n", len(h.sessionSecret))
 	}
 
-	h.tickets = securecookie.New(h.sessionSecret, nil)
+	h.tickets = securecookie.New(h.sessionSecret, h.encryptionSecret)
+	h.tickets.MaxAge(86400 * 30) // 30 days
+	h.tickets.HashFunc(sha256.New)
+	h.tickets.BlockFunc(aes.NewCipher)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
 	h.tokenName = fmt.Sprintf("token@%s", h.realm)
-	h.contacts = securecookie.New(h.sessionSecret, nil)
+	h.contacts = securecookie.New(h.sessionSecret, h.encryptionSecret)
 	h.contacts.MaxAge(0)
+	h.contacts.HashFunc(sha256.New)
+	h.contacts.BlockFunc(aes.NewCipher)
 	return h
 
 }
