@@ -123,6 +123,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		$scope.status = "initializing";
 		$scope.id = null;
 		$scope.userid = null;
+		$scope.suserid = null;
 		$scope.peer = null;
 		$scope.dialing = null;
 		$scope.conference = null;
@@ -370,6 +371,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			safeApply($scope, function(scope) {
 				scope.id = scope.myid = data.Id;
 				scope.userid = data.Userid;
+				scope.suserid = data.Suserid;
 				scope.turn = data.Turn;
 				scope.stun = data.Stun;
 				scope.refreshWebrtcSettings();
@@ -547,7 +549,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					if (opts.soft) {
 						return;
 					}
-					$scope.userid = null;
+					$scope.userid = $scope.suserid = null;
 					break;
 				case "error":
 					if (reconnecting || connected) {
@@ -623,10 +625,12 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		});
 
 		$scope.$watch("userid", function(userid) {
+			var suserid;
 			if (userid) {
-				console.info("Session is now authenticated:", userid);
+				suserid = $scope.suserid;
+				console.info("Session is now authenticated:", userid, suserid);
 			}
-			appData.e.triggerHandler("authenticationChanged", [userid]);
+			appData.e.triggerHandler("authenticationChanged", [userid, suserid]);
 		});
 
 		// Apply all layout stuff as classes to our element.

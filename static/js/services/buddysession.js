@@ -45,7 +45,7 @@ define(["underscore"], function(_) {
 					}
 				}
 			} else {
-				this.set({});
+				this.use(null, {});
 			}
 		};
 

@@ -120,16 +120,17 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 	};
 
 	// contacts
-	return ["appData", "contactData", function(appData, contactData) {
+	return ["appData", "contactData", "mediaStream", function(appData, contactData, mediaStream) {
 
 		var Contacts = function() {
 
 			this.e = $({});
 			this.userid = null;
+			this.key = null;
 			this.database = null;
 
-			appData.e.on("authenticationChanged", _.bind(function(event, userid) {
-				var database = this.open(userid);
+			appData.e.on("authenticationChanged", _.bind(function(event, userid, suserid) {
+				var database = this.open(userid, suserid);
 				if (database && userid) {
 					// TODO(longsleep): This needs to be delayed util self has ha userid.
 					if (database.ready) {
@@ -150,7 +151,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 
 		};
 
-		Contacts.prototype.open = function(userid) {
+		Contacts.prototype.open = function(userid, suserid) {
 
 			if (this.database && (!userid || this.userid !== userid)) {
 				// Unload existing contacts.
@@ -163,9 +164,10 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 				if (!Modernizr.indexeddb) {
 					return;
 				}
-				// Create HMAC database name for user.
-				var hmac = new sjcl.misc.hmac('mediastream');
-				var id = "mediastream-"+sjcl.codec.base64.fromBits(hmac.encrypt(userid));
+				// Create secure key for hashing and encryption.
+				this.key = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(suserid+mediaStream.config.Token));
+				// Create database name for user which.
+				var id = "mediastream-" + this.id(userid);
 				console.log("Open of database:", id);
 				var database = this.database = new Database(id);
 				return database;
@@ -176,14 +178,53 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 
 		};
 
+		Contacts.prototype.id = function(userid) {
+
+			var hmac = new sjcl.misc.hmac(this.key);
+			return sjcl.codec.base64.fromBits(hmac.encrypt(userid));
+
+		};
+
+		Contacts.prototype.encrypt = function(data) {
+
+			return sjcl.encrypt(this.key, JSON.stringify(data));
+
+		};
+
+		Contacts.prototype.decrypt = function(data) {
+
+			var result;
+			try {
+				var s = sjcl.decrypt(this.key, data);
+				result = JSON.parse(s);
+			} catch(err) {
+				console.error("Failed to decrypt contact data", err);
+			}
+			return result;
+
+		};
+
 		Contacts.prototype.load = function() {
 			if (this.database) {
 				console.log("Load contacts from storage", this);
+				var remove = [];
 				this.database.all("contacts", _.bind(function(data) {
-					var contact = contactData.addByData(data.contact);
-					// TODO(longsleep): Convert buddyImage string to Blob.
-					this.e.triggerHandler("contactadded", contact);
+					var d = this.decrypt(data.contact);
+					if (d) {
+						var contact = contactData.addByData(d);
+						// TODO(longsleep): Convert buddyImage string to Blob.
+						this.e.triggerHandler("contactadded", d);
+					} else {
+						// Remove empty or invalid entries automatically.
+						remove.push(data.id);
+					}
 				}, this));
+				// Remove marked entries.
+				if (remove.length) {
+					_.each(remove, _.bind(function(id) {
+						this.database.delete("contacts", id);
+					}, this));
+				}
 			}
 		};
 
@@ -198,8 +239,8 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 			this.e.triggerHandler("contactadded", contact);
 			if (this.database) {
 				this.database.put("contacts", {
-					id: contact.Userid,
-					contact: contact
+					id: this.id(contact.Userid),
+					contact: this.encrypt(contact)
 				})
 			}
 		};
@@ -210,7 +251,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(underscore, $, Mo
 			if (contact) {
 				contactData.remove(userid);
 				if (this.database) {
-					this.database.delete("contacts", userid);
+					this.database.delete("contacts", this.id(userid));
 				}
 				this.e.triggerHandler("contactremoved", contact);
 			}
