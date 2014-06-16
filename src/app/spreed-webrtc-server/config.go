@@ -39,9 +39,9 @@ type Config struct {
 	UsersEnabled           bool     // Flag if users are enabled
 	UsersAllowRegistration bool     // Flag if users can register
 	UsersMode              string   // Users mode string
+	DefaultRoomEnabled     bool     // Flag if default room ("") is enabled
 	Plugin                 string   // Plugin to load
 	globalRoomid           string   // Id of the global room (not exported to Javascript)
-	defaultRoomEnabled     bool     // Flag if default room ("") is enabled
 }
 
 func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURIs, turnURIs []string, tokens bool, globalRoomid string, defaultRoomEnabled, usersEnabled, usersAllowRegistration bool, usersMode, plugin string) *Config {
@@ -59,9 +59,9 @@ func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURI
 		UsersEnabled:           usersEnabled,
 		UsersAllowRegistration: usersAllowRegistration,
 		UsersMode:              usersMode,
+		DefaultRoomEnabled:     defaultRoomEnabled,
 		Plugin:                 plugin,
 		globalRoomid:           globalRoomid,
-		defaultRoomEnabled:     defaultRoomEnabled,
 	}
 }
 
