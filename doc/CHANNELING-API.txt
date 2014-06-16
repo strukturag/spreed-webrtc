@@ -282,7 +282,8 @@ Additional types for session listing and notifications
         "Id": "7",
         "Userid": "u7",
         "Ua": "Chrome 28",
-        "Status": null
+        "Status": null,
+        "Prio": 100
     }
 
     Note: The Userid field is only present if that session belongs to a known user.
@@ -324,21 +325,24 @@ Additional types for session listing and notifications
                 "Type": "Online",
                 "Id": "1",
                 "Ua": "Firefox 27",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             },
             {
                 "Type": "Online",
                 "Id": "3",
                 "Userid": "u3",
                 "Ua": "Chrome 28",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             },
             {
                 "Type": "Online",
                 "Id": "4",
                 "Userid": "u4",
                 "Ua": "Chrome 28",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             }
         ]
     }

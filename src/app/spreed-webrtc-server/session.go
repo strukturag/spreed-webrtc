@@ -37,6 +37,7 @@ type Session struct {
 	UpdateRev uint64
 	Status    interface{}
 	Nonce     string
+	Prio      int
 	mutex     sync.RWMutex
 	userid    string
 }
@@ -44,8 +45,9 @@ type Session struct {
 func NewSession(id, sid string) *Session {
 
 	return &Session{
-		Id:  id,
-		Sid: sid,
+		Id:   id,
+		Sid:  sid,
+		Prio: 100,
 	}
 
 }
@@ -59,12 +61,12 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 		//fmt.Println("type update", key)
 		switch key {
-		//case "Roomid":
-		//	s.Roomid = update.Roomid
 		case "Ua":
 			s.Ua = update.Ua
 		case "Status":
 			s.Status = update.Status
+		case "Prio":
+			s.Prio = update.Prio
 		}
 
 	}
@@ -174,6 +176,7 @@ func (s *Session) DataSessionJoined() *DataSession {
 		Id:     s.Id,
 		Userid: s.userid,
 		Ua:     s.Ua,
+		Prio:   s.Prio,
 	}
 
 }
@@ -189,6 +192,7 @@ func (s *Session) DataSessionStatus() *DataSession {
 		Userid: s.userid,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
+		Prio:   s.Prio,
 	}
 
 }
@@ -198,6 +202,7 @@ type SessionUpdate struct {
 	Types  []string
 	Roomid string
 	Ua     string
+	Prio   int
 	Status interface{}
 }
 

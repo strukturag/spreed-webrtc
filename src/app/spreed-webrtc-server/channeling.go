@@ -72,6 +72,7 @@ type DataSession struct {
 	Token   string `json:",omitempty"`
 	Version string `json:",omitempty"`
 	Rev     uint64 `json:",omitempty"`
+	Prio    int    `json:",omitempty"`
 	Status  interface{}
 }
 
