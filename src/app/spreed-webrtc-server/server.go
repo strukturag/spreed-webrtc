@@ -68,7 +68,7 @@ func (s *Server) OnUnregister(c *Connection) {
 
 func (s *Server) OnText(c *Connection, b Buffer) {
 
-	//log.Printf("OnText from %d: %s\n", c.id, b)
+	//log.Printf("OnText from %d: %s\n", c.Id, b)
 	var msg DataIncoming
 	err := json.Unmarshal(b.Bytes(), &msg)
 	if err != nil {
@@ -167,9 +167,9 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 			}
 		}
 	case "Alive":
-		s.Alive(c, msg.Alive)
+		s.Alive(c, msg.Alive, msg.Iid)
 	case "Sessions":
-		s.Sessions(c, msg.Sessions)
+		s.Sessions(c, msg.Sessions.Sessions, msg.Iid)
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
@@ -192,15 +192,15 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 	b.Decref()
 }
 
-func (s *Server) Alive(c *Connection, alive *DataAlive) {
+func (s *Server) Alive(c *Connection, alive *DataAlive, iid string) {
 
-	c.h.aliveHandler(c, alive)
+	c.h.aliveHandler(c, alive, iid)
 
 }
 
-func (s *Server) Sessions(c *Connection, sessions *DataSessions) {
+func (s *Server) Sessions(c *Connection, srq *DataSessionsRequest, iid string) {
 
-	c.h.sessionsHandler(c, sessions)
+	c.h.sessionsHandler(c, srq, iid)
 
 }
 

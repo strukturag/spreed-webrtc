@@ -65,8 +65,8 @@ type DataTurn struct {
 }
 
 type DataSession struct {
+	Type    string
 	Id      string
-	Type    string `json:",omitempty"`
 	Userid  string `json:",omitempty"`
 	Ua      string `json:",omitempty"`
 	Token   string `json:",omitempty"`
@@ -148,22 +148,25 @@ type DataIncoming struct {
 	Alive          *DataAlive
 	Authentication *DataAuthentication
 	Sessions       *DataSessions
+	Iid            string `json:",omitempty"`
 }
 
 type DataOutgoing struct {
 	Data interface{}
 	From string
 	To   string
+	Iid  string `json:",omitempty"`
 }
 
 type DataSessions struct {
-	Type      string
-	Users     []*DataSession
-	Id        string `json:",omitempty"`
-	Token     string `json:",omitempty"`
-	TokenType string `json:",omitempty"`
-	Index     uint64 `json:",omitempty"`
-	Batch     uint64 `json:",omitempty"`
+	Type     string
+	Sessions *DataSessionsRequest `json:",omitempty"`
+	Users    []*DataSession
+}
+
+type DataSessionsRequest struct {
+	Token string
+	Type  string
 }
 
 type DataConference struct {

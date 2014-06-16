@@ -44,7 +44,7 @@ define(['jquery', 'underscore'], function($, _) {
 			var element = $element[0];
 			var width = 0;
 			this.update = _.bind(function() {
-				if (this.active || width > 0) {	
+				if (this.active || width > 0) {
 					if (webrtc.usermedia.audioLevel) {
 						width = Math.round(100 * webrtc.usermedia.audioLevel);
 						// Hide low volumes.

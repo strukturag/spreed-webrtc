@@ -129,7 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", "animationFrame", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream, animationFrame) {
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream, animationFrame, $q) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -158,16 +158,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.hover(buddyElement, event.type === "mouseenter" ? true : false);
 			}, this));
 			$element.on("click", ".buddy", _.bind(function(event) {
-				console.log("click event", event);
 				var buddyElement = $(event.currentTarget);
-				//buddyElement.scope().doDefault();
 				this.click(buddyElement, event.target);
 			}, this));
-			/*$element.on("click", ".fa.contact", _.bind(function(event) {
-				event.stopPropagation();
-				var buddyElement = $(event.currentTarget);
-				buddyElement.scope().doDefaultContact();
-			}, this));*/
 			$element.attr("data-xthreshold", "10");
 			$element.on("swipeleft", ".buddy", _.bind(function(event) {
 				event.preventDefault();
@@ -658,32 +651,47 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			var scope = buddyElement.scope();
 			var session = scope.session;
-			var sessionData = session.get()
 			var contact = scope.contact;
-			var id;
-			if (!sessionData) {
-				// TODO(longsleep): Find session with help of contact.
-				console.log("No sessions for this buddy.", session, contact);
-				if (contact && contact.Token) {
-					mediaStream.api.sendSessions(contact.Token, "contact");
+
+			var promise = (function() {
+				var deferred = $q.defer();
+				var sessionData = session.get()
+				if (!sessionData) {
+					// Find session with help of contact.
+					if (contact && contact.Token) {
+						mediaStream.api.sendSessions(contact.Token, "contact", function(event, type, data) {
+							//console.log("oooooooooooooooo", type, data);
+							if (data.Users && data.Users.length > 0) {
+								var s = data.Users[0];
+								buddyData.set(s.Id, scope);
+								deferred.resolve(s.Id);
+							}
+						});
+					}
+				} else {
+					deferred.resolve(sessionData.Id);
 				}
-				return;
-			} else {
-				id = sessionData.Id;
-			}
-			//console.log("id", id);
+				return deferred.promise;
+			})();
+
 			switch (action) {
 			case "call":
-				scope.doCall(id);
+				promise.then(function(id) {
+					scope.doCall(id);
+				});
 				break;
 			case "chat":
-				scope.doChat(id);
+				promise.then(function(id) {
+					scope.doChat(id);
+				});
 				break;
 			case "contact":
 				if (contact) {
 					scope.doContactRemove(contact.Userid);
 				} else {
-					scope.doContactRequest(id);
+					promise.then(function(id) {
+						scope.doContactRequest(id);
+					});
 				}
 				break;
 			}

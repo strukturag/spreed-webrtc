@@ -52,11 +52,14 @@ Sending vs receiving document data encapsulation
 
     {
         "Type": "Whatever",
-        "Whatever": { /* your document */ }
+        "Whatever": { /* your document */ },
+        "Iid": "request-identifier-unique-to-client"
     }
 
     So any document you sent, you have to specify a Type key pointing
-    to the key where the real document is to be found.
+    to the key where the real document is to be found. The Iid field is
+    optional and is returned back with the response wrapper document to
+    match requests with response data when supported by the type.
 
   Received documents are wrapped by a special Document which provides
   additional information.
@@ -64,7 +67,8 @@ Sending vs receiving document data encapsulation
     {
         "From": "4",
         "To": "5",
-        "Data": {}
+        "Data": {},
+        "Iid": "request-identifier-unique-to-client"
     }
 
   The Data key contains the real Document.
@@ -76,6 +80,9 @@ Sending vs receiving document data encapsulation
     To   : The Id, the server send this Document to. Should be the same as
            your current Self Id.
     Data : Contains the payload.
+    Iid  : Optional request identifier to match this response to the calling
+           request. Only available when sent by the client and the requested
+           type implementation does support it.
 
 
 Special purpose documents for channling
@@ -333,9 +340,7 @@ Additional types for session listing and notifications
                 "Ua": "Chrome 28",
                 "Status": {...}
             }
-        ],
-        "Index": 0,
-        "Batch": 0
+        ]
     }
 
     Note: The Userid field is only present, if that session belongs to a known user.
@@ -389,9 +394,10 @@ Information retrieval
 
     {
         "Type": "Sessions",
-        "Id": "Client generated request ID",
-        "Token": "Request token",
-        "TokenType": "Token type"
+        "Sessions": {
+          "Type": "Token type",
+          "Token": "Request token"
+        }
     }
 
     Valid known token types are: "contact".
@@ -401,9 +407,10 @@ Information retrieval
 
     {
         "Type": "Sessions",
-        "Id": "ID as from request",
-        "Token": "Token as in request",
-        "TokenType": "Type as in request",
+        "Sessions": {
+          "Type": "Type as in request",
+          "Token": "Token as in request"
+        },
         "Users": [
           {
             "Type": "Online",

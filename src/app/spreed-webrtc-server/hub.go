@@ -405,11 +405,11 @@ func (h *Hub) unicastHandler(m *MessageRequest) {
 
 }
 
-func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
+func (h *Hub) aliveHandler(c *Connection, alive *DataAlive, iid string) {
 
 	aliveJson := h.buffers.New()
 	encoder := json.NewEncoder(aliveJson)
-	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: alive})
+	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: alive, Iid: iid})
 	if err != nil {
 		log.Println("Alive error while encoding JSON", err)
 		aliveJson.Decref()
@@ -420,16 +420,20 @@ func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
 
 }
 
-func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
+func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid string) {
 
-	reply := false
+	var users []*DataSession
 
-	switch sessions.TokenType {
+	switch srq.Type {
 	case "contact":
 		contact := &Contact{}
-		err := h.contacts.Decode("contactRequest", sessions.Token, contact)
+		err := h.contacts.Decode("contactConfirmed", srq.Token, contact)
 		if err != nil {
-			log.Println("Failed to decode incoming contact token", err, sessions.Token)
+			log.Println("Failed to decode incoming contact token", err, srq.Token)
+			return
+		}
+		if !contact.Ok {
+			log.Println("Ignoring contact token without Ok", contact)
 			return
 		}
 		// Use the userid which is not ours from the contact data.
@@ -451,16 +455,16 @@ func (h *Hub) sessionsHandler(c *Connection, sessions *DataSessions) {
 			return
 		}
 		// Add sessions for forein user.
-		sessions.Users = user.SessionsData()
-		reply = true
+		users = user.SessionsData()
 	default:
-		log.Println("Unkown incoming sessions request type", sessions.TokenType)
+		log.Println("Unkown incoming sessions request type", srq.Type)
 	}
 
-	if reply {
+	if users != nil {
+		sessions := &DataSessions{Type: "Sessions", Users: users, Sessions: srq}
 		sessionsJson := h.buffers.New()
 		encoder := json.NewEncoder(sessionsJson)
-		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions})
+		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions, Iid: iid})
 		if err != nil {
 			log.Println("Sessions error while encoding JSON", err)
 			sessionsJson.Decref()

@@ -29,6 +29,7 @@ define(['jquery', 'underscore'], function($, _) {
 		this.sid = null;
 		this.session = {};
 		this.connector = connector;
+		this.iids= 0;
 
 		this.e = $({});
 
@@ -74,7 +75,7 @@ define(['jquery', 'underscore'], function($, _) {
 			Type: type
 		};
 		payload[type] = data;
-		//console.log("<<<<<<<<<<<<", JSON.stringify(payload));
+		//console.log("<<<<<<<<<<<<", JSON.stringify(payload, null, 2));
 		this.connector.send(payload, noqueue);
 
 	};
@@ -91,6 +92,21 @@ define(['jquery', 'underscore'], function($, _) {
 		return this.apply(name, obj);
 	};
 
+	Api.prototype.request = function(type, data, cb) {
+
+		var payload = {
+			Type: type
+		}
+		payload[type] = data;
+		if (cb) {
+			var iid = ""+(this.iids++);
+			payload.Iid = iid;
+			this.e.one(iid+".request", cb);
+		}
+		this.connector.send(payload);
+
+	}
+
 	// Helper hack function to send API requests to other destinations.
 	// Simply provide an alternative send function on the obj Object.
 	Api.prototype.apply = function(name, obj) {
@@ -105,8 +121,15 @@ define(['jquery', 'underscore'], function($, _) {
 		this.last_receive = now;
 		this.last_receive_overdue = false;
 
+		var iid = d.Iid;
 		var data = d.Data;
 		var dataType = data.Type;
+
+		if (iid) {
+			// Shortcut for iid registered responses.
+			this.e.triggerHandler(iid+".request", [dataType, data]);
+			return;
+		}
 
 		switch (dataType) {
 			case "Self":
@@ -321,16 +344,17 @@ define(['jquery', 'underscore'], function($, _) {
 		return this.send("Alive", data);
 	};
 
-	Api.prototype.sendSessions = function(token, type) {
+	Api.prototype.sendSessions = function(token, type, cb) {
 
 		var data = {
 			Type: "Sessions",
-			Id: "some-random-whatever",
-			Token: token,
-			TokenType: type
+			Sessions: {
+				Type: type,
+				Token: token
+			}
 		}
 
-		return this.send("Sessions", data);
+		return this.request("Sessions", data, cb);
 
 	};
 
