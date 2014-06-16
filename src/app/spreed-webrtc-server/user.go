@@ -23,6 +23,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 )
 
@@ -85,6 +86,27 @@ func (u *User) SessionsData() []*DataSession {
 	for _, session := range u.sessionTable {
 		sessions = append(sessions, session.Data())
 	}
+	sort.Sort(ByPrioAndStamp(sessions))
 	return sessions
 
+}
+
+type ByPrioAndStamp []*DataSession
+
+func (a ByPrioAndStamp) Len() int {
+	return len(a)
+}
+
+func (a ByPrioAndStamp) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func (a ByPrioAndStamp) Less(i, j int) bool {
+	if a[i].Prio < a[j].Prio {
+		return true
+	}
+	if a[i].Prio == a[j].Prio {
+		return a[i].stamp < a[j].stamp
+	}
+	return false
 }

@@ -74,6 +74,7 @@ type DataSession struct {
 	Rev     uint64 `json:",omitempty"`
 	Prio    int    `json:",omitempty"`
 	Status  interface{}
+	stamp   int64
 }
 
 type DataUser struct {

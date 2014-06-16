@@ -483,7 +483,6 @@ func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 	h.mutex.RUnlock()
 	var rev uint64
 	if ok {
-		rev = session.Update(s)
 		if s.Status != nil {
 			status, ok := s.Status.(map[string]interface{})
 			if ok && status["buddyPicture"] != nil {
@@ -496,6 +495,7 @@ func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 				}
 			}
 		}
+		rev = session.Update(s)
 	} else {
 		log.Printf("Update data for unknown user %s\n", s.Id)
 	}

@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"sync"
+	"time"
 )
 
 var sessionNonces *securecookie.SecureCookie
@@ -40,14 +41,16 @@ type Session struct {
 	Prio      int
 	mutex     sync.RWMutex
 	userid    string
+	stamp     int64
 }
 
 func NewSession(id, sid string) *Session {
 
 	return &Session{
-		Id:   id,
-		Sid:  sid,
-		Prio: 100,
+		Id:    id,
+		Sid:   sid,
+		Prio:  100,
+		stamp: time.Now().Unix(),
 	}
 
 }
@@ -119,6 +122,7 @@ func (s *Session) Authenticate(realm string, st *SessionToken, userid string) er
 	}
 
 	s.userid = userid
+	s.stamp = time.Now().Unix()
 	s.UpdateRev++
 	return nil
 
@@ -143,6 +147,8 @@ func (s *Session) Data() *DataSession {
 		Ua:     s.Ua,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
+		Prio:   s.Prio,
+		stamp:  s.stamp,
 	}
 
 }
