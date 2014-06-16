@@ -107,7 +107,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		// TODO(longsleep): Validate Answer
 		s.Unicast(c, msg.Answer.To, msg.Answer)
 	case "Users":
-		if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+		if c.Hello {
 			s.Users(c)
 		}
 	case "Authentication":
@@ -122,7 +122,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 	case "Status":
 		//log.Println("Status", msg.Status)
 		s.UpdateSession(c, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
-		if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+		if c.Hello {
 			s.Broadcast(c, c.Session.DataSessionStatus())
 		}
 	case "Chat":
@@ -133,7 +133,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		msg.Chat.Chat.Time = time.Now().Format(time.RFC3339)
 		if msg.Chat.To == "" {
 			// TODO(longsleep): Check if chat broadcast is allowed.
-			if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+			if c.Hello {
 				atomic.AddUint64(&c.h.broadcastChatMessages, 1)
 				s.Broadcast(c, msg.Chat)
 			}
