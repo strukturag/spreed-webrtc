@@ -24,7 +24,6 @@ package main
 import ()
 
 type Contact struct {
-	A  string
-	B  string
-	Ok bool
+	A string
+	B string
 }

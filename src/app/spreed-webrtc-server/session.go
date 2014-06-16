@@ -33,13 +33,12 @@ var sessionNonces *securecookie.SecureCookie
 type Session struct {
 	Id        string
 	Sid       string
-	Userid    string
-	Roomid    string
 	Ua        string
 	UpdateRev uint64
 	Status    interface{}
 	Nonce     string
 	mutex     sync.RWMutex
+	userid    string
 }
 
 func NewSession(id, sid string) *Session {
@@ -60,8 +59,8 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 		//fmt.Println("type update", key)
 		switch key {
-		case "Roomid":
-			s.Roomid = update.Roomid
+		//case "Roomid":
+		//	s.Roomid = update.Roomid
 		case "Ua":
 			s.Ua = update.Ua
 		case "Status":
@@ -83,7 +82,7 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 	if s.Id != st.Id || s.Sid != st.Sid {
 		return "", errors.New("session id mismatch")
 	}
-	if s.Userid != "" {
+	if s.userid != "" {
 		return "", errors.New("session already authenticated")
 	}
 
@@ -100,7 +99,7 @@ func (s *Session) Authenticate(realm string, st *SessionToken, userid string) er
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if s.Userid != "" {
+	if s.userid != "" {
 		return errors.New("session already authenticated")
 	}
 	if userid == "" {
@@ -117,14 +116,18 @@ func (s *Session) Authenticate(realm string, st *SessionToken, userid string) er
 		s.Nonce = ""
 	}
 
-	s.Userid = userid
+	s.userid = userid
 	s.UpdateRev++
 	return nil
 
 }
 
 func (s *Session) Token() *SessionToken {
-	return &SessionToken{Id: s.Id, Sid: s.Sid, Userid: s.Userid}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return &SessionToken{Id: s.Id, Sid: s.Sid, Userid: s.userid}
 }
 
 func (s *Session) Data() *DataSession {
@@ -134,11 +137,17 @@ func (s *Session) Data() *DataSession {
 
 	return &DataSession{
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Ua:     s.Ua,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
 	}
+
+}
+
+func (s *Session) Userid() string {
+
+	return s.userid
 
 }
 
@@ -163,7 +172,7 @@ func (s *Session) DataSessionJoined() *DataSession {
 	return &DataSession{
 		Type:   "Joined",
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Ua:     s.Ua,
 	}
 
@@ -177,7 +186,7 @@ func (s *Session) DataSessionStatus() *DataSession {
 	return &DataSession{
 		Type:   "Status",
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
 	}

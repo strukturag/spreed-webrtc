@@ -188,12 +188,13 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 }
 
 func (h *Hub) CreateSuserid(session *Session) (suserid string) {
-	if session.Userid != "" {
+	userid := session.Userid()
+	if userid != "" {
 		m := hmac.New(sha256.New, h.encryptionSecret)
-		m.Write([]byte(session.Userid))
+		m.Write([]byte(userid))
 		suserid = base64.StdEncoding.EncodeToString(m.Sum(nil))
 	}
-	return suserid
+	return
 }
 
 func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
@@ -371,14 +372,15 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		return
 	}
 	session := c.Session
+	suserid := session.Userid()
 	delete(h.connectionTable, c.Id)
 	delete(h.sessionTable, c.Id)
-	if session != nil && session.Userid != "" {
-		user, ok := h.userTable[session.Userid]
+	if session != nil && suserid != "" {
+		user, ok := h.userTable[suserid]
 		if ok {
 			empty := user.RemoveSession(session)
 			if empty {
-				delete(h.userTable, session.Userid)
+				delete(h.userTable, suserid)
 			}
 		}
 	}
@@ -427,20 +429,17 @@ func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid strin
 	switch srq.Type {
 	case "contact":
 		contact := &Contact{}
-		err := h.contacts.Decode("contactConfirmed", srq.Token, contact)
+		err := h.contacts.Decode("contact", srq.Token, contact)
 		if err != nil {
 			log.Println("Failed to decode incoming contact token", err, srq.Token)
 			return
 		}
-		if !contact.Ok {
-			log.Println("Ignoring contact token without Ok", contact)
-			return
-		}
 		// Use the userid which is not ours from the contact data.
 		var userid string
-		if contact.A == c.Session.Userid {
+		suserid := c.Session.Userid()
+		if contact.A == suserid {
 			userid = contact.B
-		} else if contact.B == c.Session.Userid {
+		} else if contact.B == suserid {
 			userid = contact.A
 		}
 		if userid == "" {
@@ -528,11 +527,12 @@ func (h *Hub) authenticateHandler(session *Session, st *SessionToken, userid str
 	err := session.Authenticate(h.realm, st, userid)
 	if err == nil {
 		// Authentication success.
+		suserid := session.Userid()
 		h.mutex.Lock()
-		user, ok := h.userTable[session.Userid]
+		user, ok := h.userTable[suserid]
 		if !ok {
-			user = NewUser(session.Userid)
-			h.userTable[session.Userid] = user
+			user = NewUser(suserid)
+			h.userTable[suserid] = user
 		}
 		h.mutex.Unlock()
 		user.AddSession(session)
@@ -548,72 +548,61 @@ func (h *Hub) contactrequestHandler(c *Connection, to string, cr *DataContactReq
 
 	if cr.Success {
 		// Client replied with success.
-		// Decode Token and make sure c.Session.Userid and the to Session.UserId are a match.
+		// Decode Token and make sure c.Session.Userid and the to Session.Userid are a match.
 		contact := &Contact{}
-		err = h.contacts.Decode("contactRequest", cr.Token, contact)
+		err = h.contacts.Decode("contact", cr.Token, contact)
 		if err != nil {
 			return err
 		}
-		if contact.Ok {
-			return errors.New("received success with ok state set")
-		}
-		bSessionData := c.Session.Data()
-		if bSessionData.Userid == "" {
+		suserid := c.Session.Userid()
+		if suserid == "" {
 			return errors.New("no userid")
 		}
 		h.mutex.RLock()
-		aSession, ok := h.sessionTable[to]
+		session, ok := h.sessionTable[to]
 		h.mutex.RUnlock()
 		if !ok {
 			return errors.New("unknown to session for confirm")
 		}
-		aSessionData := aSession.Data()
-		if aSessionData.Userid == "" {
+		userid := session.Userid()
+		if userid == "" {
 			return errors.New("to has no userid for confirm")
 		}
-		if aSessionData.Userid != contact.A {
+		if suserid != contact.A {
 			return errors.New("contact mismatch in a")
 		}
-		if bSessionData.Userid != contact.B {
+		if userid != contact.B {
 			return errors.New("contact mismatch in b")
 		}
-		contact.Ok = true
-		cr.Token, err = h.contacts.Encode("contactConfirmed", contact)
 	} else {
 		if cr.Token != "" {
 			// Client replied with no success.
-			// Decode Token.
-			contact := &Contact{}
-			err = h.contacts.Decode("contactRequest", cr.Token, contact)
-			if err != nil {
-				return err
-			}
 			// Remove token.
 			cr.Token = ""
 		} else {
 			// New request.
 			// Create Token with flag and c.Session.Userid and the to Session.Userid.
-			aSessionData := c.Session.Data()
-			if aSessionData.Userid == "" {
+			suserid := c.Session.Userid()
+			if suserid == "" {
 				return errors.New("no userid")
 			}
 			h.mutex.RLock()
-			bSession, ok := h.sessionTable[to]
+			session, ok := h.sessionTable[to]
 			h.mutex.RUnlock()
 			if !ok {
 				return errors.New("unknown to session")
 			}
-			bSessionData := bSession.Data()
-			if bSessionData.Userid == "" {
+			userid := session.Userid()
+			if userid == "" {
 				return errors.New("to has no userid")
 			}
-			if bSessionData.Userid == aSessionData.Userid {
+			if userid == suserid {
 				return errors.New("to userid cannot be the same as own userid")
 			}
 			// Create object.
-			contact := &Contact{aSessionData.Userid, bSessionData.Userid, false}
+			contact := &Contact{userid, suserid}
 			// Serialize.
-			cr.Token, err = h.contacts.Encode("contactRequest", contact)
+			cr.Token, err = h.contacts.Encode("contact", contact)
 		}
 	}
 

@@ -44,7 +44,7 @@ func (s *Server) OnRegister(c *Connection) {
 			Type:    "Self",
 			Id:      c.Id,
 			Sid:     c.Session.Sid,
-			Userid:  c.Session.Userid,
+			Userid:  c.Session.Userid(),
 			Suserid: c.h.CreateSuserid(c.Session),
 			Token:   token,
 			Version: c.h.version,
@@ -144,7 +144,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 					log.Println("Ignoring invalid contact request.", err)
 					return
 				}
-				msg.Chat.Chat.Status.ContactRequest.Userid = c.Session.Userid
+				msg.Chat.Chat.Status.ContactRequest.Userid = c.Session.Userid()
 			}
 			atomic.AddUint64(&c.h.unicastChatMessages, 1)
 			s.Unicast(c, msg.Chat.To, msg.Chat)
