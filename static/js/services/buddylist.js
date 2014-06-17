@@ -252,7 +252,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				}
 				buddyData.set(id, targetScope);
 				delete this.actionElements[id];
+				return targetScope;
 			}
+			return;
 
 		};
 
@@ -466,14 +468,16 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.updateSubline(display, status.message);
 			}
 			// Update display picture.
-			display.buddyPicture = status.buddyPicture || null;
-			this.updateBuddyPicture(display);
+			if (status.buddyPicture) {
+				display.buddyPicture = status.buddyPicture || null;
+				this.updateBuddyPicture(display);
+			}
 
 		};
 
 		Buddylist.prototype.updateSubline = function(display, s) {
 
-			if (!s || s === "__none__") {
+			if (!s || s === "__e") {
 				display.subline = "";
 				return;
 			}
@@ -497,7 +501,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			// Update session.
 			var sessionData = scope.session.update(id, data, _.bind(function(session) {
 				//console.log("Session is now authenticated", session);
-				this.onBuddySessionUserid(scope, session);
+				var newscope = this.onBuddySessionUserid(scope, session);
+				if (newscope) {
+					scope = newscope;
+				}
 			}, this));
 			if (sessionData) {
 				// onStatus for main session.
@@ -519,7 +526,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			buddyCount++;
 			var sessionData = scope.session.update(id, data, _.bind(function(session) {
 				//console.log("Session is now authenticated", session);
-				this.onBuddySessionUserid(scope, session);
+				var newscope = this.onBuddySessionUserid(scope, session);
+				if (newscope) {
+					scope = newscope;
+				}
 			}, this));
 			if (sessionData && sessionData.Status) {
 				this.setDisplay(id, scope, sessionData, "joined");
@@ -566,11 +576,17 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				if (sessionData) {
 					this.updateDisplay(sessionData.Id, scope, sessionData, "status");
 				} else if (scope.contact) {
+					var contact = scope.contact;
 					// Use it with userid as id in tree.
-					if (!this.tree.check(session.Userid)) {
-						this.tree.add(session.Userid, scope);
+					if (!this.tree.check(contact.Userid)) {
+						this.tree.add(contact.Userid, scope);
 						buddyCount++;
 					}
+					if (contact.Status !== null && !contact.Status.message) {
+						// Remove status message.
+						contact.Status.message = "__e";
+					}
+					this.updateDisplay(contact.Userid, scope, contact, "status");
 				}
 				if (!noApply) {
 					scope.$apply();
@@ -613,6 +629,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					if (contact.Status === null && sessionData.Status) {
 						// Update contact status with session.Status
 						var status = contact.Status = _.extend({}, sessionData.Status);
+						// Remove status message.
+						delete status.message;
+						// Convert buddy image.
 						if (status.buddyPicture) {
 							var img = this.dumpBuddyPictureToString(scope);
 							if (img) {
@@ -631,7 +650,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				scope = this.onJoined({
 					Id: contact.Userid,
 					Userid: contact.Userid,
-					Status: contact.Status
+					Status: _.extend({}, contact.Status)
 				});
 				scope.contact = contact;
 			}
