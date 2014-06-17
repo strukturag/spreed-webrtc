@@ -668,8 +668,23 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			if (mediaStream.connector.connected) {
 				$scope.setStatus("waiting");
 			}
-			$scope.layout.buddylist = true;
-			$scope.layout.buddylistAutoHide = false;
+			if ($scope.roomstatus) {
+				$scope.layout.buddylist = true;
+				$scope.layout.buddylistAutoHide = false;
+			} else {
+				$scope.layout.buddylist = false;
+				$scope.layout.buddylistAutoHide = true;
+			}
+		});
+
+		$scope.$watch("roomstatus", function(roomstatus) {
+			if (roomstatus && !$scope.peer) {
+				$scope.layout.buddylist = true;
+				$scope.layout.buddylistAutoHide = false;
+			} else if (!$scope.layout.buddylistAutoHide) {
+				$scope.layout.buddylist = false;
+				$scope.layout.buddylistAutoHide = true;
+			}
 		});
 
 		mediaStream.webrtc.e.on("busy", function(event, from) {
