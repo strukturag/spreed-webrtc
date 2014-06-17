@@ -435,7 +435,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			display.buddyPicture = status.buddyPicture;
 			this.updateBuddyPicture(display);
 			// Set display subline.
-			display.subLine = data.Ua;
+			this.updateSubline(display, status.message);
 			// Add to render queue when no element exists.
 			if (!scope.element) {
 				var before = this.tree.add(id, scope);
@@ -462,12 +462,28 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.queue.push([queueName, id, before]);
 			}
 			// Update display subline.
-			if (data.Ua) {
-				display.subLine = data.Ua;
+			if (status.message) {
+				this.updateSubline(display, status.message);
 			}
 			// Update display picture.
 			display.buddyPicture = status.buddyPicture || null;
 			this.updateBuddyPicture(display);
+
+		};
+
+		Buddylist.prototype.updateSubline = function(display, s) {
+
+			if (!s || s === "__none__") {
+				display.subline = "";
+				return;
+			}
+			if (s.length > 20) {
+				display.sublineFull = s;
+				s = s.substr(0, 20) + "...";
+			} else {
+				display.sublineFull = null;
+			}
+			display.subline = s;
 
 		};
 

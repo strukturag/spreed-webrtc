@@ -139,6 +139,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		$scope.master = {
 			displayName: null,
 			buddyPicture: null,
+			message: null,
 			settings: {
 				videoQuality: "high",
 				stereo: true,
@@ -175,7 +176,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				// This is the user status.
 				var status = {
 					displayName: $scope.master.displayName || null,
-					buddyPicture: $scope.master.buddyPicture || null
+					buddyPicture: $scope.master.buddyPicture || null,
+					message: $scope.master.message || null
 				}
 				if (_.isEqual(status, cache.status)) {
 					console.log("Status update skipped, as status has not changed.")

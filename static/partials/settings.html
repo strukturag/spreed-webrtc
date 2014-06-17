@@ -3,7 +3,7 @@
   <div class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
     <fieldset>
 
-      <legend>{{_('Settings')}}</legend>
+      <legend>{{_('Profile')}}</legend>
       <div class="form-group">
       <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
         <div class="col-xs-8">
@@ -16,69 +16,84 @@
         <label class="col-xs-4 control-label">{{_('Your name')}}</label>
         <div class="col-xs-8">
           <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
-          <span class="help-block">{{_('Your picture and name are visible to others.')}}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-xs-4 control-label">{{_('Status message')}}</label>
+        <div class="col-xs-8">
+          <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-8 col-xs-offset-4">
+          {{_('Profile information is public.')}}
         </div>
       </div>
       <div ng-controller="UsersettingsController as usersettings">
-        <div class="form-group" ng-if="(withUsers && withUsersRegistration) || userid">
-          <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
-          <div ng-switch="withUsersMode">
-            <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
-              <div ng-if="!userid">
-                <keygen style="display:none" name="pubkey"/>
-                <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
-                  <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+        <div ng-if="(withUsers && withUsersRegistration) || userid">
+          <legend>{{_('Account')}}</legend>
+          <div class="form-group">
+            <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
+            <div ng-switch="withUsersMode">
+              <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
+                <div ng-if="!userid">
+                  <keygen style="display:none" name="pubkey"/>
+                  <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
+                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                  </label>
+                  <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+                </div>
+                <div ng-if="userid">
+                  <pre class="small">{{userid}}</pre>
+                  <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
+                </div>
+              </form>
+              <div ng-switch-default class="col-xs-8">
+                <div ng-if="!userid && withUsersRegistration">
+                  <label ng-if="usersettings.loginUserid">
+                    <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
+                  </label>
+                  <label ng-if="usersettings.registerUserid">
+                    <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                  </label>
+                </div>
+                <pre class="small" ng-if="userid">{{userid}}</pre>
+                <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
+                  <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
                 </label>
-                <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
               </div>
-              <div ng-if="userid">
-                <pre class="small">{{userid}}</pre>
-                <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
-              </div>
-            </form>
-            <div ng-switch-default class="col-xs-8">
-              <div ng-if="!userid && withUsersRegistration">
-                <label ng-if="usersettings.loginUserid">
-                  <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
-                </label>
-                <label ng-if="usersettings.registerUserid">
-                  <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
-                </label>
-              </div>
-              <pre class="small" ng-if="userid">{{userid}}</pre>
-              <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
-                <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
-              </label>
             </div>
           </div>
         </div>
       </div>
-      <div ng-show="mediaSources.supported">
-        <hr/>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Microphone')}}</label>
-          <div class="col-xs-8">
-            <select class="form-control" ng-model="user.settings.microphoneId" ng-options="mic.id as mic.label for mic in mediaSources.audio"></select>
+      <div ng-show="mediaSources.supported || isChrome">
+        <legend>{{_('Media')}}</legend>
+        <div ng-show="mediaSources.supported">
+          <div class="form-group">
+            <label class="col-xs-4 control-label">{{_('Microphone')}}</label>
+            <div class="col-xs-8">
+              <select class="form-control" ng-model="user.settings.microphoneId" ng-options="mic.id as mic.label for mic in mediaSources.audio"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-4 control-label">{{_('Camera')}}</label>
+            <div class="col-xs-8">
+              <select class="form-control" ng-model="user.settings.cameraId" ng-options="vid.id as vid.label for vid in mediaSources.video"></select>
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Camera')}}</label>
+        <div ng-show="isChrome" class="form-group">
+          <label class="col-xs-4 control-label">{{_('Video quality')}}</label>
           <div class="col-xs-8">
-            <select class="form-control" ng-model="user.settings.cameraId" ng-options="vid.id as vid.label for vid in mediaSources.video"></select>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'low'">{{_('Low')}}</button>
+              <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'high'">{{_('High')}}</button>
+              <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('HD')}}</button>
+            </div>
           </div>
         </div>
       </div>
-      <div ng-show="isChrome" class="form-group">
-        <label class="col-xs-4 control-label">{{_('Video quality')}}</label>
-        <div class="col-xs-8">
-          <div class="btn-group">
-            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'low'">{{_('Low')}}</button>
-            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'high'">{{_('High')}}</button>
-            <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('HD')}}</button>
-          </div>
-        </div>
-      </div>
-      <hr/>
+      <legend>{{_('Settings')}}</legend>
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Language')}}</label>
         <div class="col-xs-8">

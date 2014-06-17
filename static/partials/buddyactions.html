@@ -1,11 +1,11 @@
 <div class="buddyhover">
 	<div class="buddyactions active">
-	    <a class="btn btn-info" data-action="call" title="{{_('Start video call')}}"><i class="fa fa-eye"></i></a>
-	    <a class="btn btn-info" data-action="chat" title="{{_('Start chat')}}"><i class="fa fa-comments-o"></i></a>
+		<a class="btn btn-info" data-action="call" title="{{_('Start video call')}}"><i class="fa fa-eye"></i></a>
+		<a class="btn btn-info" data-action="chat" title="{{_('Start chat')}}"><i class="fa fa-comments-o"></i></a>
 	</div>
 	<div class="buddysessions" ng-if="session.count>1">
-    	<ul>
-    		<li ng-repeat="(id, s) in session.sessions" ng-class="{currentsession: s.Id === session.Id}"><!--<div class="buddyPicture buddyPictureSmall"><i class="fa fa-user fa-2x"/><img ng-show="s.Status.buddyPicture" alt ng-src="{{s.Status.buddyPicture}}" width="30" height="30"/></div>--><span class="btn-group"><a class="btn btn-sm btn-default buddy3" ng-click="$event.stopPropagation()"><span>{{s.Status.displayName}}, {{s.Ua}}</span></a><a class="btn btn-sm btn-default" title="{{_('Start video call')}}" ng-click="doCall(s.Id); $event.stopPropagation()"><i class="fa fa-eye"></i></a><a class="btn btn-sm btn-default" title="{{_('Start chat')}}" ng-click="doChat(s.Id); $event.stopPropagation()"><i class="fa fa-comments-o"></i></a></span></li>
-    	</ul>
+		<ul>
+			<li ng-repeat="(id, s) in session.sessions" ng-class="{currentsession: s.Id === session.Id}"><!--<div class="buddyPicture buddyPictureSmall"><i class="fa fa-user fa-2x"/><img ng-show="s.Status.buddyPicture" alt ng-src="{{s.Status.buddyPicture}}" width="30" height="30"/></div>--><span class="btn-group"><a class="btn btn-sm btn-default buddy3" ng-click="$event.stopPropagation()"><span>{{s.Status.displayName}}, {{s.Message}}</span></a><a class="btn btn-sm btn-default" title="{{_('Start video call')}}" ng-click="doCall(s.Id); $event.stopPropagation()"><i class="fa fa-eye"></i></a><a class="btn btn-sm btn-default" title="{{_('Start chat')}}" ng-click="doChat(s.Id); $event.stopPropagation()"><i class="fa fa-comments-o"></i></a></span></li>
+		</ul>
 	</div>
 </div>
