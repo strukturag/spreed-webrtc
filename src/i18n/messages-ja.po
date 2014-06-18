@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-23 10:35+0200\n"
+"POT-Creation-Date: 2014-06-18 17:46+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -54,6 +54,24 @@ msgstr "音声会議を始める"
 msgid "No other users online"
 msgstr "オンラインのユーザーはいません"
 
+msgid "Take"
+msgstr ""
+
+msgid "Retake"
+msgstr ""
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Set as Profile Picture"
+msgstr ""
+
+msgid "Take picture"
+msgstr "写真を取る"
+
+msgid "Waiting for camera"
+msgstr "カメラ待ち"
+
 msgid "Chat sessions"
 msgstr "チャットのセッション"
 
@@ -90,9 +108,6 @@ msgstr "ダウンロード"
 msgid "Open"
 msgstr "開く"
 
-msgid "Cancel"
-msgstr "キャンセル"
-
 msgid "Unshare"
 msgstr "共有取り消し"
 
@@ -123,14 +138,11 @@ msgstr "画面共有オプション"
 msgid "Fit screen."
 msgstr "画面に合わせる"
 
+msgid "Profile"
+msgstr ""
+
 msgid "Your picture"
 msgstr "あなたの写真"
-
-msgid "Take picture"
-msgstr "写真を取る"
-
-msgid "Waiting for camera"
-msgstr "カメラ待ち"
 
 msgid "Your name"
 msgstr "あなたの名前"
@@ -138,8 +150,18 @@ msgstr "あなたの名前"
 msgid "Name"
 msgstr "名前"
 
-msgid "Your picture and name are visible to others."
-msgstr "あなたの写真と名前は公開されています."
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+#, fuzzy
+msgid "Profile information is public."
+msgstr "さらなる情報が必要です"
+
+msgid "Account"
+msgstr ""
 
 msgid "Your ID"
 msgstr ""
@@ -152,10 +174,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "Log out"
 msgstr ""
 
-msgid "Only register an ID if this is your private browser."
+msgid "Media"
 msgstr ""
 
 msgid "Microphone"
@@ -361,6 +386,24 @@ msgstr "あなたの共有ファイル:"
 
 msgid "Incoming file:"
 msgstr "受信中ファイル:"
+
+msgid "You accepted the contact request."
+msgstr ""
+
+msgid "You rejected the contact request."
+msgstr ""
+
+msgid "You sent a contact request."
+msgstr ""
+
+msgid "Your contact request was accepted."
+msgstr ""
+
+msgid "Incoming contact request."
+msgstr ""
+
+msgid "Your contact request was rejected."
+msgstr ""
 
 msgid "Close this window and disconnect?"
 msgstr ""

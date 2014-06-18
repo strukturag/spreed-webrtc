@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-23 10:35+0200\n"
+"POT-Creation-Date: 2014-06-18 17:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,6 +54,24 @@ msgstr ""
 msgid "No other users online"
 msgstr ""
 
+msgid "Take"
+msgstr ""
+
+msgid "Retake"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Set as Profile Picture"
+msgstr ""
+
+msgid "Take picture"
+msgstr ""
+
+msgid "Waiting for camera"
+msgstr ""
+
 msgid "Chat sessions"
 msgstr ""
 
@@ -90,9 +108,6 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Unshare"
 msgstr ""
 
@@ -123,13 +138,10 @@ msgstr ""
 msgid "Fit screen."
 msgstr ""
 
+msgid "Profile"
+msgstr ""
+
 msgid "Your picture"
-msgstr ""
-
-msgid "Take picture"
-msgstr ""
-
-msgid "Waiting for camera"
 msgstr ""
 
 msgid "Your name"
@@ -138,7 +150,16 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-msgid "Your picture and name are visible to others."
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid "Profile information is public."
+msgstr ""
+
+msgid "Account"
 msgstr ""
 
 msgid "Your ID"
@@ -152,10 +173,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "Log out"
 msgstr ""
 
-msgid "Only register an ID if this is your private browser."
+msgid "Media"
 msgstr ""
 
 msgid "Microphone"
@@ -360,6 +384,24 @@ msgid "You share file:"
 msgstr ""
 
 msgid "Incoming file:"
+msgstr ""
+
+msgid "You accepted the contact request."
+msgstr ""
+
+msgid "You rejected the contact request."
+msgstr ""
+
+msgid "You sent a contact request."
+msgstr ""
+
+msgid "Your contact request was accepted."
+msgstr ""
+
+msgid "Incoming contact request."
+msgstr ""
+
+msgid "Your contact request was rejected."
 msgstr ""
 
 msgid "Close this window and disconnect?"

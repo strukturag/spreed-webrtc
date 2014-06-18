@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-23 10:35+0200\n"
+"POT-Creation-Date: 2014-06-18 17:46+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -54,6 +54,24 @@ msgstr "음성회의 시작"
 msgid "No other users online"
 msgstr "온라인에 다른 대화상대 없음"
 
+msgid "Take"
+msgstr ""
+
+msgid "Retake"
+msgstr ""
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Set as Profile Picture"
+msgstr ""
+
+msgid "Take picture"
+msgstr "사진 찍음"
+
+msgid "Waiting for camera"
+msgstr "카메라 대기중"
+
 msgid "Chat sessions"
 msgstr "대화 세션"
 
@@ -90,9 +108,6 @@ msgstr "다운로드"
 msgid "Open"
 msgstr "열기"
 
-msgid "Cancel"
-msgstr "취소"
-
 msgid "Unshare"
 msgstr "비공유"
 
@@ -123,14 +138,11 @@ msgstr "화면 공유 옵션"
 msgid "Fit screen."
 msgstr "화면에 맟춤"
 
+msgid "Profile"
+msgstr ""
+
 msgid "Your picture"
 msgstr "사용자 사진"
-
-msgid "Take picture"
-msgstr "사진 찍음"
-
-msgid "Waiting for camera"
-msgstr "카메라 대기중"
 
 msgid "Your name"
 msgstr "사용자 이름"
@@ -138,8 +150,18 @@ msgstr "사용자 이름"
 msgid "Name"
 msgstr "이름"
 
-msgid "Your picture and name are visible to others."
-msgstr "사용자의 사진과 이름이 다른사람에게 보일수 있습니다."
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+#, fuzzy
+msgid "Profile information is public."
+msgstr "더 많은 정보가 필요함"
+
+msgid "Account"
+msgstr ""
 
 msgid "Your ID"
 msgstr ""
@@ -152,10 +174,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "Log out"
 msgstr ""
 
-msgid "Only register an ID if this is your private browser."
+msgid "Media"
 msgstr ""
 
 msgid "Microphone"
@@ -361,6 +386,24 @@ msgstr "공유 화일:"
 
 msgid "Incoming file:"
 msgstr "도착하는 화일:"
+
+msgid "You accepted the contact request."
+msgstr ""
+
+msgid "You rejected the contact request."
+msgstr ""
+
+msgid "You sent a contact request."
+msgstr ""
+
+msgid "Your contact request was accepted."
+msgstr ""
+
+msgid "Incoming contact request."
+msgstr ""
+
+msgid "Your contact request was rejected."
+msgstr ""
 
 msgid "Close this window and disconnect?"
 msgstr ""

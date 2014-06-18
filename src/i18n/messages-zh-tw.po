@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-05-23 10:35+0200\n"
+"POT-Creation-Date: 2014-06-18 17:46+0200\n"
 "PO-Revision-Date: 2014-04-07 18:09+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -54,6 +54,24 @@ msgstr "開始語音會議"
 msgid "No other users online"
 msgstr "無其他聯繫人在線"
 
+msgid "Take"
+msgstr ""
+
+msgid "Retake"
+msgstr ""
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Set as Profile Picture"
+msgstr ""
+
+msgid "Take picture"
+msgstr "拍照"
+
+msgid "Waiting for camera"
+msgstr "等待啟動攝像頭"
+
 msgid "Chat sessions"
 msgstr "會話"
 
@@ -90,9 +108,6 @@ msgstr "下載"
 msgid "Open"
 msgstr "打開"
 
-msgid "Cancel"
-msgstr "取消"
-
 msgid "Unshare"
 msgstr "停止分享"
 
@@ -124,14 +139,11 @@ msgstr "媒體屏幕共享"
 msgid "Fit screen."
 msgstr ""
 
+msgid "Profile"
+msgstr ""
+
 msgid "Your picture"
 msgstr "您的圖片"
-
-msgid "Take picture"
-msgstr "拍照"
-
-msgid "Waiting for camera"
-msgstr "等待啟動攝像頭"
 
 msgid "Your name"
 msgstr "您的名字"
@@ -139,8 +151,18 @@ msgstr "您的名字"
 msgid "Name"
 msgstr "名字"
 
-msgid "Your picture and name are visible to others."
-msgstr "別人能看到您的圖片及名字"
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+#, fuzzy
+msgid "Profile information is public."
+msgstr "需要更多信息"
+
+msgid "Account"
+msgstr ""
 
 msgid "Your ID"
 msgstr ""
@@ -153,10 +175,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
+msgid "Login"
+msgstr ""
+
 msgid "Log out"
 msgstr ""
 
-msgid "Only register an ID if this is your private browser."
+msgid "Media"
 msgstr ""
 
 msgid "Microphone"
@@ -362,6 +387,24 @@ msgstr "分享文件："
 
 msgid "Incoming file:"
 msgstr "發來文件："
+
+msgid "You accepted the contact request."
+msgstr ""
+
+msgid "You rejected the contact request."
+msgstr ""
+
+msgid "You sent a contact request."
+msgstr ""
+
+msgid "Your contact request was accepted."
+msgstr ""
+
+msgid "Incoming contact request."
+msgstr ""
+
+msgid "Your contact request was rejected."
+msgstr ""
 
 msgid "Close this window and disconnect?"
 msgstr ""
