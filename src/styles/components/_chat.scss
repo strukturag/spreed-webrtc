@@ -20,12 +20,12 @@
  */
 
 #chat {
-  bottom: 0;
+  bottom: 10px;
   perspective: 1000;
   pointer-events: none;
   position: absolute;
   right: 260px;
-  top: 0;
+  top: 10px;
   width: 260px;
   z-index: 45;
 }
