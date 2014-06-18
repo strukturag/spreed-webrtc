@@ -85,6 +85,20 @@ The latest version of Spreed WebRTC can be found on GitHub:
   and CSS reload directly.
 
 
+## Branding
+
+  Insert logo in `static/img`. Edit `src/styles/global/_branding.scss` to link
+  to desired custom logo. It is also possible to insert the raw svg data.
+
+
+## Skins
+
+  Insert skins in `src/styles/global/skins` and edit the `@import "skins/light";`
+  line in `src/styles/global/_variables.scss`. Available skins are light and
+  dark. It is recommended to create a new skin file if you wish to customize
+  colors.
+
+
 ## Production use
 
   Spreed WebRTC should be run through a SSL frontend proxy with
@@ -106,6 +120,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
 3. Make changes.
 4. Do your commits (run ``make fmt`` before commit).
 5. Send "pull request".
+
 
 ## License
 

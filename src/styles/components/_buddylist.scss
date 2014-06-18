@@ -29,14 +29,14 @@
 }
 
 #buddylist:before {
-  background: $componentbg;
+  background: $buddylist-tab-background;
   border-left: 1px solid $bordercolor;
   border-top: 1px solid $bordercolor;
   border-bottom: 1px solid $bordercolor;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
   bottom: 0;
-  color: $buddylist-background;
+  color: $buddylist-tab-color;
   content: "\f100";
   cursor: pointer;
   display: none;
@@ -62,7 +62,7 @@
 }
 
 .buddylist {
-  background: $componentbg;
+  background: $buddylist-background;
   border-top: 1px solid $bordercolor;
   bottom: 0;
   left: 25px;
@@ -93,7 +93,7 @@
   .buddylistloading,
   .buddylistempty {
     bottom: 0;
-    color: $buddylist-background;
+    color: $font-color-accent;
     display: none;
     font-size: 1.4em;
     height: 2em;
@@ -175,7 +175,7 @@
     }
   }
   .buddy1 {
-    color: $componentfg1;
+    color: $buddylist-buddy1;
     font-weight: bold;
     font-size: 14px;
     height: 28px;
@@ -188,7 +188,7 @@
     white-space: nowrap;
   }
   .buddy2 {
-    color: $componentfg2;
+    color: $buddylist-buddy2;
     left: 65px;
     overflow: hidden;
     position: absolute;
