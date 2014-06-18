@@ -19,130 +19,157 @@
  *
  */
 
+@import "compass/utilities/color/contrast";
+@import "branding";
+@import "skins/light";
+
 // general
-$background: #e5e5e5;
-$componentbg: #f5f5f5;
-$componentfg1: #262626;
-$componentfg2: rgba(0,0,0,.5);
-$componentfg3: rgba(0,0,0,.2); //#ccc
-$componentfg4: #737373;
-$sidepanebg: white;
-$bordercolor: #ccc;
-$actioncolor1: rgb(132,184,25);
-$actioncolor2: rgb(0,149,52);
+$background: #e5e5e5 !default;
+$componentbg: #f5f5f5 !default;
+$componentfg1: #262626 !default;
+$componentfg2: rgba(0,0,0,.5) !default;
+$componentfg3: rgba(0,0,0,.2) !default;
+$componentfg4: #737373 !default;
+$sidepanebg: white !default;
+$bordercolor: #ccc !default;
+$actioncolor1: rgb(132,184,25) !default;
+$actioncolor2: rgb(0,149,52) !default;
+
+// branding
+$logo: url("../img/logo-small.png") !default;
+$load-logo: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICBpZD0ic3ZnMiIKICAgdmVyc2lvbj0iMS4xIgogICBpbmtzY2FwZTp2ZXJzaW9uPSIwLjQ4LjMuMSByOTg4NiIKICAgd2lkdGg9IjEzNy4wMDA0OSIKICAgaGVpZ2h0PSIxMjYuNSIKICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgc29kaXBvZGk6ZG9jbmFtZT0ic3ByZWVkV2F2ZXMuc3ZnIgogICBpbmtzY2FwZTpleHBvcnQtZmlsZW5hbWU9Ii9ob21lL2RvbWFpbi9sb25nc2xlZXAvRGVza3RvcC9zcHJlZWRpby9zcHJlZWRfd2F2ZXNfYmlnLnBuZyIKICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjM5NC4xNiIKICAgaW5rc2NhcGU6ZXhwb3J0LXlkcGk9IjM5NC4xNiI+PG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhOCI+PHJkZjpSREY+PGNjOldvcmsKICAgICAgICAgcmRmOmFib3V0PSIiPjxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PjxkYzp0eXBlCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz48ZGM6dGl0bGUgLz48L2NjOldvcms+PC9yZGY6UkRGPjwvbWV0YWRhdGE+PGRlZnMKICAgICBpZD0iZGVmczYiPjxjbGlwUGF0aAogICBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIKICAgaWQ9ImNsaXBQYXRoMTgiPjxwYXRoCiAgICAgZD0ibSAwLDAgNTI0NCwwIDAsMTg3MC44NyAtNTI0NCwwIEwgMCwwIHoiCiAgICAgaWQ9InBhdGgyMCIKICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPjwvY2xpcFBhdGg+CjwvZGVmcz48c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgcGFnZWNvbG9yPSIjZmZmZmZmIgogICAgIGJvcmRlcmNvbG9yPSIjNjY2NjY2IgogICAgIGJvcmRlcm9wYWNpdHk9IjEiCiAgICAgb2JqZWN0dG9sZXJhbmNlPSIxMCIKICAgICBncmlkdG9sZXJhbmNlPSIxMCIKICAgICBndWlkZXRvbGVyYW5jZT0iMTAiCiAgICAgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAiCiAgICAgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIKICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjEyNjUiCiAgICAgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iNzUyIgogICAgIGlkPSJuYW1lZHZpZXc0IgogICAgIHNob3dncmlkPSJmYWxzZSIKICAgICBzaG93Z3VpZGVzPSJ0cnVlIgogICAgIGlua3NjYXBlOmd1aWRlLWJib3g9InRydWUiCiAgICAgZml0LW1hcmdpbi10b3A9IjAiCiAgICAgZml0LW1hcmdpbi1sZWZ0PSIwIgogICAgIGZpdC1tYXJnaW4tcmlnaHQ9IjAiCiAgICAgZml0LW1hcmdpbi1ib3R0b209IjAiCiAgICAgYm9yZGVybGF5ZXI9ImZhbHNlIgogICAgIHNob3dib3JkZXI9InRydWUiCiAgICAgaW5rc2NhcGU6c2hvd3BhZ2VzaGFkb3c9InRydWUiCiAgICAgaW5rc2NhcGU6em9vbT0iMiIKICAgICBpbmtzY2FwZTpjeD0iMTI2Ljc4NDk3IgogICAgIGlua3NjYXBlOmN5PSI4LjQyNzQzMDQiCiAgICAgaW5rc2NhcGU6d2luZG93LXg9Ijg5NyIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMzY3IgogICAgIGlua3NjYXBlOndpbmRvdy1tYXhpbWl6ZWQ9IjAiCiAgICAgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0ibGF5ZXIyIgogICAgIGlua3NjYXBlOnNuYXAtZnJvbS1ndWlkZT0idHJ1ZSI+PHNvZGlwb2RpOmd1aWRlCiAgICAgICBwb3NpdGlvbj0iMC4wMDAzMjM1OTEzNiwtMTA4LjUwMzgyIgogICAgICAgb3JpZW50YXRpb249IjAsODU1LjUxMDAxIgogICAgICAgaWQ9Imd1aWRlMzgwMSIgLz48c29kaXBvZGk6Z3VpZGUKICAgICAgIHBvc2l0aW9uPSI4NTUuNTEwMzQsLTEwOC41MDM4MiIKICAgICAgIG9yaWVudGF0aW9uPSItMjMzLjg2MjUsMCIKICAgICAgIGlkPSJndWlkZTM4MDMiIC8+PHNvZGlwb2RpOmd1aWRlCiAgICAgICBwb3NpdGlvbj0iLTYuNSwxMjYuNSIKICAgICAgIG9yaWVudGF0aW9uPSIwLC04NTUuNTEwMDEiCiAgICAgICBpZD0iZ3VpZGUzODA1IiAvPjxzb2RpcG9kaTpndWlkZQogICAgICAgcG9zaXRpb249IjAuMDAwMzIzNTkxMzYsMTI1LjM1ODY3IgogICAgICAgb3JpZW50YXRpb249IjIzMy44NjI1LDAiCiAgICAgICBpZD0iZ3VpZGUzODA3IiAvPjxzb2RpcG9kaTpndWlkZQogICAgICAgb3JpZW50YXRpb249IjAsMSIKICAgICAgIHBvc2l0aW9uPSItOS41LC0zLjA1MTc1NzhlLTA2IgogICAgICAgaWQ9Imd1aWRlMzgxNSIgLz48c29kaXBvZGk6Z3VpZGUKICAgICAgIG9yaWVudGF0aW9uPSIxLDAiCiAgICAgICBwb3NpdGlvbj0iMTQ2LjUwMDQ5LDEyNS4zNTg2NyIKICAgICAgIGlkPSJndWlkZTQ1NjEiIC8+PC9zb2RpcG9kaTpuYW1lZHZpZXc+PGcKICAgICBpZD0iZzEwIgogICAgIGlua3NjYXBlOmdyb3VwbW9kZT0ibGF5ZXIiCiAgICAgaW5rc2NhcGU6bGFiZWw9IndhdmVzIgogICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuMjUsMCwwLC0xLjI1LDMuMjM1OTEzNmUtNCwyMzUuMDAzODMpIgogICAgIHN0eWxlPSJkaXNwbGF5OmlubGluZSI+PGcKICAgdHJhbnNmb3JtPSJtYXRyaXgoMC4xLDAsMCwwLjEsLTguNDAwMzksMzAuNjY3MDAzKSIKICAgaWQ9ImcxNiIKICAgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTgpIj48cGF0aAogICAgIGQ9Im0gNjY3LjQzNCwxNDI3LjIzIGMgNS42MjUsNDAuMzIgNTAsMTA1IDEzMS4yNSwxMDUgODEuMjUsMCAyNjMuNzUsMCAyOTIuNDk2LDAgMjguNzUsMCA2Mi41LC02LjI1IDgzLjc1LDQwIC0xLjI1LC0zMCAtOC43NSwtMTMwIC0xMS4yNSwtMTQ2LjI1IC0yLjUsLTE2LjI1IC0yMi41LC0xMzcuNSAtMTM2LjI0NiwtMTM4Ljc1IC0xMTMuNzUsMCAtMjk3LjUsMCAtMjk3LjUsMCAwLDAgLTU4Ljc1LDYuODggLTg4LjQzOCwtNDYuMjUgLTAuMTkxLC0wLjM5IDIwLjkzOCwxNTIuNSAyNS45MzgsMTg2LjI1IgogICAgIHN0eWxlPSJmaWxsOiMwMDk1MzQ7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiCiAgICAgaWQ9InBhdGgyMiIKICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiAvPjxwYXRoCiAgICAgZD0ibSAxMzUuNzg1Miw5MzkuMzk4IGMgMTEuMjMwNCw4MS40OTMgOTkuODIzOCwyMTIuMjcgMjYyLjAzNDgsMjEyLjI3IDE2Mi4yMTUsMCA1MjYuNTcxLDAgNTgzLjk2OSwwIDU3LjM5OSwwIDEyNC43ODEsLTEyLjYzNyAxNjcuMjAxLDgwLjg2MiAtMi40OSwtNjAuNjQ3IC0xNy40NywtMjYyLjgxMSAtMjIuNDYsLTI5NS42NTkgLTQuOTksLTMyLjg1MSAtNDQuOTIsLTI3Ny45NzMgLTI3Mi4wMTQsLTI4MC41IC0yMjcuMDk4LDAgLTU5My45NSwwIC01OTMuOTUsMCAwLDAgLTExOC45ODc5LDEzLjA5OCAtMTc2LjU2MjEsLTkzLjUgLTAuMzgyOCwtMC44MDEgNDEuODAwOCwzMDguMzAxIDUxLjc4MTMsMzc2LjUyNyIKICAgICBzdHlsZT0iZmlsbDojODRiODE5O2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIgogICAgIGlkPSJwYXRoMjQiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz48L2c+PHRleHQKICAgdHJhbnNmb3JtPSJzY2FsZSgxLC0xKSIKICAgc29kaXBvZGk6bGluZXNwYWNpbmc9IjEyNSUiCiAgIGlkPSJ0ZXh0MzAxMyIKICAgeT0iLTg3LjE5OTk5NyIKICAgeD0iNTgwIgogICBzdHlsZT0iZm9udC1zaXplOjkuNjAwMDAwMzhweDtmb250LXN0eWxlOm5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7bGluZS1oZWlnaHQ6MTI1JTtsZXR0ZXItc3BhY2luZzowcHg7d29yZC1zcGFjaW5nOjBweDtmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7Zm9udC1mYW1pbHk6Qml0c3RyZWFtIFZlcmEgU2FucyIKICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHRzcGFuCiAgICAgeT0iLTg3LjE5OTk5NyIKICAgICB4PSI1ODAiCiAgICAgaWQ9InRzcGFuMzAxNSIKICAgICBzb2RpcG9kaTpyb2xlPSJsaW5lIiAvPjwvdGV4dD4KCjxnCiAgIGlua3NjYXBlOmdyb3VwbW9kZT0ibGF5ZXIiCiAgIGlkPSJsYXllcjIiCiAgIGlua3NjYXBlOmxhYmVsPSJtYXNrIgogICBzdHlsZT0iZGlzcGxheTppbmxpbmUiIC8+PC9nPjwvc3ZnPg==") !default;
+
+// background
+$main-background: url("../img/bg-tiles.png") !default;
+$main-background-retina: url("../img/bg-tiles_x2.png") !default;
 
 // general action based colors
-$action-hover: rgba(0,0,0,.4);
-$action-mute: rgb(219,79,57);
-$action-enable: $actioncolor1;
+$action-hover: rgba(0,0,0,.4) !default;
+$action-mute: rgb(219,79,57) !default;
+$action-enable: $actioncolor1 !default;
 
 // base
-$welcome: #aaa;
-$loading: #ddd;
+$welcome: #aaa !default;
+$loading: #ddd !default;
 
 // font
-$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$base-font-size: 13px; // compass
-$base-line-height: 1.53846156; // compass
+$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif !default;
+$base-font-size: 13px !default; // compass vertical_rhythm mixin
+$base-line-height: 1.53846156 !default; // compass vertical_rhythm mixin
+$font-color: lighten(#000, 20%) !default;
+$font-color-accent: lighten($font-color, 50%) !default;
 
 // audio video
-$audiovideolevel: $action-enable;
+$audiovideolevel: $action-enable !default;
 
 // main navigation bar
-$minbarheight: 44px;
-$bar-logo-text-desc: rgb(34,34,34);
-$bar-btn-action-color: rgba(0,0,0,.3);
-$bar-btn-action-hover: $action-hover;
-$bar-btn-action-mute: $action-mute;
-$bar-btn-action-enable: $action-enable;
+$minbarheight: 44px !default;
+$bar-background: $componentbg;
+$bar-logo-text-desc: rgb(34,34,34) !default;
+$bar-btn-action-border: $bordercolor !default;
+$bar-btn-action-color: rgba(0,0,0,.3) !default;
+$bar-btn-action-hover: $action-hover !default;
+$bar-btn-action-mute: $action-mute !default;
+$bar-btn-action-enable: $action-enable !default;
+
+// overlaybar
+$overlaybar-background: $componentfg3;
+$overlaybar-color: $bordercolor !default;
+$overlaybar-btn: $bordercolor !default;
 
 // video
-$video-background: rgba(0,0,0,.4);
-$video-onlyaudio-background: #666;
-$video-onlyaudio: rgba(255,255,255,.3);
-$video-overlayactions: rgba(0,0,0,.9);
+$video-background: rgba(0,0,0,.4) !default;
+$video-onlyaudio-background: #666 !default;
+$video-onlyaudio: rgba(255,255,255,.3) !default;
+$video-overlayactions: rgba(0,0,0,.9) !default;
 
 // buddylist
-$buddylist-background: rgba(0,0,0,.3);
-$buddylist-action-background: rgba(255,255,255,0.5);
+$buddylist-background: $componentbg;
+$buddylist-tab-color: rgba(0,0,0,.3) !default;
+$buddylist-tab-background: $componentbg !default;
+$buddylist-action-background: rgba(255,255,255,0.5) !default;
+$buddylist-buddy1: $componentfg1 !default;
+$buddylist-buddy2: $componentfg2 !default;
 
 // chat
-$chat-background: #e7e7e7;
-$chat-disabled: #aaa;
-$chat-badge: #84b819;
-$chat-ctrl: rgba(0,0,0,.3);
-$chat-timestamp: #aaa;
-$chat-meta: #aaa;
-$chat-msg-background: white;
-$chat-msg-border: #e5e5ef;
+$chat-background: #e7e7e7 !default;
+$chat-header: $componentbg !default;
+$chat-disabled: #aaa !default;
+$chat-badge: #84b819 !default;
+$chat-ctrl: rgba(0,0,0,.3) !default;
+$chat-timestamp: #aaa !default;
+$chat-meta: #aaa !default;
+$chat-msg-background: white !default;
+$chat-msg-border: #e5e5ef !default;
 
-$chat-msg-default-icon-color: #ccc;
-$chat-msg-unread-icon-color: #FE9A2E;
-$chat-msg-sending-icon-color: $chat-msg-default-icon-color;
-$chat-msg-sent-icon-color: #5882FA;
-$chat-msg-delivered-icon-color: #5882FA;
-$chat-msg-received-icon-color: #84b819;
-$chat-msg-read-icon-color: $chat-msg-default-icon-color;
+$chat-msg-default-icon-color: #ccc !default;
+$chat-msg-unread-icon-color: #FE9A2E !default;
+$chat-msg-sending-icon-color: $chat-msg-default-icon-color !default;
+$chat-msg-sent-icon-color: #5882FA !default;
+$chat-msg-delivered-icon-color: #5882FA !default;
+$chat-msg-received-icon-color: #84b819 !default;
+$chat-msg-read-icon-color: $chat-msg-default-icon-color !default;
 
-$chat-msg-unread-icon: '\f0eb';
-$chat-msg-sending-icon: '\f0ec';
-$chat-msg-sent-icon: '\f003';
-$chat-msg-delivered-icon: '\f019';
-$chat-msg-received-icon: '\f06e';
-$chat-msg-read-icon: '\f00c';
+$chat-msg-unread-icon: '\f0eb' !default;
+$chat-msg-sending-icon: '\f0ec' !default;
+$chat-msg-sent-icon: '\f003' !default;
+$chat-msg-delivered-icon: '\f019' !default;
+$chat-msg-received-icon: '\f06e' !default;
+$chat-msg-read-icon: '\f00c' !default;
 
-$chat-msg-self-background: white;
-$chat-msg-remote-background: white;
+$chat-msg-self-background: white !default;
+$chat-msg-remote-background: white !default;
 
-$chat-bottom-background: $chat-background;
-$chat-typing: $chat-meta;
-$chat-input-border-color: #66afe9;
+$chat-bottom-background: $chat-background !default;
+$chat-typing: $chat-meta !default;
+$chat-input-border-color: #66afe9 !default;
 
 // fileinfo
-$fileinfo-background: white;
-$fileinfo-border: #ddd;
-$fileinfo-icon-background-color: #eee;
-$fileinfo-downloading-size-border: #ddd;
+$fileinfo-background: white !default;
+$fileinfo-border: #ddd !default;
+$fileinfo-icon-background-color: #eee !default;
+$fileinfo-downloading-size-border: #ddd !default;
+$fileinfo-background-remote: $fileinfo-background !default;
+$fileinfo-border-remote: $fileinfo-border !default;
+$fileinfo-icon-background-color-remote: $fileinfo-icon-background-color !default;
 
 // settings
-$settings-version: #ccc;
+$settings-version: #ccc !default;
+$form-help-text: #737373 !default;
+$settings-background: white !default;
 
 // social
-$social-email-color: #aaa;
-$social-facebook-color: #45619d;
-$social-google-color: #dd4b39;
-$social-twitter-color: #00aced;
-$social-xing-color: white;
+$social-email-color: #aaa !default;
+$social-facebook-color: #45619d !default;
+$social-google-color: #dd4b39 !default;
+$social-twitter-color: #00aced !default;
+$social-xing-color: white !default;
 
 // useability
-$breakpoint-useability-small: 400px;
-$breakpoint-useability-large: 1020px;
+$breakpoint-useability-small: 400px !default;
+$breakpoint-useability-large: 1020px !default;
 
 // breakpoints
-$breakpoint-small: 480px;
-$breakpoint-medium: 700px;
-$breakpoint-large: 1280px;
-$breakpoint-video-small: 590px;
-$breakpoint-video-medium: 630px;
-$breakpoint-chat-small: 210px;
-$breakpoint-settings-medium: 630px;
+$breakpoint-small: 480px !default;
+$breakpoint-medium: 700px !default;
+$breakpoint-large: 1280px !default;
+$breakpoint-video-small: 590px !default;
+$breakpoint-video-medium: 630px !default;
+$breakpoint-chat-small: 210px !default;
+$breakpoint-settings-medium: 630px !default;
 
 // touch specific
-$tap-highlight: rgba(0, 0, 0, 0);
+$tap-highlight: rgba(0, 0, 0, 0) !default;
 
-// Fontawsome changed variables
-// original at libs/fontawesome/_variables.scss
-$fa-css-prefix: fa;
+// Fontawsome targeted variables
+$fa-css-prefix: fa !default;
 
 // Bootstrap changed variables
-// original at libs/bootstrap/_variables.scss
-$body-bg: $background;
+$body-bg: $background !default;
 
-// typography
-// font, line-height, and color for body text, headings, and more
-$font-family-sans-serif:  $font-sans-serif;
-$font-family-serif:       Georgia, "Times New Roman", Times, serif;
-$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
-$font-family-base:        $font-family-sans-serif;
-$font-size-base:          $base-font-size;
-$line-height-base:        $base-line-height;
+$font-family-sans-serif: $font-sans-serif !default;
+$font-family-base: $font-family-sans-serif !default;
+$font-size-base: $base-font-size !default;
+$font-size-base: $base-font-size !default;
+$line-height-base: $base-line-height !default;
+$text-color: $font-color !default;

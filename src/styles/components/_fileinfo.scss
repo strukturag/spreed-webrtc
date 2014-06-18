@@ -56,6 +56,17 @@
   }
 }
 
+.is_remote .file-info {
+  background: $fileinfo-background-remote;
+  border: 1px solid $fileinfo-border-remote;
+  .file-info-bg {
+    .#{$fa-css-prefix} {
+      color: $fileinfo-icon-background-color-remote;
+      font-size: 20em;
+    }
+  }
+}
+
 .file-info-name {
   font-size: 1.1em;
   margin: .2em 0;
