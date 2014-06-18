@@ -137,3 +137,8 @@ a {
 .help-block {
   color: $form-help-text;
 }
+
+.dialog-header-notify,
+.dialog-header-confirm {
+  background-color: $dialog-header-neutral;
+}

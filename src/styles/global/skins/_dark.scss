@@ -51,8 +51,6 @@ $fileinfo-icon-background-color: $chat-msg-self-background;
 $fileinfo-icon-background-color-remote: $chat-msg-remote-background;
 
 // font
-$base-font-size: 13px; // compass vertical_rhythm mixin
-$base-line-height: 1.53846156; // compass vertical_rhythm mixin
 $font-color: contrast-color($menu-background-color);
 $font-color-accent: darken($font-color, 20%);
 
@@ -87,3 +85,7 @@ $input-bg: lighten($menu-background-color, 20%);
 $input-color: $font-color;
 $input-border: $bar-btn-action-border;
 $progress-bg: lighten($input-bg, 30%);
+$modal-content-bg: $menu-background-color-accent;
+$dialog-header-neutral: $menu-background-color-accent !default;
+$close-color: white;
+$modal-header-border-color: $bordercolor;
