@@ -5,17 +5,10 @@
 
       <legend>{{_('Settings')}}</legend>
       <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+      <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
         <div class="col-xs-8">
           <label>
-            <div style="margin-bottom:5px">
-              <img ng-show="user.buddyPicture" ng-src="{{user.buddyPicture}}" alt="" />
-            </div>
-            <div class="collapse" collapse="!showTakePicture">
-              <video autoplay="autoplay" width="200"></video>
-              <canvas style="display:none" width="46" height="46"></canvas>
-            </div>
-            <a class="btn btn-small btn-success" ng-disabled="!showTakePictureReady" ng-click="takePicture($event.target)"> {{_('Take picture')}}</a> <span ng-show="!showTakePictureReady"><i class="fa fa-spinner fa-spin"></i> {{_('Waiting for camera')}}</span><a class="btn btn-small btn-default" ng-show="showTakePicture" ng-click="takePicture($event.target, true)"> {{_('Cancel')}}</a>
+            <buddy-picture/>
           </label>
         </div>
       </div>

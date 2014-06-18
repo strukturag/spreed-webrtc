@@ -18,46 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-/*jshint -W030 */
-({
-	baseUrl: '../static/js',
-	mainConfigFile: '../static/js/main.js',
-	optimize: 'uglify2',
-	uglify2: {
-		output: {
-			beautify: false
-		},
-		compress: {
-			sequences: true,
-			global_defs: {
-				DEBUG: false
-			}
-		},
-		warnings: true,
-		mangle: true
-	},
-	wrap: false,
-	useStrict: true,
-	dir: './out',
-	skipDirOptimize: true,
-	removeCombined: true,
-	modules: [
-		{
-			name: 'main',
-			exclude: [
-				'base'
-			]
-		},
-		{
-			name: 'base',
-		},
-		{
-			name: 'app',
-			exclude: [
-				'main',
-				'base'
-			],
-			inlineText: true,
-		}
-	]
-})
+
+.buddyPicture {
+  .picture {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .videoPicture {
+    position: relative;
+  }
+  .preview {
+    left: 0;
+    position: absolute;
+    top: 0;
+    &.previewPicture {
+      position: relative;
+    }
+  }
+  .showTakePicture {
+    .btn {
+      margin: 5px 0px;
+    }
+  }
+  .btn-takePicture,
+  .btn-retakePicture {
+    left: 85px;
+    position: absolute;
+    top: 110px;
+  }
+  .countdownPicture {
+    color: $componentbg;
+    font-size: 45px;
+    left: 90px;
+    position: absolute;
+    top: 55px;
+  }
+}

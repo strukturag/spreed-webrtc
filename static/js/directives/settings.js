@@ -26,8 +26,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
-			$scope.showTakePicture = false;
-			$scope.showTakePictureReady = true;
 			$scope.rememberSettings = true;
 			$scope.desktopNotify = desktopNotify;
 			$scope.mediaSources = mediaSources;
@@ -45,8 +43,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					name: name
 				});
 			});
-
-			var localStream = null;
 
 			// Make sure to save settings when they are open and the page is reloaded.
 			$(window).on("unload", function() {
@@ -76,65 +72,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$scope.desktopNotify.requestPermission(function() {
 					safeApply($scope);
 				});
-			};
-			$scope.takePicture = function(element, stop) {
-				if (stop) {
-					$scope.showTakePicture = false;
-					if (localStream) {
-						localStream.stop();
-						localStream = null;
-					}
-				} else {
-					var video = $(element).parent().find("video").get(0);
-					if (!$scope.showTakePicture) {
-						$scope.showTakePictureReady = false;
-						var videoConstraints = true;
-						if ($scope.user.settings.cameraId) {
-							videoConstraints = {
-								optional: [{
-									sourceId: $scope.user.settings.cameraId
-								}]
-							}
-						}
-						getUserMedia({
-							video: videoConstraints
-						}, function(stream) {
-							if ($scope.showTakePictureReady) {
-								stream.stop()
-								return;
-							}
-							$scope.showTakePicture = true;
-							localStream = stream;
-							$scope.showTakePictureReady = true;
-							attachMediaStream(video, stream);
-							safeApply($scope);
-						}, function(error) {
-							console.error('Failed to get access to local media. Error code was ' + error.code);
-							$scope.showTakePictureReady = true;
-							safeApply($scope);
-						});
-						return;
-					} else {
-						var canvas = $(element).parent().find("canvas").get(0);
-						var videoWidth = video.videoWidth;
-						var videoHeight = video.videoHeight;
-						var aspectRatio = videoWidth / videoHeight;
-						if (!aspectRatio) {
-							// NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
-							console.warn("Unable to compute aspectRatio", aspectRatio);
-							aspectRatio = 1.3333333333333333;
-						}
-						var x = (46 * aspectRatio - 46) / -2
-						canvas.getContext("2d").drawImage(video, x, 0, 46 * aspectRatio, 46);
-						$scope.user.buddyPicture = canvas.toDataURL("image/jpeg");
-						console.info("Image size", $scope.user.buddyPicture.length);
-						localStream.stop();
-						localStream = null;
-						$scope.showTakePictureReady = true;
-						$scope.showTakePicture = false;
-						safeApply($scope);
-					}
-				}
 			};
 
 			$scope.registerUserid = function(btn) {
@@ -228,7 +165,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			template: template,
 			controller: controller,
 			link: link
-		}
+		};
 
 	}];
 
