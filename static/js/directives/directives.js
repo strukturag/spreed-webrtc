@@ -36,7 +36,7 @@ define([
 	'directives/roombar',
 	'directives/socialshare',
 	'directives/page',
-	'directives/contactrequest'], function(_, onEnter, onEscape, statusMessage, buddyList, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest) {
+	'directives/contactrequest'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest) {
 
 	var directives = {
 		onEnter: onEnter,
