@@ -18,31 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["jquery"], function($) {
 
-	// appData.e events
-	// - authenticationChanged(userid)
-	// - selfReceived(self)
+package main
 
-	// appData
-	return [function() {
+import ()
 
-		var data = {
-			data: null,
-			e: $({})
-		}
-		var appData = {
-			get: function() {
-				return data.data;
-			},
-			set: function(d) {
-				data.data = d;
-				return d;
-			},
-			e: data.e
-		}
-		return appData;
-
-	}];
-
-});
+type Contact struct {
+	A string
+	B string
+}

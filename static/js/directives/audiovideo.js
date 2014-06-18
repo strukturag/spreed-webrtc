@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'injectCSS', 'webrtc.adapter', 'rAF'], function($, _, template, templatePeer, BigScreen) {
+define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'injectCSS', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout) {
+	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", "animationFrame", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout, animationFrame) {
 
-		var requestAnimationFrame = $window.requestAnimationFrame;
 		var peerTemplate = $compile(templatePeer);
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
@@ -316,9 +315,8 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						needsRedraw = false;
 						redraw();
 					}
-					requestAnimationFrame(update);
 				}
-				_.defer(update);
+				animationFrame.register(update);
 
 			}
 

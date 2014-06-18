@@ -21,14 +21,14 @@
 define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 	// buddyList
-	return ["$compile", "buddyList", "mediaStream", function($compile, buddyList, mediaStream) {
+	return ["$compile", "buddyList", "mediaStream", "contacts", function($compile, buddyList, mediaStream, contacts) {
 
 		//console.log("buddyList directive");
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			$scope.layout.buddylist = false;
-			$scope.enabled = false;
+			$scope.layout.buddylistAutoHide = true;
 
 			$scope.doCall = function(id) {
 
@@ -46,33 +46,44 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
+			$scope.doContactRequest = function(id) {
+
+				//console.log("doContact", id);
+				$scope.$emit("requestcontact", id, {
+					restore: true
+				});
+
+			};
+
+			$scope.doContactRemove = function(userid) {
+
+				contacts.remove(userid);
+
+			};
+
+			/*
 			$scope.doAudioConference = function(id) {
 
 				$scope.updateAutoAccept(id);
 				mediaStream.api.sendChat(id, null, {
-					type: "conference",
-					id: mediaStream.connector.roomid
+					AutoCall: {
+						Type: "conference",
+						Id: mediaStream.connector.roomid
+					}
 				})
 
-			};
+			};*/
 
 			$scope.setRoomStatus = function(status) {
-				if (status !== $scope.enabled) {
-					$scope.enabled = status;
-					$scope.$emit("roomStatus", status);
-				}
-				if (status && !$scope.layout.buddylistAutoHide) {
-					$scope.layout.buddylist = true
-				}
+				$scope.$emit("roomStatus", status);
 			};
-
-			//XXX(longsleep): Debug leftover ?? Remove this.
-			window.doAudioConference = $scope.doAudioConference;
 
 			var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
 			var onJoined = _.bind(buddylist.onJoined, buddylist);
 			var onLeft = _.bind(buddylist.onLeft, buddylist);
 			var onStatus = _.bind(buddylist.onStatus, buddylist);
+			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
+			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);
@@ -97,10 +108,16 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				$scope.setRoomStatus(false);
 				buddylist.onClosed();
 			});
-
 			// Request user list whenever the connection comes ready.
 			mediaStream.connector.ready(function() {
 				mediaStream.api.requestUsers();
+			});
+			// Contacts.
+			contacts.e.on("contactadded", function(event, data) {
+				onContactAdded(data);
+			});
+			contacts.e.on("contactremoved", function(event, data) {
+				onContactRemoved(data);
 			});
 
 		}];

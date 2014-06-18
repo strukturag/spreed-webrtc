@@ -29,7 +29,7 @@ define([
 
 ], function($, _, uaparser, Connector, Api, WebRTC, tokens) {
 
-	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce) {
+	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage) {
 
 		var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
 		var version = context.Cfg.Version || "unknown";

@@ -50,6 +50,7 @@ type DataSelf struct {
 	Id      string
 	Sid     string
 	Userid  string
+	Suserid string
 	Token   string
 	Version string
 	Turn    *DataTurn
@@ -66,12 +67,19 @@ type DataTurn struct {
 type DataSession struct {
 	Type    string
 	Id      string
-	Userid  string `json:"Userid,omitempty"`
-	Ua      string `json:"Ua,omitempty"`
-	Token   string `json:"Token,omitempty"`
-	Version string `json:"Version,omitempty"`
-	Rev     uint64 `json:"Rev,omitempty"`
+	Userid  string `json:",omitempty"`
+	Ua      string `json:",omitempty"`
+	Token   string `json:",omitempty"`
+	Version string `json:",omitempty"`
+	Rev     uint64 `json:",omitempty"`
+	Prio    int    `json:",omitempty"`
 	Status  interface{}
+	stamp   int64
+}
+
+type DataUser struct {
+	Id       string
+	Sessions int
 }
 
 type DataBye struct {
@@ -92,16 +100,41 @@ type DataChat struct {
 }
 
 type DataChatMessage struct {
-	Mid     string
 	Message string
 	Time    string
-	NoEcho  bool `json:"NoEcho,omitempty"`
-	Status  interface{}
+	NoEcho  bool   `json:",omitempty"`
+	Mid     string `json:",omitempty"`
+	Status  *DataChatStatus
 }
 
-type DataChatMessageStatus struct {
-	State string
-	Mid   string
+type DataChatStatus struct {
+	Typing         string              `json:",omitempty"`
+	State          string              `json:",omitempty"`
+	Mid            string              `json:",omitempty"`
+	SeenMids       []string            `json:",omitempty"`
+	FileInfo       *DataFileInfo       `json:",omitempty"`
+	ContactRequest *DataContactRequest `json:",omitempty"`
+	AutoCall       *DataAutoCall       `json:",omitempty"`
+}
+
+type DataFileInfo struct {
+	Id     string `json:"id"`
+	Chunks uint64 `json:"chunks"`
+	Name   string `json:"name"`
+	Size   uint64 `json:"size"`
+	Type   string `json:"type"`
+}
+
+type DataContactRequest struct {
+	Id      string
+	Success bool
+	Userid  string `json:",omitempty"`
+	Token   string `json:",omitempty"`
+}
+
+type DataAutoCall struct {
+	Id   string
+	Type string
 }
 
 type DataIncoming struct {
@@ -116,19 +149,26 @@ type DataIncoming struct {
 	Conference     *DataConference
 	Alive          *DataAlive
 	Authentication *DataAuthentication
+	Sessions       *DataSessions
+	Iid            string `json:",omitempty"`
 }
 
 type DataOutgoing struct {
 	Data interface{}
 	From string
 	To   string
+	Iid  string `json:",omitempty"`
 }
 
 type DataSessions struct {
+	Type     string
+	Sessions *DataSessionsRequest `json:",omitempty"`
+	Users    []*DataSession
+}
+
+type DataSessionsRequest struct {
+	Token string
 	Type  string
-	Users []*DataSession
-	Index uint64
-	Batch uint64
 }
 
 type DataConference struct {

@@ -113,7 +113,7 @@
   cursor: pointer;
   display: block;
   font-size: 13px;
-  height: 66px;
+  min-height: 66px;
   overflow: hidden;
   position: relative;
   text-align: left;
@@ -126,14 +126,20 @@
 }
 
 .buddy {
-  &.withSubline .buddy1 {
+  &.withSubline .buddy1, &.contact .buddy1 {
     top: 15px;
   }
-  &.withSubline .buddy2 {
+  &.withSubline .buddy2, &.contact .buddy2 {
     display: block;
   }
   &.hovered .buddyactions {
     right: 0;
+  }
+  & .fa.contact:before {
+    content: "\f006";
+  }
+  &.contact .fa.contact:before {
+    content: "\f005";
   }
   .buddyPicture {
     background: $actioncolor1;
@@ -156,6 +162,16 @@
       position: absolute;
       right: 0;
       top: 0;
+    }
+  }
+  .buddyPictureSmall {
+    margin:0px;
+    margin-left:-4px;
+    height:30px;
+    width:30px;
+    margin-right:4px;
+    .#{$fa-css-prefix} {
+      line-height: 30px;
     }
   }
   .buddy1 {
@@ -181,11 +197,19 @@
     white-space: nowrap;
     display: none;
   }
+  .buddy3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width:160px;
+    text-align:left;
+  }
 }
 
 .buddy .buddyactions {
   background: $buddylist-action-background;
-  bottom: 0px;
+  height: 66px;
   line-height: 66px;
   position: absolute;
   right: -125px;
@@ -199,4 +223,34 @@
   .#{$fa-css-prefix} {
     font-size: 2em;
   }
+  i.fa {
+    pointer-events: none;
+  }
+}
+
+.buddy .buddysessions {
+  margin-top: 56px;
+  max-height:0px;
+  transition-property: max-height;
+  transition-duration: 1s;
+  transition-delay: .1s;
+  ul {
+    padding-top: 10px;
+    margin-left: 20px;
+    padding-left: 0px;
+    border-left: 1px dotted $bordercolor;
+  }
+  ul li {
+    margin-bottom: 1px;
+    margin-top: 1px;
+    margin-left: -4px;
+    list-style-type: none;
+  }
+  .currentsession .buddy3 {
+    font-weight: bold;
+  }
+}
+
+.buddy.hovered .buddysessions {
+  max-height:999px;
 }

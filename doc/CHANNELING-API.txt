@@ -52,11 +52,14 @@ Sending vs receiving document data encapsulation
 
     {
         "Type": "Whatever",
-        "Whatever": { /* your document */ }
+        "Whatever": { /* your document */ },
+        "Iid": "request-identifier-unique-to-client"
     }
 
     So any document you sent, you have to specify a Type key pointing
-    to the key where the real document is to be found.
+    to the key where the real document is to be found. The Iid field is
+    optional and is returned back with the response wrapper document to
+    match requests with response data when supported by the type.
 
   Received documents are wrapped by a special Document which provides
   additional information.
@@ -64,7 +67,8 @@ Sending vs receiving document data encapsulation
     {
         "From": "4",
         "To": "5",
-        "Data": {}
+        "Data": {},
+        "Iid": "request-identifier-unique-to-client"
     }
 
   The Data key contains the real Document.
@@ -76,6 +80,9 @@ Sending vs receiving document data encapsulation
     To   : The Id, the server send this Document to. Should be the same as
            your current Self Id.
     Data : Contains the payload.
+    Iid  : Optional request identifier to match this response to the calling
+           request. Only available when sent by the client and the requested
+           type implementation does support it.
 
 
 Special purpose documents for channling
@@ -87,6 +94,7 @@ Special purpose documents for channling
         "Id": "4",
         "Sid": "5157",
         "Userid": "",
+        "Suserid": "",
         "Token": "some-very-long-string",
         "Version": "server-version-number",
         "Turn": {
@@ -108,20 +116,21 @@ Special purpose documents for channling
 
     Keys:
 
-        Type   : Self (string)
-        Id     : Public Session id for this connection (string).
-        Sid    : Secure (non public) id for this session (string).
-        Userid : User id if this session belongs to an authenticated user. Else empty.
-        Token  : Security token (string), to restablish connection with the same
+        Type    : Self (string)
+        Id      : Public Session id for this connection (string).
+        Sid     : Secure (non public) id for this session (string).
+        Userid  : User id if this session belongs to an authenticated user. Else empty.
+        Suserid : Secure (non public) user id if session has an user id. Else empty.
+        Token   : Security token (string), to restablish connection with the same
                  session. Pass the value as URL query parameter t, to the websocket URL.
-        Version: Server version number. Use this to detect server upgrades.
-        Turn   : Mapping (interface{}) to contain TURN server details, like
-                 urls, password and username. See
-                 http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
-                 and TURN REST API section in
-                 https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
-                 for details.
-        Stun   : Array with STUN server URLs.
+        Version : Server version number. Use this to detect server upgrades.
+        Turn    : Mapping (interface{}) to contain TURN server details, like
+                  urls, password and username. See
+                  http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+                  and TURN REST API section in
+                  https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
+                  for details.
+        Stun    : Array with STUN server URLs.
 
     You can also send an empty Self document to the server to make the server
     transmit a fresh Self document (eg. to refresh when ttl was reached). Please
@@ -273,7 +282,8 @@ Additional types for session listing and notifications
         "Id": "7",
         "Userid": "u7",
         "Ua": "Chrome 28",
-        "Status": null
+        "Status": null,
+        "Prio": 100
     }
 
     Note: The Userid field is only present if that session belongs to a known user.
@@ -303,11 +313,7 @@ Additional types for session listing and notifications
   Users (Request uses empty data)
 
     {
-        "Type": "Users",
-        "Users": {
-            "Type": "Users",
-            "Users": {}
-        }
+        "Type": "Users"
     }
 
   Users (Response with data)
@@ -319,25 +325,26 @@ Additional types for session listing and notifications
                 "Type": "Online",
                 "Id": "1",
                 "Ua": "Firefox 27",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             },
             {
                 "Type": "Online",
                 "Id": "3",
                 "Userid": "u3",
                 "Ua": "Chrome 28",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             },
             {
                 "Type": "Online",
                 "Id": "4",
                 "Userid": "u4",
                 "Ua": "Chrome 28",
-                "Status": {...}
+                "Status": {...},
+                "Prio": 100
             }
-        ],
-        "Index": 0,
-        "Batch": 0
+        ]
     }
 
     Note: The Userid field is only present, if that session belongs to a known user.
@@ -383,6 +390,47 @@ User authorization and session authentication
 
     There is no way to undo authentication for a session. For log out, close
     the session (disconnect) and forget the token.
+
+
+Information retrieval
+
+  Sessions (Request uses Id, Token and Type)
+
+    {
+        "Type": "Sessions",
+        "Sessions": {
+          "Type": "Token type",
+          "Token": "Request token"
+        }
+    }
+
+    Valid known token types are: "contact".
+
+  Sessions (Response with Id, Token and Type from request and
+  populated Session list).
+
+    {
+        "Type": "Sessions",
+        "Sessions": {
+          "Type": "Type as in request",
+          "Token": "Token as in request"
+        },
+        "Users": [
+          {
+            "Type": "Online",
+            "Id": "1",
+            "Ua": "Firefox 27",
+            "Status": {...}
+          },
+          {
+              "Type": "Online",
+              "Id": "3",
+              "Userid": "u3",
+              "Ua": "Chrome 28",
+              "Status": {...}
+          }, ...
+        ]
+    }
 
 
 Chat messages and status information
@@ -456,6 +504,48 @@ Chat messages and status information
     a token peer connection for file transfer. It is up to the UI if the
     message is shown or not. For file transfer information the message is
     always "File".
+
+  Chat with contact request/confirm information
+
+    Request to create a contact token with Id.
+
+    {
+        "Message": "Some message",
+        "Time": "2013-11-20T16:28:42+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "client-generated-id"
+            }
+        }
+    }
+
+    Reply with success (Sever generates and inserts token).
+
+    {
+        "Message": "Some response message",
+        "Time": "2013-11-20T16:28:59+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "request-id",
+                "Success": true,
+                "Token": "server-generated-token-on-success"
+            }
+        }
+    }
+
+    Or reject (no reply is also possible).
+
+    {
+        "Message": "Some response message",
+        "Time": "2013-11-20T16:28:59+01:00",
+        "Status": {
+            "ContactRequest": {
+                "Id": "request-id",
+                "Success": false
+            }
+        }
+    }
+
 
   Chat message deliver status extensions
 
@@ -536,22 +626,24 @@ Chat messages and status information
     }
 
 
-  Request being called from audio mixer
+  Request an automatic callback, by sending a chat message with the AutoCall
+  document in Status.
 
     {
         "Type": "Chat",
         "Chat": {
-            "Message": null,
+            "Message": "Call me back",
             "Status": {
-                "type": "conference",
-                "id": "my-conference-room"
+              "AutoCall": {
+                "Type": "conference",
+                "Id": "my-conference-room"
             }
         }
     }
 
-    This can be sent to any participant that has a "Status" containing the "isMixer"
-    flag with a "true" value. The peer will then try to establish a peer connection
-    to the caller which it needs to pick up to join an audio conference.
+    For example this can be sent to sessions which have "autoCalls" set in session
+    status. The peer will then try to establish a peer connection  to the caller which
+    the client eeds to pick up automatically.
 
 
 Data channel only messages

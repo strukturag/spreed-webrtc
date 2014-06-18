@@ -1,0 +1,10 @@
+<div class="contact-request">
+	<div ng-if="!fromself && request.Userid && !request.Success && request.Token">
+		<div ng-switch="state">
+			<div ng-switch-when="request">
+				<button ng-click="doAccept()" class="btn btn-success btn-sm">Accept</button>
+				<button ng-click="doReject()" class="btn btn-danger btn-sm">Reject</button>
+			</div>
+		</div>
+	</div>
+</div>

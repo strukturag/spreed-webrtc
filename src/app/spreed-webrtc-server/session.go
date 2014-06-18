@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"sync"
+	"time"
 )
 
 var sessionNonces *securecookie.SecureCookie
@@ -33,21 +34,23 @@ var sessionNonces *securecookie.SecureCookie
 type Session struct {
 	Id        string
 	Sid       string
-	Userid    string
-	Roomid    string
 	Ua        string
 	UpdateRev uint64
 	Status    interface{}
 	Nonce     string
+	Prio      int
 	mutex     sync.RWMutex
+	userid    string
+	stamp     int64
 }
 
-func NewSession(id, sid, userid string) *Session {
+func NewSession(id, sid string) *Session {
 
 	return &Session{
-		Id:     id,
-		Sid:    sid,
-		Userid: userid,
+		Id:    id,
+		Sid:   sid,
+		Prio:  100,
+		stamp: time.Now().Unix(),
 	}
 
 }
@@ -61,28 +64,15 @@ func (s *Session) Update(update *SessionUpdate) uint64 {
 
 		//fmt.Println("type update", key)
 		switch key {
-		case "Roomid":
-			s.Roomid = update.Roomid
 		case "Ua":
 			s.Ua = update.Ua
 		case "Status":
 			s.Status = update.Status
+		case "Prio":
+			s.Prio = update.Prio
 		}
 
 	}
-
-	s.UpdateRev++
-	return s.UpdateRev
-
-}
-
-func (s *Session) Apply(st *SessionToken) uint64 {
-
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	s.Id = st.Id
-	s.Sid = st.Sid
-	s.Userid = st.Userid
 
 	s.UpdateRev++
 	return s.UpdateRev
@@ -97,7 +87,7 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 	if s.Id != st.Id || s.Sid != st.Sid {
 		return "", errors.New("session id mismatch")
 	}
-	if s.Userid != "" {
+	if s.userid != "" {
 		return "", errors.New("session already authenticated")
 	}
 
@@ -109,35 +99,41 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 }
 
-func (s *Session) Authenticate(realm string, st *SessionToken) error {
+func (s *Session) Authenticate(realm string, st *SessionToken, userid string) error {
 
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	if s.Userid != "" {
+	if s.userid != "" {
 		return errors.New("session already authenticated")
 	}
-	if s.Nonce == "" || s.Nonce != st.Nonce {
-		return errors.New("nonce validation failed")
-	}
-	var userid string
-	err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
-	if err != nil {
-		return err
-	}
-	if st.Userid != userid {
-		return errors.New("user id mismatch")
+	if userid == "" {
+		if s.Nonce == "" || s.Nonce != st.Nonce {
+			return errors.New("nonce validation failed")
+		}
+		err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
+		if err != nil {
+			return err
+		}
+		if st.Userid != userid {
+			return errors.New("user id mismatch")
+		}
+		s.Nonce = ""
 	}
 
-	s.Nonce = ""
-	s.Userid = st.Userid
+	s.userid = userid
+	s.stamp = time.Now().Unix()
 	s.UpdateRev++
 	return nil
 
 }
 
 func (s *Session) Token() *SessionToken {
-	return &SessionToken{Id: s.Id, Sid: s.Sid, Userid: s.Userid}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	return &SessionToken{Id: s.Id, Sid: s.Sid, Userid: s.userid}
 }
 
 func (s *Session) Data() *DataSession {
@@ -147,11 +143,19 @@ func (s *Session) Data() *DataSession {
 
 	return &DataSession{
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Ua:     s.Ua,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
+		Prio:   s.Prio,
+		stamp:  s.stamp,
 	}
+
+}
+
+func (s *Session) Userid() string {
+
+	return s.userid
 
 }
 
@@ -176,8 +180,9 @@ func (s *Session) DataSessionJoined() *DataSession {
 	return &DataSession{
 		Type:   "Joined",
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Ua:     s.Ua,
+		Prio:   s.Prio,
 	}
 
 }
@@ -190,9 +195,10 @@ func (s *Session) DataSessionStatus() *DataSession {
 	return &DataSession{
 		Type:   "Status",
 		Id:     s.Id,
-		Userid: s.Userid,
+		Userid: s.userid,
 		Status: s.Status,
 		Rev:    s.UpdateRev,
+		Prio:   s.Prio,
 	}
 
 }
@@ -202,6 +208,7 @@ type SessionUpdate struct {
 	Types  []string
 	Roomid string
 	Ua     string
+	Prio   int
 	Status interface{}
 }
 

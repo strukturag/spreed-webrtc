@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, moment, templateFileInfo) {
+define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html'], function(_, moment, templateFileInfo, templateContactRequest) {
 
 	// ChatroomController
 	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation) {
@@ -45,6 +45,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 		var displayName = safeDisplayName;
 		var buddyImageSrc = $filter("buddyImageSrc");
 		var fileInfo = $compile(templateFileInfo);
+		var contactRequest = $compile(templateContactRequest);
 
 		var knowMessage = {
 			r: {},
@@ -285,17 +286,17 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 
 		$scope.showmessage = function(from, timestamp, message, nodes) {
 
-			var userid = $scope.$parent.$parent.id;
+			var sessonid = $scope.$parent.$parent.id;
 
 			// Prepare message to display.
 			var s = [];
 			if (message) {
 				s.push(message);
-				$scope.$emit("incoming", message, from, userid);
+				$scope.$emit("incoming", message, from, sessonid);
 			}
 
 			var is_new_message = lastSender !== from;
-			var is_self = from === userid;
+			var is_self = from === sessonid;
 
 			var extra_css = "";
 			var title = null;
@@ -373,7 +374,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 
 		$scope.$on("received", function(event, from, data) {
 
-			var userid = $scope.$parent.$parent.id;
+			var sessionid = $scope.$parent.$parent.id;
 			var mid = data.Mid || null;
 
 			switch (data.Type) {
@@ -394,9 +395,10 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 					// Definitions.
 					var message = null;
 					var nodes = null;
-					var fromself = from === userid;
+					var fromself = from === sessionid;
 					var noop = false;
 					var element = null;
+					var subscope;
 
 					var timestamp = data.Time;
 					if (!timestamp) {
@@ -441,11 +443,44 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html'], function(_, mome
 
 						// File offers.
 						if (data.Status.FileInfo) {
-							var subscope = $scope.$new();
+							subscope = $scope.$new();
 							subscope.info = data.Status.FileInfo;
 							subscope.from = from;
 							fileInfo(subscope, function(clonedElement, scope) {
 								var text = fromself ? translation._("You share file:") : translation._("Incoming file:");
+								element = $scope.showmessage(from, timestamp, text, clonedElement);
+							});
+							noop = true;
+						}
+
+						// Contact request.
+						if (data.Status.ContactRequest) {
+							subscope = $scope.$new();
+							subscope.request = data.Status.ContactRequest;
+							subscope.fromself = fromself;
+							contactRequest(subscope, function(clonedElement, scope) {
+								var text;
+								if (fromself) {
+									if (scope.request.Userid) {
+										if (scope.request.Success) {
+											text = translation._("You accepted the contact request.");
+										} else {
+											text = translation._("You rejected the contact request.");
+										}
+									} else {
+										text = translation._("You sent a contact request.");
+									}
+								} else {
+									if (scope.request.Success) {
+										text = translation._("Your contact request was accepted.");
+									} else{
+										if (scope.request.Token) {
+											text = translation._("Incoming contact request.");
+										} else {
+											text = translation._("Your contact request was rejected.");
+										}
+									}
+								}
 								element = $scope.showmessage(from, timestamp, text, clonedElement);
 							});
 							noop = true;

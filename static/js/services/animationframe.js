@@ -18,30 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["jquery"], function($) {
+define(["underscore", "rAF"], function(_) {
 
-	// appData.e events
-	// - authenticationChanged(userid)
-	// - selfReceived(self)
+	// animationFrame
+	return ["$window", function($window) {
 
-	// appData
-	return [function() {
+		var requestAnimationFrame = $window.requestAnimationFrame;
+		var registry = [];
 
-		var data = {
-			data: null,
-			e: $({})
-		}
-		var appData = {
-			get: function() {
-				return data.data;
-			},
-			set: function(d) {
-				data.data = d;
-				return d;
-			},
-			e: data.e
-		}
-		return appData;
+		var caller = function(f) {
+			f();
+		};
+		var worker = function() {
+			registry.forEach(caller)
+			requestAnimationFrame(worker);
+		};
+
+		// Public api.
+		var animationFrame = {
+			register: function(f) {
+				registry.push(f);
+			}
+		};
+
+		// Auto start worker.
+		_.defer(worker);
+
+		return animationFrame;
 
 	}];
 

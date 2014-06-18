@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html', 'rAF'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
+define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
 
 	var BuddyTree = function() {
 
@@ -31,7 +31,8 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	BuddyTree.prototype.create = function(id, scope) {
 
-		var sort = scope.displayName ? scope.displayName : "session " + scope.buddyIndexSortable + " " + id;
+		var display = scope.display || {};
+		var sort = display.displayName ? display.displayName : "session " + scope.buddyIndexSortable + " " + id;
 		var data = {
 			id: id,
 			sort: sort + "z" + id
@@ -63,6 +64,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			this.tree.remove(this.data[id]);
 			delete this.data[id];
 		}
+
+	};
+
+	BuddyTree.prototype.check = function(id) {
+
+		return this.data.hasOwnProperty(id);
 
 	};
 
@@ -102,6 +109,18 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 	};
 
+	BuddyTree.prototype.traverse = function(cb) {
+
+		return this.tree.inOrderTraverse(cb);
+
+	};
+
+	BuddyTree.prototype.keys = function() {
+
+		return _.keys(this.data);
+
+	};
+
 	BuddyTree.prototype.clear = function() {
 
 		this.tree.clear();
@@ -110,9 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "fastScroll", "mediaStream", function($window, $compile, playSound, buddyData, fastScroll, mediaStream) {
-
-		var requestAnimationFrame = $window.requestAnimationFrame;
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream, animationFrame, $q) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -138,25 +155,24 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			$element.on("mouseenter mouseleave", ".buddy", _.bind(function(event) {
 				// Hover handler for on Buddy actions.
 				var buddyElement = $(event.currentTarget);
-				this.hover(buddyElement, event.type === "mouseenter" ? true : false, buddyElement.scope().session.Id);
+				this.hover(buddyElement, event.type === "mouseenter" ? true : false);
 			}, this));
 			$element.on("click", ".buddy", _.bind(function(event) {
 				var buddyElement = $(event.currentTarget);
-				buddyElement.scope().doDefault();
+				this.click(buddyElement, event.target);
 			}, this));
 			$element.attr("data-xthreshold", "10");
 			$element.on("swipeleft", ".buddy", _.bind(function(event) {
 				event.preventDefault();
 				var buddyElement = $(event.currentTarget);
-				this.hover(buddyElement, !buddyElement.hasClass("hovered"), buddyElement.scope().session.Id);
+				this.hover(buddyElement, !buddyElement.hasClass("hovered"));
 			}, this));
 
 			$window.setInterval(_.bind(this.soundLoop, this), 500);
 			var update = _.bind(function refreshBuddies() {
 				this.refreshBuddies();
-				requestAnimationFrame(update);
 			}, this);
-			requestAnimationFrame(update);
+			animationFrame.register(update);
 
 		};
 
@@ -185,20 +201,60 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.onBuddyScope = function(scope) {
+		Buddylist.prototype.onBuddyScopeCreated = function(scope, data) {
 
+			// Init scope with our stuff.
 			scope.element = null;
-			scope.doDefault = function() {
-				var id = scope.session.Id;
-				if (scope.status.isMixer) {
-					return scope.doAudioConference(id);
-				}
-				return scope.doCall(id);
-			};
+			scope.contact = null;
+			scope.display = {};
+			scope.session = buddySession.create(data);
 			scope.$on("$destroy", function() {
+				//console.log("destroyed");
 				scope.element = null;
 				scope.killed = true;
 			});
+
+		};
+
+		Buddylist.prototype.onBuddySessionUserid = function(scope, sourceSession) {
+
+			//console.log("session with userid", sourceSession);
+
+			var userid = sourceSession.Userid;
+			/*
+			if (userid === scope.userid) {
+				// The source session has our own userid, ignore it.
+
+			}*/
+			var targetScope = buddyData.get(userid);
+			if (!targetScope) {
+				// No scope for this userid yet - set us.
+				buddyData.set(userid, scope);
+				//console.log("set scope with userid", sourceSession);
+				return;
+			}
+			var session = targetScope.session;
+			if (sourceSession === session) {
+				// No action.
+				//console.log("source session same as target");
+				return;
+			}
+			// Merge sessions.
+			session.merge(sourceSession);
+			// Cleanup old from tree and DOM.
+			var id = sourceSession.Id;
+			this.tree.remove(id);
+			if (targetScope !== scope) {
+				if (scope.element) {
+					this.lefts[id] = scope.element;
+					//console.log("destroying", id, scope.element);
+					scope.$destroy();
+				}
+				buddyData.set(id, targetScope);
+				delete this.actionElements[id];
+				return targetScope;
+			}
+			return;
 
 		};
 
@@ -335,72 +391,160 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.onStatus = function(data) {
+		Buddylist.prototype.dumpBuddyPictureToBlob = function(scope, data) {
 
-			//console.log("onStatus", status);
-			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this));
-			// Update session.
-			scope.session.Userid = data.Userid;
-			scope.session.Rev = data.Rev;
-			// Update status.
-			if (scope.status && scope.status.Rev >= data.Rev) {
-				console.warn("Received old status update in status", data.Rev, scope.status.Rev);
-			} else {
-				scope.status = data.Status;
-				this.updateBuddyPicture(scope.status);
-				var displayName = scope.displayName;
-				if (scope.status.displayName) {
-					scope.displayName = scope.status.displayName;
-				} else {
-					scope.displayName = null;
+			if (!data) {
+				data = this.dumpBuddyPictureToString(scope);
+				if (!data) {
+					return null;
 				}
-				if (displayName !== scope.displayName) {
-					var before = this.tree.update(id, scope);
-					this.queue.push(["status", id, before]);
-				}
-				scope.$apply();
 			}
+			// NOTE(longsleep): toBlob is not widely supported narf ..
+			// see: https://code.google.com/p/chromium/issues/detail?id=67587
+			var parts = data.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+\/]+)/);
+			var binStr = atob(parts[3]);
+			var buf = new ArrayBuffer(binStr.length);
+			var view = new Uint8Array(buf);
+			for (var i = 0; i < view.length; i++) {
+				view[i] = binStr.charCodeAt(i);
+			}
+			return new Blob([view], {'type': parts[1]});
 
 		};
 
-		Buddylist.prototype.onJoined = function(data) {
+		Buddylist.prototype.dumpBuddyPictureToString = function(scope) {
 
-			//console.log("Joined", data);
-			var id = data.Id;
-			var scope = buddyData.get(id, this.$scope, _.bind(this.onBuddyScope, this));
-			// Create session.
-			scope.session = {
-				Id: data.Id,
-				Userid: data.Userid,
-				Ua: data.Ua,
-				Rev: 0
-			};
-			// Add status.
-			buddyCount++;
-			if (data.Status) {
-				if (scope.status && scope.status.Rev >= data.Status.Rev) {
-					console.warn("Received old status update in join", data.Status.Rev, scope.status.Rev);
-				} else {
-					scope.status = data.Status;
-					scope.displayName = scope.status.displayName;
-					this.updateBuddyPicture(scope.status);
-				}
+			var img = scope.element.find(".buddyPicture img").get(0);
+			if (img) {
+				var canvas = $window.document.createElement("canvas");
+				canvas.width = img.width;
+				canvas.height = img.height;
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(img, 0, 0);
+				return canvas.toDataURL("image/jpeg");
 			}
-			//console.log("Joined scope", scope, scope.element);
+			return null;
+
+		};
+
+		Buddylist.prototype.setDisplay = function(id, scope, data, queueName) {
+
+			var status = data.Status;
+			var display = scope.display;
+			// Set display.name.
+			display.displayName = status.displayName;
+			// Set display.picture.
+			display.buddyPicture = status.buddyPicture;
+			this.updateBuddyPicture(display);
+			// Set display subline.
+			this.updateSubline(display, status.message);
+			// Add to render queue when no element exists.
 			if (!scope.element) {
 				var before = this.tree.add(id, scope);
-				this.queue.push(["joined", id, before]);
+				this.queue.push([queueName, id, before]);
 				this.playSoundJoined = true;
 			}
 
 		};
 
-		Buddylist.prototype.onLeft = function(data) {
+		Buddylist.prototype.updateDisplay = function(id, scope, data, queueName) {
 
-			//console.log("Left", session);
+			var status = data.Status;
+			var display = scope.display;
+			// Update display name.
+			var displayName = display.displayName;
+			if (status.displayName) {
+				display.displayName = status.displayName;
+			} else {
+				display.displayName = null;
+			}
+			// Add to status queue if sorting has changed.
+			if (displayName !== status.displayName) {
+				var before = this.tree.update(id, scope);
+				this.queue.push([queueName, id, before]);
+			}
+			// Update display subline.
+			if (status.message) {
+				this.updateSubline(display, status.message);
+			}
+			// Update display picture.
+			if (status.buddyPicture) {
+				display.buddyPicture = status.buddyPicture || null;
+				this.updateBuddyPicture(display);
+			}
+
+		};
+
+		Buddylist.prototype.updateSubline = function(display, s) {
+
+			if (!s || s === "__e") {
+				display.subline = "";
+				return;
+			}
+			if (s.length > 20) {
+				display.sublineFull = s;
+				s = s.substr(0, 20) + "...";
+			} else {
+				display.sublineFull = null;
+			}
+			display.subline = s;
+
+		};
+
+		Buddylist.prototype.onStatus = function(data) {
+
+			//console.log("onStatus", data);
 			var id = data.Id;
-			this.tree.remove(id);
+			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
+				this.onBuddyScopeCreated(scope, data);
+			}, this), data.Userid);
+			// Update session.
+			var sessionData = scope.session.update(id, data, _.bind(function(session) {
+				//console.log("Session is now authenticated", session);
+				var newscope = this.onBuddySessionUserid(scope, session);
+				if (newscope) {
+					scope = newscope;
+				}
+			}, this));
+			if (sessionData) {
+				// onStatus for main session.
+				this.updateDisplay(id, scope, sessionData, "status");
+			}
+			scope.$apply();
+			return scope;
+
+		};
+
+		Buddylist.prototype.onJoined = function(data, noApply) {
+
+			//console.log("Joined", data);
+			var id = data.Id;
+			var scope = buddyData.get(id, this.$scope, _.bind(function(scope) {
+				this.onBuddyScopeCreated(scope, data);
+			}, this), data.Userid);
+			// Update session.
+			buddyCount++;
+			var sessionData = scope.session.update(id, data, _.bind(function(session) {
+				//console.log("Session is now authenticated", session);
+				var newscope = this.onBuddySessionUserid(scope, session);
+				if (newscope) {
+					scope = newscope;
+				}
+			}, this));
+			if (sessionData && sessionData.Status) {
+				this.setDisplay(id, scope, sessionData, "joined");
+			} else if (!noApply) {
+				scope.$apply();
+			}
+			return scope;
+
+		};
+
+
+		Buddylist.prototype.onLeft = function(data, force, noApply) {
+
+			//console.log("Left", data);
+			var id = data.Id;
 			var scope = buddyData.get(id);
 			if (!scope) {
 				//console.warn("Trying to remove buddy with no registered scope", session);
@@ -409,30 +553,191 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			if (buddyCount > 0) {
 				buddyCount--;
 			}
-			if (scope.element) {
-				this.lefts[id] = scope.element;
-				this.playSoundLeft = true;
-			}
+			// Remove current id from tree.
+			this.tree.remove(id);
 			buddyData.del(id);
-			delete this.actionElements[id];
+			// Remove session.
+			var session = scope.session;
+			if ((session.remove(id) && scope.contact === null) || force) {
+				// No session left. Cleanup.
+				if (scope.element) {
+					this.lefts[id] = scope.element;
+					this.playSoundLeft = true;
+				}
+				if (session.Userid) {
+					buddyData.del(session.Userid, true);
+				}
+				delete this.actionElements[id];
+				scope.$destroy();
+			} else {
+				// Update display stuff if a session is left. This can
+				// return no session in case when we got this as contact.
+				var sessionData = session.get();
+				if (sessionData) {
+					this.updateDisplay(sessionData.Id, scope, sessionData, "status");
+				} else if (scope.contact) {
+					var contact = scope.contact;
+					// Use it with userid as id in tree.
+					if (!this.tree.check(contact.Userid)) {
+						this.tree.add(contact.Userid, scope);
+						buddyCount++;
+					}
+					if (contact.Status !== null && !contact.Status.message) {
+						// Remove status message.
+						contact.Status.message = "__e";
+					}
+					this.updateDisplay(contact.Userid, scope, contact, "status");
+				}
+				if (!noApply) {
+					scope.$apply();
+				}
+			}
+			return scope;
 
 		};
 
 		Buddylist.prototype.onClosed = function() {
 
 			//console.log("Closed");
-			this.$element.empty();
-			buddyCount = 0;
-			buddyData.clear();
-			this.tree.clear();
-			this.actionElements = {};
+
+			// Remove pending stuff from queue.
 			this.queue = [];
+
+			// Trigger left events for all sessions.
+			var data = {};
+			var sessions = buddySession.sessions();
+			for (var id in sessions) {
+				if (sessions.hasOwnProperty(id)) {
+					//console.log("close id", id);
+					data.Id = id;
+					this.onLeft(data, false, true);
+				}
+			}
 
 		};
 
-		Buddylist.prototype.hover = function(buddyElement, hover, id) {
+		Buddylist.prototype.onContactAdded = function(contact) {
 
-			//console.log("hover handler", event, hover, id);
+			//console.log("onContactAdded", contact);
+			var userid = contact.Userid;
+
+			var scope = buddyData.get(userid);
+			if (scope) {
+				scope.contact = contact;
+				var sessionData = scope.session.get();
+				if (sessionData) {
+					if (contact.Status === null && sessionData.Status) {
+						// Update contact status with session.Status
+						var status = contact.Status = _.extend({}, sessionData.Status);
+						// Remove status message.
+						delete status.message;
+						// Convert buddy image.
+						if (status.buddyPicture) {
+							var img = this.dumpBuddyPictureToString(scope);
+							if (img) {
+								status.buddyPicture = img;
+							} else {
+								delete status.buddyPicture;
+							}
+						}
+						console.log("Injected status into contact", contact);
+					}
+					this.updateDisplay(sessionData.Id, scope, contact, "status");
+					scope.$apply();
+				}
+			} else {
+				// Create new scope for contact.
+				scope = this.onJoined({
+					Id: contact.Userid,
+					Userid: contact.Userid,
+					Status: _.extend({}, contact.Status)
+				});
+				scope.contact = contact;
+			}
+
+		};
+
+		Buddylist.prototype.onContactRemoved = function(contact) {
+
+			//console.log("onContactRemoved", contact);
+			var userid = contact.Userid;
+
+			var scope = buddyData.get(userid);
+			if (scope) {
+				scope.contact = null;
+				// Remove with left when no session for this userid.
+				var sessionData = scope.session.get();
+				if (!sessionData) {
+					// Force left.
+					this.onLeft({Id: userid}, true);
+				}
+			}
+
+		};
+
+		Buddylist.prototype.click = function(buddyElement, target) {
+
+			//console.log("click handler", buddyElement, target);
+			var action = $(target).data("action");
+			if (!action) {
+				// Make call the default action.
+				action = "call";
+			}
+
+			var scope = buddyElement.scope();
+			var session = scope.session;
+			var contact = scope.contact;
+
+			var promise = (function() {
+				var deferred = $q.defer();
+				var sessionData = session.get()
+				if (!sessionData) {
+					// Find session with help of contact.
+					if (contact && contact.Token) {
+						mediaStream.api.sendSessions(contact.Token, "contact", function(event, type, data) {
+							//console.log("oooooooooooooooo", type, data);
+							if (data.Users && data.Users.length > 0) {
+								var s = data.Users[0];
+								buddyData.set(s.Id, scope);
+								deferred.resolve(s.Id);
+							}
+						});
+					}
+				} else {
+					deferred.resolve(sessionData.Id);
+				}
+				return deferred.promise;
+			})();
+
+			switch (action) {
+			case "call":
+				promise.then(function(id) {
+					scope.doCall(id);
+				});
+				break;
+			case "chat":
+				promise.then(function(id) {
+					scope.doChat(id);
+				});
+				break;
+			case "contact":
+				if (contact) {
+					scope.doContactRemove(contact.Userid);
+				} else {
+					promise.then(function(id) {
+						scope.doContactRequest(id);
+					});
+				}
+				break;
+			}
+
+		};
+
+		Buddylist.prototype.hover = function(buddyElement, hover) {
+
+			//console.log("hover handler", buddyElement, hover);
+			var scope = buddyElement.scope();
+			var id = scope.session.Id;
 			var buddy = $(buddyElement);
 			var actionElements = this.actionElements;
 			var elem;
@@ -453,11 +758,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				if (elem) {
 					buddy.addClass("hovered");
 				} else {
-					var scope = buddyData.get(id);
 					var template = buddyActions;
-					if (scope.status.isMixer) {
-						template = buddyActionsForAudioMixer;
-					}
+					//if (scope.status.autoCalls && _.indexOf(scope.status.autoCalls, "conference") !== -1) {
+					//	template = buddyActionsForAudioMixer;
+					//}
 					//console.log("scope", scope, id);
 					template(scope, _.bind(function(clonedElement, $scope) {
 						actionElements[id] = clonedElement;

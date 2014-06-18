@@ -44,7 +44,8 @@ func (s *Server) OnRegister(c *Connection) {
 			Type:    "Self",
 			Id:      c.Id,
 			Sid:     c.Session.Sid,
-			Userid:  c.Session.Userid,
+			Userid:  c.Session.Userid(),
+			Suserid: c.h.CreateSuserid(c.Session),
 			Token:   token,
 			Version: c.h.version,
 			Turn:    c.h.CreateTurnData(c.Id),
@@ -67,7 +68,7 @@ func (s *Server) OnUnregister(c *Connection) {
 
 func (s *Server) OnText(c *Connection, b Buffer) {
 
-	//log.Printf("OnText from %d: %s\n", c.id, b)
+	//log.Printf("OnText from %d: %s\n", c.Id, b)
 	var msg DataIncoming
 	err := json.Unmarshal(b.Bytes(), &msg)
 	if err != nil {
@@ -106,7 +107,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		// TODO(longsleep): Validate Answer
 		s.Unicast(c, msg.Answer.To, msg.Answer)
 	case "Users":
-		if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+		if c.Hello {
 			s.Users(c)
 		}
 	case "Authentication":
@@ -121,7 +122,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 	case "Status":
 		//log.Println("Status", msg.Status)
 		s.UpdateSession(c, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
-		if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+		if c.Hello {
 			s.Broadcast(c, c.Session.DataSessionStatus())
 		}
 	case "Chat":
@@ -132,16 +133,24 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 		msg.Chat.Chat.Time = time.Now().Format(time.RFC3339)
 		if msg.Chat.To == "" {
 			// TODO(longsleep): Check if chat broadcast is allowed.
-			if c.h.config.DefaultRoomEnabled || !c.h.isDefaultRoomid(c.Roomid) {
+			if c.Hello {
 				atomic.AddUint64(&c.h.broadcastChatMessages, 1)
 				s.Broadcast(c, msg.Chat)
 			}
 		} else {
+			if msg.Chat.Chat.Status != nil && msg.Chat.Chat.Status.ContactRequest != nil {
+				err = s.ContactRequest(c, msg.Chat.To, msg.Chat.Chat.Status.ContactRequest)
+				if err != nil {
+					log.Println("Ignoring invalid contact request.", err)
+					return
+				}
+				msg.Chat.Chat.Status.ContactRequest.Userid = c.Session.Userid()
+			}
 			atomic.AddUint64(&c.h.unicastChatMessages, 1)
 			s.Unicast(c, msg.Chat.To, msg.Chat)
 			if msg.Chat.Chat.Mid != "" {
 				// Send out delivery confirmation status chat message.
-				s.Unicast(c, c.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatMessageStatus{State: "sent"}}})
+				s.Unicast(c, c.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatStatus{State: "sent"}}})
 			}
 		}
 	case "Conference":
@@ -158,7 +167,9 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 			}
 		}
 	case "Alive":
-		s.Alive(c, msg.Alive)
+		s.Alive(c, msg.Alive, msg.Iid)
+	case "Sessions":
+		s.Sessions(c, msg.Sessions.Sessions, msg.Iid)
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
@@ -181,9 +192,15 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 	b.Decref()
 }
 
-func (s *Server) Alive(c *Connection, alive *DataAlive) {
+func (s *Server) Alive(c *Connection, alive *DataAlive, iid string) {
 
-	c.h.aliveHandler(c, alive)
+	c.h.aliveHandler(c, alive, iid)
+
+}
+
+func (s *Server) Sessions(c *Connection, srq *DataSessionsRequest, iid string) {
+
+	c.h.sessionsHandler(c, srq, iid)
 
 }
 
@@ -191,6 +208,12 @@ func (s *Server) UpdateSession(c *Connection, su *SessionUpdate) uint64 {
 
 	su.Id = c.Id
 	return c.h.sessionupdateHandler(su)
+
+}
+
+func (s *Server) ContactRequest(c *Connection, to string, cr *DataContactRequest) (err error) {
+
+	return c.h.contactrequestHandler(c, to, cr)
 
 }
 
@@ -228,9 +251,9 @@ func (s *Server) Users(c *Connection) {
 
 func (s *Server) Authenticate(c *Connection, st *SessionToken) bool {
 
-	err := c.Session.Authenticate(c.h.realm, st)
+	err := c.h.authenticateHandler(c.Session, st, "")
 	if err == nil {
-		log.Println("Authentication success", c.Id, c.Idx, st.Userid)
+		log.Println("Authentication success", c.Id, c.Idx, c.Session.Userid)
 		return true
 	} else {
 		log.Println("Authentication failed", err, c.Id, c.Idx, st.Userid, st.Nonce)

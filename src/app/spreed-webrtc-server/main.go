@@ -211,6 +211,11 @@ func runner(runtime phoenix.Runtime) error {
 		return fmt.Errorf("No sessionSecret in config file.")
 	}
 
+	encryptionSecret, err := runtime.GetString("app", "encryptionSecret")
+	if err != nil {
+		return fmt.Errorf("No encryptionSecret in config file.")
+	}
+
 	tokenFile, err := runtime.GetString("app", "tokenFile")
 	if err == nil {
 		if !httputils.HasFilePath(path.Clean(tokenFile)) {
@@ -340,7 +345,7 @@ func runner(runtime phoenix.Runtime) error {
 	computedRealm := fmt.Sprintf("%s.%s", serverRealm, serverToken)
 
 	// Create our hub instance.
-	hub := NewHub(runtimeVersion, config, sessionSecret, turnSecret, computedRealm)
+	hub := NewHub(runtimeVersion, config, sessionSecret, encryptionSecret, turnSecret, computedRealm)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {

@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -123,6 +123,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		$scope.status = "initializing";
 		$scope.id = null;
 		$scope.userid = null;
+		$scope.suserid = null;
 		$scope.peer = null;
 		$scope.dialing = null;
 		$scope.conference = null;
@@ -138,6 +139,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		$scope.master = {
 			displayName: null,
 			buddyPicture: null,
+			message: null,
 			settings: {
 				videoQuality: "high",
 				stereo: true,
@@ -174,7 +176,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				// This is the user status.
 				var status = {
 					displayName: $scope.master.displayName || null,
-					buddyPicture: $scope.master.buddyPicture || null
+					buddyPicture: $scope.master.buddyPicture || null,
+					message: $scope.master.message || null
 				}
 				if (_.isEqual(status, cache.status)) {
 					console.log("Status update skipped, as status has not changed.")
@@ -344,7 +347,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		});
 
 		// Load stuff from localStorage.
-		// TODO(longsleep): Put localStorage into Angular service.
 		var storedUser = localStorage.getItem("mediastream-user");
 		console.log("Found stored user data:", storedUser);
 		if (storedUser) {
@@ -371,6 +373,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			safeApply($scope, function(scope) {
 				scope.id = scope.myid = data.Id;
 				scope.userid = data.Userid;
+				scope.suserid = data.Suserid;
 				scope.turn = data.Turn;
 				scope.stun = data.Stun;
 				scope.refreshWebrtcSettings();
@@ -402,6 +405,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 						delete data.nonce;
 					}, function(data, status) {
 						console.error("Failed to authorize session", status, data);
+						mediaStream.users.forget();
 					});
 				}
 			}
@@ -426,6 +430,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					}
 				}, 0);
 			}
+
+			appData.e.triggerHandler("selfReceived", data);
 
 		});
 
@@ -545,7 +551,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					if (opts.soft) {
 						return;
 					}
-					$scope.userid = null;
+					$scope.userid = $scope.suserid = null;
 					break;
 				case "error":
 					if (reconnecting || connected) {
@@ -621,9 +627,12 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		});
 
 		$scope.$watch("userid", function(userid) {
+			var suserid;
 			if (userid) {
-				console.info("Session is now authenticated:", userid);
+				suserid = $scope.suserid;
+				console.info("Session is now authenticated:", userid, suserid);
 			}
+			appData.e.triggerHandler("authenticationChanged", [userid, suserid]);
 		});
 
 		// Apply all layout stuff as classes to our element.
@@ -659,8 +668,23 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 			if (mediaStream.connector.connected) {
 				$scope.setStatus("waiting");
 			}
-			$scope.layout.buddylist = true;
-			$scope.layout.buddylistAutoHide = false;
+			if ($scope.roomstatus) {
+				$scope.layout.buddylist = true;
+				$scope.layout.buddylistAutoHide = false;
+			} else {
+				$scope.layout.buddylist = false;
+				$scope.layout.buddylistAutoHide = true;
+			}
+		});
+
+		$scope.$watch("roomstatus", function(roomstatus) {
+			if (roomstatus && !$scope.peer) {
+				$scope.layout.buddylist = true;
+				$scope.layout.buddylistAutoHide = false;
+			} else if (!$scope.layout.buddylistAutoHide) {
+				$scope.layout.buddylist = false;
+				$scope.layout.buddylistAutoHide = true;
+			}
 		});
 
 		mediaStream.webrtc.e.on("busy", function(event, from) {

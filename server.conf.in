@@ -60,6 +60,11 @@ listen = 127.0.0.1:8080
 ; Session secret to use for session id generator. 32 or 64 bytes of random data
 ; are recommented.
 sessionSecret = the-default-secret-do-not-keep-me
+; Encryption secret protecting the data in generated server side tokens. Use
+; 16, 24, or 32 bytes to select AES-128, AES-192, or AES-256. When you change
+; the encryption secret, stored authentications, sessions and contacts become
+; invalid.
+encryptionSecret = tne-default-encryption-block-key
 ; Full path to a text file containig client tokens which a user needs to enter
 ; when accessing the web client. Each line in this file represents a valid
 ; token.

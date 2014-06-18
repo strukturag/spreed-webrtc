@@ -21,7 +21,7 @@
 define(['underscore'], function(underscore) {
 
 	// buddyData
-	return [function() {
+	return ["contactData", function(contactData) {
 
 		var scopes = {};
 		var brain = {};
@@ -61,16 +61,35 @@ define(['underscore'], function(underscore) {
 				}
 				return 0;
 			},
-			get: function(id, createInParent, afterCreateCallback) {
+			get: function(id, createInParent, afterCreateCallback, userid) {
 				if (scopes.hasOwnProperty(id)) {
+					//console.log("found id scope", id);
 					return scopes[id];
 				} else if (!createInParent && pushed.hasOwnProperty(id)) {
 					return pushed[id].scope;
 				} else {
+					var scope;
+					if (userid && scopes.hasOwnProperty(userid)) {
+						scope = scopes[userid];
+						if (createInParent) {
+							scopes[id] = scope;
+						}
+						//console.log("found userid scope", userid);
+						return scope;
+					}
 					if (createInParent) {
+						//console.log("creating scope", id, userid);
 						// If we have a parent we can create a new scope.
-						var scope = scopes[id] = createInParent.$new();
+						scope = scopes[id] = createInParent.$new();
+						if (userid) {
+							scopes[userid] = scope;
+						}
 						scope.buddyIndex = ++count;
+						if (userid) {
+							scope.contact = contactData.get(userid);
+						} else {
+							scope.contact = null;
+						}
 						scope.buddyIndexSortable = ("0000000" + scope.buddyIndex).slice(-7);
 						if (pushed.hasOwnProperty(id)) {
 							// Refresh pushed scope reference.
@@ -101,13 +120,17 @@ define(['underscore'], function(underscore) {
 			del: function(id, hard) {
 				var scope = scopes[id];
 				if (scope) {
-					scope.$destroy();
-					brain[id] = scope;
+					if (!hard) {
+						brain[id] = scope;
+					}
 					delete scopes[id];
 					return scope;
 				} else {
 					return null;
 				}
+			},
+			set: function(id, scope) {
+				scopes[id] = scope;
 			}
 		};
 		return buddyData;

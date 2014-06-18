@@ -74,10 +74,11 @@ func (uh *UsersSharedsecretHandler) Get(request *http.Request) (userid string, e
 func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest, request *http.Request) (string, error) {
 
 	// Parse UseridCombo.
-	useridCombo := strings.SplitN(snr.UseridCombo, ":", 2)
-	if len(useridCombo) != 2 {
+	useridCombo := strings.SplitN(snr.UseridCombo, ":", 3)
+	if len(useridCombo) < 2 {
 		return "", errors.New("invalid useridcombo")
 	}
+	// TODO(longsleep): Add support for third field which provides the username.
 	expirationString, userid := useridCombo[0], useridCombo[1]
 
 	expiration, err := strconv.ParseInt(expirationString, 10, 64)

@@ -23,6 +23,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
 	"crypto/hmac"
 	"crypto/sha1"
 	"crypto/sha256"
@@ -56,11 +57,13 @@ type HubStat struct {
 	Rooms                 int                     `json:"rooms"`
 	Connections           int                     `json:"connections"`
 	Sessions              int                     `json:"sessions"`
+	Users                 int                     `json:"users"`
 	Count                 uint64                  `json:"count"`
 	BroadcastChatMessages uint64                  `json:"broadcastchatmessages"`
 	UnicastChatMessages   uint64                  `json:"unicastchatmessages"`
 	IdsInRoom             map[string][]string     `json:"idsinroom,omitempty"`
 	SessionsById          map[string]*DataSession `json:"sessionsbyid,omitempty"`
+	UsersById             map[string]*DataUser    `json:"usersbyid,omitempty"`
 	ConnectionsByIdx      map[string]string       `json:"connectionsbyidx,omitempty"`
 }
 
@@ -69,9 +72,11 @@ type Hub struct {
 	connectionTable       map[string]*Connection
 	sessionTable          map[string]*Session
 	roomTable             map[string]*RoomWorker
+	userTable             map[string]*User
 	version               string
 	config                *Config
 	sessionSecret         []byte
+	encryptionSecret      []byte
 	turnSecret            []byte
 	tickets               *securecookie.SecureCookie
 	count                 uint64
@@ -83,29 +88,39 @@ type Hub struct {
 	realm                 string
 	tokenName             string
 	useridRetriever       func(*http.Request) (string, error)
+	contacts              *securecookie.SecureCookie
 }
 
-func NewHub(version string, config *Config, sessionSecret, turnSecret, realm string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, encryptionSecret, turnSecret, realm string) *Hub {
 
 	h := &Hub{
-		connectionTable: make(map[string]*Connection),
-		sessionTable:    make(map[string]*Session),
-		roomTable:       make(map[string]*RoomWorker),
-		version:         version,
-		config:          config,
-		sessionSecret:   []byte(sessionSecret),
-		turnSecret:      []byte(turnSecret),
-		realm:           realm,
+		connectionTable:  make(map[string]*Connection),
+		sessionTable:     make(map[string]*Session),
+		roomTable:        make(map[string]*RoomWorker),
+		userTable:        make(map[string]*User),
+		version:          version,
+		config:           config,
+		sessionSecret:    []byte(sessionSecret),
+		encryptionSecret: []byte(encryptionSecret),
+		turnSecret:       []byte(turnSecret),
+		realm:            realm,
 	}
 
 	if len(h.sessionSecret) < 32 {
 		log.Printf("Weak sessionSecret (only %d bytes). It is recommended to use a key with 32 or 64 bytes.\n", len(h.sessionSecret))
 	}
 
-	h.tickets = securecookie.New(h.sessionSecret, nil)
+	h.tickets = securecookie.New(h.sessionSecret, h.encryptionSecret)
+	h.tickets.MaxAge(86400 * 30) // 30 days
+	h.tickets.HashFunc(sha256.New)
+	h.tickets.BlockFunc(aes.NewCipher)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
 	h.tokenName = fmt.Sprintf("token@%s", h.realm)
+	h.contacts = securecookie.New(h.sessionSecret, h.encryptionSecret)
+	h.contacts.MaxAge(0)
+	h.contacts.HashFunc(sha256.New)
+	h.contacts.BlockFunc(aes.NewCipher)
 	return h
 
 }
@@ -117,6 +132,7 @@ func (h *Hub) Stat(details bool) *HubStat {
 		Rooms:       len(h.roomTable),
 		Connections: len(h.connectionTable),
 		Sessions:    len(h.sessionTable),
+		Users:       len(h.userTable),
 		Count:       h.count,
 		BroadcastChatMessages: atomic.LoadUint64(&h.broadcastChatMessages),
 		UnicastChatMessages:   atomic.LoadUint64(&h.unicastChatMessages),
@@ -136,6 +152,11 @@ func (h *Hub) Stat(details bool) *HubStat {
 			sessions[sessionid] = session.Data()
 		}
 		stat.SessionsById = sessions
+		users := make(map[string]*DataUser)
+		for userid, user := range h.userTable {
+			users[userid] = user.Data()
+		}
+		stat.UsersById = users
 		connections := make(map[string]string)
 		for id, connection := range h.connectionTable {
 			connections[fmt.Sprintf("%d", connection.Idx)] = id
@@ -166,6 +187,16 @@ func (h *Hub) CreateTurnData(id string) *DataTurn {
 
 }
 
+func (h *Hub) CreateSuserid(session *Session) (suserid string) {
+	userid := session.Userid()
+	if userid != "" {
+		m := hmac.New(sha256.New, h.encryptionSecret)
+		m.Write([]byte(userid))
+		suserid = base64.StdEncoding.EncodeToString(m.Sum(nil))
+	}
+	return
+}
+
 func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
 	// NOTE(longsleep): Is it required to make this a secure cookie,
@@ -183,8 +214,8 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 	if st == nil {
 		sid := NewRandomString(32)
 		id, _ := h.tickets.Encode("id", sid)
-		session = NewSession(id, sid, userid)
-		log.Println("Created new session id", len(id), id, sid, userid)
+		session = NewSession(id, sid)
+		log.Println("Created new session id", len(id), id, sid)
 	} else {
 		if userid == "" {
 			userid = st.Userid
@@ -192,7 +223,11 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 		if !usersEnabled {
 			userid = ""
 		}
-		session = NewSession(st.Id, st.Sid, userid)
+		session = NewSession(st.Id, st.Sid)
+	}
+
+	if userid != "" {
+		h.authenticateHandler(session, st, userid)
 	}
 
 	return session
@@ -337,8 +372,18 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		return
 	}
 	session := c.Session
+	suserid := session.Userid()
 	delete(h.connectionTable, c.Id)
 	delete(h.sessionTable, c.Id)
+	if session != nil && suserid != "" {
+		user, ok := h.userTable[suserid]
+		if ok {
+			empty := user.RemoveSession(session)
+			if empty {
+				delete(h.userTable, suserid)
+			}
+		}
+	}
 	h.mutex.Unlock()
 	if session != nil {
 		h.buddyImages.Delete(session.Id)
@@ -362,11 +407,11 @@ func (h *Hub) unicastHandler(m *MessageRequest) {
 
 }
 
-func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
+func (h *Hub) aliveHandler(c *Connection, alive *DataAlive, iid string) {
 
 	aliveJson := h.buffers.New()
 	encoder := json.NewEncoder(aliveJson)
-	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: alive})
+	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: alive, Iid: iid})
 	if err != nil {
 		log.Println("Alive error while encoding JSON", err)
 		aliveJson.Decref()
@@ -374,6 +419,59 @@ func (h *Hub) aliveHandler(c *Connection, alive *DataAlive) {
 	}
 	c.send(aliveJson)
 	aliveJson.Decref()
+
+}
+
+func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid string) {
+
+	var users []*DataSession
+
+	switch srq.Type {
+	case "contact":
+		contact := &Contact{}
+		err := h.contacts.Decode("contact", srq.Token, contact)
+		if err != nil {
+			log.Println("Failed to decode incoming contact token", err, srq.Token)
+			return
+		}
+		// Use the userid which is not ours from the contact data.
+		var userid string
+		suserid := c.Session.Userid()
+		if contact.A == suserid {
+			userid = contact.B
+		} else if contact.B == suserid {
+			userid = contact.A
+		}
+		if userid == "" {
+			log.Println("Ignoring foreign contact token", contact.A, contact.B)
+			return
+		}
+		// Find foreign user.
+		h.mutex.RLock()
+		defer h.mutex.RUnlock()
+		user, ok := h.userTable[userid]
+		if !ok {
+			return
+		}
+		// Add sessions for forein user.
+		users = user.SessionsData()
+	default:
+		log.Println("Unkown incoming sessions request type", srq.Type)
+	}
+
+	if users != nil {
+		sessions := &DataSessions{Type: "Sessions", Users: users, Sessions: srq}
+		sessionsJson := h.buffers.New()
+		encoder := json.NewEncoder(sessionsJson)
+		err := encoder.Encode(&DataOutgoing{From: c.Id, Data: sessions, Iid: iid})
+		if err != nil {
+			log.Println("Sessions error while encoding JSON", err)
+			sessionsJson.Decref()
+			return
+		}
+		c.send(sessionsJson)
+		sessionsJson.Decref()
+	}
 
 }
 
@@ -385,7 +483,6 @@ func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 	h.mutex.RUnlock()
 	var rev uint64
 	if ok {
-		rev = session.Update(s)
 		if s.Status != nil {
 			status, ok := s.Status.(map[string]interface{})
 			if ok && status["buddyPicture"] != nil {
@@ -398,6 +495,7 @@ func (h *Hub) sessionupdateHandler(s *SessionUpdate) uint64 {
 				}
 			}
 		}
+		rev = session.Update(s)
 	} else {
 		log.Printf("Update data for unknown user %s\n", s.Id)
 	}
@@ -421,5 +519,93 @@ func (h *Hub) sessiontokenHandler(st *SessionToken) (string, error) {
 	}
 
 	return nonce, nil
+
+}
+
+func (h *Hub) authenticateHandler(session *Session, st *SessionToken, userid string) error {
+
+	err := session.Authenticate(h.realm, st, userid)
+	if err == nil {
+		// Authentication success.
+		suserid := session.Userid()
+		h.mutex.Lock()
+		user, ok := h.userTable[suserid]
+		if !ok {
+			user = NewUser(suserid)
+			h.userTable[suserid] = user
+		}
+		h.mutex.Unlock()
+		user.AddSession(session)
+	}
+
+	return err
+
+}
+
+func (h *Hub) contactrequestHandler(c *Connection, to string, cr *DataContactRequest) error {
+
+	var err error
+
+	if cr.Success {
+		// Client replied with success.
+		// Decode Token and make sure c.Session.Userid and the to Session.Userid are a match.
+		contact := &Contact{}
+		err = h.contacts.Decode("contact", cr.Token, contact)
+		if err != nil {
+			return err
+		}
+		suserid := c.Session.Userid()
+		if suserid == "" {
+			return errors.New("no userid")
+		}
+		h.mutex.RLock()
+		session, ok := h.sessionTable[to]
+		h.mutex.RUnlock()
+		if !ok {
+			return errors.New("unknown to session for confirm")
+		}
+		userid := session.Userid()
+		if userid == "" {
+			return errors.New("to has no userid for confirm")
+		}
+		if suserid != contact.A {
+			return errors.New("contact mismatch in a")
+		}
+		if userid != contact.B {
+			return errors.New("contact mismatch in b")
+		}
+	} else {
+		if cr.Token != "" {
+			// Client replied with no success.
+			// Remove token.
+			cr.Token = ""
+		} else {
+			// New request.
+			// Create Token with flag and c.Session.Userid and the to Session.Userid.
+			suserid := c.Session.Userid()
+			if suserid == "" {
+				return errors.New("no userid")
+			}
+			h.mutex.RLock()
+			session, ok := h.sessionTable[to]
+			h.mutex.RUnlock()
+			if !ok {
+				return errors.New("unknown to session")
+			}
+			userid := session.Userid()
+			if userid == "" {
+				return errors.New("to has no userid")
+			}
+			if userid == suserid {
+				return errors.New("to userid cannot be the same as own userid")
+			}
+			// Create object.
+			contact := &Contact{userid, suserid}
+			// Serialize.
+			cr.Token, err = h.contacts.Encode("contact", contact)
+		}
+	}
+
+	return err
 
 }
