@@ -25,7 +25,29 @@
     margin-bottom: 5px;
   }
   .videoPicture {
-    position: relative;
+    margin-bottom: 4px;
+    .videoPictureVideo {
+      background-color: black;
+      overflow: hidden;
+      position: relative;
+    }
+    video {
+      object-fit: cover;
+    }
+  }
+  .videoFlash {
+    position: absolute;
+    left:0px;
+    right:0px;
+    top:0px;
+    bottom:0px;
+    background-color:white;
+    border: 1px dotted $bordercolor;
+    visibility: hidden;
+    z-index: 5;
+  }
+  .videoFlash.flash {
+    visibility: visible;
   }
   .preview {
     left: 0;
@@ -37,20 +59,33 @@
   }
   .showTakePicture {
     .btn {
-      margin: 5px 0px;
     }
   }
   .btn-takePicture,
   .btn-retakePicture {
-    left: 85px;
+    left: 0px;
+    right: 0px;
     position: absolute;
-    top: 110px;
+    top: 50%;
+    margin:0 auto;
+    max-width:40%;
+  }
+  .btn-retakePicture {
+    visibility:hidden;
+  }
+  .videoPictureVideo:hover .btn-retakePicture {
+    visibility:visible;
   }
   .countdownPicture {
     color: $componentbg;
     font-size: 45px;
-    left: 90px;
+    left: 0px;
+    right: 0px;
     position: absolute;
-    top: 55px;
+    top: 75px;
+    margin:0 auto;
+    text-align: center;
+    text-shadow: 0 0 5px black;
+    opacity:0.8;
   }
 }

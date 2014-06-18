@@ -49,31 +49,49 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 						}
 					}, delayTotal/start*num);
 				};
-				for(var i = 1; i <= start; i++) {
+				for (var i = 1; i <= start; i++) {
 					decrementNum(i);
 				}
 			};
 
-			var getCanvasAspectRatio = function() {
+			var writeVideoToCanvas = function(canvas) {
+
 				var videoWidth = $scope.video.videoWidth;
 				var videoHeight = $scope.video.videoHeight;
 				var aspectRatio = videoWidth/videoHeight;
 				if (!aspectRatio) {
 					// NOTE(longsleep): In Firefox the video size becomes available at sound point later - crap!
-					console.warn("Unable to compute aspectRatio", aspectRatio);
+					console.warn("Unable to compute aspectRat§io", aspectRatio);
 					aspectRatio = 1.3333333333333333;
 				}
-				return aspectRatio;
-			};
+				var height = canvas.height;
+				var width = canvas.width;
+				var x = 0;
+				var y = 0;
+				if (aspectRatio >= 1) {
+					x = (width - (width * aspectRatio)) / 2;
+					width = width * aspectRatio;
+				} else {
+					y = (height - (height * (1/aspectRatio))) / 2;
+					height = height * aspectRatio;
+
+				}
+				canvas.getContext("2d").drawImage($scope.video, x, y, width, height);
+
+			}
 
 			var writePreviewPic = function() {
-				$scope.canvasPrev.getContext("2d").drawImage($scope.video, 0, 0, $scope.video.width, $scope.video.width/getCanvasAspectRatio());
+				writeVideoToCanvas($scope.canvasPrev);
 				$scope.preview = $scope.canvasPrev.toDataURL("image/jpeg");
 			};
 
 			var makePicture = function(stream, cntFrom, delayTotal) {
 				takePictureCountDown(cntFrom, delayTotal);
 				$timeout(function() {
+					$scope.flash.addClass("flash");
+					$timeout(function() {
+						$scope.flash.removeClass("flash");
+					}, 70);
 					videoStop(stream, $scope.video);
 					writePreviewPic();
 					$scope.previewPicture = true;
@@ -142,10 +160,9 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 			};
 
 			$scope.setAsProfilePicture = function() {
-				var x = (46 * getCanvasAspectRatio() - 46) / -2;
-				$scope.canvasPic.getContext("2d").drawImage($scope.video, x, 0, 46 * getCanvasAspectRatio(), 46);
+				writeVideoToCanvas($scope.canvasPic);
 				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
-				console.info("Image size", $scope.user.buddyPicture.length);
+				//console.info("Image size", $scope.user.buddyPicture.length);
 				$scope.cancelPicture();
 				safeApply($scope);
 			};
@@ -153,9 +170,12 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 		}];
 
 		var link = function($scope, $element) {
+
 			$scope.video = $element.find("video").get(0);
-			$scope.canvasPic = $element.find("canvas#pic").get(0);
-			$scope.canvasPrev = $element.find("canvas#prev").get(0);
+			$scope.flash = $element.find(".videoFlash");
+			$scope.canvasPic = $element.find("canvas.videoPic").get(0);
+			$scope.canvasPrev = $element.find("canvas.videoPrev").get(0);
+
 		};
 
 		return {
