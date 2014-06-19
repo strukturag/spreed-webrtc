@@ -267,6 +267,14 @@ func (h *Hub) EncodeAttestation(session *Session) (string, error) {
 
 }
 
+func (h *Hub) DecodeAttestation(token string) (string, error) {
+
+	var id string
+	err := h.attestations.Decode("attestation", token, &id)
+	return id, err
+
+}
+
 func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
 	return h.tickets.Encode(h.tokenName, st)
@@ -465,13 +473,27 @@ func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid strin
 		}
 		// Find foreign user.
 		h.mutex.RLock()
-		defer h.mutex.RUnlock()
 		user, ok := h.userTable[userid]
+		h.mutex.RUnlock()
 		if !ok {
 			return
 		}
 		// Add sessions for forein user.
 		users = user.SessionsData()
+	case "session":
+		id, err := h.DecodeAttestation(srq.Token)
+		if err != nil {
+			log.Println("Failed to decode incoming attestation", err, srq.Token)
+			return
+		}
+		h.mutex.RLock()
+		session, ok := h.sessionTable[id]
+		h.mutex.RUnlock()
+		if !ok {
+			return
+		}
+		users = make([]*DataSession, 1, 1)
+		users[0] = session.Data()
 	default:
 		log.Println("Unkown incoming sessions request type", srq.Type)
 	}

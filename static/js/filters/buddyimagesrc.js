@@ -77,7 +77,7 @@ define(["underscore"], function(_) {
 
 		return function(id) {
 
-			var scope = buddyData.lookup(id);
+			var scope = buddyData.lookup(id, false, true);
 			if (scope) {
 				var display = scope.display;
 				if (display) {
