@@ -184,7 +184,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				} else {
 					console.log("Updating own status", status);
 					mediaStream.api.updateStatus(status);
-					cache.status = status;
+					cache.status = _.clone(status);
 				}
 			};
 		}());
