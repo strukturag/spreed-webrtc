@@ -46,6 +46,7 @@ const (
 	maxUsersLength        = 5000
 )
 
+// TODO(longsleep): Get rid of MessageRequest type.
 type MessageRequest struct {
 	From    string
 	To      string
@@ -79,6 +80,7 @@ type Hub struct {
 	encryptionSecret      []byte
 	turnSecret            []byte
 	tickets               *securecookie.SecureCookie
+	attestations          *securecookie.SecureCookie
 	count                 uint64
 	mutex                 sync.RWMutex
 	buffers               BufferCache
@@ -114,11 +116,14 @@ func NewHub(version string, config *Config, sessionSecret, encryptionSecret, tur
 	h.tickets.MaxAge(86400 * 30) // 30 days
 	h.tickets.HashFunc(sha256.New)
 	h.tickets.BlockFunc(aes.NewCipher)
+	h.attestations = securecookie.New(h.sessionSecret, nil)
+	h.attestations.MaxAge(300) // 5 minutes
+	h.tickets.HashFunc(sha256.New)
 	h.buffers = NewBufferCache(1024, bytes.MinRead)
 	h.buddyImages = NewImageCache()
 	h.tokenName = fmt.Sprintf("token@%s", h.realm)
 	h.contacts = securecookie.New(h.sessionSecret, h.encryptionSecret)
-	h.contacts.MaxAge(0)
+	h.contacts.MaxAge(0) // Forever
 	h.contacts.HashFunc(sha256.New)
 	h.contacts.BlockFunc(aes.NewCipher)
 	return h
@@ -226,6 +231,8 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 		session = NewSession(st.Id, st.Sid)
 	}
 
+	h.EncodeAttestation(session)
+
 	if userid != "" {
 		h.authenticateHandler(session, st, userid)
 	}
@@ -247,6 +254,16 @@ func (h *Hub) ValidateSession(id, sid string) bool {
 		return false
 	}
 	return true
+
+}
+
+func (h *Hub) EncodeAttestation(session *Session) (string, error) {
+
+	attestation, err := h.attestations.Encode("attestation", session.Id)
+	if err == nil {
+		session.UpdateAttestation(attestation)
+	}
+	return attestation, err
 
 }
 

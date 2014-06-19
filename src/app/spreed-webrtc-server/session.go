@@ -32,16 +32,17 @@ import (
 var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
-	Id        string
-	Sid       string
-	Ua        string
-	UpdateRev uint64
-	Status    interface{}
-	Nonce     string
-	Prio      int
-	mutex     sync.RWMutex
-	userid    string
-	stamp     int64
+	Id          string
+	Sid         string
+	Ua          string
+	UpdateRev   uint64
+	Status      interface{}
+	Nonce       string
+	Prio        int
+	mutex       sync.RWMutex
+	userid      string
+	stamp       int64
+	attestation string
 }
 
 func NewSession(id, sid string) *Session {
@@ -153,9 +154,29 @@ func (s *Session) Data() *DataSession {
 
 }
 
-func (s *Session) Userid() string {
+func (s *Session) Userid() (userid string) {
 
-	return s.userid
+	s.mutex.RLock()
+	userid = s.userid
+	s.mutex.RUnlock()
+	return
+
+}
+
+func (s *Session) Attestation() (attestation string) {
+
+	s.mutex.RLock()
+	attestation = s.attestation
+	s.mutex.RUnlock()
+	return
+
+}
+
+func (s *Session) UpdateAttestation(attestation string) {
+
+	s.mutex.Lock()
+	s.attestation = attestation
+	s.mutex.Unlock()
 
 }
 

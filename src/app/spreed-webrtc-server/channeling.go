@@ -158,6 +158,7 @@ type DataOutgoing struct {
 	From string
 	To   string
 	Iid  string `json:",omitempty"`
+	A    string `json:",omitempty"`
 }
 
 type DataSessions struct {

@@ -21,11 +21,12 @@
 define(['underscore'], function(underscore) {
 
 	// buddyData
-	return ["contactData", function(contactData) {
+	return ["contactData", "mediaStream", function(contactData, mediaStream) {
 
 		var scopes = {};
 		var brain = {};
 		var pushed = {};
+		var attestations = {};
 		var count = 0;
 
 		var buddyData = {
@@ -131,8 +132,55 @@ define(['underscore'], function(underscore) {
 			},
 			set: function(id, scope) {
 				scopes[id] = scope;
+			},
+			attestation: function(id) {
+				var data = attestations[id];
+				if (data) {
+					return data.a;
+				}
+				return null;
 			}
 		};
+
+		// attestation support
+		(function() {
+
+			// Listen for attestation events.
+			mediaStream.api.e.on("received.attestation", function(event, from, attestation) {
+
+				var current = attestations[from];
+				var create = false;
+				if (!current) {
+					create = true;
+				} else {
+					if (current.a !== attestation) {
+						create = true;
+					}
+				}
+				if (create) {
+					//console.log("Created attestation entry", from);
+					attestations[from] = {
+						a: attestation,
+						t: (new Date().getTime())
+					}
+				}
+
+			});
+
+			var expire = function() {
+				var expired = (new Date().getTime()) - 240000;
+				_.each(attestations, function(data, id) {
+					if (data.t < expired) {
+						delete attestations[id];
+						//console.log("expired attestation", id);
+					}
+				})
+				setTimeout(expire, 120000);
+			};
+			expire();
+
+		})();
+
 		return buddyData;
 
 	}];

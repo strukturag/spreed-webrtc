@@ -121,9 +121,15 @@ define(['jquery', 'underscore'], function($, _) {
 		this.last_receive = now;
 		this.last_receive_overdue = false;
 
+		var attestation = d.A;
 		var iid = d.Iid;
 		var data = d.Data;
 		var dataType = data.Type;
+
+		if (attestation && d.From) {
+			// Trigger received attestations.
+			this.e.triggerHandler("received.attestation", [d.From, attestation]);
+		}
 
 		if (iid) {
 			// Shortcut for iid registered responses.
