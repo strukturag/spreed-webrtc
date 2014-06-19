@@ -86,15 +86,17 @@
     border-right: none;
     border-left: none;
     border-radius: 0;
-    padding-right: 30px;
+    padding-right: 70px;
     position: relative;
+    min-height: 51px;
+    line-height: 26px;
     &.newmessage {
       animation: newmessage 1s ease -0.3s infinite;
     }
     &.disabled {
       color: $chat-disabled;
     }
-    &:hover .item-btn {
+    &:hover button {
       display: inline;
     }
     .fa-lg {
@@ -105,13 +107,14 @@
     .badge {
       background: $chat-badge;
       border: 1px solid white;
-      font-size: .8em;
+      position: absolute;
+      right: 50px;
+      top: 14px;
     }
-    .item-btn {
-      cursor: pointer;
+    button {
       display: none;
       position: absolute;
-      right: 12px;
+      right: 10px;
     }
   }
 }
