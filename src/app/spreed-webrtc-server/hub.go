@@ -219,7 +219,7 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 	if st == nil {
 		sid := NewRandomString(32)
 		id, _ := h.tickets.Encode("id", sid)
-		session = NewSession(id, sid)
+		session = NewSession(h, id, sid)
 		log.Println("Created new session id", len(id), id, sid)
 	} else {
 		if userid == "" {
@@ -228,10 +228,8 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 		if !usersEnabled {
 			userid = ""
 		}
-		session = NewSession(st.Id, st.Sid)
+		session = NewSession(h, st.Id, st.Sid)
 	}
-
-	h.EncodeAttestation(session)
 
 	if userid != "" {
 		h.authenticateHandler(session, st, userid)
@@ -257,6 +255,7 @@ func (h *Hub) ValidateSession(id, sid string) bool {
 
 }
 
+/*
 func (h *Hub) EncodeAttestation(session *Session) (string, error) {
 
 	attestation, err := h.attestations.Encode("attestation", session.Id)
@@ -273,7 +272,7 @@ func (h *Hub) DecodeAttestation(token string) (string, error) {
 	err := h.attestations.Decode("attestation", token, &id)
 	return id, err
 
-}
+}*/
 
 func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
@@ -481,7 +480,7 @@ func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid strin
 		// Add sessions for forein user.
 		users = user.SessionsData()
 	case "session":
-		id, err := h.DecodeAttestation(srq.Token)
+		id, err := c.Session.attestation.Decode(srq.Token)
 		if err != nil {
 			log.Println("Failed to decode incoming attestation", err, srq.Token)
 			return
