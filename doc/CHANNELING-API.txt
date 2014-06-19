@@ -81,10 +81,11 @@ Sending vs receiving document data encapsulation
     To   : The Id, the server send this Document to. Should be the same as
            your current Self Id.
     Data : Contains the payload.
-    Iid  : Optional request identifier to match this response to the calling
+    Iid  : Request identifier to match this response to the calling
            request. Only available when sent by the client and the requested
-           type implementation does support it.
-    A    : Session attestation token.
+           type implementation does support it (optional).
+    A    : Session attestation token. Only available for incoming data 
+           created by other sessions (optional).
 
 
 Special purpose documents for channling
