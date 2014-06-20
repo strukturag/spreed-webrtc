@@ -22,7 +22,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"sort"
 	"sync"
 )
@@ -49,7 +49,7 @@ func (u *User) AddSession(s *Session) bool {
 	u.mutex.Lock()
 	u.sessionTable[s.Id] = s
 	if len(u.sessionTable) == 1 {
-		fmt.Println("First session registered for user", u.Id)
+		log.Println("First session registered for user", u.Id)
 		first = true
 	}
 	u.mutex.Unlock()
@@ -62,7 +62,7 @@ func (u *User) RemoveSession(s *Session) bool {
 	u.mutex.Lock()
 	delete(u.sessionTable, s.Id)
 	if len(u.sessionTable) == 0 {
-		fmt.Println("Last session unregistered for user", u.Id)
+		log.Println("Last session unregistered for user", u.Id)
 		last = true
 	}
 	u.mutex.Unlock()
