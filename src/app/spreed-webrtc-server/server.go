@@ -178,9 +178,13 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 
 func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
+	outgoing := &DataOutgoing{From: c.Id, To: to, Data: m}
+	if c.Id != to {
+		outgoing.A = c.Session.Attestation()
+	}
 	b := c.h.buffers.New()
 	encoder := json.NewEncoder(b)
-	err := encoder.Encode(&DataOutgoing{From: c.Id, To: to, Data: m, A: c.Session.Attestation()})
+	err := encoder.Encode(outgoing)
 	if err != nil {
 		b.Decref()
 		log.Println("Unicast error while encoding JSON", err)

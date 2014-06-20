@@ -21,7 +21,7 @@
 define(['underscore'], function(underscore) {
 
 	// buddyData
-	return ["contactData", "mediaStream", "$rootScope", function(contactData, mediaStream, $rootScope) {
+	return ["appData", "contactData", "mediaStream", "$rootScope", function(appData, contactData, mediaStream, $rootScope) {
 
 		var scopes = {};
 		var brain = {};
@@ -183,6 +183,12 @@ define(['underscore'], function(underscore) {
 
 			// Listen for attestation events.
 			mediaStream.api.e.on("received.attestation", function(event, from, attestation) {
+
+				var data = appData.get();
+				if (data && data.id === from) {
+					// Ignore own id.
+					return;
+				}
 
 				var current = attestations[from];
 				var create = false;
