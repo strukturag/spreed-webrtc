@@ -22,8 +22,6 @@
 #rightslide {
   bottom: 0;
   left: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
   pointer-events: none;
   position: absolute;
   right: -260px;
@@ -38,7 +36,6 @@
 
 #rightslide .rightslidepane {
   height: 100%;
-  min-width: 520px;
   position: relative;
   width: 100%;
 }

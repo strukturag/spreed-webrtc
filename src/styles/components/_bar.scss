@@ -22,7 +22,7 @@
 #bar {
   left: 0;
   min-height: $minbarheight;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   z-index: 5;
@@ -99,8 +99,6 @@
     height: 46px;
     margin: -5px .5em 0 .5em;
     width: 46px;
-  }
-  img {
     @include breakpt($breakpoint-medium) {
       display: none;
     }
