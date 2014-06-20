@@ -20,9 +20,22 @@
  */
 define(["jquery"], function($) {
 
-	// appData.e events
-	// - authenticationChanged(userid)
-	// - selfReceived(self)
+	// appData.e events:
+	// subscribe these events with appData.e.on(eventname, function() {}).
+	//
+	// - authenticationChanged(event, userid)
+	//     userid (string) : Public user id of the authenitcated user.
+	//
+	// - selfReceived(event, self)
+	//     self (object) : Self document as received from API.
+	//
+	// - uiNotification(event, type, details)
+	//     type (string)    : Notification type (busy, reject, pickuptimeout,
+	//                        incomingbusy, incomingpickuptimeout, chatmessage)
+	//     details (object) : Depends on event type.
+	//
+	// - mainStatus(event, status)
+	//     status (string)  : Status id (connected, waiting, ...)
 
 	// appData
 	return [function() {

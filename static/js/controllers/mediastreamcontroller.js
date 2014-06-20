@@ -431,7 +431,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				}, 0);
 			}
 
-			appData.e.triggerHandler("selfReceived", data);
+			appData.e.triggerHandler("selfReceived", [data]);
 
 		});
 
@@ -489,6 +489,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					from: from
 				});
 			}, 30000);
+			appData.e.triggerHandler("uiNotification", ["incoming", {from: from}]);
 		});
 
 		mediaStream.webrtc.e.on("error", function(event, message, msgid) {
@@ -740,6 +741,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 					playSound.play("connect");
 				}
 			});
+			appData.e.triggerHandler("mainStatus", [status]);
 		});
 
 		$scope.$on("notification", function(event, type, details) {
@@ -765,6 +767,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 				playSound.play("question");
 				alertify.dialog.alert(message);
 			}
+			appData.e.triggerHandler("uiNotification", [type, details]);
 		});
 
 		$scope.$on("download", function(event, from, token) {

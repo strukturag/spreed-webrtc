@@ -346,8 +346,13 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 								if (!subscope.isgroupchat && from !== sessionid) {
 									playSound.play("message1");
 									desktopNotify.notify(translation._("Message from ") + displayName(from), message);
+									appData.e.triggerHandler("uiNotification", ["chatmessage", {from: from, message: message, first: subscope.firstmessage}]);
 								}
 								subscope.firstmessage = false;
+							} else {
+								if (!subscope.isgroupchat && from !== sessionid) {
+									appData.e.triggerHandler("uiNotification", ["chatmessage", {from: from, message: message, first: subscope.firstmessage}]);
+								}
 							}
 						});
 						chat(subscope, function(clonedElement, $scope) {
