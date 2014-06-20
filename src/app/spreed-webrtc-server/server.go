@@ -180,7 +180,7 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
 	b := c.h.buffers.New()
 	encoder := json.NewEncoder(b)
-	err := encoder.Encode(&DataOutgoing{From: c.Id, To: to, Data: m})
+	err := encoder.Encode(&DataOutgoing{From: c.Id, To: to, Data: m, A: c.Session.Attestation()})
 	if err != nil {
 		b.Decref()
 		log.Println("Unicast error while encoding JSON", err)
@@ -190,6 +190,31 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 	var msg = &MessageRequest{From: c.Id, To: to, Message: b}
 	c.h.unicastHandler(msg)
 	b.Decref()
+}
+
+func (s *Server) Broadcast(c *Connection, m interface{}) {
+
+	b := c.h.buffers.New()
+	encoder := json.NewEncoder(b)
+	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: m, A: c.Session.Attestation()})
+	if err != nil {
+		b.Decref()
+		log.Println("Broadcast error while encoding JSON", err)
+		return
+	}
+
+	if c.h.isGlobalRoomid(c.Roomid) {
+		c.h.RunForAllRooms(func(room *RoomWorker) {
+			var msg = &MessageRequest{From: c.Id, Message: b, Id: room.Id}
+			room.broadcastHandler(msg)
+		})
+	} else {
+		var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
+		room := c.h.GetRoom(c.Roomid)
+		room.broadcastHandler(msg)
+	}
+	b.Decref()
+
 }
 
 func (s *Server) Alive(c *Connection, alive *DataAlive, iid string) {
@@ -214,31 +239,6 @@ func (s *Server) UpdateSession(c *Connection, su *SessionUpdate) uint64 {
 func (s *Server) ContactRequest(c *Connection, to string, cr *DataContactRequest) (err error) {
 
 	return c.h.contactrequestHandler(c, to, cr)
-
-}
-
-func (s *Server) Broadcast(c *Connection, m interface{}) {
-
-	b := c.h.buffers.New()
-	encoder := json.NewEncoder(b)
-	err := encoder.Encode(&DataOutgoing{From: c.Id, Data: m})
-	if err != nil {
-		b.Decref()
-		log.Println("Broadcast error while encoding JSON", err)
-		return
-	}
-
-	if c.h.isGlobalRoomid(c.Roomid) {
-		c.h.RunForAllRooms(func(room *RoomWorker) {
-			var msg = &MessageRequest{From: c.Id, Message: b, Id: room.Id}
-			room.broadcastHandler(msg)
-		})
-	} else {
-		var msg = &MessageRequest{From: c.Id, Message: b, Id: c.Roomid}
-		room := c.h.GetRoom(c.Roomid)
-		room.broadcastHandler(msg)
-	}
-	b.Decref()
 
 }
 

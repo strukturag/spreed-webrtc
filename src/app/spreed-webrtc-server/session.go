@@ -32,26 +32,31 @@ import (
 var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
-	Id        string
-	Sid       string
-	Ua        string
-	UpdateRev uint64
-	Status    interface{}
-	Nonce     string
-	Prio      int
-	mutex     sync.RWMutex
-	userid    string
-	stamp     int64
+	Id          string
+	Sid         string
+	Ua          string
+	UpdateRev   uint64
+	Status      interface{}
+	Nonce       string
+	Prio        int
+	mutex       sync.RWMutex
+	userid      string
+	stamp       int64
+	attestation *SessionAttestation
+	h           *Hub
 }
 
-func NewSession(id, sid string) *Session {
+func NewSession(h *Hub, id, sid string) *Session {
 
-	return &Session{
+	session := &Session{
 		Id:    id,
 		Sid:   sid,
 		Prio:  100,
 		stamp: time.Now().Unix(),
+		h:     h,
 	}
+	session.NewAttestation()
+	return session
 
 }
 
@@ -153,9 +158,12 @@ func (s *Session) Data() *DataSession {
 
 }
 
-func (s *Session) Userid() string {
+func (s *Session) Userid() (userid string) {
 
-	return s.userid
+	s.mutex.RLock()
+	userid = s.userid
+	s.mutex.RUnlock()
+	return
 
 }
 
@@ -203,6 +211,32 @@ func (s *Session) DataSessionStatus() *DataSession {
 
 }
 
+func (s *Session) NewAttestation() {
+
+	s.attestation = &SessionAttestation{
+		s: s,
+	}
+	s.attestation.Update()
+
+}
+
+func (s *Session) Attestation() (attestation string) {
+
+	s.mutex.RLock()
+	attestation = s.attestation.Token()
+	s.mutex.RUnlock()
+	return
+
+}
+
+func (s *Session) UpdateAttestation() {
+
+	s.mutex.Lock()
+	s.attestation.Update()
+	s.mutex.Unlock()
+
+}
+
 type SessionUpdate struct {
 	Id     string
 	Types  []string
@@ -217,6 +251,48 @@ type SessionToken struct {
 	Sid    string // Secret session id.
 	Userid string // Public user id.
 	Nonce  string `json:"Nonce,omitempty"` // User autentication nonce.
+}
+
+type SessionAttestation struct {
+	refresh int64
+	token   string
+	s       *Session
+}
+
+func (sa *SessionAttestation) Update() (string, error) {
+
+	token, err := sa.Encode()
+	if err == nil {
+		sa.token = token
+		sa.refresh = time.Now().Unix() + 180 // expires after 3 minutes
+	}
+	return token, err
+
+}
+
+func (sa *SessionAttestation) Token() (token string) {
+
+	if sa.refresh < time.Now().Unix() {
+		token, _ = sa.Update()
+	} else {
+		token = sa.token
+	}
+	return
+
+}
+
+func (sa *SessionAttestation) Encode() (string, error) {
+
+	return sa.s.h.attestations.Encode("attestation", sa.s.Id)
+
+}
+
+func (sa *SessionAttestation) Decode(token string) (string, error) {
+
+	var id string
+	err := sa.s.h.attestations.Decode("attestation", token, &id)
+	return id, err
+
 }
 
 func init() {

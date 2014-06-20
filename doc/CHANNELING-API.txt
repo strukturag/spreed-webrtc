@@ -68,7 +68,8 @@ Sending vs receiving document data encapsulation
         "From": "4",
         "To": "5",
         "Data": {},
-        "Iid": "request-identifier-unique-to-client"
+        "Iid": "request-identifier-unique-to-client",
+        "A": "attestation-session-token"
     }
 
   The Data key contains the real Document.
@@ -80,9 +81,11 @@ Sending vs receiving document data encapsulation
     To   : The Id, the server send this Document to. Should be the same as
            your current Self Id.
     Data : Contains the payload.
-    Iid  : Optional request identifier to match this response to the calling
+    Iid  : Request identifier to match this response to the calling
            request. Only available when sent by the client and the requested
-           type implementation does support it.
+           type implementation does support it (optional).
+    A    : Session attestation token. Only available for incoming data 
+           created by other sessions (optional).
 
 
 Special purpose documents for channling
@@ -400,11 +403,16 @@ Information retrieval
         "Type": "Sessions",
         "Sessions": {
           "Type": "Token type",
-          "Token": "Request token"
+          "Token": "Token data"
         }
     }
 
-    Valid known token types are: "contact".
+    Valid known token types are:
+      contact:
+        Token data retrieved when a contact request is accepted.
+      session:
+        Token data retrieved on incoming messages as A field (attestation
+        token).
 
   Sessions (Response with Id, Token and Type from request and
   populated Session list).

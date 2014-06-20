@@ -33,7 +33,7 @@ define([], function() {
 			if (id === group_chat_id) {
 				return "";
 			}
-			var scope = buddyData.lookup(id);
+			var scope = buddyData.lookup(id, false, true);
 			if (scope) {
 				if (scope.display.displayName) {
 					return scope.display.displayName;
