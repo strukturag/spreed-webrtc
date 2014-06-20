@@ -255,25 +255,6 @@ func (h *Hub) ValidateSession(id, sid string) bool {
 
 }
 
-/*
-func (h *Hub) EncodeAttestation(session *Session) (string, error) {
-
-	attestation, err := h.attestations.Encode("attestation", session.Id)
-	if err == nil {
-		session.UpdateAttestation(attestation)
-	}
-	return attestation, err
-
-}
-
-func (h *Hub) DecodeAttestation(token string) (string, error) {
-
-	var id string
-	err := h.attestations.Decode("attestation", token, &id)
-	return id, err
-
-}*/
-
 func (h *Hub) EncodeSessionToken(st *SessionToken) (string, error) {
 
 	return h.tickets.Encode(h.tokenName, st)
