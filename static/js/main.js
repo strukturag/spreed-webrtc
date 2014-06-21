@@ -186,6 +186,14 @@ define([
 				plugin.module(modules);
 			}
 		});
+		// External plugin support.
+		var externalPlugin
+		if (window.externalPlugin) {
+			externalPlugin = window.externalPlugin($, _, angular);
+			if (externalPlugin && externalPlugin.module) {
+				externalPlugin.module(modules);
+			}
+		}
 		// Init Angular app.
 		var app = App.initialize(modules);
 		// Init plugins.
@@ -194,6 +202,10 @@ define([
 				plugin.initialize(app);
 			}
 		});
+		// Init external plugin.
+		if (externalPlugin && externalPlugin.initialize) {
+			externalPlugin.initialize(app);
+		}
 	});
 
 });
