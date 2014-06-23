@@ -209,11 +209,23 @@ func runner(runtime phoenix.Runtime) error {
 	sessionSecret, err := runtime.GetString("app", "sessionSecret")
 	if err != nil {
 		return fmt.Errorf("No sessionSecret in config file.")
+	} else {
+		if len(sessionSecret) < 32 {
+			return fmt.Errorf("Length of sessionSecret must be at least 32 bytes.")
+		}
 	}
 
 	encryptionSecret, err := runtime.GetString("app", "encryptionSecret")
 	if err != nil {
 		return fmt.Errorf("No encryptionSecret in config file.")
+	} else {
+		switch l := len(encryptionSecret); {
+		case l == 16:
+		case l == 24:
+		case l == 32:
+		default:
+			return fmt.Errorf("Length of encryptionSecret must be exactly 16, 24 or 32 bytes to select AES-128, AES-192 or AES-256.")
+		}
 	}
 
 	tokenFile, err := runtime.GetString("app", "tokenFile")
