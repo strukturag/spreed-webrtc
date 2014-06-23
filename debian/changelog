@@ -1,3 +1,23 @@
+spreed-webrtc-server (0.19.0) precise; urgency=low
+
+  * Implemented authenticated sessions.
+  * Implemented contacts.
+  * Implemented aggregated sessions in buddy list.
+  * Implemented contact and attestation tokens to fetch contact
+    details/sessions with such a token.
+  * Tokens are now AES encrypted where appropriate.
+  * New ui workflow to take your own picture in settings.
+  * Fixed plugins for english language.
+  * Implemented event hub in appData.
+  * Updates to various base libraries.
+  * Added support for external plugins.
+  * Added support to inject additional settings from plugins.
+  * Translation updates to German, Chinese and Japanese.
+  * Multiple bug fixes.
+  * Improved build system autoconf detections.
+
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 23 Jun 2014 15:44:30 +0200
+
 spreed-webrtc-server (0.18.1) precise; urgency=low
 
   * Added autoconf/automake support.
