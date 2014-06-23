@@ -54,12 +54,15 @@
                     <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-default" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                    <button class="btn btn-small btn-link" ng-click="usersettings.registerUserid($event.target)">{{_('Register account')}}</button>
                   </label>
                 </div>
                 <pre class="small" ng-if="userid">{{userid}}</pre>
                 <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
                   <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
+                </label>
+                <label ng-if="userid && usersettings.accountUserid">
+                  <button class="btn btn-small btn-link" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
                 </label>
               </div>
             </div>
