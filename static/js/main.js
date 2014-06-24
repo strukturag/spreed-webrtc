@@ -48,7 +48,6 @@ require.config({
 		'rAF': 'libs/rAF',
 		'humanize': 'libs/humanize',
 		'sha': 'libs/sha',
-		'dialogs': 'libs/angular/dialogs.min',
 		'sjcl': 'libs/sjcl',
 
 		'partials': '../partials',

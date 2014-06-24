@@ -20,8 +20,9 @@
  */
 define(["angular"], function(angular) {
 
-	var promptController = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+	var controller = {};
 
+	controller.prompt = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
 		$scope.input = {
 			text: ''
 		};
@@ -41,20 +42,46 @@ define(["angular"], function(angular) {
 				$scope.save();
 			}
 		};
+	}];
 
+	controller.confirm = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+		$scope.header = data.title || "";
+		$scope.msg = data.message || "";
+		$scope.ok = function() {
+			$modalInstance.close('ok');
+		};
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
+	}];
+
+	controller.notify = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+		$scope.header = data.title || "";
+		$scope.msg = data.message || "";
+		$scope.close = function() {
+			$modalInstance.close('close');
+		};
+	}];
+
+	controller.error = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+		$scope.header = data.title || "";
+		$scope.msg = data.message || "";
+		$scope.close = function() {
+			$modalInstance.close('close');
+		};
 	}];
 
 	// Alertify uniquified api wrapper
-	return ["$window", "$dialogs", "$templateCache", "translation", function($window, $dialogs, $templateCache, translation) {
+	return ["$window", "$modal", "$templateCache", "translation", function($window, $modal, $templateCache, translation) {
 
 		// Overwrite templates from dialogs with fontawesome/i18n variants.
 		$templateCache.put('/dialogs/error.html', '<div class="modal-header dialog-header-error"><button type="button" class="close" ng-click="close()">&times;</button><h4 class="modal-title text-danger"><span class="fa fa-warning"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body text-danger" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
 		$templateCache.put('/dialogs/wait.html', '<div class="modal-header dialog-header-wait"><h4 class="modal-title"><span class="fa fa-clock-o"></span> Please Wait</h4></div><div class="modal-body"><p ng-bind-html="msg"></p><div class="progress progress-striped active"><div class="progress-bar progress-bar-info" ng-style="getProgress()"></div><span class="sr-only">{{progress}}% Complete</span></div></div>');
 		$templateCache.put('/dialogs/notify.html', '<div class="modal-header dialog-header-notify"><button type="button" class="close" ng-click="close()" class="pull-right">&times;</button><h4 class="modal-title text-info"><span class="fa fa-info-circle"></span> {{header}}</h4></div><div class="modal-body text-info" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-primary" ng-click="close()">{{_("Ok")}}</button></div>');
-		$templateCache.put('/dialogs/confirm.html', '<div class="modal-header dialog-header-confirm"><button type="button" class="close" ng-click="no()">&times;</button><h4 class="modal-title"><span class="fa fa-check-square-o"></span> {{header}}</h4></div><div class="modal-body" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="yes()">{{_("Ok")}}</button><button type="button" class="btn btn-primary" ng-click="no()">{{_("Cancel")}}</button></div>');
+		$templateCache.put('/dialogs/confirm.html', '<div class="modal-header dialog-header-confirm"><button type="button" class="close" ng-click="cancel()">&times;</button><h4 class="modal-title"><span class="fa fa-check-square-o"></span> {{header}}</h4></div><div class="modal-body" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="ok()">{{_("Ok")}}</button><button type="button" class="btn btn-primary" ng-click="cancel()">{{_("Cancel")}}</button></div>');
 
 		// Add new template for prompt.
-		$templateCache.put('/alertify/prompt.html', '<div class="modal-header"><h4 class="modal-title"><span class="fa fa-star"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body"><ng-form name="promptDialog" novalidate role="form"><div class="form-group input-group-lg" ng-class="{true: \'has-error\'}[promptDialog.text.$dirty && promptDialog.text.$invalid]"><label class="control-label"></label><input type="text" id="{{id}}" class="form-control" name="text" ng-model="input.text" ng-keyup="hitEnter($event)" required></div></ng-form></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="cancel()">{{cancelButtonLabel}}</button><button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || promptDialog.$pristine">{{okButtonLabel}}</button></div>');
+		$templateCache.put('/dialogs/prompt.html', '<div class="modal-header"><h4 class="modal-title"><span class="fa fa-star"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body"><ng-form name="promptDialog" novalidate role="form"><div class="form-group input-group-lg" ng-class="{true: \'has-error\'}[promptDialog.text.$dirty && promptDialog.text.$invalid]"><label class="control-label"></label><input type="text" id="{{id}}" class="form-control" name="text" ng-model="input.text" ng-keyup="hitEnter($event)" required></div></ng-form></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="cancel()">{{cancelButtonLabel}}</button><button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || promptDialog.$pristine">{{okButtonLabel}}</button></div>');
 
 		var defaultMessages = {
 			error: translation._("Error"),
@@ -72,9 +99,18 @@ define(["angular"], function(angular) {
 			defaultMessages: defaultMessages
 		};
 
+		var setupModal = function(data, type) {
+			return $modal.open({
+				templateUrl: '/dialogs/' + type +'.html',
+				controller: controller[type],
+				resolve: {
+					data: function() { return data; }
+				}
+			});
+		};
+
 		var dialog = {
 			exec: function(n, title, message, ok_cb, err_cb) {
-				var f = $dialogs[n];
 				if (!message && title) {
 					message = title;
 					title = null;
@@ -82,7 +118,7 @@ define(["angular"], function(angular) {
 				if (!title) {
 					title = api.defaultMessages[n] || n;
 				}
-				var dlg = f(title, message);
+				var dlg = setupModal({'title': title, 'message': message}, n);
 				if (ok_cb) {
 					dlg.result.then(ok_cb, err_cb);
 				}
@@ -109,8 +145,8 @@ define(["angular"], function(angular) {
 					cancelButtonLabel: api.defaultMessages.cancelButtonLabel || "Cancel",
 					header: title,
 					id: id
-				}
-				var dlg = $dialogs.create('/alertify/prompt.html', promptController, data, {});
+				};
+				var dlg = setupModal(data, "prompt");
 				dlg.result.then(function(text) {
 					if (ok_cb) {
 						ok_cb(text);
@@ -120,21 +156,11 @@ define(["angular"], function(angular) {
 						err_cb();
 					}
 				});
-				dlg.opened.then(function() {
-					// Crude hack to get auto focus.
-					$window.setTimeout(function() {
-						var element = $window.document.getElementById(id);
-						if (element) {
-							element.focus();
-						}
-					}, 100);
-				});
 			}
-		}
+		};
 
 		// Expose the shit.
 		api.dialog = dialog;
-		api.dialogs = $dialogs;
 
 		return api;
 
