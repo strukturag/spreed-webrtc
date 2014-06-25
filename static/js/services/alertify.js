@@ -20,14 +20,13 @@
  */
 define(["angular"], function(angular) {
 
-	var controller = {};
-
-	controller.prompt = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+	var modalController = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
 		$scope.input = {
 			text: ''
 		};
 		$scope.id = data.id;
 		$scope.header = data.header || "";
+		$scope.msg = data.message || "";
 		$scope.okButtonLabel = data.okButtonLabel || "Ok";
 		$scope.cancelButtonLabel = data.cancelButtonLabel || "Cancel";
 
@@ -42,32 +41,11 @@ define(["angular"], function(angular) {
 				$scope.save();
 			}
 		};
-	}];
-
-	controller.confirm = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
-		$scope.header = data.title || "";
-		$scope.msg = data.message || "";
 		$scope.ok = function() {
-			$modalInstance.close('ok');
+			$modalInstance.close('Ok');
 		};
-		$scope.cancel = function() {
-			$modalInstance.dismiss('cancel');
-		};
-	}];
-
-	controller.notify = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
-		$scope.header = data.title || "";
-		$scope.msg = data.message || "";
 		$scope.close = function() {
-			$modalInstance.close('close');
-		};
-	}];
-
-	controller.error = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
-		$scope.header = data.title || "";
-		$scope.msg = data.message || "";
-		$scope.close = function() {
-			$modalInstance.close('close');
+			$modalInstance.close('Close');
 		};
 	}];
 
@@ -102,7 +80,7 @@ define(["angular"], function(angular) {
 		var setupModal = function(data, type) {
 			return $modal.open({
 				templateUrl: '/dialogs/' + type +'.html',
-				controller: controller[type],
+				controller: modalController,
 				resolve: {
 					data: function() { return data; }
 				}
@@ -118,7 +96,7 @@ define(["angular"], function(angular) {
 				if (!title) {
 					title = api.defaultMessages[n] || n;
 				}
-				var dlg = setupModal({'title': title, 'message': message}, n);
+				var dlg = setupModal({'header': title, 'message': message}, n);
 				if (ok_cb) {
 					dlg.result.then(ok_cb, err_cb);
 				}
@@ -155,6 +133,15 @@ define(["angular"], function(angular) {
 					if (err_cb) {
 						err_cb();
 					}
+				});
+				dlg.opened.then(function() {
+					// Crude hack to get auto focus.
+					$window.setTimeout(function() {
+						var element = $window.document.getElementById(id);
+						if (element) {
+							element.focus();
+						}
+					}, 100);
 				});
 			}
 		};

@@ -107,10 +107,6 @@ require.config({
 			deps: ['jquery'],
 			exports: '$'
 		},
-		'dialogs': {
-			deps: ['angular', 'angular-sanitize'],
-			exports: 'angular'
-		},
 		'sjcl': {
 			exports: 'sjcl'
 		}
