@@ -14,7 +14,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
   - [Compass](http://compass-style.org/)
   - [Babel](http://babel.pocoo.org/)
   - [po2json](https://github.com/mikeedwards/po2json)
-  - [autoprefixer](https://www.npmjs.org/package/autoprefixer)
+  - [autoprefixer](https://www.npmjs.org/package/autoprefixer) 1.1
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
 
