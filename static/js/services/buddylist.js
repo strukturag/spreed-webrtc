@@ -455,15 +455,12 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			var contact = scope.contact && scope.contact.Status;
 			// Update display name.
 			var displayName = display.displayName;
-			// Use saved contact name
 			if(contact) {
 				display.displayName = contact.displayName;
+			} else if (status.displayName) {
+				display.displayName = status.displayName;
 			} else {
-				if (status.displayName) {
-					display.displayName = status.displayName;
-				} else {
-					display.displayName = null;
-				}
+				display.displayName = null;
 			}
 			// Add to status queue if sorting has changed.
 			if (displayName !== status.displayName) {
