@@ -449,14 +449,21 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.updateDisplay = function(id, scope, data, queueName) {
 
+			//console.log("updateDisplay", 'data', data, 'scope', scope);
 			var status = data.Status;
 			var display = scope.display;
+			var contact = scope.contact && scope.contact.Status;
 			// Update display name.
 			var displayName = display.displayName;
-			if (status.displayName) {
-				display.displayName = status.displayName;
+			// Use saved contact name
+			if(contact) {
+				display.displayName = contact.displayName;
 			} else {
-				display.displayName = null;
+				if (status.displayName) {
+					display.displayName = status.displayName;
+				} else {
+					display.displayName = null;
+				}
 			}
 			// Add to status queue if sorting has changed.
 			if (displayName !== status.displayName) {
