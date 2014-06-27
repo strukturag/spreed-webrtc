@@ -455,7 +455,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			var contact = scope.contact && scope.contact.Status;
 			// Update display name.
 			var displayName = display.displayName;
-			if(contact) {
+			if (contact) {
 				display.displayName = contact.displayName;
 			} else if (status.displayName) {
 				display.displayName = status.displayName;
@@ -472,7 +472,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.updateSubline(display, status.message);
 			}
 			// Update display picture.
-			if (status.buddyPicture) {
+			if (contact) {
+				display.buddyPicture = contact.buddyPicture || null;
+				this.updateBuddyPicture(display);
+			} else if (status.buddyPicture) {
 				display.buddyPicture = status.buddyPicture || null;
 				this.updateBuddyPicture(display);
 			}
