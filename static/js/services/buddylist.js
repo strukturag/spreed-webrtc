@@ -473,7 +473,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}
 			// Update display picture.
 			if (contact) {
-				display.buddyPicture = contact.buddyPicture || null;
+				display.buddyPicture = contact.buddyPicture || status.buddyPicture || null;
 				this.updateBuddyPicture(display);
 			} else if (status.buddyPicture) {
 				display.buddyPicture = status.buddyPicture || null;
