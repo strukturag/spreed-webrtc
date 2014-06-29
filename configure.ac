@@ -25,7 +25,8 @@ AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.co
 
 # minimum required versions
 GO_VERSION_MIN=1.1
-NODEJS_VERSION_MIN=0.8.0
+NODEJS_VERSION_MIN=0.6.0
+NODEJS_VERSION_STYLES_MIN=0.10.0
 SASS_VERSION_MIN=3.2.0
 
 AC_CONFIG_SRCDIR([src/app/spreed-webrtc-server/main.go])
@@ -67,12 +68,13 @@ AC_SUBST(GO)
 
 AC_PATH_PROGS([NODEJS],[nodejs node])
 if test x"${NODEJS}" == x"" ; then
-    AC_MSG_WARN([No node.js. It is required to build styles and translations.])
-    NODEJS=nodejs
+    AC_MSG_ERROR([Please install Go before trying to build spreed-webrtc.])
 else
     NODEJS_VERSION=`$NODEJS --version | $SED 's/^v//'`
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
-        [AC_MSG_WARN([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])])
+        [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
+    AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_STYLES_MIN],
+        [AC_MSG_WARN([Please install node.js NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])])
 fi
 AC_SUBST(NODEJS)
 
