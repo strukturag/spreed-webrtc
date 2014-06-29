@@ -44,11 +44,6 @@ DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
 
-SASSFLAGS = --style=expanded
-
-# Tools
-AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
-
 all: build
 
 build: get binary assets
@@ -80,32 +75,23 @@ test: get
 	GOPATH=$(GOPATH) $(GO) test -i $(TESTDEPS)
 	GOPATH=$(GOPATH) $(GO) test -v $(TESTDEPS)
 
-assets: styles javascript
-
-styles:
-	$(MKDIR_P) $(CURDIR)/static/css
-	$(MKDIR_P) $(CURDIR)/static/fonts
-	cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/font* $(CURDIR)/static/fonts
-	$(SASS) --compass --scss $(SASSFLAGS) \
-		$(CURDIR)/src/styles/main.scss:$(CURDIR)/static/css/main.min.css
-	$(AUTOPREFIXER) --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(CURDIR)/static/css/main.min.css
-	$(SASS) --compass --scss $(SASSFLAGS) \
-		$(CURDIR)/src/styles/bootstrap.scss:$(CURDIR)/static/css/bootstrap.min.css
-	$(SASS) --compass --scss $(SASSFLAGS) \
-		$(CURDIR)/src/styles/font-awesome.scss:$(CURDIR)/static/css/font-awesome.min.css
-
-styleshint:
-	$(FIND) src/styles -maxdepth 1 -name "*.scss" -print0 | xargs -0 -n1 $(SASS) --compass --scss $(SASSFLAGS) -c
+assets: javascript fonts
 
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
-releaseassets: SASSFLAGS = --style=compressed --no-cache
 releaseassets: dist_gopath assets
+
+fonts:
+	$(MKDIR_P) $(CURDIR)/static/fonts
+	cp -r $(CURDIR)/src/styles/libs/font-awesome/fonts/font* $(CURDIR)/static/fonts
 
 javascript:
 	$(MKDIR_P) $(OUTPUT_JS)
 	$(NODEJS) $(CURDIR)/build/r.js \
 		-o $(CURDIR)/build/build.js \
 		dir=$(OUTPUT_JS) $(RJSFLAGS)
+
+styles: fonts
+	cd $(CURDIR)/src/styles && $(MAKE) styles
 
 jshint:
 	@if [ "$(JSHINT)" = "" ]; then echo "Command 'jshint' not found"; exit 1; fi
@@ -178,4 +164,4 @@ tarball: distclean release install
 		echo -n $(PACKAGE_VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-.PHONY: clean distclean pristine get getupdate build styles javascript release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: clean distclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
