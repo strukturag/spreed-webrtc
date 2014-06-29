@@ -134,7 +134,6 @@ install:
 clean:
 	GOPATH=$(GOPATH) $(GO) clean -i $(PKG)
 	rm -rf $(CURDIR)/pkg
-	rm -rf $(CURDIR)/static/css
 	rm -rf $(CURDIR)/static/fonts
 	rm -rf $(CURDIR)/build/out
 
