@@ -74,9 +74,11 @@ else
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
         [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_STYLES_MIN],
-        [AC_MSG_WARN([Please install node.js NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])])
+        [AC_MSG_WARN([Please install node.js NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])
+        NODEJS_SUPPORT_STYLES=no],[NODEJS_SUPPORT_STYLES=yes])
 fi
 AC_SUBST(NODEJS)
+AC_SUBST(NODEJS_SUPPORT_STYLES)
 
 AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
@@ -84,7 +86,8 @@ if test x"${SASS}" == x"" ; then
 else
     SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
-        [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])])
+        [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
+        SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
 fi
 AC_SUBST(SASS)
 
@@ -103,9 +106,11 @@ if test x"${SASS}" != x"" ; then
     if test x"${sass_compass}" != x"0" ; then
         AC_MSG_RESULT([not available])
         AC_MSG_WARN([Please install compass so it can be used using "sass --compass ...".])
+        SASS_SUPPORT_STYLES=no
     fi
     AC_MSG_RESULT([ok])
 fi
+AC_SUBST(SASS_SUPPORT_STYLES)
 
 AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
 if test x"${AUTOPREFIXER}" == x"" ; then
