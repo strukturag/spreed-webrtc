@@ -23,6 +23,15 @@ AC_PREREQ([2.53])
 
 AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.com/strukturag/spreed-webrtc])
 
+I18N_VERSION="1.0"
+I18N_PROJECT="Spreed WebRTC"
+I18N_COPYRIGHT="struktur AG"
+I18N_EMAIL="simon@struktur.de"
+AC_SUBST(I18N_VERSION)
+AC_SUBST(I18N_PROJECT)
+AC_SUBST(I18N_COPYRIGHT)
+AC_SUBST(I18N_EMAIL)
+
 # minimum required versions
 GO_VERSION_MIN=1.1
 NODEJS_VERSION_MIN=0.6.0
@@ -43,19 +52,23 @@ AC_PROG_MKDIR_P
 AC_PROG_INSTALL
 AC_PROG_GREP
 AC_PROG_SED
+AC_PROG_AWK
 
 AC_SUBST(MKDIR_P)
 AC_SUBST(INSTALL)
 AC_SUBST(GREP)
 AC_SUBST(SED)
+AC_SUBST(AWK)
 
 AC_PATH_PROGS([FIND],[find])
 AC_PATH_PROGS([JSHINT],[jshint])
 AC_PATH_PROGS([JS_BEAUTIFY],[js-beautify])
+AC_PATH_PROGS([PYTHON],[python2 python])
 
 AC_SUBST(FIND)
 AC_SUBST(JSHINT)
 AC_SUBST(JS_BEAUTIFY)
+AC_SUBST(PYTHON)
 
 AC_PATH_PROGS([GO],[go])
 if test x"${GO}" == x"" ; then
@@ -118,6 +131,29 @@ if test x"${AUTOPREFIXER}" == x"" ; then
 fi
 AC_SUBST(AUTOPREFIXER)
 
+AC_PATH_PROGS([PYBABEL],[pybabel])
+if test x"${PYBABEL}" == x"" ; then
+    AC_MSG_WARN([Please install pybabel before trying to build i18n.])
+fi
+AC_SUBST(PYBABEL)
+
+AC_PATH_PROGS([NPM],[npm])
+NODEJS_SUPPORT_PO2JSON=no
+if test x"${NPM}" != x"" ; then
+    AC_MSG_CHECKING([for po2json support in node.js])
+    found_po2json=`$NPM list --global 2> /dev/null | $GREP po2json`
+    if test x"${found_po2json}" == x"" ; then
+        AC_MSG_RESULT([not available])
+        AC_MSG_WARN([Please install the node.js module po2json to build i18n.])
+    else
+        AC_MSG_RESULT([ok])
+        NODEJS_SUPPORT_PO2JSON=yes
+    fi
+else
+    AC_MSG_WARN([Please install npm and the the node.js module po2json to build i18n.])
+fi
+AC_SUBST(NODEJS_SUPPORT_PO2JSON)
+
 VERSION=`dpkg-parsechangelog | sed -n 's/^Version: //p'`
 PACKAGE_VERSION="$VERSION"
 PACKAGE_STRING="$PACKAGE_NAME $PACKAGE_VERSION"
@@ -127,5 +163,6 @@ AC_DEFINE_UNQUOTED(PACKAGE_STRING, ["$PACKAGE_STRING"], [Define to the full name
 
 AC_CONFIG_FILES([
     Makefile src/styles/Makefile
+    src/i18n/Makefile
 ])
 AC_OUTPUT
