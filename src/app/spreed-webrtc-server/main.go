@@ -24,6 +24,7 @@ package main
 import (
 	"app/spreed-webrtc-server/sleepy"
 	"bytes"
+	"crypto/rand"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -392,9 +393,23 @@ func runner(runtime phoenix.Runtime) error {
 	router := mux.NewRouter()
 	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
 
-	// Prepare listeners.
-	runtime.DefaultHTTPHandler(r)
-	runtime.DefaultHTTPSHandler(r)
+	// HTTP listener support.
+	if _, err = runtime.GetString("http", "listen"); err == nil {
+		runtime.DefaultHTTPHandler(r)
+	}
+
+	// Native HTTPS listener support.
+	if _, err = runtime.GetString("https", "listen"); err == nil {
+		// Setup TLS.
+		tlsConfig, err := runtime.TLSConfig()
+		if err != nil {
+			return fmt.Errorf("TLS configuration error: %s", err)
+		}
+		// Explicitly set random to use.
+		tlsConfig.Rand = rand.Reader
+		log.Println("Native TLS configuration intialized")
+		runtime.DefaultHTTPSHandler(r)
+	}
 
 	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
