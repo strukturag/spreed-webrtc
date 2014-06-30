@@ -9,14 +9,15 @@ The latest version of Spreed WebRTC can be found on GitHub:
 ## Build prerequisites
 
   - [Go](http://golang.org) >= 1.1.0
-  - [NodeJS](http://nodejs.org/) >= 0.8.0
-  - [Sass](http://sass-lang.com/) >= 3.2.0
-  - [Compass](http://compass-style.org/)
-  - [Babel](http://babel.pocoo.org/)
-  - [po2json](https://github.com/mikeedwards/po2json)
-  - [autoprefixer](https://www.npmjs.org/package/autoprefixer) 1.1
+  - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
+
+
+## Runtime dependencies
+
+  Spreed WebRTC compiles directly to native code and has no
+  external runtime dependencies. See http://golang.org/doc/faq#How_is_the_run_time_support_implemented for details.
 
 
 ## Building
@@ -42,8 +43,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
   Get Go external dependencies first with ``make get``.
 
   ```bash
-  $ make styles
-  $ make javascript
+  $ make assets
   $ make binary
   ```
 
@@ -72,7 +72,24 @@ The latest version of Spreed WebRTC can be found on GitHub:
   web client will launch.
 
 
-## In place start for development
+## Development
+
+  To build styles and translations, further dependencies are required.
+  The source tree contains already built styles and translations, so
+  these are only required if you want to make changes.
+
+  - [NodeJS](http://nodejs.org/) >= 0.10.0
+  - [Sass](http://sass-lang.com/) >= 3.2.0
+  - [Compass](http://compass-style.org/)
+  - [autoprefixer](https://www.npmjs.org/package/autoprefixer) 1.1
+  - [Babel](http://babel.pocoo.org/)
+  - [po2json](https://github.com/mikeedwards/po2json)
+
+  Styles can be found in src/styles. Translations are found in src/i18n.
+  Each folder has its own Makefile to build the corresponding files.
+
+
+## Running server for development
 
   Copy the server.conf.in to server.conf.
 
@@ -99,7 +116,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
   colors.
 
 
-## Production use
+## Running for production
 
   Spreed WebRTC should be run through a SSL frontend proxy with
   support for Websockets. Example configuration for Nginx can be
@@ -118,7 +135,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
 1. "Fork".
 2. Make a feature branch.
 3. Make changes.
-4. Do your commits (run ``make fmt`` before commit).
+4. Do your commits (run ``make fmt`` and ``make jshint`` before commit).
 5. Send "pull request".
 
 

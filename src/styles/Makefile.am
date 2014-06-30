@@ -1,0 +1,36 @@
+#
+# Spreed WebRTC.
+# Copyright (C) 2013-2014 struktur AG
+#
+# This file is part of Spreed WebRTC.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+SASSFLAGS = --style=compressed --no-cache
+AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
+STATIC = ../../static
+
+styles:
+	$(MKDIR_P) $(STATIC)/css
+	$(SASS) --compass --scss $(SASSFLAGS) \
+		$(CURDIR)/main.scss:$(STATIC)/css/main.min.css
+	$(AUTOPREFIXER) --browsers $(AUTOPREFIXER_BROWSER_SUPPORT) $(STATIC)/css/main.min.css
+	$(SASS) --compass --scss $(SASSFLAGS) \
+		$(CURDIR)/bootstrap.scss:$(STATIC)/css/bootstrap.min.css
+	$(SASS) --compass --scss $(SASSFLAGS) \
+		$(CURDIR)/font-awesome.scss:$(STATIC)/css/font-awesome.min.css
+
+styleshint:
+	$(FIND) ./ -maxdepth 1 -name "*.scss" -print0 | xargs -0 -n1 $(SASS) --compass --scss $(SASSFLAGS) -c
