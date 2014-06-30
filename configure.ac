@@ -162,7 +162,8 @@ AC_DEFINE_UNQUOTED(PACKAGE_VERSION, ["$PACKAGE_VERSION"], [Define to the version
 AC_DEFINE_UNQUOTED(PACKAGE_STRING, ["$PACKAGE_STRING"], [Define to the full name and version of this package.])
 
 AC_CONFIG_FILES([
-    Makefile src/styles/Makefile
+    Makefile
+    src/styles/Makefile
     src/i18n/Makefile
 ])
 AC_OUTPUT
