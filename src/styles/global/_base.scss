@@ -101,19 +101,24 @@ a {
   z-index: 20000;
   transition-property: opacity;
   transition-duration: .5s;
-  div {
+  &.done {
+    opacity: 0;
+  }
+  > div {
     color: $loading;
     display: block;
-    font-size: 3em;
+    font-size: 2em;
     left: 0;
     margin: 0 auto;
     right: 0;
     position: absolute;
-    top: 50%;
+    bottom: 0px;
+    margin-bottom: -40px;
     text-align: center;
+    text-shadow: 0 0 5px black;
   }
-  &.done {
-    opacity: 0;
+  .loader-message {
+    font-size: 0.5em;
   }
 }
 
