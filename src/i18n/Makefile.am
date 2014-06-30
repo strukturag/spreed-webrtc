@@ -51,7 +51,7 @@ update:
 	@if [ "$(PYBABEL)" = "" ]; then echo "Command 'pybabel' not found, required when updating i18n"; exit 1; fi
 	for lang in $(LANGUAGES) ; do \
 		l=$$lang ; \
-		if echo $$l | grep -q -; then \
+		if echo $$l | $(GREP) -q -; then \
 			l=`echo $$lang | $(AWK) '{split($$0,a,"-"); printf "%s_%s", a[1],toupper(a[2])}'` ; \
 		fi ; \
 		$(PYBABEL) update -l $$l -i "$(CURDIR)/messages.pot" -o "$(CURDIR)/messages-$$lang.po" ; \
