@@ -68,7 +68,7 @@ AC_SUBST(GO)
 
 AC_PATH_PROGS([NODEJS],[nodejs node])
 if test x"${NODEJS}" == x"" ; then
-    AC_MSG_ERROR([Please install Go before trying to build spreed-webrtc.])
+    AC_MSG_ERROR([Please install node.js before trying to build spreed-webrtc.])
 else
     NODEJS_VERSION=`$NODEJS --version | $SED 's/^v//'`
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
