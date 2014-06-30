@@ -26,11 +26,11 @@ AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.co
 I18N_VERSION="1.0"
 I18N_PROJECT="Spreed WebRTC"
 I18N_COPYRIGHT="struktur AG"
-I18N_EMAIL="simon@struktur.de"
+I18N_BUG_ADDRESS="simon@struktur.de"
 AC_SUBST(I18N_VERSION)
 AC_SUBST(I18N_PROJECT)
 AC_SUBST(I18N_COPYRIGHT)
-AC_SUBST(I18N_EMAIL)
+AC_SUBST(I18N_BUG_ADDRESS)
 
 # minimum required versions
 GO_VERSION_MIN=1.1

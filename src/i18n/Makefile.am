@@ -35,7 +35,7 @@ extract:
 	@if [ "$(PYBABEL)" = "" ]; then echo "Command 'pybabel' not found, required when extracting i18n"; exit 1; fi
 	$(PYBABEL) extract -F babel.cfg --no-default-keywords -k _n:1,2 -k _ \
 		--no-location --project="$(I18N_PROJECT)" --version="$(I18N_VERSION)" \
-		--copyright-holder="$(I18N_COPYRIGHT)" --msgid-bugs-address="$(I18N_EMAIL)" \
+		--copyright-holder="$(I18N_COPYRIGHT)" --msgid-bugs-address="$(I18N_BUG_ADDRESS)" \
 		-o "$(CURDIR)/messages.pot" \
 		"$(ROOT)/html" \
 		"$(ROOT)/static/partials" \
