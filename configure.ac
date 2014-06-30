@@ -120,8 +120,9 @@ if test x"${SASS}" != x"" ; then
         AC_MSG_RESULT([not available])
         AC_MSG_WARN([Please install compass so it can be used using "sass --compass ...".])
         SASS_SUPPORT_STYLES=no
+    else
+        AC_MSG_RESULT([ok])
     fi
-    AC_MSG_RESULT([ok])
 fi
 AC_SUBST(SASS_SUPPORT_STYLES)
 
