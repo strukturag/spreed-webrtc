@@ -33,7 +33,7 @@ build: update
 
 extract:
 	@if [ "$(PYBABEL)" = "" ]; then echo "Command 'pybabel' not found, required when extracting i18n"; exit 1; fi
-	$(PYBABEL) extract -F babel.cfg --no-default-keywords -k _n:1,2 -k _ \
+	$(PYBABEL) extract -F "$(CURDIR)/babel.cfg" --no-default-keywords -k _n:1,2 -k _ \
 		--no-location --project="$(I18N_PROJECT)" --version="$(I18N_VERSION)" \
 		--copyright-holder="$(I18N_COPYRIGHT)" --msgid-bugs-address="$(I18N_BUG_ADDRESS)" \
 		-o "$(CURDIR)/messages.pot" \
@@ -51,7 +51,7 @@ update:
 	@if [ "$(PYBABEL)" = "" ]; then echo "Command 'pybabel' not found, required when updating i18n"; exit 1; fi
 	for lang in $(LANGUAGES) ; do \
 		l=$$lang ; \
-		if echo $$l | grep -q -; then \
+		if echo $$l | $(GREP) -q -; then \
 			l=`echo $$lang | $(AWK) '{split($$0,a,"-"); printf "%s_%s", a[1],toupper(a[2])}'` ; \
 		fi ; \
 		$(PYBABEL) update -l $$l -i "$(CURDIR)/messages.pot" -o "$(CURDIR)/messages-$$lang.po" ; \
