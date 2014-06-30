@@ -1,0 +1,96 @@
+/*
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+.contactsManager {
+  .contactsContentHead {
+    margin-bottom: 10px;
+  }
+  .contactsDesc {
+    font-size: 20px;
+    font-weight: normal;
+    text-align: baseline;
+  }
+  .contactsAddBtn {
+    .fa-users {
+      font-size: 22px;
+    }
+    .fa-plus {
+      font-size: 15px;
+    }
+  }
+  .contactsEditPicture {
+    vertical-align: middle;
+    float: left;
+    margin-right: 20px;
+  }
+  .contactsUploadPicBtn {
+    margin-top: 7px;
+  }
+}
+
+.search {
+  &:before {
+    position: absolute;
+    font-family: "fontAwesome";
+    content: "\f002";
+    font-size: 14px;
+    opacity: .4;
+    top: 6px;
+    left: 22px;
+  }
+  ~ input {
+    padding-left: 25px;
+  }
+}
+
+.contactsEditList {
+  max-height: 250px;
+  overflow-y: scroll;
+  padding-right: 0px;
+}
+
+.contactsTable {
+  .picture {
+    width: 15%;
+    min-height: 46px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .name {
+    width: 70%;
+    padding-left: 5%;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .action {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+.userAvatar {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  background: grey;
+  border-radius: 2px;
+  margin: 0 auto;
+}

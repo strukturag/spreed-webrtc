@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{{_('Close')}}</span></button>
+  <h4 class="modal-title" id="myModalLabel">
+    {{_('Edit contact')}}
+  </h4>
+</div>
+<div class="modal-body">
+  <div class="container-fluid">
+    <div class="row">
+      <form class="form-horizontal">
+        <legend>{{_('Contact')}}</legend>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Name')}}</label>
+          <div class="col-xs-6">
+            <input type="text" class="form-control" value="">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Picture')}}</label>
+          <div class="col-xs-8">
+            <div class="contactsEditPicture">
+              <div class="userAvatar"></div>
+            </div>
+            <buttton class="btn btn-info contactsUploadPicBtn">{{_('Upload')}}</buttton>
+          </div>
+        </div>
+        <hr>
+        <div class="form-group">
+          <div class="col-xs-2">
+            <button class="btn btn-danger">{{_('Remove')}}</button>
+          </div>
+          <div class="col-xs-offset-4 col-xs-6">
+            <div class="pull-right">
+              <button class="btn btn-success">{{_('Ok')}}</button> <button class="btn btn-default">{{_('Cancel')}}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

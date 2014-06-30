@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, template) {
+define(['jquery', 'underscore', 'text!partials/settings.html', 'text!partials/contactsmanager.html'], function($, _, template, templateContactsManger) {
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', '$modal', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, $modal) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -73,6 +73,13 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					safeApply($scope);
 				});
 			};
+
+			$scope.contactsManager = function() {
+				$modal.open({
+					template: templateContactsManger,
+					windowClass: 'contactsManager'
+				});
+			}
 
 			$scope.checkDefaultMediaSources = function() {
 				if ($scope.master.settings.microphoneId && !$scope.mediaSources.hasAudioId($scope.master.settings.microphoneId)) {
