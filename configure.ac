@@ -74,7 +74,7 @@ else
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
         [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_STYLES_MIN],
-        [AC_MSG_WARN([Please install node.js NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])
+        [AC_MSG_WARN([Please install node.js $NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])
         NODEJS_SUPPORT_STYLES=no],[NODEJS_SUPPORT_STYLES=yes])
 fi
 AC_SUBST(NODEJS)
