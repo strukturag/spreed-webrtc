@@ -8,7 +8,6 @@
   <div class="container-fluid">
     <div class="row">
       <form class="form-horizontal">
-        <legend>{{_('Contact')}}</legend>
         <div class="form-group">
           <label class="col-xs-4 control-label">{{_('Name')}}</label>
           <div class="col-xs-6">
@@ -24,18 +23,20 @@
             <buttton class="btn btn-info contactsUploadPicBtn">{{_('Upload')}}</buttton>
           </div>
         </div>
-        <hr>
-        <div class="form-group">
-          <div class="col-xs-2">
-            <button class="btn btn-danger">{{_('Remove')}}</button>
-          </div>
-          <div class="col-xs-offset-4 col-xs-6">
-            <div class="pull-right">
-              <button class="btn btn-success">{{_('Ok')}}</button> <button class="btn btn-default">{{_('Cancel')}}</button>
-            </div>
-          </div>
-        </div>
       </form>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-xs-2">
+      <button class="btn btn-danger">{{_('Remove')}}</button>
+    </div>
+    <div class="col-xs-offset-4 col-xs-6">
+      <div class="pull-right">
+        <button class="btn btn-default">{{_('Cancel')}}</button> 
+        <button class="btn btn-primary">{{_('Ok')}}</button>
+      </div>
     </div>
   </div>
 </div>
