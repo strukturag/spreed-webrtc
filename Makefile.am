@@ -93,6 +93,9 @@ javascript:
 styles: fonts
 	cd $(CURDIR)/src/styles && $(MAKE) styles
 
+styleshint:
+	cd $(CURDIR)/src/styles && $(MAKE) styleshint
+
 jshint:
 	@if [ "$(JSHINT)" = "" ]; then echo "Command 'jshint' not found"; exit 1; fi
 	$(FIND) static/ -wholename static/js/libs -prune -o -name "*.js" -print0 | xargs -0 -n1 $(JSHINT) --config .jshint
