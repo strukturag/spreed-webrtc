@@ -54,22 +54,32 @@ define([], function() {
 			return roomid;
 		};
 
+		$scope.refreshRoom = function() {
+			if (ctrl.enabled) {
+				ctrl.getRoom(function(roomdata) {
+					console.info("Retrieved room data", roomdata);
+					$scope.roomdata = roomdata;
+				});
+			}
+		};
+
 		$scope.$on("$destroy", function() {
 			//console.log("Room change controller destroyed");
 			ctrl.enabled = false;
 		});
 
+		$scope.roomdata = {};
+		$scope.$watch("roomdata.name", function(n) {
+			console.log("roomdata.name changed", n);
+			var u = encodeURIComponent(n);
+			$scope.roomdata.url = "/" + u;
+			$scope.roomdata.link = $scope.roomlink = mediaStream.url.room(n);
+		});
+
 		var roomDataLinkInput = $element.find(".roomdata-link-input");
 		if (roomDataLinkInput.length) {
-			$scope.roomdata = {};
 			$timeout(function() {
-				if (ctrl.enabled) {
-					ctrl.getRoom(function(roomdata) {
-						console.info("Retrieved room data", roomdata);
-						$scope.roomdata = roomdata;
-						roomdata.link = $scope.roomlink = mediaStream.url.room(roomdata.name);
-					});
-				}
+				$scope.refreshRoom();
 			}, 100);
 		}
 

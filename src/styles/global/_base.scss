@@ -128,7 +128,6 @@ a {
   position: absolute;
   right: 0;
   top: 44px;
-  user-select: none;
 }
 
 .welcome {
@@ -137,6 +136,25 @@ a {
   margin-top: 80px;
   text-shadow: 0 0 5px black;
   max-width:500px;
+
+  .welcome-input {
+    position: relative;
+    input {
+      padding-right: 105px;
+    }
+  }
+
+  .welcome-input-buttons {
+    text-shadow: none;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    a {
+      padding-right: .5em;
+      color: black;
+    }
+  }
+
 }
 
 .help-block {
