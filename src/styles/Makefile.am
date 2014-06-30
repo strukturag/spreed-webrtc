@@ -23,6 +23,10 @@ AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 STATIC = ../../static
 
 styles:
+	@if [ "$(SASS)" = "" ]; then echo "Command 'sass' not found, required when building styles"; exit 1; fi
+	@if [ "$(AUTOPREFIXER)" = "" ]; then echo "Command 'autoprefixer' not found, required when building styles"; exit 1; fi
+	@if [ "$(NODEJS_SUPPORT_STYLES)" = "no" ]; then echo "Your version of node.js does not support building styles"; exit 1; fi
+	@if [ "$(SASS_SUPPORT_STYLES)" = "no" ]; then echo "Your version of sass does not support building styles"; exit 1; fi
 	$(MKDIR_P) $(STATIC)/css
 	$(SASS) --compass --scss $(SASSFLAGS) \
 		$(CURDIR)/main.scss:$(STATIC)/css/main.min.css

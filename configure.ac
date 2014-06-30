@@ -23,6 +23,15 @@ AC_PREREQ([2.53])
 
 AC_INIT([spreed-webrtc],[unknown],[opensource@struktur.de],[],[https://github.com/strukturag/spreed-webrtc])
 
+I18N_VERSION="1.0"
+I18N_PROJECT="Spreed WebRTC"
+I18N_COPYRIGHT="struktur AG"
+I18N_BUG_ADDRESS="simon@struktur.de"
+AC_SUBST(I18N_VERSION)
+AC_SUBST(I18N_PROJECT)
+AC_SUBST(I18N_COPYRIGHT)
+AC_SUBST(I18N_BUG_ADDRESS)
+
 # minimum required versions
 GO_VERSION_MIN=1.1
 NODEJS_VERSION_MIN=0.6.0
@@ -43,19 +52,23 @@ AC_PROG_MKDIR_P
 AC_PROG_INSTALL
 AC_PROG_GREP
 AC_PROG_SED
+AC_PROG_AWK
 
 AC_SUBST(MKDIR_P)
 AC_SUBST(INSTALL)
 AC_SUBST(GREP)
 AC_SUBST(SED)
+AC_SUBST(AWK)
 
 AC_PATH_PROGS([FIND],[find])
 AC_PATH_PROGS([JSHINT],[jshint])
 AC_PATH_PROGS([JS_BEAUTIFY],[js-beautify])
+AC_PATH_PROGS([PYTHON],[python2 python])
 
 AC_SUBST(FIND)
 AC_SUBST(JSHINT)
 AC_SUBST(JS_BEAUTIFY)
+AC_SUBST(PYTHON)
 
 AC_PATH_PROGS([GO],[go])
 if test x"${GO}" == x"" ; then
@@ -74,45 +87,73 @@ else
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
         [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_STYLES_MIN],
-        [AC_MSG_WARN([Please install node.js NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])])
+        [AC_MSG_WARN([Please install node.js $NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])
+        NODEJS_SUPPORT_STYLES=no],[NODEJS_SUPPORT_STYLES=yes])
 fi
 AC_SUBST(NODEJS)
+AC_SUBST(NODEJS_SUPPORT_STYLES)
 
 AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
-    AC_MSG_WARN([Please install sass before trying to build spreed-webrtc.])
-    SASS=sass
+    AC_MSG_WARN([Please install sass before trying to build styles.])
 else
     SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
-        [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])])
+        [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
+        SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
 fi
 AC_SUBST(SASS)
 
 AC_PATH_PROGS([COMPASS],[compass])
 if test x"${COMPASS}" == x"" ; then
     AC_MSG_WARN([Please install compass before trying to build styles.])
-    COMPASS=compass
 fi
 AC_SUBST(COMPASS)
 
-AC_MSG_CHECKING([for compass support in sass])
-tempfile=`mktemp`
-$SASS --compass $tempfile > /dev/null 2> /dev/null
-sass_compass=$?
-rm $tempfile
-if test x"${sass_compass}" != x"0" ; then
-    AC_MSG_RESULT([not available])
-    AC_MSG_WARN([Please install compass so it can be used using "sass --compass ...".])
+if test x"${SASS}" != x"" ; then
+    AC_MSG_CHECKING([for compass support in sass])
+    tempfile=`mktemp`
+    $SASS --compass $tempfile > /dev/null 2> /dev/null
+    sass_compass=$?
+    rm $tempfile
+    if test x"${sass_compass}" != x"0" ; then
+        AC_MSG_RESULT([not available])
+        AC_MSG_WARN([Please install compass so it can be used using "sass --compass ...".])
+        SASS_SUPPORT_STYLES=no
+    else
+        AC_MSG_RESULT([ok])
+    fi
 fi
-AC_MSG_RESULT([ok])
+AC_SUBST(SASS_SUPPORT_STYLES)
 
 AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
 if test x"${AUTOPREFIXER}" == x"" ; then
     AC_MSG_WARN([Please install autoprefixer before trying to build styles.])
-    AUTOPREFIXER=autoprefixer
 fi
 AC_SUBST(AUTOPREFIXER)
+
+AC_PATH_PROGS([PYBABEL],[pybabel])
+if test x"${PYBABEL}" == x"" ; then
+    AC_MSG_WARN([Please install pybabel before trying to build i18n.])
+fi
+AC_SUBST(PYBABEL)
+
+AC_PATH_PROGS([NPM],[npm])
+NODEJS_SUPPORT_PO2JSON=no
+if test x"${NPM}" != x"" ; then
+    AC_MSG_CHECKING([for po2json support in node.js])
+    found_po2json=`$NPM list --global 2> /dev/null | $GREP po2json`
+    if test x"${found_po2json}" == x"" ; then
+        AC_MSG_RESULT([not available])
+        AC_MSG_WARN([Please install the node.js module po2json to build i18n.])
+    else
+        AC_MSG_RESULT([ok])
+        NODEJS_SUPPORT_PO2JSON=yes
+    fi
+else
+    AC_MSG_WARN([Please install npm and the the node.js module po2json to build i18n.])
+fi
+AC_SUBST(NODEJS_SUPPORT_PO2JSON)
 
 VERSION=`dpkg-parsechangelog | sed -n 's/^Version: //p'`
 PACKAGE_VERSION="$VERSION"
@@ -122,6 +163,8 @@ AC_DEFINE_UNQUOTED(PACKAGE_VERSION, ["$PACKAGE_VERSION"], [Define to the version
 AC_DEFINE_UNQUOTED(PACKAGE_STRING, ["$PACKAGE_STRING"], [Define to the full name and version of this package.])
 
 AC_CONFIG_FILES([
-    Makefile src/styles/Makefile
+    Makefile
+    src/styles/Makefile
+    src/i18n/Makefile
 ])
 AC_OUTPUT

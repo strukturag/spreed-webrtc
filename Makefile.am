@@ -104,6 +104,15 @@ jsbeautify:
 	@if [ "$(JS_BEAUTIFY)" = "" ]; then echo "Command 'js-beautify' not found"; exit 1; fi
 	$(FIND) static/ \( -path static/js/libs -o -path static/translation \) -prune -o -name "*.js" -exec $(JS_BEAUTIFY) -t -o {}.new {} \; -exec mv -f {}.new {} \;
 
+build-i18n:
+	cd $(CURDIR)/src/i18n && $(MAKE) build
+
+extract-i18n:
+	cd $(CURDIR)/src/i18n && $(MAKE) extract
+
+update-i18n:
+	cd $(CURDIR)/src/i18n && $(MAKE) update
+
 release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
 release: LDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
