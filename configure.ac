@@ -81,7 +81,6 @@ AC_SUBST(NODEJS)
 AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
     AC_MSG_WARN([Please install sass before trying to build spreed-webrtc.])
-    SASS=sass
 else
     SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
@@ -92,7 +91,6 @@ AC_SUBST(SASS)
 AC_PATH_PROGS([COMPASS],[compass])
 if test x"${COMPASS}" == x"" ; then
     AC_MSG_WARN([Please install compass before trying to build styles.])
-    COMPASS=compass
 fi
 AC_SUBST(COMPASS)
 
@@ -110,7 +108,6 @@ AC_MSG_RESULT([ok])
 AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
 if test x"${AUTOPREFIXER}" == x"" ; then
     AC_MSG_WARN([Please install autoprefixer before trying to build styles.])
-    AUTOPREFIXER=autoprefixer
 fi
 AC_SUBST(AUTOPREFIXER)
 
