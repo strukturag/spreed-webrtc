@@ -449,11 +449,15 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.updateDisplay = function(id, scope, data, queueName) {
 
+			//console.log("updateDisplay", 'data', data, 'scope', scope);
 			var status = data.Status;
 			var display = scope.display;
+			var contact = scope.contact && scope.contact.Status;
 			// Update display name.
 			var displayName = display.displayName;
-			if (status.displayName) {
+			if (contact) {
+				display.displayName = contact.displayName;
+			} else if (status.displayName) {
 				display.displayName = status.displayName;
 			} else {
 				display.displayName = null;
@@ -468,7 +472,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				this.updateSubline(display, status.message);
 			}
 			// Update display picture.
-			if (status.buddyPicture) {
+			if (contact) {
+				display.buddyPicture = contact.buddyPicture || status.buddyPicture || null;
+				this.updateBuddyPicture(display);
+			} else if (status.buddyPicture) {
 				display.buddyPicture = status.buddyPicture || null;
 				this.updateBuddyPicture(display);
 			}
