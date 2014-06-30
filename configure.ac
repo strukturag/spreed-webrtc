@@ -80,7 +80,7 @@ AC_SUBST(NODEJS)
 
 AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
-    AC_MSG_WARN([Please install sass before trying to build spreed-webrtc.])
+    AC_MSG_WARN([Please install sass before trying to build styles.])
 else
     SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
