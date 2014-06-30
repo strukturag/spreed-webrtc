@@ -39,7 +39,6 @@ define([
 	'angular-humanize',
 	'angular-route',
 	'mobile-events',
-	'dialogs'
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers, languages) {
 
@@ -64,7 +63,7 @@ define([
 
 	var initialize = function(ms) {
 
-		var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute', 'dialogs'];
+		var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute'];
 		if (ms && ms.length) {
 			_.each(ms, function(module) {
 				modules.push(module);

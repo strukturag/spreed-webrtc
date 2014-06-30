@@ -48,7 +48,6 @@ require.config({
 		'rAF': 'libs/rAF',
 		'humanize': 'libs/humanize',
 		'sha': 'libs/sha',
-		'dialogs': 'libs/angular/dialogs.min',
 		'sjcl': 'libs/sjcl',
 
 		'partials': '../partials',
@@ -107,10 +106,6 @@ require.config({
 		'mobile-events': {
 			deps: ['jquery'],
 			exports: '$'
-		},
-		'dialogs': {
-			deps: ['angular', 'angular-sanitize'],
-			exports: 'angular'
 		},
 		'sjcl': {
 			exports: 'sjcl'
