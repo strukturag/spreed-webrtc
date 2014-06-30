@@ -1,3 +1,11 @@
+spreed-webrtc-server (0.19.1) precise; urgency=low
+
+  * Added Dockerfile.
+  * Updates to compile time dependencies.
+  * Session data no longer overwrites contact data.
+
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 30 Jun 2014 19:18:17 +0200
+
 spreed-webrtc-server (0.19.0) precise; urgency=low
 
   * Implemented authenticated sessions.
