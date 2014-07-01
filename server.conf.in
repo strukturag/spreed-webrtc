@@ -41,10 +41,10 @@ listen = 127.0.0.1:8080
 ; long cached static resources.
 ;ver = 1234
 ; STUN server URIs in format host:port. You can provide multiple seperated by
-; space. If you do not have one use a public one like stun.l.google.com:19302.
-; If you have a TURN server you do not need to set an STUN server as the TURN
-; server will normally do STUN too.
-;stunURIs = stun:stun.l.google.com:19302
+; space. If you do not have one use a public one like stun.spreed.me:443. If
+; you have a TURN server you do not need to set an STUN server as the TURN
+; server will provide STUN services.
+;stunURIs = stun:stun.spreed.me:443
 ; TURN server URIs in format host:port?transport=udp|tcp. You can provide
 ; multiple seperated by space. If you do not have at least one TURN server then
 ; some users will not be able to use the server as the peer to peer connection
@@ -58,12 +58,14 @@ listen = 127.0.0.1:8080
 ; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
 ;turnSecret = the-default-turn-shared-secret-do-not-keep
 ; Session secret to use for session id generator. 32 or 64 bytes of random data
-; are recommented.
+; are recommented (hex encoded). A warning will be logged if hex decode fails.
+; You can generate a secret easily with "xxd -ps -l 32 -c 32 /dev/random".
 sessionSecret = the-default-secret-do-not-keep-me
 ; Encryption secret protecting the data in generated server side tokens. Use
-; 16, 24, or 32 bytes to select AES-128, AES-192, or AES-256. When you change
-; the encryption secret, stored authentications, sessions and contacts become
-; invalid.
+; 16, 24, or 32 bytes (hex encoded) to select AES-128, AES-192, or AES-256.
+; When you change the encryption secret, stored authentications, sessions and
+; contacts become invalid. A warning will be logged if hex decode fails. You
+; can generate a secret easily with "xxd -ps -l 32 -c 32 /dev/random".
 encryptionSecret = tne-default-encryption-block-key
 ; Full path to a text file containig client tokens which a user needs to enter
 ; when accessing the web client. Each line in this file represents a valid
@@ -78,12 +80,12 @@ encryptionSecret = tne-default-encryption-block-key
 ;defaultRoomEnabled = true
 ; Server token is a public random string which is used to enhance security of
 ; server generated security tokens. When the serverToken is changed all existing
-; nonces become invalid. Use 32 or 64 byte random data.
-;serverToken = i-did-not-change-the-public-token-boo
+; nonces become invalid. Use 32 or 64 characters (eg. 16 or 32 byte hex).
+serverToken = i-did-not-change-the-public-token-boo
 ; The server realm is part of the validation chain of tokens and nonces and is
 ; added as suffix to server created user ids if user creation is enabled. When
 ; the realm is changed, all existing tokens and nonces become invalid.
-;serverRealm = local
+serverRealm = local
 ; Full path to an extra templates directory. Templates in this directory ending
 ; with .html will be parsed on startup and can be used to fill the supported
 ; extra-* template slots. If the extra folder has a sub folder "static", the

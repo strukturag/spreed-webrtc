@@ -93,7 +93,7 @@ type Hub struct {
 	contacts              *securecookie.SecureCookie
 }
 
-func NewHub(version string, config *Config, sessionSecret, encryptionSecret, turnSecret, realm string) *Hub {
+func NewHub(version string, config *Config, sessionSecret, encryptionSecret, turnSecret []byte, realm string) *Hub {
 
 	h := &Hub{
 		connectionTable:  make(map[string]*Connection),
@@ -102,9 +102,9 @@ func NewHub(version string, config *Config, sessionSecret, encryptionSecret, tur
 		userTable:        make(map[string]*User),
 		version:          version,
 		config:           config,
-		sessionSecret:    []byte(sessionSecret),
-		encryptionSecret: []byte(encryptionSecret),
-		turnSecret:       []byte(turnSecret),
+		sessionSecret:    sessionSecret,
+		encryptionSecret: encryptionSecret,
+		turnSecret:       turnSecret,
 		realm:            realm,
 	}
 

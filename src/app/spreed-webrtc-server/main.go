@@ -25,6 +25,7 @@ import (
 	"app/spreed-webrtc-server/sleepy"
 	"bytes"
 	"crypto/rand"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -207,19 +208,31 @@ func runner(runtime phoenix.Runtime) error {
 		}()
 	}
 
-	sessionSecret, err := runtime.GetString("app", "sessionSecret")
+	var sessionSecret []byte
+	sessionSecretString, err := runtime.GetString("app", "sessionSecret")
 	if err != nil {
 		return fmt.Errorf("No sessionSecret in config file.")
 	} else {
+		sessionSecret, err = hex.DecodeString(sessionSecretString)
+		if err != nil {
+			log.Println("Warning: sessionSecret value is not a hex encoded", err)
+			sessionSecret = []byte(sessionSecretString)
+		}
 		if len(sessionSecret) < 32 {
 			return fmt.Errorf("Length of sessionSecret must be at least 32 bytes.")
 		}
 	}
 
-	encryptionSecret, err := runtime.GetString("app", "encryptionSecret")
+	var encryptionSecret []byte
+	encryptionSecretString, err := runtime.GetString("app", "encryptionSecret")
 	if err != nil {
 		return fmt.Errorf("No encryptionSecret in config file.")
 	} else {
+		encryptionSecret, err = hex.DecodeString(encryptionSecretString)
+		if err != nil {
+			log.Println("Warning: encryptionSecret value is not a hex encoded", err)
+			encryptionSecret = []byte(encryptionSecretString)
+		}
 		switch l := len(encryptionSecret); {
 		case l == 16:
 		case l == 24:
@@ -268,9 +281,10 @@ func runner(runtime phoenix.Runtime) error {
 	turnURIs := strings.Split(turnURIsString, " ")
 	trimAndRemoveDuplicates(&turnURIs)
 
-	turnSecret, err := runtime.GetString("app", "turnSecret")
-	if err != nil {
-		turnSecret = ""
+	var turnSecret []byte
+	turnSecretString, err := runtime.GetString("app", "turnSecret")
+	if err == nil {
+		turnSecret = []byte(turnSecretString)
 	}
 
 	stunURIsString, err := runtime.GetString("app", "stunURIs")
