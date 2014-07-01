@@ -29,7 +29,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 			var pending = true;
 			var complete = false;
 
-			var initalizer = null;
+			var initializer = null;
 
 			var ctrl = this;
 			ctrl.setInfo = function(info) {
@@ -43,17 +43,20 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 					if (status) {
 						localStorage.setItem("mediastream-mediacheck", MEDIA_CHECK)
 						$scope.connect()
-						ctrl.setInfo("initializing");
-						initializer = $timeout(function() {
+						if (mediaStream.config.DefaultRoomEnabled !== true) {
+							ctrl.setInfo("initializing");
+							initializer = $timeout(function() {
+								ctrl.setInfo("ok");
+								$scope.layout.settings = false;
+								$scope.$emit("welcome");
+							}, 1000);
+						} else {
 							ctrl.setInfo("ok");
-							$scope.$emit("welcome");
-						}, 1000);
+						}
 						complete = true;
 					} else {
 						ctrl.setInfo("denied");
 					}
-					// Check if we should show settings per default.
-					$scope.layout.settings = $scope.loadedUser ? false : true;
 				});
 			};
 
@@ -98,6 +101,8 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 						$timeout.cancel(initializer);
 						initializer = null;
 					}
+					// Check if we should show settings per default when in a room.
+					$scope.layout.settings = $scope.loadedUser ? false : true;
 					ctrl.setInfo("ok");
 				}
 			});

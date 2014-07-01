@@ -20,7 +20,7 @@
  */
 define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(template, welcome) {
 
-	return ["$templateCache", function($templateCache) {
+	return ["$templateCache", "mediaStream", function($templateCache, mediaStream) {
 
 		$templateCache.put('page/welcome.html', welcome);
 
@@ -29,32 +29,36 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 			scope.room = false;
 			scope.page = null;
 
-			scope.$on("welcome", function() {
-				if (!scope.initialized) {
+			if (mediaStream.config.DefaultRoomEnabled !== true) {
+
+				scope.$on("welcome", function() {
+					if (!scope.initialized) {
+						scope.initialized = true;
+						scope.refresh();
+					}
+				});
+
+				scope.$on("room", function(event, room) {
 					scope.initialized = true;
+					scope.room = room !== null ? true : false;
 					scope.refresh();
-				}
-			});
+				});
 
-			scope.$on("room", function(event, room) {
-				scope.initialized = true;
-				scope.room = room !== null ? true : false;
-				scope.refresh();
-			});
+				scope.$watch("status", function(event) {
+					if (scope.initialized) {
+						scope.refresh();
+					}
+				});
 
-			scope.$watch("status", function(event) {
-				if (scope.initialized) {
-					scope.refresh();
-				}
-			});
+				scope.refresh = function() {
+					if (scope.roomid || scope.room || scope.status !== "waiting") {
+						scope.page = null;
+					} else {
+						scope.page = "page/welcome.html";
+					}
+				};
 
-			scope.refresh = function() {
-				if (scope.roomid || scope.room || scope.status !== "waiting") {
-					scope.page = null;
-				} else {
-					scope.page = "page/welcome.html";
-				}
-			};
+			}
 
 		};
 
