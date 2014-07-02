@@ -68,9 +68,15 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 						subscope.$on("downloadComplete", function(event) {
 							event.stopPropagation();
 						});
-						subscope.$on("writeComplete", function(event, url) {
+						subscope.$on("writeComplete", function(event, url, fileInfo) {
 							event.stopPropagation();
-							$scope.doOpenFile(url);
+							if (url.indexOf("blob:") === 0) {
+								$scope.doOpenFile(url);
+							} else {
+								fileInfo.file.file(function(fp) {
+									$scope.openFile(fp);
+								});
+							}
 						});
 						handler = mediaStream.tokens.on(subscope.info.id, function(event, currenttoken, to, data, type, to2, from, xfer) {
 							//console.log("PdfViewer token request", currenttoken, data, type);
@@ -163,8 +169,8 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 
 			$scope.openFile = function(file) {
 				console.log("Loading PDF from", file);
-				var fp = file.file;
-				if (typeof URL !== "undefined" && URL.createObjectURL1) {
+				var fp = file.file || file;
+				if (typeof URL !== "undefined" && URL.createObjectURL) {
 					var url = URL.createObjectURL(fp);
 					$scope.doOpenFile(url);
 				} else {
