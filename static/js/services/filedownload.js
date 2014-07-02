@@ -90,7 +90,7 @@ define(["jquery", "underscore"], function($, _) {
 				safeApply(this.scope, function($scope) {
 					var url = file.toURL();
 					console.log("Generated URL", url);
-					$scope.$emit("writeComplete", url);
+					$scope.$emit("writeComplete", url, file);
 				});
 			}, this));
 			file.e.bind("error writerror failed", _.bind(function(event, e) {
