@@ -127,10 +127,7 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 							// ...and flip the buffers...
 							scope.canvasIndex = 1 - scope.canvasIndex;
 							console.log("Done");
-							if (scope.pendingPageNumber !== null) {
-								scope.showPage(scope.pendingPageNumber);
-								scope.pendingPageNumber = null;
-							}
+							scope.showQueuedPage();
 						});
 					});
 				});
@@ -156,13 +153,25 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 				}
 			};
 
+			$scope.showQueuedPage = function() {
+				if ($scope.pendingPageNumber !== null) {
+					$scope.showPage($scope.pendingPageNumber);
+					$scope.pendingPageNumber = null;
+				}
+			};
+
 			$scope.doOpenFile = function(source) {
 				pdf.getDocument(source).then(function(doc) {
 					$scope.$apply(function(scope) {
 						scope.doc = doc;
 						scope.maxPageNumber = doc.numPages;
+						scope.currentPageNumber = -1;
 						console.log("PDF loaded", doc);
-						scope.$emit("queuePageRendering", 1);
+						if ($scope.isPresenter) {
+							scope.$emit("queuePageRendering", 1);
+						} else {
+							scope.showQueuedPage();
+						}
 					});
 				});
 			};
@@ -301,8 +310,8 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 							//console.log("PdfViewer token request", currenttoken, data, type);
 							session.handleRequest(subscope, xfer, data);
 						}, "xfer");
-						$scope.openFile(f);
 						$scope.isPresenter = true;
+						$scope.openFile(f);
 					}, this));
 				}, this));
 				binder.namespace = function() {
