@@ -18,8 +18,8 @@ before_install:
 install:
   - sudo apt-get -y install nodejs rubygems python-babel
   - sudo gem install compass
-  - sudo npm install -g po2json
-  - sudo npm install -g autoprefixer
+  - npm install -g po2json
+  - npm install -g autoprefixer
 
 script:
   - ./autogen.sh
