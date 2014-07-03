@@ -33,7 +33,7 @@
     // purports support for touch events even if the underlying hardware
     // does not!
     var agent = navigator.userAgent.toLowerCase(),
-        isChromeDesktop = (agent.indexOf('chrome') > -1 && ((agent.indexOf('windows') > -1) || (agent.indexOf('macintosh') > -1) || (agent.indexOf('linux') > -1)) && agent.indexOf('mobile') < 0),
+        isChromeDesktop = (agent.indexOf('chrome') > -1 && ((agent.indexOf('windows') > -1) || (agent.indexOf('macintosh') > -1) || (agent.indexOf('linux') > -1)) && agent.indexOf('mobile') < 0 && agent.indexOf('nexus') < 0),
 
         settings = {
 			tap_pixel_range: 5,
@@ -267,7 +267,7 @@
             $this.on(settings.startevent, function (e) {
                 if (e.which && e.which !== 1) {
                     return false;
-                } else {
+                } else if(!$this.data('lastTouch')) {
                     $this.data('doubletapped', false);
                     origTarget = e.target;
                     $this.data('callee1', arguments.callee);
@@ -302,12 +302,12 @@
                     // Now get the current event:
                     var lastTap = {
                         'position': {
-                            'x': (settings.touch_capable) ? origEvent.touches[0].screenX : e.screenX,
-                            'y': (settings.touch_capable) ? origEvent.touches[0].screenY : e.screenY
+                            'x': (settings.touch_capable) ? e.originalEvent.changedTouches[0].screenX : e.screenX,
+                            'y': (settings.touch_capable) ? e.originalEvent.changedTouches[0].screenY : e.screenY
                         },
                         'offset': {
-                            'x': (settings.touch_capable) ? origEvent.touches[0].pageX - origEvent.touches[0].target.offsetLeft : e.offsetX,
-                            'y': (settings.touch_capable) ? origEvent.touches[0].pageY - origEvent.touches[0].target.offsetTop : e.offsetY
+                            'x': (settings.touch_capable) ? e.originalEvent.changedTouches[0].pageX - e.originalEvent.changedTouches[0].target.offsetLeft : e.offsetX,
+                            'y': (settings.touch_capable) ? e.originalEvent.changedTouches[0].pageY - e.originalEvent.changedTouches[0].target.offsetTop : e.offsetY
                         },
                         'time': new Date().getTime(),
                         'target': e.target
