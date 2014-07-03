@@ -135,7 +135,16 @@ a {
   font-size: 1.1em;
   margin-top: 80px;
   text-shadow: 0 0 5px black;
-  max-width:500px;
+  max-width:600px;
+
+  h1 {
+    text-align: center;
+  }
+
+  .welcome-container {
+    max-width: 450px;
+    margin: 0 auto;
+  }
 
   .welcome-input {
     position: relative;

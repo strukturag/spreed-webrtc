@@ -73,7 +73,7 @@ define([], function() {
 			console.log("roomdata.name changed", n);
 			var u = encodeURIComponent(n);
 			$scope.roomdata.url = "/" + u;
-			$scope.roomdata.link = $scope.roomlink = mediaStream.url.room(n);
+			$scope.roomdata.link = mediaStream.url.room(n);
 		});
 
 		var roomDataLinkInput = $element.find(".roomdata-link-input");
