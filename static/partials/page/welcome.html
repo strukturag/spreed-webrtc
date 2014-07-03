@@ -1,20 +1,17 @@
 <div class="welcome container-fluid" ng-controller="RoomchangeController">
-<h3 style="margin-top:0px">{{_("Create your room")}}</h3>
-<p><i>{{_("This is your room link:")}}</i></p>
-<p>
-  <div class="input-group input-group-lg">
-    <input type="text" class="form-control roomdata-link-input" ng-model="roomdata.link" placeholder="{{_('Creating room link ...')}}" disabled>
-    <span class="input-group-btn">
-      <button class="btn btn-primary" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">{{_("Start")}}</button>
-    </span>
-  </div>
-</p>
-<p><i>{{_("Just click start")}}</i></p>
-<small>
-  <ul class="fa-ul">
-    <li><i class="fa-li fa fa-share-square"></i>{{_("Share this URL with the people you want to meet.")}}</li>
-    <li><i class="fa-li fa fa-repeat"></i>{{_("You can use and re-use this room as many times as you want.")}}</li>
-  </ul>
-</small>
-<social-share/>
+	<h1>{{_("Create a room and talk together")}}</h1>
+	<div class="welcome-container">
+		<p>
+		  <div class="form-group welcome-input">
+		    <input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdata.name" placeholder="{{_('Creating room ...')}}">
+		    <div class="welcome-input-buttons">
+		      <a class="fa fa-refresh" ng-click="refreshRoom()"></a>
+		      <button class="btn btn-primary" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">{{_("Create")}}</button>
+		    </div>
+		  </div>
+		</p>
+		<center>
+		    <p ng-show="roomdata.name"><i class="fa fa-external-link"></i> <a href="{{roomdata.link}}" ng-click="changeRoomToId(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></p>
+		</center>
+	</div>
 </div>
