@@ -18,9 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'], function(require, $, _, template, pdf) {
-
-	pdf.workerSrc = require.toUrl('pdf.worker') + ".js";
+define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, template) {
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen) {
 
@@ -28,20 +26,18 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 
 			var pdfViewerCount = 0;
 			var pane = $element.find(".pdfviewerpane");
-			var canvases = $element.find(".pdfviewercanvas");
-			$scope.canvasIndex = 0;
 
 			$scope.layout.pdfviewer = false;
 			$scope.isPresenter = false;
 			$scope.hideControlsBar = false;
 
-			$scope.doc = null;
-			$scope.rendering = false;
-			$scope.scale = 0.8;
-			$scope.currentPage = null;
-			$scope.currentPageNumber = -1;
-			$scope.maxPageNumber = -1;
-			$scope.pendingPageNumber = null;
+			$scope.$on("pdfLoaded", function(event, source, doc) {
+				if ($scope.isPresenter) {
+					$scope.$emit("showPdfPage", 1);
+				} else {
+					$scope.$emit("showQueuedPdfPage");
+				}
+			});
 
 			var handleRequest = function(event, currenttoken, to, data, type, to2, from, peerpdfviewer) {
 				console.log("PdfViewer answer message", currenttoken, data, type);
@@ -71,10 +67,10 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 						subscope.$on("writeComplete", function(event, url, fileInfo) {
 							event.stopPropagation();
 							if (url.indexOf("blob:") === 0) {
-								$scope.doOpenFile(url);
+								$scope.$emit("openPdf", url);
 							} else {
 								fileInfo.file.file(function(fp) {
-									$scope.openFile(fp);
+									$scope.$emit("openPdf", fp);
 								});
 							}
 						});
@@ -86,7 +82,7 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 						break;
 
 					case "Page":
-						$scope.$emit("queuePageRendering", data.Page);
+						$scope.$emit("showPdfPage", data.Page);
 						break;
 
 					default:
@@ -94,104 +90,6 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 					}
 				}
 			});
-
-			$scope.showPage = function(page) {
-				console.log("Showing page", page, "/", $scope.maxPageNumber);
-				if ($scope.currentPage) {
-					$scope.currentPage.destroy();
-					$scope.currentPage = null;
-				}
-				$scope.rendering = true;
-				$scope.currentPageNumber = page;
-				$scope.doc.getPage(page).then(function(page) {
-					console.log("Got page", page);
-					$scope.currentPage = page;
-					var viewport = page.getViewport($scope.scale);
-					// use double-buffering to avoid flickering while
-					// the new page is rendered...
-					var canvas = canvases[1 - $scope.canvasIndex];
-					canvas.width = viewport.width;
-					canvas.height = viewport.height;
-					var renderContext = {
-						canvasContext: canvas.getContext("2d"),
-						viewport: viewport
-					};
-
-					console.log("Rendering page", page);
-					// TODO(fancycode): also render images in different resolutions for subscribed peers and send to them when ready
-					var renderTask = page.render(renderContext);
-					renderTask.promise.then(function() {
-						$scope.$apply(function(scope) {
-							console.log("Rendered page", page);
-							scope.rendering = false;
-							// ...and flip the buffers...
-							scope.canvasIndex = 1 - scope.canvasIndex;
-							console.log("Done");
-							scope.showQueuedPage();
-						});
-					});
-				});
-			};
-
-			$scope.$on("queuePageRendering", function(event, page) {
-				if (!$scope.doc || $scope.rendering) {
-					$scope.pendingPageNumber = page;
-				} else {
-					$scope.showPage(page);
-				}
-			});
-
-			$scope.prevPage = function() {
-				if ($scope.currentPageNumber > 1) {
-					$scope.$emit("queuePageRendering", $scope.currentPageNumber - 1);
-				}
-			};
-
-			$scope.nextPage = function() {
-				if ($scope.currentPageNumber < $scope.maxPageNumber) {
-					$scope.$emit("queuePageRendering", $scope.currentPageNumber + 1);
-				}
-			};
-
-			$scope.showQueuedPage = function() {
-				if ($scope.pendingPageNumber !== null) {
-					$scope.showPage($scope.pendingPageNumber);
-					$scope.pendingPageNumber = null;
-				}
-			};
-
-			$scope.doOpenFile = function(source) {
-				pdf.getDocument(source).then(function(doc) {
-					$scope.$apply(function(scope) {
-						scope.doc = doc;
-						scope.maxPageNumber = doc.numPages;
-						scope.currentPageNumber = -1;
-						console.log("PDF loaded", doc);
-						if ($scope.isPresenter) {
-							scope.$emit("queuePageRendering", 1);
-						} else {
-							scope.showQueuedPage();
-						}
-					});
-				});
-			};
-
-			$scope.openFile = function(file) {
-				console.log("Loading PDF from", file);
-				var fp = file.file || file;
-				if (typeof URL !== "undefined" && URL.createObjectURL) {
-					var url = URL.createObjectURL(fp);
-					$scope.doOpenFile(url);
-				} else {
-					var fileReader = new FileReader();
-					fileReader.onload = function webViewerChangeFileReaderOnload(evt) {
-					  var buffer = evt.target.result;
-					  var uint8Array = new Uint8Array(buffer);
-					  $scope.doOpenFile(uint8Array);
-					};
-					fileReader.readAsArrayBuffer(fp);
-				}
-			};
 
 			$scope.showPDFViewer = function() {
 				console.log("PDF viewer active");
@@ -257,7 +155,7 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 				// Catch later calls too.
 				mediaStream.webrtc.e.on("statechange", updater);
 
-				$scope.$on("queuePageRendering", function(event, page) {
+				$scope.$on("pdfPageLoading", function(event, page) {
 					_.each(peers, function(ignore, peerId) {
 						var peercall = mediaStream.webrtc.findTargetCall(peerId);
 						mediaStream.api.apply("sendPdfViewer", {
@@ -311,7 +209,7 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 							session.handleRequest(subscope, xfer, data);
 						}, "xfer");
 						$scope.isPresenter = true;
-						$scope.openFile(f);
+						$scope.$emit("openPdf", f);
 					}, this));
 				}, this));
 				binder.namespace = function() {
@@ -323,14 +221,7 @@ define(['require', 'jquery', 'underscore', 'text!partials/pdfviewer.html', 'pdf'
 
 			$scope.hidePDFViewer = function() {
 				console.log("PDF viewer disabled");
-				if ($scope.doc) {
-					$scope.doc.cleanup();
-					$scope.doc.destroy();
-					$scope.doc = null;
-				}
-				// clear visible canvas so it's empty when we show the next document
-				var canvas = canvases[$scope.canvasIndex];
-				canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+				$scope.$emit("closePdf");
 				$scope.layout.pdfviewer = false;
 				$scope.isPresenter = false;
 				$scope.$emit("mainview", "pdfviewer", false);

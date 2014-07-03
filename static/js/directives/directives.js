@@ -38,7 +38,8 @@ define([
 	'directives/page',
 	'directives/contactrequest',
 	'directives/defaultdialog',
-	'directives/pdfviewer'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfviewer) {
+	'directives/pdfcanvas',
+	'directives/pdfviewer'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, pdfviewer) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -58,6 +59,7 @@ define([
 		page: page,
 		contactRequest: contactRequest,
 		defaultDialog: defaultDialog,
+		pdfcanvas: pdfcanvas,
 		pdfviewer: pdfviewer
 	};
 
