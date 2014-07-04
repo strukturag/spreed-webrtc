@@ -63,7 +63,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 				var userid = data.Userid;
 				var id;
 				if (users.hasOwnProperty(userid)) {
-					id = users[userid]
+					id = users[userid];
 				} else {
 					id = String(count++);
 					users[userid] = id;
@@ -88,12 +88,15 @@ define(['underscore', 'jquery'], function(underscore, $) {
 			},
 			getById: function(id) {
 				if (id.indexOf("contact-") === 0) {
-					id = id.substr(8)
+					id = id.substr(8);
 				}
 				if (contacts.hasOwnProperty(id)) {
 					return contacts[id];
 				}
-				return null
+				return null;
+			},
+			getAllContacts: function() {
+				return contacts;
 			}
 		};
 

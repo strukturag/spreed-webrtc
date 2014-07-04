@@ -45,6 +45,22 @@
   .contactsUploadPicBtn {
     margin-top: 7px;
   }
+  .buddyPicture {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    background: $actioncolor1;
+    border-radius: 2px;
+    margin: 0 auto;
+    &:after {
+        content: "\f007";
+        color: $actioncolor2;
+        font-family: fontAwesome;
+        font-size: 3em;
+        position: relative;
+        top: -6px;
+    }
+  }
 }
 
 .search {
@@ -85,13 +101,4 @@
     text-align: center;
     vertical-align: middle;
   }
-}
-
-.userAvatar {
-  position: relative;
-  width: 46px;
-  height: 46px;
-  background: grey;
-  border-radius: 2px;
-  margin: 0 auto;
 }

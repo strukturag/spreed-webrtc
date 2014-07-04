@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{{_('Close')}}</span></button>
+  <button type="button" class="close" ng-click="close()"><span aria-hidden="true">×</span></button>
   <h4 class="modal-title" id="myModalLabel">
     {{_('Contacts Manager')}}
   </h4>
@@ -9,7 +9,7 @@
     <div class="col-xs-offset-7 col-xs-5">
       <div class="pull-right">
       <button class="btn btn-success contactsAddBtn">
-        Find new contacts&nbsp;
+        {{_('Find new contacts')}}&nbsp;
         <i class="fa fa-users"></i>
         <i class="fa fa-plus"></i>
       </button>
@@ -20,70 +20,16 @@
     <div class="col-xs-12 contactsEditList">
       <table class="table table-bordered table-hover table-condensed contactsTable">
         <tbody>
-          <tr>
+          <tr ng-repeat="contact in contacts">
             <td class="picture">
-              <div class="userAvatar"></div>
+              <img ng-show="contact.Status.buddyPicture" ng-src="{{contact.Status.buddyPicture}}">
+              <div ng-show="!contact.Status.buddyPicture" class="buddyPicture"></div>
             </td>
             <td class="name">
-              Mike
+              <span>{{contact.Status.displayName}}</span>
             </td>
             <td class="action">
-              <button class="btn btn-info">{{_('Edit')}}</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="picture">
-              <div class="userAvatar"></div>
-            </td>
-            <td class="name">
-              Mike
-            </td>
-            <td class="action">
-              <button class="btn btn-info">Edit</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="picture">
-              <div class="userAvatar"></div>
-            </td>
-            <td class="name">
-              Mike
-            </td>
-            <td class="action">
-              <button class="btn btn-info">Edit</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="picture">
-              <div class="userAvatar"></div>
-            </td>
-            <td class="name">
-              Mike
-            </td>
-            <td class="action">
-              <button class="btn btn-info">Edit</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="picture">
-              <div class="userAvatar"></div>
-            </td>
-            <td class="name">
-              Mike
-            </td>
-            <td class="action">
-              <button class="btn btn-info">Edit</button>
-            </td>
-          </tr>
-          <tr>
-            <td class="picture">
-              <div class="userAvatar"></div>
-            </td>
-            <td class="name">
-              Mike
-            </td>
-            <td class="action">
-              <button class="btn btn-info">Edit</button>
+              <button class="btn btn-primary">{{_('Edit')}}</button>
             </td>
           </tr>
         </tbody>
