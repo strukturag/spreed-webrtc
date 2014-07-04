@@ -65,6 +65,7 @@ type Connection struct {
 	queue     list.List
 	mutex     sync.Mutex
 	isClosed  bool
+	isClosing bool
 
 	// Metadata.
 	Id           string
@@ -93,6 +94,7 @@ func (c *Connection) close() {
 
 	if !c.isClosed {
 		c.ws.Close()
+		c.Session.Close()
 		c.mutex.Lock()
 		c.Session = nil
 		c.isClosed = true
@@ -132,6 +134,7 @@ func (c *Connection) reregister(token string) error {
 }
 
 func (c *Connection) unregister() {
+	c.isClosing = true
 	c.h.unregisterHandler(c)
 }
 

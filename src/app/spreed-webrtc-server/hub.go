@@ -376,23 +376,20 @@ func (h *Hub) unregisterHandler(c *Connection) {
 		h.mutex.Unlock()
 		return
 	}
-	session := c.Session
-	suserid := session.Userid()
+	suserid := c.Session.Userid()
 	delete(h.connectionTable, c.Id)
 	delete(h.sessionTable, c.Id)
-	if session != nil && suserid != "" {
+	if suserid != "" {
 		user, ok := h.userTable[suserid]
 		if ok {
-			empty := user.RemoveSession(session)
+			empty := user.RemoveSession(c.Session)
 			if empty {
 				delete(h.userTable, suserid)
 			}
 		}
 	}
 	h.mutex.Unlock()
-	if session != nil {
-		h.buddyImages.Delete(session.Id)
-	}
+	h.buddyImages.Delete(c.Id)
 	//log.Printf("Unregister (%d) from %s: %s\n", c.Idx, c.RemoteAddr, c.Id)
 	h.server.OnUnregister(c)
 	c.close()
@@ -459,7 +456,7 @@ func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid strin
 			return
 		}
 		// Add sessions for forein user.
-		users = user.SessionsData()
+		users = user.SubscribeSessions(c.Session)
 	case "session":
 		id, err := c.Session.attestation.Decode(srq.Token)
 		if err != nil {

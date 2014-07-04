@@ -169,7 +169,7 @@ define(['jquery', 'underscore'], function($, _) {
 				break;
 			case "Joined":
 			case "Left":
-				//console.log("User action received", dataType, data);
+				console.log("User action received", dataType, data);
 				this.e.triggerHandler("received.userleftorjoined", [dataType, data]);
 				break;
 			case "Status":

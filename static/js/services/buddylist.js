@@ -557,9 +557,6 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				//console.warn("Trying to remove buddy with no registered scope", session);
 				return;
 			}
-			if (buddyCount > 0) {
-				buddyCount--;
-			}
 			// Remove current id from tree.
 			this.tree.remove(id);
 			buddyData.del(id);
@@ -576,6 +573,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				}
 				delete this.actionElements[id];
 				scope.$destroy();
+				if (buddyCount > 0) {
+					buddyCount--;
+				}
 			} else {
 				// Update display stuff if a session is left. This can
 				// return no session in case when we got this as contact.
@@ -703,10 +703,29 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 					if (contact && contact.Token) {
 						mediaStream.api.sendSessions(contact.Token, "contact", function(event, type, data) {
 							//console.log("oooooooooooooooo", type, data);
+							var tmpSessionData = null;
 							if (data.Users && data.Users.length > 0) {
-								var s = data.Users[0];
-								buddyData.set(s.Id, scope);
-								deferred.resolve(s.Id);
+								/*
+								_.each(data.Users, function(s) {
+									buddyData.set(s.Id, scope);
+									// NOTE(longsleep): Not sure if its a good idea to add the retrieved sessions here.
+									session.add(s.Id, s);
+								});
+								sessionData = session.get();
+								deferred.resolve(sessionData.Id);
+								*/
+								tmpSessionData = data.Users[0];
+							}
+							// Check if we got a session in the meantime.
+							sessionData = session.get();
+							if (!sessionData && tmpSessionData) {
+								// Use temporary session as received.
+								buddyData.set(tmpSessionData.Id, scope);
+								sessionData = tmpSessionData;
+							}
+							if (sessionData) {
+								// Resolve with whatever we found.
+								deferred.resolve(sessionData.Id);
 							}
 						});
 					}

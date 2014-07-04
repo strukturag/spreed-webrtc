@@ -58,12 +58,15 @@ func (s *Server) OnRegister(c *Connection) {
 
 func (s *Server) OnUnregister(c *Connection) {
 	//log.Println("OnUnregister", c.id)
+	dsl := c.Session.DataSessionLeft("hard")
 	if c.Hello {
 		s.UpdateRoomConnection(c, &RoomConnectionUpdate{Id: c.Roomid})
-		s.Broadcast(c, c.Session.DataSessionLeft("hard"))
-	} else {
-		//log.Println("Ingoring OnUnregister because of no Hello", c.Idx)
+		s.Broadcast(c, dsl)
 	}
+	c.Session.RunForAllSubscribers(func(session *Session) {
+		log.Println("Notifying subscriber that we are gone", c.Id, session.Id)
+		s.Unicast(c, session.Id, dsl)
+	})
 }
 
 func (s *Server) OnText(c *Connection, b Buffer) {
@@ -179,7 +182,7 @@ func (s *Server) OnText(c *Connection, b Buffer) {
 func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 
 	outgoing := &DataOutgoing{From: c.Id, To: to, Data: m}
-	if c.Id != to {
+	if !c.isClosing && c.Id != to {
 		outgoing.A = c.Session.Attestation()
 	}
 	b := c.h.buffers.New()
@@ -190,6 +193,7 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 		log.Println("Unicast error while encoding JSON", err)
 		return
 	}
+	log.Println("Unicast", b)
 
 	var msg = &MessageRequest{From: c.Id, To: to, Message: b}
 	c.h.unicastHandler(msg)

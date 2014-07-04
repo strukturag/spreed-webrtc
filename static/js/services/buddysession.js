@@ -60,8 +60,10 @@ define(["underscore"], function(_) {
 		};
 
 		BuddySession.prototype.rm = function(id) {
-			delete this.sessions[id];
-			this.count--;
+			if (this.sessions.hasOwnProperty(id)) {
+				delete this.sessions[id];
+				this.count--;
+			}
 			delete sessions[id];
 		};
 

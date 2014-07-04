@@ -32,31 +32,97 @@ import (
 var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
-	Id          string
-	Sid         string
-	Ua          string
-	UpdateRev   uint64
-	Status      interface{}
-	Nonce       string
-	Prio        int
-	mutex       sync.RWMutex
-	userid      string
-	stamp       int64
-	attestation *SessionAttestation
-	h           *Hub
+	Id            string
+	Sid           string
+	Ua            string
+	UpdateRev     uint64
+	Status        interface{}
+	Nonce         string
+	Prio          int
+	mutex         sync.RWMutex
+	userid        string
+	stamp         int64
+	attestation   *SessionAttestation
+	subscriptions map[string]*Session
+	subscribers   map[string]*Session
+	h             *Hub
 }
 
 func NewSession(h *Hub, id, sid string) *Session {
 
 	session := &Session{
-		Id:    id,
-		Sid:   sid,
-		Prio:  100,
-		stamp: time.Now().Unix(),
-		h:     h,
+		Id:            id,
+		Sid:           sid,
+		Prio:          100,
+		stamp:         time.Now().Unix(),
+		subscriptions: make(map[string]*Session),
+		subscribers:   make(map[string]*Session),
+		h:             h,
 	}
 	session.NewAttestation()
 	return session
+
+}
+
+func (s *Session) Subscribe(session *Session) {
+
+	s.mutex.Lock()
+	s.subscriptions[session.Id] = session
+	s.mutex.Unlock()
+	session.AddSubscriber(s)
+
+}
+
+func (s *Session) Unsubscribe(id string) {
+
+	s.mutex.Lock()
+	if session, ok := s.subscriptions[id]; ok {
+		delete(s.subscriptions, id)
+		s.mutex.Unlock()
+		session.RemoveSubscriber(id)
+	} else {
+		s.mutex.Unlock()
+	}
+
+}
+
+func (s *Session) AddSubscriber(session *Session) {
+	s.mutex.Lock()
+	s.subscribers[session.Id] = session
+	s.mutex.Unlock()
+}
+
+func (s *Session) RemoveSubscriber(id string) {
+	s.mutex.Lock()
+	if _, ok := s.subscribers[id]; ok {
+		delete(s.subscribers, id)
+	}
+	s.mutex.Unlock()
+}
+
+func (s *Session) RunForAllSubscribers(f func(session *Session)) {
+
+	s.mutex.Lock()
+	for _, session := range s.subscribers {
+		s.mutex.Unlock()
+		f(session)
+		s.mutex.Lock()
+	}
+	s.mutex.Unlock()
+
+}
+
+func (s *Session) Close() {
+
+	s.mutex.Lock()
+	// Remove foreign references.
+	for _, session := range s.subscriptions {
+		session.RemoveSubscriber(s.Id)
+	}
+	// Remove session cross references.
+	s.subscriptions = make(map[string]*Session)
+	s.subscribers = make(map[string]*Session)
+	s.mutex.Unlock()
 
 }
 

@@ -78,12 +78,14 @@ func (u *User) Data() *DataUser {
 	}
 }
 
-func (u *User) SessionsData() []*DataSession {
+func (u *User) SubscribeSessions(from *Session) []*DataSession {
 
 	sessions := make([]*DataSession, 0, len(u.sessionTable))
 	u.mutex.RLock()
 	defer u.mutex.RUnlock()
 	for _, session := range u.sessionTable {
+		// TODO(longsleep): This does lots of locks - check if these can be streamlined.
+		from.Subscribe(session)
 		sessions = append(sessions, session.Data())
 	}
 	sort.Sort(ByPrioAndStamp(sessions))
