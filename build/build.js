@@ -58,6 +58,9 @@
 				'base'
 			],
 			inlineText: true,
+		},
+		{
+			name: 'libs/pdf/pdf.worker',
 		}
 	]
 })
