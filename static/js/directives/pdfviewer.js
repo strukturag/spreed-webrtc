@@ -39,8 +39,66 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 				}
 			});
 
-			var handleRequest = function(event, currenttoken, to, data, type, to2, from, peerpdfviewer) {
-				console.log("PdfViewer answer message", currenttoken, data, type);
+			var downloadScope = $scope.$new();
+			downloadScope.$on("downloadComplete", function(event) {
+				event.stopPropagation();
+				finishDownloadPdf();
+			});
+
+			downloadScope.$on("writeComplete", function(event, url, fileInfo) {
+				event.stopPropagation();
+				if (url.indexOf("blob:") === 0) {
+					$scope.$emit("openPdf", url);
+				} else {
+					fileInfo.file.file(function(fp) {
+						$scope.$emit("openPdf", fp);
+					});
+				}
+			});
+
+			var finishDownloadPdf = function() {
+				if (downloadScope.info) {
+					mediaStream.tokens.off(downloadScope.info.id, downloadScope.handler);
+					downloadScope.info = null;
+					downloadScope.handler = null;
+				}
+			};
+
+			var downloadPdf = function(fileInfo, from) {
+				finishDownloadPdf();
+
+				var token = fileInfo.id;
+				downloadScope.info = fileInfo;
+				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
+					//console.log("PdfViewer token request", currenttoken, data, type);
+					fileDownload.handleRequest($scope, xfer, data);
+				}, "xfer");
+
+				fileDownload.startDownload(downloadScope, from, token);
+			};
+
+			var uploadScope = $scope.$new();
+
+			var finishUploadPdf = function() {
+				if (uploadScope.info) {
+					uploadScope.$emit("cancelUpload");
+					mediaStream.tokens.off(uploadScope.info.id, uploadScope.handler);
+					uploadScope.info = null;
+					uploadScope.handler = null;
+				}
+			};
+
+			var uploadPdf = function(fileInfo) {
+				finishUploadPdf();
+
+				var token = fileInfo.id;
+				uploadScope.info = fileInfo;
+				var session = fileUpload.startUpload(uploadScope, token);
+				// This binds the token to transfer and ui.
+				uploadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
+					//console.log("PdfViewer token request", currenttoken, data, type);
+					session.handleRequest(uploadScope, xfer, data);
+				}, "xfer");
 			};
 
 			mediaStream.api.e.on("received.pdfviewer", function(event, id, from, data, p2p) {
@@ -49,39 +107,17 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 					return;
 				}
 
-				var token = data.id;
 				$scope.$emit("mainview", "pdfviewer", true);
-
-				// Bind token.
-				var handler = mediaStream.tokens.on(token, handleRequest, "pdfviewer");
 
 				if (data.Type) {
 					switch (data.Type) {
 					case "FileInfo":
 						console.log("Received PdfViewer file request", data);
-						var subscope = $scope.$new();
-						subscope.info = data.FileInfo;
-						subscope.$on("downloadComplete", function(event) {
-							event.stopPropagation();
-						});
-						subscope.$on("writeComplete", function(event, url, fileInfo) {
-							event.stopPropagation();
-							if (url.indexOf("blob:") === 0) {
-								$scope.$emit("openPdf", url);
-							} else {
-								fileInfo.file.file(function(fp) {
-									$scope.$emit("openPdf", fp);
-								});
-							}
-						});
-						handler = mediaStream.tokens.on(subscope.info.id, function(event, currenttoken, to, data, type, to2, from, xfer) {
-							//console.log("PdfViewer token request", currenttoken, data, type);
-							fileDownload.handleRequest($scope, xfer, data);
-						}, "xfer");
-						fileDownload.startDownload(subscope, from, subscope.info.id);
+						downloadPdf(data.FileInfo, from);
 						break;
 
 					case "Page":
+						console.log("Received PdfViewer page request", data);
 						$scope.$emit("showPdfPage", data.Page);
 						break;
 
@@ -89,6 +125,63 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 						console.log("Received unknown PdfViewer event", data);
 					}
 				}
+			});
+
+			var peers = {};
+			var pdfviewers = [];
+			var currentToken = null;
+			var tokenHandler = null;
+
+			var connector = function(token, peercall) {
+				console.log("XXX connector", token, peercall);
+				if (peers.hasOwnProperty(peercall.id)) {
+					// Already got a connection.
+					return;
+				}
+				peers[peercall.id] = true;
+				mediaStream.api.apply("sendPdfViewer", {
+					send: function(type, data) {
+						return peercall.peerconnection.send(data);
+					}
+				})(peercall.from, token);
+			};
+
+			// Updater function to bring in new calls.
+			var updater = function(event, state, currentcall) {
+				console.log("XXX updater", event, state, currentcall);
+				switch (state) {
+					case "completed":
+					case "connected":
+						connector(currentToken, currentcall);
+						break;
+					case "closed":
+						delete peers[currentcall.id];
+						if (!peers.length) {
+							console.log("All peers disconnected, stopping sharing");
+							$scope.$apply(function(scope) {
+								scope.hidePDFViewer();
+							});
+						}
+						break;
+				}
+			};
+
+			$scope.$on("pdfPageLoading", function(event, page) {
+				if (!$scope.isPresenter) {
+					return;
+				}
+
+				_.each(peers, function(ignore, peerId) {
+					var peercall = mediaStream.webrtc.findTargetCall(peerId);
+					mediaStream.api.apply("sendPdfViewer", {
+						send: function(type, data) {
+							return peercall.peerconnection.send(data);
+						}
+					})(peerId, currentToken, {
+						Type: "Page",
+						Page: page
+					});
+				});
 			});
 
 			$scope.showPDFViewer = function() {
@@ -100,49 +193,16 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 				$scope.layout.pdfviewer = true;
 				$scope.$emit("mainview", "pdfviewer", true);
 
-				var peers = {};
-				var pdfviewers = [];
-
-				var connector = function(token, peercall) {
-					console.log("XXX connector", token, peercall);
-					if (peers.hasOwnProperty(peercall.id)) {
-						// Already got a connection.
-						return;
-					}
-					peers[peercall.id] = true;
-					mediaStream.api.apply("sendPdfViewer", {
-						send: function(type, data) {
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.from, token);
-				};
+				if (currentToken) {
+					mediaStream.tokens.off(currentToken, tokenHandler);
+				}
 
 				// Create token to register with us and send token out to all peers.
 				// Peers when connect to us with the token and we answer.
-				var token = "pdfviewer_" + $scope.id + "_" + (pdfViewerCount++);
-
-				// Updater function to bring in new calls.
-				var updater = function(event, state, currentcall) {
-					console.log("XXX updater", event, state, currentcall);
-					switch (state) {
-						case "completed":
-						case "connected":
-							connector(token, currentcall);
-							break;
-						case "closed":
-							delete peers[currentcall.id];
-							if (!peers.length) {
-								console.log("All peers disconnected, stopping sharing");
-								$scope.$apply(function(scope) {
-									scope.hidePDFViewer();
-								});
-							}
-							break;
-					}
-				};
+				currentToken = "pdfviewer_" + $scope.id + "_" + (pdfViewerCount++);
 
 				// Create callbacks are called for each incoming connections.
-				handler = mediaStream.tokens.create(token, function(event, currenttoken, to, data, type, to2, from, peerpdfviewer) {
+				tokenHandler = mediaStream.tokens.create(currentToken, function(event, currenttoken, to, data, type, to2, from, peerpdfviewer) {
 					console.log("PDF viewer create", currenttoken, data, type, peerpdfviewer);
 					pdfviewers.push(peerpdfviewer);
 					//usermedia.addToPeerConnection(peerscreenshare.peerconnection);
@@ -150,24 +210,10 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 
 				// Connect all current calls.
 				mediaStream.webrtc.callForEachCall(function(peercall) {
-					connector(token, peercall);
+					connector(currentToken, peercall);
 				});
 				// Catch later calls too.
 				mediaStream.webrtc.e.on("statechange", updater);
-
-				$scope.$on("pdfPageLoading", function(event, page) {
-					_.each(peers, function(ignore, peerId) {
-						var peercall = mediaStream.webrtc.findTargetCall(peerId);
-						mediaStream.api.apply("sendPdfViewer", {
-							send: function(type, data) {
-								return peercall.peerconnection.send(data);
-							}
-						})(peerId, token, {
-							Type: "Page",
-							Page: page
-						});
-					});
-				});
 
 				// create drag-drop target
 				var namespace = "file_" + $scope.id;
@@ -195,19 +241,12 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 								send: function(type, data) {
 									return peercall.peerconnection.send(data);
 								}
-							})(peerId, token, {
+							})(peerId, currentToken, {
 								Type: "FileInfo",
 								FileInfo: info
 							});
 						});
-						var subscope = $scope.$new();
-						subscope.info = info;
-						var session = fileUpload.startUpload(subscope, info.id);
-						// This binds the token to transfer and ui.
-						var handler = mediaStream.tokens.on(info.id, function(event, currenttoken, to, data, type, to2, from, xfer) {
-							//console.log("PdfViewer token request", currenttoken, data, type);
-							session.handleRequest(subscope, xfer, data);
-						}, "xfer");
+						uploadPdf(info);
 						$scope.isPresenter = true;
 						$scope.$emit("openPdf", f);
 					}, this));
@@ -222,6 +261,8 @@ define(['jquery', 'underscore', 'text!partials/pdfviewer.html'], function($, _, 
 			$scope.hidePDFViewer = function() {
 				console.log("PDF viewer disabled");
 				$scope.$emit("closePdf");
+				finishUploadPdf();
+				finishDownloadPdf();
 				$scope.layout.pdfviewer = false;
 				$scope.isPresenter = false;
 				$scope.$emit("mainview", "pdfviewer", false);
