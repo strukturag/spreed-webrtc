@@ -688,7 +688,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			var action = $(target).data("action");
 			if (!action) {
 				// Make call the default action.
-				action = "call";
+				action = "chat";
 			}
 
 			var scope = buddyElement.scope();
