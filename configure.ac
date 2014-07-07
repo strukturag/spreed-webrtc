@@ -88,7 +88,7 @@ if test x"${GO}" == x"" ; then
 fi
 
 AC_MSG_CHECKING([for version of Go])
-GO_VERSION=`$GO version | sed 's/^go version go//' | $SED 's/ .*//'`
+GO_VERSION=`$GO version | $SED 's/^go version go//' | $SED 's/ .*//'`
 AC_MSG_RESULT([$GO_VERSION])
 AX_COMPARE_VERSION([$GO_VERSION], [lt], [$GO_VERSION_MIN],
     [AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])])
@@ -192,7 +192,7 @@ else
 fi
 AC_SUBST(NODEJS_SUPPORT_PO2JSON)
 
-VERSION=`dpkg-parsechangelog | sed -n 's/^Version: //p'`
+VERSION=`dpkg-parsechangelog | $SED -n 's/^Version: //p'`
 PACKAGE_VERSION="$VERSION"
 PACKAGE_STRING="$PACKAGE_NAME $PACKAGE_VERSION"
 AC_DEFINE_UNQUOTED(VERSION, ["$VERSION"], [Version number of package])
