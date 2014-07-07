@@ -38,7 +38,7 @@ define([
 	'angular-animate',
 	'angular-humanize',
 	'angular-route',
-	'mobile-events',
+	'mobile-events'
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers, languages) {
 

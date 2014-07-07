@@ -61,6 +61,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 			addByData: function(data) {
 				//console.log("addByData", data.Userid, data);
 				var userid = data.Userid;
+				var id;
 				if (users.hasOwnProperty(userid)) {
 					id = users[userid]
 				} else {
