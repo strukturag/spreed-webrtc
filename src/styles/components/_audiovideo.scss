@@ -195,11 +195,11 @@
   }
   .peerActions {
     bottom: 5%;
-    left: 0;
+    left: 40px;
     opacity: 0;
     pointer-events: auto;
     position: absolute;
-    right: 0;
+    right: 40px;
     text-align: center;
     transition-property: opacity;
     transition-duration: .2s;
