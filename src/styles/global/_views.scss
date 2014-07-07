@@ -19,44 +19,24 @@
  *
  */
 
-html,
-body {
-  background-clip: padding-box;
-  background-color: $background;
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  max-height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 0;
-}
-
-a {
-  cursor: pointer;
-}
-
-#background {
-  background: $main-background repeat;
+.mainview {
   bottom: 0;
-  left: 0;
-  position:fixed;
+  display: none;
+  left: 150px;
+  position: absolute;
   right: 0;
-  top: 0;
-  z-index: 0;
-  @include hidpi {
-    background-image: $main-background-retina;
-    background-size: 198px 200px;
+  top: 45px;
+}
+
+.withChat,
+.withBuddylist {
+  .mainview {
+    right: 260px;
   }
 }
 
-.help-block {
-  color: $form-help-text;
-}
-
-.dialog-header-notify,
-.dialog-header-confirm {
-  background-color: $dialog-header-neutral;
+.withBuddylist {
+  &.withChat .mainview {
+    right: 520px;
+  }
 }

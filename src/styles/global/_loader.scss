@@ -19,44 +19,39 @@
  *
  */
 
-html,
-body {
-  background-clip: padding-box;
-  background-color: $background;
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  max-height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 0;
-}
-
-a {
-  cursor: pointer;
-}
-
-#background {
-  background: $main-background repeat;
-  bottom: 0;
-  left: 0;
-  position:fixed;
-  right: 0;
-  top: 0;
-  z-index: 0;
-  @include hidpi {
-    background-image: $main-background-retina;
-    background-size: 198px 200px;
+#loader {
+  background: $load-logo no-repeat center;
+  background-size: contain;
+  bottom: 15%;
+  left: 15%;
+  max-width: 200px;
+  max-height: 150px;
+  margin: auto;
+  opacity: 1;
+  pointer-events: none;
+  position: fixed;
+  right: 15%;
+  top: 15%;
+  z-index: 20000;
+  transition-property: opacity;
+  transition-duration: .5s;
+  &.done {
+    opacity: 0;
   }
-}
-
-.help-block {
-  color: $form-help-text;
-}
-
-.dialog-header-notify,
-.dialog-header-confirm {
-  background-color: $dialog-header-neutral;
+  > div {
+    color: $loading;
+    display: block;
+    font-size: 2em;
+    left: 0;
+    margin: 0 auto;
+    right: 0;
+    position: absolute;
+    bottom: 0px;
+    margin-bottom: -40px;
+    text-align: center;
+    text-shadow: 0 0 5px black;
+  }
+  .loader-message {
+    font-size: 0.5em;
+  }
 }

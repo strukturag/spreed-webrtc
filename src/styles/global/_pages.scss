@@ -1,0 +1,94 @@
+/*
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#page {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 44px;
+}
+
+.welcome {
+
+  color: $welcome;
+  font-size: 1.1em;
+  margin-top: 80px;
+  text-shadow: 0 0 5px black;
+  max-width:600px;
+  min-height: 160px;
+  padding-left:160px;
+  padding-right: 0px;
+  position: relative;
+  @include breakpt($breakpoint-medium) {
+    padding-left:0px;
+    margin: 0 10px;
+  }
+
+  h1 {
+    text-align: center;
+    white-space: nowrap;
+    @include breakpt($breakpoint-medium) {
+      white-space: normal;
+    }
+  }
+
+  .welcome-container {
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .welcome-logo {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 140px;
+    background: $scalable-logo no-repeat left;
+    background-size: contain;
+    @include breakpt($breakpoint-medium) {
+      position: relative;
+      margin: 0 auto;
+      height: 70px;
+      width: 70px;
+      margin-top: 30px;
+    }
+  }
+
+  .welcome-input {
+    position: relative;
+    input {
+      padding-right: 105px;
+    }
+  }
+
+  .welcome-input-buttons {
+    text-shadow: none;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    a {
+      padding-right: .5em;
+      color: black;
+    }
+  }
+
+}
