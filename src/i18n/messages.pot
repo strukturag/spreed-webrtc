@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-06-23 12:33+0200\n"
+"POT-Creation-Date: 2014-07-07 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -348,30 +348,13 @@ msgstr ""
 msgid "Please set your user details and settings."
 msgstr ""
 
-msgid ""
-"Please note that some settings require you to reload or to make a new "
-"call to become effective."
+msgid "Create a room and talk together"
 msgstr ""
 
-msgid "Create your room"
+msgid "Creating room ..."
 msgstr ""
 
-msgid "This is your room link:"
-msgstr ""
-
-msgid "Creating room link ..."
-msgstr ""
-
-msgid "Start"
-msgstr ""
-
-msgid "Just click start"
-msgstr ""
-
-msgid "Share this URL with the people you want to meet."
-msgstr ""
-
-msgid "You can use and re-use this room as many times as you want."
+msgid "Create"
 msgstr ""
 
 msgid "Peer to peer chat active."
@@ -447,6 +430,9 @@ msgid " tried to call you."
 msgstr ""
 
 msgid " called you."
+msgstr ""
+
+msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
 
 msgid "Your browser does not support WebRTC. No calls possible."

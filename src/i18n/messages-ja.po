@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-06-23 12:33+0200\n"
+"POT-Creation-Date: 2014-07-07 12:43+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -349,31 +349,15 @@ msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "あなたのプロフィールとアプリの動作を設定してください."
 
-msgid ""
-"Please note that some settings require you to reload or to make a new "
-"call to become effective."
-msgstr "いくつかの設定は、再読み込みもしくは次回の発信から有効です."
+msgid "Create a room and talk together"
+msgstr ""
 
-msgid "Create your room"
-msgstr "自分のルームを作成する"
-
-msgid "This is your room link:"
-msgstr "あなたのルームへのリンク:"
-
-msgid "Creating room link ..."
+#, fuzzy
+msgid "Creating room ..."
 msgstr "ルームへのリンクを作る..."
 
-msgid "Start"
-msgstr "開始"
-
-msgid "Just click start"
-msgstr "クリックして開始"
-
-msgid "Share this URL with the people you want to meet."
-msgstr "会いたい人とURLをシェアする."
-
-msgid "You can use and re-use this room as many times as you want."
-msgstr "ルームは何回でも好きなだけ使えます."
+msgid "Create"
+msgstr ""
 
 msgid "Peer to peer chat active."
 msgstr "ピア・ツー・ピア・チャットがアクティブです."
@@ -449,6 +433,10 @@ msgstr "は電話しようとしました."
 
 msgid " called you."
 msgstr "から電話がありました."
+
+#, fuzzy
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr "ブラウザがファイル転送をサポートしていません."
 
 msgid "Your browser does not support WebRTC. No calls possible."
 msgstr "ブラウザがWebRTCをサポートしていない為通話はできません."

@@ -22,12 +22,13 @@ define([
 	'jquery',
 	'underscore',
 	'ua-parser',
+	'modernizr',
 	'mediastream/connector',
 	'mediastream/api',
 	'mediastream/webrtc',
 	'mediastream/tokens'
 
-], function($, _, uaparser, Connector, Api, WebRTC, tokens) {
+], function($, _, uaparser, Modernizr, Connector, Api, WebRTC, tokens) {
 
 	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage) {
 
@@ -204,6 +205,11 @@ define([
 				$rootScope.roomstatus = false;
 
 				var connect = function() {
+					// We need websocket support to connect.
+					if (!Modernizr.websockets) {
+						console.error("This browser has no support for websockets. Connect aborted.");
+						return;
+					}
 					if (ready && cont) {
 						// Inject connector function into scope, so that controllers can pick it up.
 						safeApply($rootScope, function(scope) {

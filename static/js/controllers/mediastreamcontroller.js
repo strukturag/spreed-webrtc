@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl) {
+define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
 
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage) {
 
@@ -792,8 +792,14 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'webrtc.adapter'], function
 		});
 
 		_.defer(function() {
+			if (!Modernizr.websockets) {
+				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
+				$scope.setStatus("unsupported");
+				return;
+			}
 			if (!$window.webrtcDetectedVersion) {
 				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
+				return;
 			}
 		});
 

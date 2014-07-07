@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-06-23 12:33+0200\n"
-"PO-Revision-Date: 2014-06-23 12:37+0100\n"
+"POT-Creation-Date: 2014-07-07 12:43+0200\n"
+"PO-Revision-Date: 2014-07-07 12:44+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -354,33 +354,14 @@ msgstr "Hier klicken für weitere Infos (Google Chrome)."
 msgid "Please set your user details and settings."
 msgstr "Bitte vervollständigen Sie Ihre Daten und Einstellungen."
 
-msgid ""
-"Please note that some settings require you to reload or to make a new "
-"call to become effective."
-msgstr ""
-"Bitte beachten Sie, dass einige Einstellungen erst nach einem Reload oder"
-" einem neuen Anruf aktiv werden."
-
-msgid "Create your room"
+msgid "Create a room and talk together"
 msgstr "Erstellen Sie Ihren Raum"
 
-msgid "This is your room link:"
-msgstr "Ihre Raum-Addresse:"
+msgid "Creating room ..."
+msgstr "Raum wird erstellt ..."
 
-msgid "Creating room link ..."
-msgstr "Raum-Link wird erstellt ..."
-
-msgid "Start"
-msgstr "Start"
-
-msgid "Just click start"
-msgstr "Klicken Sie auf Start"
-
-msgid "Share this URL with the people you want to meet."
-msgstr "Teilen Sie die Raum-Adresse mit anderen Kontakten."
-
-msgid "You can use and re-use this room as many times as you want."
-msgstr "Sie können diesen Raum so oft wieder benutzen wie Sie möchten."
+msgid "Create"
+msgstr "Erstellen"
 
 msgid "Peer to peer chat active."
 msgstr "Peer-to-peer Chat ist aktiv."
@@ -458,6 +439,11 @@ msgstr " hat versucht Sie anzurufen."
 
 msgid " called you."
 msgstr " hat Sie angerufen."
+
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr ""
+"Ihr Browser wird nicht unterstützt. Bitte aktualisieren Sie auf eine "
+"aktuelle Version."
 
 msgid "Your browser does not support WebRTC. No calls possible."
 msgstr "Ihr Browser unterstützt kein WebRTC. Keine Anrufe möglich."

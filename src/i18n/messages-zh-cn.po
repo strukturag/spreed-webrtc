@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-06-23 12:33+0200\n"
+"POT-Creation-Date: 2014-07-07 12:43+0200\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -349,31 +349,15 @@ msgstr "点击这里获取帮助 (Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "请设定您的用户信息及设置"
 
-msgid ""
-"Please note that some settings require you to reload or to make a new "
-"call to become effective."
-msgstr "请注意，有些设置需要重新加载或开始新的通话后才能生效。"
+msgid "Create a room and talk together"
+msgstr ""
 
-msgid "Create your room"
-msgstr "创建您的房间"
-
-msgid "This is your room link:"
-msgstr "这是您的房间链接"
-
-msgid "Creating room link ..."
+#, fuzzy
+msgid "Creating room ..."
 msgstr "创建房间链接"
 
-msgid "Start"
-msgstr "开始"
-
-msgid "Just click start"
-msgstr "直接点击开始"
-
-msgid "Share this URL with the people you want to meet."
-msgstr "请与您需要联系的人分享此URL "
-
-msgid "You can use and re-use this room as many times as you want."
-msgstr "您可使用或反复多次使用此房间"
+msgid "Create"
+msgstr ""
 
 msgid "Peer to peer chat active."
 msgstr "P2P聊天已启动"
@@ -449,6 +433,10 @@ msgstr " 曾呼叫您。"
 
 msgid " called you."
 msgstr " 曾与您通话。"
+
+#, fuzzy
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr "您的浏览器不支持文件传输"
 
 msgid "Your browser does not support WebRTC. No calls possible."
 msgstr "您的浏览器不支持WebRTC。不能进行通话。"
