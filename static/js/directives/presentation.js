@@ -369,6 +369,9 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				}
 			});
 
+			$($window).on("resize", function() {
+				$scope.$emit("redrawPdf");
+			});
 		}];
 
 		return {

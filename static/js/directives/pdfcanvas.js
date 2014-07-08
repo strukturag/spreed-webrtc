@@ -26,12 +26,13 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var PDFCanvas = function(scope, scale, canvases) {
+			var container = $($element);
+
+			var PDFCanvas = function(scope, canvases) {
 				this.scope = scope;
 				this.canvases = canvases;
 				this.doc = null;
 				this.rendering = false;
-				this.scale = scale;
 				this.currentPage = null;
 				this.pendingPageNumber = null;
 			};
@@ -109,32 +110,52 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 					console.log("Got page", pageObject);
 					this.scope.$emit("pdfPageLoaded", page, pageObject);
 					this.currentPage = pageObject;
-					var viewport = pageObject.getViewport(this.scale);
-					// use double-buffering to avoid flickering while
-					// the new page is rendered...
-					var canvas = this.canvases[1 - this.scope.canvasIndex];
-					canvas.width = viewport.width;
-					canvas.height = viewport.height;
-					var renderContext = {
-						canvasContext: canvas.getContext("2d"),
-						viewport: viewport
-					};
+					this.drawPage(pageObject);
+				}, this));
+			};
 
-					console.log("Rendering page", pageObject);
-					this.scope.$emit("pdfPageRendering", page);
-					// TODO(fancycode): also render images in different resolutions for subscribed peers and send to them when ready
-					var renderTask = pageObject.render(renderContext);
-					renderTask.promise.then(_.bind(function() {
-						this.scope.$apply(_.bind(function(scope) {
-							console.log("Rendered page", page);
-							this.scope.$emit("pdfPageRendered", page, scope.maxPageNumber);
-							this.rendering = false;
-							// ...and flip the buffers...
-							scope.canvasIndex = 1 - scope.canvasIndex;
-							this.showQueuedPage();
-						}, this));
+			PDFCanvas.prototype.drawPage = function(pageObject) {
+				var pdfView = pageObject.view;
+				var pdfWidth = pdfView[2] - pdfView[0];
+				var pdfHeight = pdfView[3] - pdfView[1];
+				var w = container.width();
+				var h = container.height();
+				var scale = w / pdfWidth;
+				if (pdfHeight * scale > h) {
+					scale = container.height() / pdfHeight;
+				}
+
+				// use double-buffering to avoid flickering while
+				// the new page is rendered...
+				var canvas = this.canvases[1 - this.scope.canvasIndex];
+				var viewport = pageObject.getViewport(scale);
+				canvas.width = Math.round(viewport.width);
+				canvas.height = Math.round(viewport.height);
+				var renderContext = {
+					canvasContext: canvas.getContext("2d"),
+					viewport: viewport
+				};
+
+				console.log("Rendering page", pageObject);
+				this.scope.$emit("pdfPageRendering", pageObject.pageNumber);
+				// TODO(fancycode): also render images in different resolutions for subscribed peers and send to them when ready
+				var renderTask = pageObject.render(renderContext);
+				renderTask.promise.then(_.bind(function() {
+					this.scope.$apply(_.bind(function(scope) {
+						console.log("Rendered page", pageObject.pageNumber);
+						this.scope.$emit("pdfPageRendered", pageObject.pageNumber, scope.maxPageNumber);
+						this.rendering = false;
+						// ...and flip the buffers...
+						scope.canvasIndex = 1 - scope.canvasIndex;
+						this.showQueuedPage();
 					}, this));
 				}, this));
+			};
+
+			PDFCanvas.prototype.redrawPage = function() {
+				if (this.currentPage !== null) {
+					this.drawPage(this.currentPage);
+				}
 			};
 
 			PDFCanvas.prototype.showPage = function(page) {
@@ -166,9 +187,8 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 			$scope.maxPageNumber = -1;
 			$scope.canvasIndex = 0;
 
-			var canvases = $element.find("canvas");
-			var scale = 0.8;
-			var pdfCanvas = new PDFCanvas($scope, scale, canvases);
+			var canvases = container.find("canvas");
+			var pdfCanvas = new PDFCanvas($scope, canvases);
 
 			$scope.$on("openPdf", function(event, source) {
 				pdfCanvas.open(source);
@@ -191,6 +211,10 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				pdfCanvas.showQueuedPage();
 			});
 
+			$scope.$on("redrawPdf", function() {
+				pdfCanvas.redrawPage();
+			});
+
 			$scope.prevPage = function() {
 				pdfCanvas.prevPage();
 			};
@@ -204,7 +228,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 		return {
 			restrict: 'E',
 			replace: true,
-			template: '<span><canvas ng-hide="canvasIndex"></canvas><canvas ng-show="canvasIndex"></canvas></span>',
+			template: '<div class="canvasContainer"><canvas ng-hide="canvasIndex"></canvas><canvas ng-show="canvasIndex"></canvas></div>',
 			controller: controller
 		};
 
