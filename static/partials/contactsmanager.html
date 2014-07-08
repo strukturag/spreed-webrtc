@@ -1,16 +1,10 @@
 <div class="modal-body">
   <div class="row head">
-    <div class="col-xs-offset-7 col-xs-5">
-      <div class="pull-right">
-      <button class="btn btn-success addbtn">
-        {{_('Find new contacts')}}&nbsp;
-        <i class="fa fa-users"></i>
-        <i class="fa fa-plus"></i>
-      </button>
-      </div>
+     <div class="col-xs-7" ng-if="contacts.length === 0">
+      <h4>{{_('You have no contacts.')}}</h4>
     </div>
   </div>
-  <div class="row">
+  <div class="row" ng-if="contacts.length > 0">
     <div class="col-xs-12 editlist">
       <table class="table table-bordered table-hover table-condensed">
         <tbody>
@@ -21,9 +15,6 @@
             </td>
             <td class="name">
               <span>{{contact.Status.displayName}}</span>
-            </td>
-            <td class="action">
-              <button class="btn btn-primary">{{_('Edit')}}</button>
             </td>
           </tr>
         </tbody>
