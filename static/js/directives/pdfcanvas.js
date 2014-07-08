@@ -93,6 +93,10 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 			};
 
 			PDFCanvas.prototype._showPage = function(page) {
+				if (page === this.scope.currentPageNumber) {
+					return;
+				}
+
 				console.log("Showing page", page, "/", this.scope.maxPageNumber);
 				if (this.currentPage) {
 					this.currentPage.destroy();

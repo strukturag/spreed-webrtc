@@ -1,12 +1,12 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
-        <pdfcanvas/>
-    </div>
-	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}" ng-show="isPresenter">
+		<pdfcanvas/>
+	</div>
+	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>
 		<form class="overlaybar-content form-group">
-            <a class="btn" ng-click="prevPage()" ng-show="currentPageNumber &gt; 1" title="{{_('Prev')}}"><i class="fa fa-backward"></i></a>
-            <a class="btn" ng-click="nextPage()" ng-show="currentPageNumber &lt; maxPageNumber" title="{{_('Next')}}"><i class="fa fa-forward"></i></a>
+			<a class="btn" ng-click="prevPage()" ng-show="currentPageNumber &gt; 1" title="{{_('Prev')}}"><i class="fa fa-backward"></i></a>
+			<a class="btn" ng-click="nextPage()" ng-show="currentPageNumber &lt; maxPageNumber" title="{{_('Next')}}"><i class="fa fa-forward"></i></a>
 		</form>
 	</div>
 </div>

@@ -29,7 +29,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			$scope.layout.presentation = false;
 			$scope.isPresenter = false;
-			$scope.hideControlsBar = false;
+			$scope.hideControlsBar = true;
 			$scope.pendingPageRequest = null;
 			$scope.presentationLoaded = false;
 
@@ -180,17 +180,12 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfPageLoading", function(event, page) {
-				if (!$scope.isPresenter) {
-					return;
-				}
-
-				_.each(peers, function(ignore, peerId) {
-					var peercall = mediaStream.webrtc.findTargetCall(peerId);
+				mediaStream.webrtc.callForEachCall(function(peercall) {
 					mediaStream.api.apply("sendPresentation", {
 						send: function(type, data) {
 							return peercall.peerconnection.send(data);
 						}
-					})(peerId, currentToken, {
+					})(peercall.id, currentToken, {
 						Type: "Page",
 						Page: page
 					});
@@ -261,6 +256,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						});
 						uploadPresentation(info);
 						$scope.isPresenter = true;
+						$scope.hideControlsBar = false;
 						$scope.$emit("openPdf", f);
 					}, this));
 				}, this));
@@ -278,6 +274,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				finishDownloadPresentation();
 				$scope.layout.presentation = false;
 				$scope.isPresenter = false;
+				$scope.hideControlsBar = true;
 				$scope.$emit("mainview", "presentation", false);
 			};
 
