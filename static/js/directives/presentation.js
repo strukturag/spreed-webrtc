@@ -115,23 +115,43 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					return;
 				}
 
-				$scope.$emit("mainview", "presentation", true);
-
 				if (data.Type) {
 					switch (data.Type) {
 					case "FileInfo":
 						console.log("Received presentation file request", data);
-						downloadPresentation(data.FileInfo, from);
+						$scope.$apply(function(scope) {
+							scope.isPresenter = false;
+							scope.hideControlsBar = true;
+							downloadPresentation(data.FileInfo, from);
+						});
+						break;
+
+					case "Show":
+						console.log("Received presentation show request", data);
+						$scope.$apply(function(scope) {
+							scope.isPresenter = false;
+							scope.hideControlsBar = true;
+							scope.layout.presentation = true;
+						});
+						break;
+
+					case "Hide":
+						console.log("Received presentation hide request", data);
+						$scope.$apply(function(scope) {
+							scope.layout.presentation = false;
+						});
 						break;
 
 					case "Page":
-						if (!$scope.presentationLoaded) {
-							console.log("Queuing presentation page request, not loaded yet", data);
-							$scope.pendingPageRequest = data.Page;
-						} else {
-							console.log("Received presentation page request", data);
-							$scope.$emit("showPdfPage", data.Page);
-						}
+						$scope.$apply(function(scope) {
+							if (!scope.presentationLoaded) {
+								console.log("Queuing presentation page request, not loaded yet", data);
+								scope.pendingPageRequest = data.Page;
+							} else {
+								console.log("Received presentation page request", data);
+								scope.$emit("showPdfPage", data.Page);
+							}
+						});
 						break;
 
 					default:
@@ -146,7 +166,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			var tokenHandler = null;
 
 			var connector = function(token, peercall) {
-				console.log("XXX connector", token, peercall);
+				console.log("XXX connector", token, peercall, peers);
 				if (peers.hasOwnProperty(peercall.id)) {
 					// Already got a connection.
 					return;
@@ -156,7 +176,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					send: function(type, data) {
 						return peercall.peerconnection.send(data);
 					}
-				})(peercall.from, token);
+				})(peercall.from, token, {
+							Type: "Show",
+							Show: true
+				});
 			};
 
 			// Updater function to bring in new calls.
@@ -192,12 +215,61 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				});
 			});
 
-			$scope.showPresentation = function() {
-				console.log("Presentation active");
-				if ($scope.layout.presentation) {
-					$scope.hidePresentation();
+			mediaStream.webrtc.e.on("done", function() {
+				$scope.hidePresentation();
+			});
+
+			$scope.startPresentingFile = function(file, fileInfo) {
+				console.log("Advertising file", file, fileInfo);
+				// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file
+				mediaStream.webrtc.callForEachCall(function(peercall) {
+					mediaStream.api.apply("sendPresentation", {
+						send: function(type, data) {
+							return peercall.peerconnection.send(data);
+						}
+					})(peercall.id, currentToken, {
+						Type: "FileInfo",
+						FileInfo: fileInfo
+					});
+				});
+				uploadPresentation(fileInfo);
+				$scope.isPresenter = true;
+				$scope.hideControlsBar = false;
+				$scope.$emit("openPdf", file);
+			};
+
+			// create drag-drop target
+			var namespace = "file_" + $scope.id;
+			var binder = fileUpload.bindDrop(namespace, $element, _.bind(function(files) {
+				console.log("Files dragged", files);
+				if (files.length > 1) {
+					alertify.dialog.alert(translation._("Only single PDF documents can be shared at this time."));
+					return;
 				}
 
+				_.each(files, _.bind(function(f) {
+					var info = $.extend({
+						id: f.id
+					}, f.info);
+					if (info.type !== "application/pdf") {
+						console.log("Not sharing file", f, info);
+						alertify.dialog.alert(translation._("Only PDF documents can be shared at this time."));
+						return;
+					}
+					$scope.startPresentingFile(f, info);
+				}, this));
+			}, this));
+			binder.namespace = function() {
+				// Inject own id into namespace.
+				return namespace + "_" + $scope.myid;
+			};
+
+			$scope.showPresentation = function(force) {
+				if (!force && $scope.layout.presentation) {
+					return;
+				}
+
+				console.log("Presentation active");
 				$scope.layout.presentation = true;
 				$scope.$emit("mainview", "presentation", true);
 
@@ -222,67 +294,44 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				});
 				// Catch later calls too.
 				mediaStream.webrtc.e.on("statechange", updater);
-
-				// create drag-drop target
-				var namespace = "file_" + $scope.id;
-				var binder = fileUpload.bindDrop(namespace, $element, _.bind(function(files) {
-					console.log("Files dragged", files);
-					if (files.length > 1) {
-						alertify.dialog.alert(translation._("Only single PDF documents can be shared at this time."));
-						return;
-					}
-
-					_.each(files, _.bind(function(f) {
-						var info = $.extend({
-							id: f.id
-						}, f.info);
-						if (info.type !== "application/pdf") {
-							console.log("Not sharing file", f, info);
-							alertify.dialog.alert(translation._("Only PDF documents can be shared at this time."));
-							return;
-						}
-						console.log("Advertising file", f, info);
-						// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file
-						_.each(peers, function(ignore, peerId) {
-							var peercall = mediaStream.webrtc.findTargetCall(peerId);
-							mediaStream.api.apply("sendPresentation", {
-								send: function(type, data) {
-									return peercall.peerconnection.send(data);
-								}
-							})(peerId, currentToken, {
-								Type: "FileInfo",
-								FileInfo: info
-							});
-						});
-						uploadPresentation(info);
-						$scope.isPresenter = true;
-						$scope.hideControlsBar = false;
-						$scope.$emit("openPdf", f);
-					}, this));
-				}, this));
-				binder.namespace = function() {
-					// Inject own id into namespace.
-					return namespace + "_" + $scope.myid;
-				};
-
 			};
 
-			$scope.hidePresentation = function() {
+			$scope.hidePresentation = function(force) {
+				if (!force && !$scope.layout.presentation) {
+					return;
+				}
+
 				console.log("Presentation disabled");
+				if (currentToken) {
+					mediaStream.webrtc.callForEachCall(function(peercall) {
+						mediaStream.api.apply("sendPresentation", {
+							send: function(type, data) {
+								return peercall.peerconnection.send(data);
+							}
+						})(peercall.id, currentToken, {
+							Type: "Hide",
+							Hide: true
+						});
+					});
+					mediaStream.tokens.off(currentToken, tokenHandler);
+					currentToken = null;
+				}
 				$scope.$emit("closePdf");
 				finishUploadPresentation();
 				finishDownloadPresentation();
 				$scope.layout.presentation = false;
 				$scope.isPresenter = false;
 				$scope.hideControlsBar = true;
+				peers = {};
 				$scope.$emit("mainview", "presentation", false);
+				mediaStream.webrtc.e.off("statechange", updater);
 			};
 
 			$scope.$watch("layout.presentation", function(newval, oldval) {
 				if (newval && !oldval) {
-					$scope.showPresentation();
+					$scope.showPresentation(true);
 				} else if (!newval && oldval) {
-					$scope.hidePresentation();
+					$scope.hidePresentation(true);
 				}
 			});
 
