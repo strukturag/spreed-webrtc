@@ -352,9 +352,9 @@ define(['jquery', 'underscore'], function($, _) {
 				id: viewer_id
 			}
 		}
-        if (viewer_data) {
-            data.Presentation = _.extend(data.Presentation, viewer_data);
-        }
+		if (viewer_data) {
+			data.Presentation = _.extend(data.Presentation, viewer_data);
+		}
 
 		return this.send("Presentation", data);
 
