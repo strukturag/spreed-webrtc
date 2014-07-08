@@ -189,8 +189,8 @@ define(['jquery', 'underscore'], function($, _) {
 			case "Screenshare":
 				this.e.triggerHandler("received.screenshare", [d.To, d.From, data.Screenshare, d.p2p]);
 				break;
-			case "PdfViewer":
-				this.e.triggerHandler("received.pdfviewer", [d.To, d.From, data.PdfViewer, d.p2p]);
+			case "Presentation":
+				this.e.triggerHandler("received.presentation", [d.To, d.From, data.Presentation, d.p2p]);
 				break;
 			case "Alive":
 				// Do nothing.
@@ -343,20 +343,20 @@ define(['jquery', 'underscore'], function($, _) {
 
 	};
 
-	Api.prototype.sendPdfViewer = function(id, viewer_id, viewer_data) {
+	Api.prototype.sendPresentation = function(id, viewer_id, viewer_data) {
 
 		var data = {
 			Id: id,
-			Type: "PdfViewer",
-			PdfViewer: {
+			Type: "Presentation",
+			Presentation: {
 				id: viewer_id
 			}
 		}
         if (viewer_data) {
-            data.PdfViewer = _.extend(data.PdfViewer, viewer_data);
+            data.Presentation = _.extend(data.Presentation, viewer_data);
         }
 
-		return this.send("PdfViewer", data);
+		return this.send("Presentation", data);
 
 	};
 
