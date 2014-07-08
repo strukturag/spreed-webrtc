@@ -61,20 +61,35 @@ AC_SUBST(SED)
 AC_SUBST(AWK)
 
 AC_PATH_PROGS([FIND],[find])
-AC_PATH_PROGS([JSHINT],[jshint])
-AC_PATH_PROGS([JS_BEAUTIFY],[js-beautify])
-AC_PATH_PROGS([PYTHON],[python2 python])
-
 AC_SUBST(FIND)
+
+AC_PATH_PROGS([JSHINT],[jshint])
+if test x"${JSHINT}" != x"" ; then
+    AC_MSG_CHECKING([for version of jshint])
+    JSHINT_VERSION=`$JSHINT --version 2>&1 | $SED 's/^jshint v//'`
+    AC_MSG_RESULT([$JSHINT_VERSION])
+fi
 AC_SUBST(JSHINT)
+
+AC_PATH_PROGS([JS_BEAUTIFY],[js-beautify])
 AC_SUBST(JS_BEAUTIFY)
+
+AC_PATH_PROGS([PYTHON],[python2 python])
+if test x"${PYTHON}" != x"" ; then
+    AC_MSG_CHECKING([for version of python2])
+    PYTHON_VERSION=`$PYTHON --version 2>&1 | $SED 's/^Python //'`
+    AC_MSG_RESULT([$PYTHON_VERSION])
+fi
 AC_SUBST(PYTHON)
 
 AC_PATH_PROGS([GO],[go])
 if test x"${GO}" == x"" ; then
     AC_MSG_ERROR([Please install Go before trying to build spreed-webrtc.])
 fi
-GO_VERSION=`$GO version | sed 's/^go version go//' | $SED 's/ .*//'`
+
+AC_MSG_CHECKING([for version of Go])
+GO_VERSION=`$GO version | $SED 's/^go version go//' | $SED 's/ .*//'`
+AC_MSG_RESULT([$GO_VERSION])
 AX_COMPARE_VERSION([$GO_VERSION], [lt], [$GO_VERSION_MIN],
     [AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])])
 AC_SUBST(GO)
@@ -83,7 +98,9 @@ AC_PATH_PROGS([NODEJS],[nodejs node])
 if test x"${NODEJS}" == x"" ; then
     AC_MSG_ERROR([Please install node.js before trying to build spreed-webrtc.])
 else
+    AC_MSG_CHECKING([for version of node.js])
     NODEJS_VERSION=`$NODEJS --version | $SED 's/^v//'`
+    AC_MSG_RESULT([$NODEJS_VERSION])
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_MIN],
         [AC_MSG_ERROR([Please install node.js $NODEJS_VERSION_MIN or newer before trying to build spreed-webrtc (found node.js $NODEJS_VERSION).])])
     AX_COMPARE_VERSION([$NODEJS_VERSION], [lt], [$NODEJS_VERSION_STYLES_MIN],
@@ -97,7 +114,9 @@ AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
     AC_MSG_WARN([Please install sass before trying to build styles.])
 else
+    AC_MSG_CHECKING([for version of sass])
     SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
+    AC_MSG_RESULT([$SASS_VERSION])
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
         [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
         SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
@@ -107,6 +126,10 @@ AC_SUBST(SASS)
 AC_PATH_PROGS([COMPASS],[compass])
 if test x"${COMPASS}" == x"" ; then
     AC_MSG_WARN([Please install compass before trying to build styles.])
+else
+    AC_MSG_CHECKING([for version of compass])
+    COMPASS_VERSION=`$COMPASS --version | $AWK 'NR==1' | $SED 's/^Compass //' | $SED 's/ .*//'`
+    AC_MSG_RESULT([$COMPASS_VERSION])
 fi
 AC_SUBST(COMPASS)
 
@@ -129,18 +152,29 @@ AC_SUBST(SASS_SUPPORT_STYLES)
 AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
 if test x"${AUTOPREFIXER}" == x"" ; then
     AC_MSG_WARN([Please install autoprefixer before trying to build styles.])
+else
+    AC_MSG_CHECKING([for version of autoprefixer])
+    AUTOPREFIXER_VERSION=`$AUTOPREFIXER --version | $SED 's/^autoprefixer //'`
+    AC_MSG_RESULT([$AUTOPREFIXER_VERSION])
 fi
 AC_SUBST(AUTOPREFIXER)
 
 AC_PATH_PROGS([PYBABEL],[pybabel])
 if test x"${PYBABEL}" == x"" ; then
     AC_MSG_WARN([Please install pybabel before trying to build i18n.])
+else
+    AC_MSG_CHECKING([for version of pybabel])
+    PYBABEL_VERSION=`$PYBABEL --version | $SED 's/^pybabel //'`
+    AC_MSG_RESULT([$PYBABEL_VERSION])
 fi
 AC_SUBST(PYBABEL)
 
 AC_PATH_PROGS([NPM],[npm])
 NODEJS_SUPPORT_PO2JSON=no
 if test x"${NPM}" != x"" ; then
+    AC_MSG_CHECKING([for version of npm])
+    NPM_VERSION=`$NPM --version`
+    AC_MSG_RESULT([$NPM_VERSION])
     AC_MSG_CHECKING([for po2json support in node.js])
     found_po2json=`$NPM list --global 2> /dev/null | $GREP po2json`
     if test x"${found_po2json}" == x"" ; then
@@ -148,6 +182,9 @@ if test x"${NPM}" != x"" ; then
         AC_MSG_WARN([Please install the node.js module po2json to build i18n.])
     else
         AC_MSG_RESULT([ok])
+        AC_MSG_CHECKING([for version of po2json])
+        PO2JSON_VERSION=`$NPM list --global 2>&1 | $GREP po2json | $SED 's/^.*po2json@//'`
+        AC_MSG_RESULT([$PO2JSON_VERSION])
         NODEJS_SUPPORT_PO2JSON=yes
     fi
 else
@@ -155,7 +192,7 @@ else
 fi
 AC_SUBST(NODEJS_SUPPORT_PO2JSON)
 
-VERSION=`dpkg-parsechangelog | sed -n 's/^Version: //p'`
+VERSION=`dpkg-parsechangelog | $SED -n 's/^Version: //p'`
 PACKAGE_VERSION="$VERSION"
 PACKAGE_STRING="$PACKAGE_NAME $PACKAGE_VERSION"
 AC_DEFINE_UNQUOTED(VERSION, ["$VERSION"], [Version number of package])
