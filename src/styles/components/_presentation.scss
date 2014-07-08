@@ -51,4 +51,25 @@
   bottom: 0;
   left: 0;
   right: 0;
+  text-align: center;
+}
+
+.presentation .overlaybar a.btn {
+  position: absolute;
+  font-size: 20px;
+  padding: 4px 6px;
+  top: 0px;
+  line-height: 28px;
+}
+
+.presentation .overlaybar a.btn-prev {
+  left: 40px;
+}
+
+.presentation .overlaybar a.btn-next {
+  right: 0px;
+}
+
+.presentation .overlaybar span {
+  line-height: 30px;
 }
