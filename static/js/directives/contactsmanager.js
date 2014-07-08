@@ -18,12 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/contactsmanagerbutton.html', 'text!partials/contactsmanager.html'], function($, _, templateContactsManagerButton,templateContactsManager) {
+define(['jquery', 'underscore', 'text!partials/contactsmanagerbutton.html', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageradd.html', 'text!partials/contactsmanageredit.html'], function($, _, templateContactsManagerButton, templateContactsManager, templateContactsManagerAdd, templateContactsManagerEdit) {
 
 	return ['contacts', 'alertify', function(contacts, alertify) {
 
 		var contactsManagerController = ['$scope', '$modalInstance', 'contactData', 'data', 'defaultModalController', function($scope, $modalInstance, contactData, data, defaultModalController) {
-			$scope.contacts = null;
+			$scope.contacts = [];
+			$scope.search = {};
 
 			var getContacts = function() {
 				$scope.contacts = contactData.getAll();
@@ -38,9 +39,35 @@ define(['jquery', 'underscore', 'text!partials/contactsmanagerbutton.html', 'tex
 		}];
 
 		var controller = ['$scope', '$modal', function($scope, $modal) {
-			// Setup an api to pass the html body template to alertify
+			var windowClass = 'contactsmanager';
+			var modalController = contactsManagerController;
+
 			$scope.contactsManager = function() {
-				alertify.dialog.buildCustom({'windowClass': 'contactsmanager', 'header': _('Contacts Manager'), 'bodydom': templateContactsManager, 'footerdom': null, 'controller': contactsManagerController});
+				alertify.dialog.buildCustom({
+					'windowClass': windowClass,
+					'header': _('Contacts Manager'),
+					'bodydom': templateContactsManager,
+					'footerdom': null,
+					'controller': modalController
+				});
+			};
+			$scope.contactsManagerAdd = function() {
+				alertify.dialog.buildCustom({
+					'windowClass': windowClass,
+					'header': _('Find new contacts'),
+					'bodydom': templateContactsManagerAdd,
+					'footerdom': null,
+					'controller': modalController
+				});
+			};
+			$scope.contactsManagerEdit = function() {
+				alertify.dialog.buildCustom({
+					'windowClass': windowClass,
+					'header': _('Contacts Manager'),
+					'bodydom': templateContactsManagerEdit,
+					'footerdom': null,
+					'controller': modalController
+				});
 			};
 		}];
 
