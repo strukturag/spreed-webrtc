@@ -63,7 +63,7 @@ define(['jquery', 'underscore', 'text!partials/contactsmanagerbutton.html', 'tex
 			$scope.contactsManagerEdit = function() {
 				alertify.dialog.buildCustom({
 					'windowClass': windowClass,
-					'header': _('Contacts Manager'),
+					'header': _('Edit contact'),
 					'bodydom': templateContactsManagerEdit,
 					'footerdom': null,
 					'controller': modalController
