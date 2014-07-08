@@ -157,50 +157,57 @@ require.onError = (function() {
 	};
 }());
 
-define([
-	'jquery',
-	'underscore',
-	'angular',
-	'require',
-	'base'], function($, _, angular, require) {
+// Make sure the browser knows ES5.
+if (Object.create) {
 
-	// Dynamic app loader with plugin support.
-	var load = ['app'];
-	_.each(document.getElementsByTagName('script'), function(script) {
-		var dataPlugin = script.getAttribute('data-plugin');
-		if (dataPlugin) {
-			load.push(dataPlugin);
-		}
-	});
-	require(load, function(App) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		// Add Angular modules from plugins.
-		var modules = [];
-		_.each(args, function(plugin) {
-			if (plugin && plugin.module) {
-				plugin.module(modules);
+	define([
+		'jquery',
+		'underscore',
+		'angular',
+		'require',
+		'base'], function($, _, angular, require) {
+
+		// Dynamic app loader with plugin support.
+		var load = ['app'];
+		_.each(document.getElementsByTagName('script'), function(script) {
+			var dataPlugin = script.getAttribute('data-plugin');
+			if (dataPlugin) {
+				load.push(dataPlugin);
 			}
 		});
-		// External plugin support.
-		var externalPlugin
-		if (window.externalPlugin) {
-			externalPlugin = window.externalPlugin($, _, angular);
-			if (externalPlugin && externalPlugin.module) {
-				externalPlugin.module(modules);
+		require(load, function(App) {
+			var args = Array.prototype.slice.call(arguments, 1);
+			// Add Angular modules from plugins.
+			var modules = [];
+			_.each(args, function(plugin) {
+				if (plugin && plugin.module) {
+					plugin.module(modules);
+				}
+			});
+			// External plugin support.
+			var externalPlugin
+			if (window.externalPlugin) {
+				externalPlugin = window.externalPlugin($, _, angular);
+				if (externalPlugin && externalPlugin.module) {
+					externalPlugin.module(modules);
+				}
 			}
-		}
-		// Init Angular app.
-		var app = App.initialize(modules);
-		// Init plugins.
-		_.each(args, function(plugin) {
-			if (plugin && plugin.initialize) {
-				plugin.initialize(app);
+			// Init Angular app.
+			var app = App.initialize(modules);
+			// Init plugins.
+			_.each(args, function(plugin) {
+				if (plugin && plugin.initialize) {
+					plugin.initialize(app);
+				}
+			});
+			// Init external plugin.
+			if (externalPlugin && externalPlugin.initialize) {
+				externalPlugin.initialize(app);
 			}
 		});
-		// Init external plugin.
-		if (externalPlugin && externalPlugin.initialize) {
-			externalPlugin.initialize(app);
-		}
+
 	});
 
-});
+} else {
+	alert("Your browser does not support this application. Please update your browser to the latest version.");
+}
