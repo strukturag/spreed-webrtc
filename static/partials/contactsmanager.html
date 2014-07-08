@@ -5,20 +5,22 @@
     </div>
   </div>
   <div class="row" ng-if="contacts.length > 0">
-    <div class="col-xs-12 editlist">
-      <table class="table table-bordered table-hover table-condensed">
-        <tbody>
-          <tr ng-repeat="contact in contacts">
-            <td class="picture">
-              <img ng-show="contact.Status.buddyPicture" ng-src="{{contact.Status.buddyPicture}}">
-              <div ng-show="!contact.Status.buddyPicture" class="buddyPicture"></div>
-            </td>
-            <td class="name">
-              <span>{{contact.Status.displayName}}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="col-xs-12">
+      <div class="editlist nicescroll">
+        <table class="table table-hover table-condensed">
+          <tbody>
+            <tr ng-repeat="contact in contacts">
+              <td class="picture">
+                <img ng-show="contact.Status.buddyPicture" ng-src="{{contact.Status.buddyPicture}}">
+                <div ng-show="!contact.Status.buddyPicture" class="buddyPicture"></div>
+              </td>
+              <td class="name">
+                <span>{{contact.Status.displayName}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

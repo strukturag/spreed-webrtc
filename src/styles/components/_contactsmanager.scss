@@ -63,10 +63,13 @@
   }
   .editlist {
     max-height: 250px;
-    overflow-y: scroll;
-    padding-right: 0px;
+    overflow-y: auto;
   }
   .table {
+    margin-bottom: 0px;
+    tr:first-child td {
+      border-top: none;
+    }
     .picture {
       width: 15%;
       min-height: 46px;
@@ -75,7 +78,6 @@
     }
     .name {
       width: 70%;
-      padding-left: 5%;
       text-align: left;
       vertical-align: middle;
     }
