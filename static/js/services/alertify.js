@@ -50,7 +50,7 @@ define(["angular"], function(angular) {
 	}];
 
 	// Alertify uniquified api wrapper
-	return ["$window", "$modal", "$templateCache", "translation", '$compile', function($window, $modal, $templateCache, translation, $compile) {
+	return ["$window", "$modal", "$templateCache", "translation", function($window, $modal, $templateCache, translation) {
 
 		// Overwrite templates from dialogs with fontawesome/i18n variants.
 		$templateCache.put('/dialogs/error.html', '<div class="modal-header dialog-header-error"><button type="button" class="close" ng-click="close()">&times;</button><h4 class="modal-title text-danger"><span class="fa fa-warning"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body text-danger" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
