@@ -32,6 +32,17 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$scope.hideControlsBar = true;
 			$scope.pendingPageRequest = null;
 			$scope.presentationLoaded = false;
+			$scope.currentFileInfo = null;
+			$scope.currentPage = null;
+			$scope.receivedPage = null;
+
+			$scope.resetProperties = function() {
+				$scope.isPresenter = false;
+				$scope.hideControlsBar = true;
+				$scope.currentFileInfo = null;
+				$scope.currentPage = null;
+				$scope.receivedPage = null;
+			};
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				if ($scope.isPresenter) {
@@ -120,8 +131,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					case "FileInfo":
 						console.log("Received presentation file request", data);
 						$scope.$apply(function(scope) {
-							scope.isPresenter = false;
-							scope.hideControlsBar = true;
+							scope.resetProperties();
 							downloadPresentation(data.FileInfo, from);
 						});
 						break;
@@ -129,9 +139,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					case "Show":
 						console.log("Received presentation show request", data);
 						$scope.$apply(function(scope) {
-							scope.isPresenter = false;
-							scope.hideControlsBar = true;
-							scope.layout.presentation = true;
+							if (!scope.layout.presentation) {
+								scope.resetProperties();
+								scope.layout.presentation = true;
+							}
 						});
 						break;
 
@@ -144,6 +155,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 					case "Page":
 						$scope.$apply(function(scope) {
+							scope.receivedPage = data.Page;
 							if (!scope.presentationLoaded) {
 								console.log("Queuing presentation page request, not loaded yet", data);
 								scope.pendingPageRequest = data.Page;
@@ -174,12 +186,38 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				peers[peercall.id] = true;
 				mediaStream.api.apply("sendPresentation", {
 					send: function(type, data) {
-						return peercall.peerconnection.send(data);
+						if (!peercall.peerconnection.datachannelReady) {
+							return peercall.e.one("dataReady", function() {
+								peercall.peerconnection.send(data);
+							});
+						} else {
+							return peercall.peerconnection.send(data);
+						}
 					}
-				})(peercall.from, token, {
-							Type: "Show",
-							Show: true
+				})(peercall.id, token, {
+					Type: "Show",
+					Show: true
 				});
+				if ($scope.currentFileInfo !== null) {
+					mediaStream.api.apply("sendPresentation", {
+						send: function(type, data) {
+							return peercall.peerconnection.send(data);
+						}
+					})(peercall.id, token, {
+						Type: "FileInfo",
+						FileInfo: $scope.currentFileInfo
+					});
+				}
+				if ($scope.currentPage !== null) {
+					mediaStream.api.apply("sendPresentation", {
+						send: function(type, data) {
+							return peercall.peerconnection.send(data);
+						}
+					})(peercall.id, token, {
+						Type: "Page",
+						Page: $scope.currentPage
+					});
+				}
 			};
 
 			// Updater function to bring in new calls.
@@ -192,7 +230,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						break;
 					case "closed":
 						delete peers[currentcall.id];
-						if (!peers.length) {
+						if (_.isEmpty(peers)) {
 							console.log("All peers disconnected, stopping presentation");
 							$scope.$apply(function(scope) {
 								scope.hidePresentation();
@@ -203,6 +241,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfPageLoading", function(event, page) {
+				if ($scope.receivedPage === page) {
+					// we received this page request, don't publish to others
+					$scope.receivedPage = null;
+					return;
+				}
+
+				$scope.currentPage = page;
 				mediaStream.webrtc.callForEachCall(function(peercall) {
 					mediaStream.api.apply("sendPresentation", {
 						send: function(type, data) {
@@ -213,10 +258,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						Page: page
 					});
 				});
-			});
-
-			mediaStream.webrtc.e.on("done", function() {
-				$scope.hidePresentation();
 			});
 
 			$scope.startPresentingFile = function(file, fileInfo) {
@@ -235,6 +276,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				uploadPresentation(fileInfo);
 				$scope.isPresenter = true;
 				$scope.hideControlsBar = false;
+				$scope.currentFileInfo = fileInfo;
+				$scope.receivedPage = null;
 				$scope.$emit("openPdf", file);
 			};
 
@@ -264,11 +307,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				return namespace + "_" + $scope.myid;
 			};
 
-			$scope.showPresentation = function(force) {
-				if (!force && $scope.layout.presentation) {
-					return;
-				}
-
+			$scope.showPresentation = function() {
 				console.log("Presentation active");
 				$scope.layout.presentation = true;
 				$scope.$emit("mainview", "presentation", true);
@@ -296,11 +335,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				mediaStream.webrtc.e.on("statechange", updater);
 			};
 
-			$scope.hidePresentation = function(force) {
-				if (!force && !$scope.layout.presentation) {
-					return;
-				}
-
+			$scope.hidePresentation = function() {
 				console.log("Presentation disabled");
 				if (currentToken) {
 					mediaStream.webrtc.callForEachCall(function(peercall) {
@@ -319,9 +354,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				$scope.$emit("closePdf");
 				finishUploadPresentation();
 				finishDownloadPresentation();
+				$scope.resetProperties();
 				$scope.layout.presentation = false;
-				$scope.isPresenter = false;
-				$scope.hideControlsBar = true;
 				peers = {};
 				$scope.$emit("mainview", "presentation", false);
 				mediaStream.webrtc.e.off("statechange", updater);
@@ -329,9 +363,9 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			$scope.$watch("layout.presentation", function(newval, oldval) {
 				if (newval && !oldval) {
-					$scope.showPresentation(true);
+					$scope.showPresentation();
 				} else if (!newval && oldval) {
-					$scope.hidePresentation(true);
+					$scope.hidePresentation();
 				}
 			});
 
