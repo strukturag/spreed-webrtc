@@ -95,8 +95,8 @@ define(['underscore', 'jquery'], function(underscore, $) {
 				}
 				return null;
 			},
-			getAllContacts: function() {
-				return contacts;
+			getAll: function() {
+				return _.values(contacts);
 			}
 		};
 

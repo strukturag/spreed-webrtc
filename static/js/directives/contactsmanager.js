@@ -18,24 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/contactsmanager.html'], function($, _, templateContactsManager) {
+define(['jquery', 'underscore', 'text!partials/contactsmanagerbutton.html', 'text!partials/contactsmanager.html'], function($, _, templateContactsManagerButton,templateContactsManager) {
 
-	return [function() {
+	return ['contacts', 'alertify', function(contacts, alertify) {
 
-		var contactsManagerController = ['$scope', '$modalInstance', 'contactData', function($scope, $modalInstance, contactData) {
-			$scope.contacts = contactData.getAllContacts();
-			$scope.close = function() {
-				$modalInstance.close('Close');
+		var contactsManagerController = ['$scope', '$modalInstance', 'contactData', 'data', 'defaultModalController', function($scope, $modalInstance, contactData, data, defaultModalController) {
+			$scope.contacts = null;
+
+			var getContacts = function() {
+				$scope.contacts = contactData.getAll();
 			};
+			getContacts();
+			contacts.e.on('contactadded', function() {
+				getContacts();
+			});
+
+			// Set state based on default controller
+			defaultModalController[3]($scope, $modalInstance, data);
 		}];
 
 		var controller = ['$scope', '$modal', function($scope, $modal) {
+			// Setup an api to pass the html body template to alertify
 			$scope.contactsManager = function() {
-				$modal.open({
-					template: templateContactsManager,
-					controller: contactsManagerController,
-					windowClass: 'contactsManager'
-				});
+				alertify.dialog.buildCustom({'windowClass': 'contactsmanager', 'header': _('Contacts Manager'), 'bodydom': templateContactsManager, 'footerdom': null, 'controller': contactsManagerController});
 			};
 		}];
 
@@ -44,6 +49,8 @@ define(['jquery', 'underscore', 'text!partials/contactsmanager.html'], function(
 		return {
 			scope: true,
 			restrict: 'E',
+			replace: true,
+			template: templateContactsManagerButton,
 			controller: controller,
 			link: link
 		};

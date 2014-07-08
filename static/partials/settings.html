@@ -69,16 +69,9 @@
           </div>
         </div>
       </div>
-      <contacts-manager>
-        <div ng-if="userid">
-          <legend>{{_('Contacts')}}</legend>
-          <div class="form-group">
-            <div class="col-xs-8 col-xs-offset-4">
-              <button class="btn btn-success" ng-click="contactsManager()">{{_('Contacts Manager')}}</button>
-            </div>
-          </div>
-        </div>
-      <contacts-manager/>
+      <div ng-if="userid">
+        <contacts-manager/>
+      </div>
       <div ng-show="mediaSources.supported || isChrome">
         <legend>{{_('Media')}}</legend>
         <div ng-show="mediaSources.supported">

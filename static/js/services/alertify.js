@@ -50,7 +50,7 @@ define(["angular"], function(angular) {
 	}];
 
 	// Alertify uniquified api wrapper
-	return ["$window", "$modal", "$templateCache", "translation", function($window, $modal, $templateCache, translation) {
+	return ["$window", "$modal", "$templateCache", "translation", '$compile', function($window, $modal, $templateCache, translation, $compile) {
 
 		// Overwrite templates from dialogs with fontawesome/i18n variants.
 		$templateCache.put('/dialogs/error.html', '<div class="modal-header dialog-header-error"><button type="button" class="close" ng-click="close()">&times;</button><h4 class="modal-title text-danger"><span class="fa fa-warning"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body text-danger" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
@@ -60,6 +60,9 @@ define(["angular"], function(angular) {
 
 		// Add new template for prompt.
 		$templateCache.put('/dialogs/prompt.html', '<div class="modal-header"><h4 class="modal-title"><span class="fa fa-star"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body"><ng-form name="promptDialog" novalidate role="form"><div class="form-group input-group-lg" ng-class="{true: \'has-error\'}[promptDialog.text.$dirty && promptDialog.text.$invalid]"><label class="control-label"></label><input type="text" id="{{id}}" class="form-control" name="text" ng-model="input.text" ng-keyup="hitEnter($event)" required></div></ng-form></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="cancel()">{{cancelButtonLabel}}</button><button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || promptDialog.$pristine">{{okButtonLabel}}</button></div>');
+		$templateCache.put('/base/headerdom.html', '<div class="modal-header"><button type="button" class="close" ng-click="close()">×</button><h4 class="modal-title" ng-bind-html="header"></h4></div>');
+		$templateCache.put('/base/bodydom.html', '<div class="modal-body" ng-bind-html="msg"></div>');
+		$templateCache.put('/base/footerdom.html', '<div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
 
 		var defaultMessages = {
 			error: translation._("Error"),
@@ -142,6 +145,40 @@ define(["angular"], function(angular) {
 							element.focus();
 						}
 					}, 100);
+				});
+			},
+			buildCustom: function(data) {
+				var modaldom = '';
+
+				if (data.headerdom) {
+					modaldom += data.headerdom;
+				} else {
+					modaldom += $templateCache.get('/base/headerdom.html');
+				}
+
+				if (data.bodydom) {
+					modaldom += data.bodydom;
+				} else {
+					modaldom += $templateCache.get('/base/bodydom.html');
+				}
+
+				if (data.footerdom === undefined) {
+					modaldom += $templateCache.get('/base/footerdom.html');
+				// footer should not be included
+				} else if (data.footerdom === null) {
+					modaldom += '';
+				} else {
+					modaldom += data.footerdom;
+				}
+
+				$modal.open({
+					template: modaldom,
+					controller: data.controller || modalController,
+					resolve: {
+						data: function() { return data; },
+						defaultModalController: function() { return modalController; }
+					},
+					windowClass: data.windowClass || ''
 				});
 			}
 		};
