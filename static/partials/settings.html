@@ -67,10 +67,8 @@
               </div>
             </div>
           </div>
+          <contacts-manager/>
         </div>
-      </div>
-      <div ng-if="userid">
-        <contacts-manager/>
       </div>
       <div ng-show="mediaSources.supported || isChrome">
         <legend>{{_('Media')}}</legend>
@@ -137,9 +135,9 @@
             <label class="col-xs-4 control-label">{{_('Stereo audio')}}</label>
             <div class="col-xs-8">
               <div class="checkbox">
-              	<label>
-                	<input type="checkbox" ng-model="user.settings.stereo"/>
-            	</label>
+               <label>
+                  <input type="checkbox" ng-model="user.settings.stereo"/>
+               </label>
               </div>
             </div>
           </div>
@@ -171,7 +169,7 @@
       </div>
 
       <div class="form-group">
-      	<div class="col-xs-4 control-label"></div>
+         <div class="col-xs-4 control-label"></div>
         <div class="col-xs-8">
           <a ng-click="showAdvancedSettings = !showAdvancedSettings"><span ng-show="showAdvancedSettings">{{_('Show advanced settings')}}</span><span ng-hide="showAdvancedSettings">{{_('Hide advanced settings')}}</span></a>
         </div>
@@ -180,12 +178,12 @@
       <hr/>
 
       <div class="form-group">
-      	<div class="col-xs-4 control-label"></div>
-      	<div class="col-xs-8">
+         <div class="col-xs-4 control-label"></div>
+         <div class="col-xs-8">
           <div class="checkbox" style="padding-bottom:1em">
-          	<label>
-            	<input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
-        	  </label>
+            <label>
+               <input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
+           </label>
             <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings && loadedUserlogin"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
           </div>
           <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
