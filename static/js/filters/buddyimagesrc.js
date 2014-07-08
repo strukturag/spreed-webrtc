@@ -20,33 +20,6 @@
  */
 define(["underscore"], function(_) {
 
-	// Simple function which converts data urls to blobs, both base64 or not.
-	var dataURLToBlob = (function() {
-		var is_base64 = ";base64,";
-		return function(dataURL) {
-			var parts, ct;
-			if (dataURL.indexOf(is_base64) === -1) {
-				// No base64.
-				parts = dataURL.split(",");
-				ct = parts[0].split(":")[1];
-				return new Blob([parts[1]], {
-					type: ct
-				});
-			}
-			parts = dataURL.split(is_base64);
-			ct = parts[0].split(":")[1];
-			var data = window.atob(parts[1]);
-			var length = data.length;
-			var buffer = new Uint8Array(length);
-			for (var i = 0; i < length; i++) {
-				buffer[i] = data.charCodeAt(i);
-			}
-			return new Blob([buffer], {
-				type: ct
-			});
-		};
-	}());
-
 	// Create URLs for blobs.
 	var blobToObjectURL = function(blob) {
 		return URL.createObjectURL(blob);
@@ -57,7 +30,7 @@ define(["underscore"], function(_) {
 	};
 
 	// buddyImageSrc
-	return ["buddyData", "appData", function(buddyData, appData) {
+	return ["buddyData", "buddyPicture", "appData", function(buddyData, buddyPicture, appData) {
 
 		// Cache created blob urls.
 		var urls = {};
@@ -75,24 +48,35 @@ define(["underscore"], function(_) {
 			});
 		}, 5000);
 
-		return function(id) {
+		return function(id, display) {
 
-			var scope = buddyData.lookup(id, false, true);
-			if (scope) {
-				var display = scope.display;
-				if (display) {
+			if (typeof(display) === "undefined") {
+				var scope = buddyData.lookup(id, false, true);
+				if (scope) {
+					display = scope.display;
+				}
+			}
+			if (display) {
+				if (display.buddyPictureLocalUrl) {
+					return display.buddyPictureLocalUrl;
+				} else if (display.buddyPicture) {
+					var url = urls[id];
+					if (url) {
+						revokeURL(id, url);
+					}
+					// No existing data. Check if service does find something.
+					buddyPicture.update(display);
 					if (display.buddyPictureLocalUrl) {
 						return display.buddyPictureLocalUrl;
-					} else if (display.buddyPicture) {
-						var url = urls[id];
-						if (url) {
-							revokeURL(id, url);
-						}
-						// New data -> new url.
-						var blob = dataURLToBlob(display.buddyPicture);
+					}
+					// Check if we should handle it as blob.
+					url = display.buddyPicture;
+					if (url.indexOf("data:") === 0) {
+						var blob = buddyPicture.toBlob(null, url);
 						url = display.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
 						return url;
 					}
+					return null;
 				}
 			} else {
 				var data = appData.get();

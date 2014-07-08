@@ -154,6 +154,7 @@
     .#{$fa-css-prefix} {
       color: $actioncolor2;
       line-height: 46px;
+      font-size: 3em;
     }
     img {
       bottom: 0;
@@ -172,6 +173,7 @@
     margin-right:4px;
     .#{$fa-css-prefix} {
       line-height: 30px;
+      font-size: 2em;
     }
   }
   .buddy1 {
@@ -201,9 +203,10 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
-    width:174px;
     text-align:left;
+    vertical-align:middle;
+    display: inline-block;
+    width: 132px;
   }
 }
 
@@ -220,28 +223,32 @@
   transition-duration: .3s;
   white-space: nowrap;
   z-index: 5;
-  .#{$fa-css-prefix} {
-    font-size: 1.5em;
-    pointer-events: none;
+  > .btn {
+    width: 42px;
+    height: 40px;
+    padding: 0px;
+    text-align: center;
+    font-size: 2em;
   }
 }
 
 .buddy .buddysessions {
   margin-top: 56px;
   max-height:0px;
+  margin-bottom: 10px;
   transition-property: max-height;
   transition-duration: 1s;
   transition-delay: .1s;
   ul {
     padding-top: 10px;
-    margin-left: 14px;
+    margin: 0 10px 0 14px;
     padding-left: 0px;
     border-left: 1px dotted $bordercolor;
   }
   ul li {
-    margin-bottom: 1px;
-    margin-top: 1px;
-    margin-left: -4px;
+    margin-bottom: 4px;
+    margin-top: 2px;
+    margin-left: 0px;
     list-style-type: none;
   }
   .currentsession .buddy3 {

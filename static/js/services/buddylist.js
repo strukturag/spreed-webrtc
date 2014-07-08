@@ -129,7 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, fastScroll, mediaStream, animationFrame, $q) {
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "buddyPicture", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, buddyPicture, fastScroll, mediaStream, animationFrame, $q) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -378,55 +378,6 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
-		Buddylist.prototype.updateBuddyPicture = function(status) {
-
-			url = status.buddyPicture;
-			if (!url) {
-				return;
-			}
-
-			if (url.indexOf("img:") === 0) {
-				status.buddyPicture = status.buddyPictureLocalUrl = mediaStream.url.buddy(url.substr(4));
-			}
-
-		};
-
-		Buddylist.prototype.dumpBuddyPictureToBlob = function(scope, data) {
-
-			if (!data) {
-				data = this.dumpBuddyPictureToString(scope);
-				if (!data) {
-					return null;
-				}
-			}
-			// NOTE(longsleep): toBlob is not widely supported narf ..
-			// see: https://code.google.com/p/chromium/issues/detail?id=67587
-			var parts = data.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+\/]+)/);
-			var binStr = atob(parts[3]);
-			var buf = new ArrayBuffer(binStr.length);
-			var view = new Uint8Array(buf);
-			for (var i = 0; i < view.length; i++) {
-				view[i] = binStr.charCodeAt(i);
-			}
-			return new Blob([view], {'type': parts[1]});
-
-		};
-
-		Buddylist.prototype.dumpBuddyPictureToString = function(scope) {
-
-			var img = scope.element.find(".buddyPicture img").get(0);
-			if (img) {
-				var canvas = $window.document.createElement("canvas");
-				canvas.width = img.width;
-				canvas.height = img.height;
-				var ctx = canvas.getContext("2d");
-				ctx.drawImage(img, 0, 0);
-				return canvas.toDataURL("image/jpeg");
-			}
-			return null;
-
-		};
-
 		Buddylist.prototype.setDisplay = function(id, scope, data, queueName) {
 
 			var status = data.Status;
@@ -434,8 +385,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			// Set display.name.
 			display.displayName = status.displayName;
 			// Set display.picture.
-			display.buddyPicture = status.buddyPicture;
-			this.updateBuddyPicture(display);
+			buddyPicture.update(display, status.buddyPicture);
 			// Set display subline.
 			this.updateSubline(display, status.message);
 			// Add to render queue when no element exists.
@@ -473,11 +423,9 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}
 			// Update display picture.
 			if (contact) {
-				display.buddyPicture = contact.buddyPicture || status.buddyPicture || null;
-				this.updateBuddyPicture(display);
+				buddyPicture.update(display, contact.buddyPicture || status.buddyPicture || null);
 			} else if (status.buddyPicture) {
-				display.buddyPicture = status.buddyPicture || null;
-				this.updateBuddyPicture(display);
+				buddyPicture.update(display, status.buddyPicture || null);
 			}
 
 		};
@@ -640,7 +588,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 						delete status.message;
 						// Convert buddy image.
 						if (status.buddyPicture) {
-							var img = this.dumpBuddyPictureToString(scope);
+							var img = buddyPicture.toString(scope.element.find(".buddyPicture img").get(0));
 							if (img) {
 								status.buddyPicture = img;
 							} else {
@@ -684,10 +632,16 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.click = function(buddyElement, target) {
 
-			//console.log("click handler", buddyElement, target);
-			var action = $(target).data("action");
+			var be = buddyElement.get(0);
+			// Traverse up to find click action.
+			var action;
+			do {
+				action = $(target).data("action");
+				target = $(target).parent().get(0);
+			} while (!action && target && target !== be);
+
+			// Make call the default action.
 			if (!action) {
-				// Make call the default action.
 				action = "chat";
 			}
 
