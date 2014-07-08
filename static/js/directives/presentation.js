@@ -30,13 +30,19 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$scope.layout.presentation = false;
 			$scope.isPresenter = false;
 			$scope.hideControlsBar = false;
+			$scope.pendingPageRequest = null;
+			$scope.presentationLoaded = false;
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
+				} else if ($scope.pendingPageRequest !== null) {
+					$scope.$emit("showPdfPage", $scope.pendingPageRequest);
+					$scope.pendingPageRequest = null;
 				} else {
 					$scope.$emit("showQueuedPdfPage");
 				}
+				$scope.presentationLoaded = true;
 			});
 
 			var downloadScope = $scope.$new();
@@ -68,6 +74,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				finishDownloadPresentation();
 
 				var token = fileInfo.id;
+				$scope.presentationLoaded = false;
+				$scope.pendingPageRequest = null;
 				downloadScope.info = fileInfo;
 				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
 					//console.log("Presentation token request", currenttoken, data, type);
@@ -117,8 +125,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						break;
 
 					case "Page":
-						console.log("Received presentation page request", data);
-						$scope.$emit("showPdfPage", data.Page);
+						if (!$scope.presentationLoaded) {
+							console.log("Queuing presentation page request, not loaded yet", data);
+							$scope.pendingPageRequest = data.Page;
+						} else {
+							console.log("Received presentation page request", data);
+							$scope.$emit("showPdfPage", data.Page);
+						}
 						break;
 
 					default:
