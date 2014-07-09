@@ -204,10 +204,6 @@ func (h *Hub) CreateSuserid(session *Session) (suserid string) {
 
 func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
-	// NOTE(longsleep): Is it required to make this a secure cookie,
-	// random data in itself should be sufficent if we do not validate
-	// session ids somewhere?
-
 	var session *Session
 	var userid string
 	usersEnabled := h.config.UsersEnabled
@@ -220,7 +216,7 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 		sid := NewRandomString(32)
 		id, _ := h.tickets.Encode("id", sid)
 		session = NewSession(h, id, sid)
-		log.Println("Created new session id", len(id), id, sid)
+		log.Println("Created new session id", id)
 	} else {
 		if userid == "" {
 			userid = st.Userid
@@ -235,6 +231,17 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 		h.authenticateHandler(session, st, userid)
 	}
 
+	return session
+
+}
+
+func (h *Hub) CreateFakeSession(userid string) *Session {
+
+	sid := fmt.Sprintf("fake-%s", NewRandomString(27))
+	id, _ := h.tickets.Encode("id", sid)
+	log.Println("Created new fake session id", id)
+	session := NewSession(h, id, sid)
+	session.SetUseridFake(userid)
 	return session
 
 }
@@ -453,10 +460,13 @@ func (h *Hub) sessionsHandler(c *Connection, srq *DataSessionsRequest, iid strin
 		user, ok := h.userTable[userid]
 		h.mutex.RUnlock()
 		if !ok {
-			return
+			// No user. Create fake session.
+			users = make([]*DataSession, 1, 1)
+			users[0] = h.CreateFakeSession(userid).Data()
+		} else {
+			// Add sessions for forein user.
+			users = user.SubscribeSessions(c.Session)
 		}
-		// Add sessions for forein user.
-		users = user.SubscribeSessions(c.Session)
 	case "session":
 		id, err := c.Session.attestation.Decode(srq.Token)
 		if err != nil {

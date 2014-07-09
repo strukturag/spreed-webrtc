@@ -41,6 +41,7 @@ type Session struct {
 	Prio          int
 	mutex         sync.RWMutex
 	userid        string
+	fake          bool
 	stamp         int64
 	attestation   *SessionAttestation
 	subscriptions map[string]*Session
@@ -230,6 +231,15 @@ func (s *Session) Userid() (userid string) {
 	userid = s.userid
 	s.mutex.RUnlock()
 	return
+
+}
+
+func (s *Session) SetUseridFake(userid string) {
+
+	s.mutex.Lock()
+	s.userid = userid
+	s.fake = true
+	s.mutex.Unlock()
 
 }
 

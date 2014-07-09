@@ -193,7 +193,7 @@ func (s *Server) Unicast(c *Connection, to string, m interface{}) {
 		log.Println("Unicast error while encoding JSON", err)
 		return
 	}
-	log.Println("Unicast", b)
+	//log.Println("Unicast", b)
 
 	var msg = &MessageRequest{From: c.Id, To: to, Message: b}
 	c.h.unicastHandler(msg)
