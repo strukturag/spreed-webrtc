@@ -67,7 +67,12 @@
               </div>
             </div>
           </div>
-          <contacts-manager/>
+          <div class="form-group" ng-if="userid">
+            <label class="col-xs-4 control-label">{{_('Contacts')}}</label>
+            <div class="col-xs-8">
+              <button class="btn btn-success" ng-click="openContactsManager()">{{_('Manage Contacts')}}</button>
+            </div>
+          </div>
         </div>
       </div>
       <div ng-show="mediaSources.supported || isChrome">

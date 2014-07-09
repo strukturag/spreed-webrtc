@@ -53,16 +53,13 @@ define(["angular"], function(angular) {
 	return ["$window", "$modal", "$templateCache", "translation", function($window, $modal, $templateCache, translation) {
 
 		// Overwrite templates from dialogs with fontawesome/i18n variants.
-		$templateCache.put('/dialogs/error.html', '<div class="modal-header dialog-header-error"><button type="button" class="close" ng-click="close()">&times;</button><h4 class="modal-title text-danger"><span class="fa fa-warning"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body text-danger" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
-		$templateCache.put('/dialogs/wait.html', '<div class="modal-header dialog-header-wait"><h4 class="modal-title"><span class="fa fa-clock-o"></span> Please Wait</h4></div><div class="modal-body"><p ng-bind-html="msg"></p><div class="progress progress-striped active"><div class="progress-bar progress-bar-info" ng-style="getProgress()"></div><span class="sr-only">{{progress}}% Complete</span></div></div>');
-		$templateCache.put('/dialogs/notify.html', '<div class="modal-header dialog-header-notify"><button type="button" class="close" ng-click="close()" class="pull-right">&times;</button><h4 class="modal-title text-info"><span class="fa fa-info-circle"></span> {{header}}</h4></div><div class="modal-body text-info" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-primary" ng-click="close()">{{_("Ok")}}</button></div>');
-		$templateCache.put('/dialogs/confirm.html', '<div class="modal-header dialog-header-confirm"><button type="button" class="close" ng-click="cancel()">&times;</button><h4 class="modal-title"><span class="fa fa-check-square-o"></span> {{header}}</h4></div><div class="modal-body" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="ok()">{{_("Ok")}}</button><button type="button" class="btn btn-primary" ng-click="cancel()">{{_("Cancel")}}</button></div>');
+		$templateCache.put('/dialogs/error.html', '<div class="modal-header dialog-header-error"><button type="button" class="close" ng-click="close()">&times;</button><h3 class="modal-title text-danger"><span class="fa fa-warning"></span> <span ng-bind-html="header"></span></h3></div><div class="modal-body text-danger" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
+		$templateCache.put('/dialogs/wait.html', '<div class="modal-header dialog-header-wait"><h3 class="modal-title"><span class="fa fa-clock-o"></span> Please Wait</h3></div><div class="modal-body"><p ng-bind-html="msg"></p><div class="progress progress-striped active"><div class="progress-bar progress-bar-info" ng-style="getProgress()"></div><span class="sr-only">{{progress}}% Complete</span></div></div>');
+		$templateCache.put('/dialogs/notify.html', '<div class="modal-header dialog-header-notify"><button type="button" class="close" ng-click="close()" class="pull-right">&times;</button><h3 class="modal-title text-info"><span class="fa fa-info-circle"></span> {{header}}</h3></div><div class="modal-body text-info" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-primary" ng-click="close()">{{_("Ok")}}</button></div>');
+		$templateCache.put('/dialogs/confirm.html', '<div class="modal-header dialog-header-confirm"><button type="button" class="close" ng-click="cancel()">&times;</button><h3 class="modal-title"><span class="fa fa-check-square-o"></span> {{header}}</h3></div><div class="modal-body" ng-bind-html="msg"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="ok()">{{_("Ok")}}</button><button type="button" class="btn btn-primary" ng-click="cancel()">{{_("Cancel")}}</button></div>');
 
 		// Add new template for prompt.
-		$templateCache.put('/dialogs/prompt.html', '<div class="modal-header"><h4 class="modal-title"><span class="fa fa-star"></span> <span ng-bind-html="header"></span></h4></div><div class="modal-body"><ng-form name="promptDialog" novalidate role="form"><div class="form-group input-group-lg" ng-class="{true: \'has-error\'}[promptDialog.text.$dirty && promptDialog.text.$invalid]"><label class="control-label"></label><input type="text" id="{{id}}" class="form-control" name="text" ng-model="input.text" ng-keyup="hitEnter($event)" required></div></ng-form></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="cancel()">{{cancelButtonLabel}}</button><button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || promptDialog.$pristine">{{okButtonLabel}}</button></div>');
-		$templateCache.put('/base/headerdom.html', '<div class="modal-header"><button type="button" class="close" ng-click="close()">×</button><h4 class="modal-title" ng-bind-html="header"></h4></div>');
-		$templateCache.put('/base/bodydom.html', '<div class="modal-body" ng-bind-html="msg"></div>');
-		$templateCache.put('/base/footerdom.html', '<div class="modal-footer"><button type="button" class="btn btn-default" ng-click="close()">{{_("Close")}}</button></div>');
+		$templateCache.put('/dialogs/prompt.html', '<div class="modal-header"><h3 class="modal-title"><span class="fa fa-star"></span> <span ng-bind-html="header"></span></h3></div><div class="modal-body"><ng-form name="promptDialog" novalidate role="form"><div class="form-group input-group-lg" ng-class="{true: \'has-error\'}[promptDialog.text.$dirty && promptDialog.text.$invalid]"><label class="control-label"></label><input type="text" id="{{id}}" class="form-control" name="text" ng-model="input.text" ng-keyup="hitEnter($event)" required></div></ng-form></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="cancel()">{{cancelButtonLabel}}</button><button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || promptDialog.$pristine">{{okButtonLabel}}</button></div>');
 
 		var defaultMessages = {
 			error: translation._("Error"),
@@ -145,40 +142,6 @@ define(["angular"], function(angular) {
 							element.focus();
 						}
 					}, 100);
-				});
-			},
-			buildCustom: function(data) {
-				var modaldom = '';
-
-				if (data.headerdom) {
-					modaldom += data.headerdom;
-				} else {
-					modaldom += $templateCache.get('/base/headerdom.html');
-				}
-
-				if (data.bodydom) {
-					modaldom += data.bodydom;
-				} else {
-					modaldom += $templateCache.get('/base/bodydom.html');
-				}
-
-				if (data.footerdom === undefined) {
-					modaldom += $templateCache.get('/base/footerdom.html');
-				// footer should not be included
-				} else if (data.footerdom === null) {
-					modaldom += '';
-				} else {
-					modaldom += data.footerdom;
-				}
-
-				$modal.open({
-					template: modaldom,
-					controller: data.controller || modalController,
-					resolve: {
-						data: function() { return data; },
-						defaultModalController: function() { return modalController; }
-					},
-					windowClass: data.windowClass || ''
 				});
 			}
 		};

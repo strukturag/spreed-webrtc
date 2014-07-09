@@ -49,7 +49,8 @@ define([
 	'services/contacts',
 	'services/buddysession',
 	'services/localstorage',
-	'services/animationframe'], function(_,
+	'services/animationframe',
+	'services/dialogs'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -78,7 +79,8 @@ contactData,
 contacts,
 buddySession,
 localStorage,
-animationFrame) {
+animationFrame,
+dialogs) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -109,7 +111,8 @@ animationFrame) {
 		contacts: contacts,
 		buddySession: buddySession,
 		localStorage: localStorage,
-		animationFrame: animationFrame
+		animationFrame: animationFrame,
+		dialogs: dialogs
 	};
 
 	var initialize = function(angModule) {
