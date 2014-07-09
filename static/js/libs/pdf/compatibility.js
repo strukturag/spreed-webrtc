@@ -481,9 +481,9 @@ if (typeof PDFJS === 'undefined') {
   }
 })();
 
-// TODO CanvasPixelArray is deprecated; use Uint8ClampedArray
-// once it's supported.
+// Support: IE<11, Chrome<21, Android<4.4
 (function checkSetPresenceInImageData() {
+  // IE < 11 will use window.CanvasPixelArray which lacks set function.
   if (window.CanvasPixelArray) {
     if (typeof window.CanvasPixelArray.prototype.set !== 'function') {
       window.CanvasPixelArray.prototype.set = function(arr) {
@@ -492,18 +492,68 @@ if (typeof PDFJS === 'undefined') {
         }
       };
     }
+  } else {
+    // Old Chrome and Android use an inaccessible CanvasPixelArray prototype.
+    // Because we cannot feature detect it, we rely on user agent parsing.
+    var polyfill = false;
+    if (navigator.userAgent.indexOf('Chrom') >= 0) {
+      var versionMatch = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+      if (versionMatch && parseInt(versionMatch[2]) < 21) {
+        // Chrome < 21 lacks the set function.
+        polyfill = true;
+      }
+    } else if (navigator.userAgent.indexOf('Android') >= 0) {
+      // Android < 4.4 lacks the set function.
+      // Android >= 4.4 will contain Chrome in the user agent,
+      // thus pass the Chrome check above and not reach this block.
+      var isOldAndroid = /Android\s[0-4][^\d]/g.test(navigator.userAgent);
+      if (isOldAndroid) {
+        polyfill = true;
+      }
+    }
+
+    if (polyfill) {
+      var contextPrototype = window.CanvasRenderingContext2D.prototype;
+      contextPrototype._createImageData = contextPrototype.createImageData;
+      contextPrototype.createImageData = function(w, h) {
+        var imageData = this._createImageData(w, h);
+        imageData.data.set = function(arr) {
+          for (var i = 0, ii = this.length; i < ii; i++) {
+            this[i] = arr[i];
+          }
+        };
+        return imageData;
+      };
+    }
   }
 })();
 
-// Support: IE<10, Android<4.0, iOS<5.0
+// Support: IE<10, Android<4.0, iOS
 (function checkRequestAnimationFrame() {
+  function fakeRequestAnimationFrame(callback) {
+    window.setTimeout(callback, 20);
+  }
+
+  var isIOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+  if (isIOS) {
+    // requestAnimationFrame on iOS is broken, replacing with fake one.
+    window.requestAnimationFrame = fakeRequestAnimationFrame;
+    return;
+  }
   if ('requestAnimationFrame' in window) {
     return;
   }
   window.requestAnimationFrame =
     window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
-    (function fakeRequestAnimationFrame(callback) {
-      window.setTimeout(callback, 20);
-    });
+    fakeRequestAnimationFrame;
+})();
+
+(function checkCanvasSizeLimitation() {
+  var isIOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+  var isAndroid = /Android/g.test(navigator.userAgent);
+  if (isIOS || isAndroid) {
+    // 5MP
+    PDFJS.maxCanvasPixels = 5242880;
+  }
 })();
