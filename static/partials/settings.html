@@ -5,12 +5,12 @@
 
       <legend>{{_('Profile')}}</legend>
       <div class="form-group">
-      <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
-        <div class="col-xs-8">
-          <label>
-            <buddy-picture/>
-          </label>
-        </div>
+        <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+          <div class="col-xs-8">
+            <label>
+              <buddy-picture/>
+            </label>
+          </div>
       </div>
       <div class="form-group">
         <label class="col-xs-4 control-label">{{_('Your name')}}</label>
@@ -51,15 +51,15 @@
               <div ng-switch-default class="col-xs-8">
                 <div ng-if="!userid && withUsersRegistration">
                   <label ng-if="usersettings.loginUserid">
-                    <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Login')}}</button>
+                    <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link" ng-click="usersettings.registerUserid($event.target)">{{_('Register account')}}</button>
+                    <button class="btn btn-small btn-link" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
                   </label>
                 </div>
                 <pre class="small" ng-if="userid">{{userid}}</pre>
                 <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
-                  <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Log out')}}</button>
+                  <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
                 </label>
                 <label ng-if="userid && usersettings.accountUserid">
                   <button class="btn btn-small btn-link" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
