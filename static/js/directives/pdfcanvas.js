@@ -215,12 +215,20 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				pdfCanvas.redrawPage();
 			});
 
-			$scope.prevPage = function() {
+			$scope.$on("prevPage", function() {
 				pdfCanvas.prevPage();
+			});
+
+			$scope.$on("nextPage", function() {
+				pdfCanvas.nextPage();
+			});
+
+			$scope.prevPage = function() {
+				$scope.$emit("prevPage");
 			};
 
 			$scope.nextPage = function() {
-				pdfCanvas.nextPage();
+				$scope.$emit("nextPage");
 			};
 
 		}];

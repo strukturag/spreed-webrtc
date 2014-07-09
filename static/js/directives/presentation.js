@@ -367,6 +367,31 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				mediaStream.webrtc.e.off("statechange", updater);
 			};
 
+			$(document).on("keyup", function(event) {
+				if (!$scope.layout.presentation) {
+					return;
+				}
+				if ($(event.target).is("input,textarea,select")) {
+					return;
+				}
+				$scope.$apply(function() {
+					switch (event.keyCode) {
+					case 37:
+						// left arrow
+						$scope.$emit("prevPage");
+						event.preventDefault();
+						break;
+					case 39:
+						// right arrow
+					case 32:
+						// space
+						$scope.$emit("nextPage");
+						event.preventDefault();
+						break;
+					}
+				});
+			});
+
 			$scope.$watch("layout.presentation", function(newval, oldval) {
 				if (newval && !oldval) {
 					$scope.showPresentation();
