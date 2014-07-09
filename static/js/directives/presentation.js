@@ -177,13 +177,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			var currentToken = null;
 			var tokenHandler = null;
 
-			var connector = function(token, peercall) {
-				console.log("XXX connector", token, peercall, peers);
-				if (peers.hasOwnProperty(peercall.id)) {
-					// Already got a connection.
-					return;
-				}
-				peers[peercall.id] = true;
+			var mediaStreamSendPresentation = function(peercall, token, params) {
 				mediaStream.api.apply("sendPresentation", {
 					send: function(type, data) {
 						if (!peercall.peerconnection.datachannelReady) {
@@ -194,26 +188,28 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 							return peercall.peerconnection.send(data);
 						}
 					}
-				})(peercall.id, token, {
+				})(peercall.id, token, params);
+			};
+
+			var connector = function(token, peercall) {
+				console.log("XXX connector", token, peercall, peers);
+				if (peers.hasOwnProperty(peercall.id)) {
+					// Already got a connection.
+					return;
+				}
+				peers[peercall.id] = true;
+				mediaStreamSendPresentation(peercall, token, {
 					Type: "Show",
 					Show: true
 				});
 				if ($scope.currentFileInfo !== null) {
-					mediaStream.api.apply("sendPresentation", {
-						send: function(type, data) {
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.id, token, {
+					mediaStreamSendPresentation(peercall, token, {
 						Type: "FileInfo",
 						FileInfo: $scope.currentFileInfo
 					});
 				}
 				if ($scope.currentPage !== null) {
-					mediaStream.api.apply("sendPresentation", {
-						send: function(type, data) {
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.id, token, {
+					mediaStreamSendPresentation(peercall, token, {
 						Type: "Page",
 						Page: $scope.currentPage
 					});
@@ -249,11 +245,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 				$scope.currentPage = page;
 				mediaStream.webrtc.callForEachCall(function(peercall) {
-					mediaStream.api.apply("sendPresentation", {
-						send: function(type, data) {
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.id, currentToken, {
+					mediaStreamSendPresentation(peercall, currentToken, {
 						Type: "Page",
 						Page: page
 					});
@@ -264,11 +256,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				console.log("Advertising file", file, fileInfo);
 				// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file
 				mediaStream.webrtc.callForEachCall(function(peercall) {
-					mediaStream.api.apply("sendPresentation", {
-						send: function(type, data) {
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.id, currentToken, {
+					mediaStreamSendPresentation(peercall, currentToken, {
 						Type: "FileInfo",
 						FileInfo: fileInfo
 					});
@@ -339,11 +327,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				console.log("Presentation disabled");
 				if (currentToken) {
 					mediaStream.webrtc.callForEachCall(function(peercall) {
-						mediaStream.api.apply("sendPresentation", {
-							send: function(type, data) {
-								return peercall.peerconnection.send(data);
-							}
-						})(peercall.id, currentToken, {
+						mediaStreamSendPresentation(peercall, currentToken, {
 							Type: "Hide",
 							Hide: true
 						});
