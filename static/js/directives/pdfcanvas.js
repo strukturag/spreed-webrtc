@@ -22,7 +22,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 
 	pdf.workerSrc = require.toUrl('pdf.worker') + ".js";
 
-	return ["$compile", function($compile) {
+	return ["$compile", "translation", function($compile, translation) {
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -90,6 +90,26 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 						this.currentPageNumber = -1;
 						console.log("PDF loaded", doc);
 						scope.$emit("pdfLoaded", source, doc);
+					}, this));
+				}, this), _.bind(function(error) {
+					var loadErrorMessage;
+					switch (error) {
+					case "InvalidPDFException":
+						loadErrorMessage = translation._("Could not load PDF: Invalid or corrupted PDF file.");
+						break;
+					case "MissingPDFException":
+						loadErrorMessage = translation._("'Could not load PDF: Missing PDF file.");
+						break;
+					default:
+						if (error) {
+							loadErrorMessage = translation._("An error occurred while loading the PDF (%s).", error);
+						} else {
+							loadErrorMessage = translation._("An unknown error occurred while loading the PDF.");
+						}
+						break;
+					}
+					this.scope.$apply(_.bind(function(scope) {
+						scope.$emit("pdfLoadError", source, loadErrorMessage);
 					}, this));
 				}, this));
 			};

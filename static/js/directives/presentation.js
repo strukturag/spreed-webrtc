@@ -50,6 +50,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				$scope.downloading = false;
+				$scope.hideControlsBar = !$scope.isPresenter;
 				$scope.currentPageNumber = -1;
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
@@ -60,6 +61,11 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					$scope.$emit("showQueuedPdfPage");
 				}
 				$scope.presentationLoaded = true;
+			});
+
+			$scope.$on("pdfLoadError", function(event, source, errorMessage, moreInfo) {
+				$scope.downloading = false;
+				alertify.dialog.alert(errorMessage);
 			});
 
 			$scope.$watch("currentPageNumber", function(newval, oldval) {
@@ -285,7 +291,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				});
 				uploadPresentation(fileInfo);
 				$scope.isPresenter = true;
-				$scope.hideControlsBar = false;
 				$scope.currentFileInfo = fileInfo;
 				$scope.receivedPage = null;
 				$scope.$emit("openPdf", file);
