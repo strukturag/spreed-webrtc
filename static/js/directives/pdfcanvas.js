@@ -34,6 +34,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				this.doc = null;
 				this.rendering = false;
 				this.currentPage = null;
+				this.currentPageNumber = null;
 				this.pendingPageNumber = null;
 			};
 
@@ -49,7 +50,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				}
 				this.rendering = false;
 				this.pendingPageNumber = null;
-				this.scope.currentPageNumber = -1;
+				this.currentPageNumber = -1;
 				this.scope.maxPageNumber = -1;
 				// clear visible canvas so it's empty when we show the next document
 				var canvas = this.canvases[this.scope.canvasIndex];
@@ -86,7 +87,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 					this.scope.$apply(_.bind(function(scope) {
 						this.doc = doc;
 						scope.maxPageNumber = doc.numPages;
-						scope.currentPageNumber = -1;
+						this.currentPageNumber = -1;
 						console.log("PDF loaded", doc);
 						scope.$emit("pdfLoaded", source, doc);
 					}, this));
@@ -94,7 +95,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 			};
 
 			PDFCanvas.prototype._showPage = function(page) {
-				if (page === this.scope.currentPageNumber) {
+				if (page === this.currentPageNumber) {
 					return;
 				}
 
@@ -104,7 +105,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 					this.currentPage = null;
 				}
 				this.rendering = true;
-				this.scope.currentPageNumber = page;
+				this.currentPageNumber = page;
 				this.scope.$emit("pdfPageLoading", page);
 				this.doc.getPage(page).then(_.bind(function(pageObject) {
 					console.log("Got page", pageObject);
@@ -169,11 +170,11 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 			};
 
 			PDFCanvas.prototype.prevPage = function() {
-				this.showPage(this.scope.currentPageNumber - 1);
+				this.showPage(this.currentPageNumber - 1);
 			};
 
 			PDFCanvas.prototype.nextPage = function() {
-				this.showPage(this.scope.currentPageNumber + 1);
+				this.showPage(this.currentPageNumber + 1);
 			};
 
 			PDFCanvas.prototype.showQueuedPage = function() {
@@ -183,7 +184,6 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				}
 			};
 
-			$scope.currentPageNumber = -1;
 			$scope.maxPageNumber = -1;
 			$scope.canvasIndex = 0;
 

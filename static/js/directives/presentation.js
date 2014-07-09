@@ -50,6 +50,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				$scope.downloading = false;
+				$scope.currentPageNumber = -1;
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
 				} else if ($scope.pendingPageRequest !== null) {
@@ -59,6 +60,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					$scope.$emit("showQueuedPdfPage");
 				}
 				$scope.presentationLoaded = true;
+			});
+
+			$scope.$watch("currentPageNumber", function(newval, oldval) {
+				$scope.$emit("showPdfPage", newval);
 			});
 
 			var downloadScope = $scope.$new();
@@ -253,6 +258,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfPageLoading", function(event, page) {
+				$scope.currentPageNumber = page;
 				if ($scope.receivedPage === page) {
 					// we received this page request, don't publish to others
 					$scope.receivedPage = null;
