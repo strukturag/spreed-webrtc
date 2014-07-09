@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-07 12:43+0200\n"
-"PO-Revision-Date: 2014-07-07 12:44+0100\n"
+"POT-Creation-Date: 2014-07-09 13:19+0200\n"
+"PO-Revision-Date: 2014-07-09 13:20+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -44,9 +44,6 @@ msgstr "Kiosk-Ansicht"
 
 msgid "Start chat"
 msgstr "Chat starten"
-
-msgid "Start video call"
-msgstr "Video-Anruf starten"
 
 msgid "Start audio conference"
 msgstr "Audio-Konferenz starten"
@@ -83,6 +80,15 @@ msgstr "Peer-to-peer"
 
 msgid "Close chat"
 msgstr "Chat schließen"
+
+msgid "Start video call"
+msgstr "Video-Anruf starten"
+
+msgid "Upload files"
+msgstr "Dateien hochladen"
+
+msgid "Clear chat"
+msgstr "Chat löschen"
 
 msgid "is typing..."
 msgstr " schreibt gerade..."
@@ -175,13 +181,13 @@ msgstr ""
 "Mit Zertifikat angemeldet. Melden Sie sich ab indem Sie das Zertifikat "
 "aus dem Browser entfernen."
 
-msgid "Login"
+msgid "Sign in"
 msgstr "Anmelden"
 
-msgid "Register account"
+msgid "Create an account"
 msgstr "Registrieren"
 
-msgid "Log out"
+msgid "Sign out"
 msgstr "Abmelden"
 
 msgid "Manage account"

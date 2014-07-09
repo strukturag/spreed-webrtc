@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-07 12:43+0200\n"
+"POT-Creation-Date: 2014-07-09 13:19+0200\n"
 "PO-Revision-Date: 2014-05-21 09:55+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -45,9 +45,6 @@ msgstr ""
 msgid "Start chat"
 msgstr "開始聊天"
 
-msgid "Start video call"
-msgstr "開始視頻通話"
-
 msgid "Start audio conference"
 msgstr "開始語音會議"
 
@@ -83,6 +80,17 @@ msgstr "P2P"
 
 msgid "Close chat"
 msgstr "關閉聊天"
+
+msgid "Start video call"
+msgstr "開始視頻通話"
+
+#, fuzzy
+msgid "Upload files"
+msgstr "下載失敗"
+
+#, fuzzy
+msgid "Clear chat"
+msgstr "開始聊天"
 
 msgid "is typing..."
 msgstr "正在輸入..."
@@ -174,13 +182,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
-msgid "Login"
+msgid "Sign in"
 msgstr ""
 
-msgid "Register account"
+msgid "Create an account"
 msgstr ""
 
-msgid "Log out"
+msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"

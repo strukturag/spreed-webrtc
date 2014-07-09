@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-07 12:43+0200\n"
+"POT-Creation-Date: 2014-07-09 13:19+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -45,9 +45,6 @@ msgstr ""
 msgid "Start chat"
 msgstr "チャットを始める"
 
-msgid "Start video call"
-msgstr "テレビ電話を始める"
-
 msgid "Start audio conference"
 msgstr "音声会議を始める"
 
@@ -83,6 +80,17 @@ msgstr "ピア・ツー・ピア"
 
 msgid "Close chat"
 msgstr "チャットを終える"
+
+msgid "Start video call"
+msgstr "テレビ電話を始める"
+
+#, fuzzy
+msgid "Upload files"
+msgstr "ダウンロード失敗."
+
+#, fuzzy
+msgid "Clear chat"
+msgstr "チャットを始める"
 
 msgid "is typing..."
 msgstr "は入力中です..."
@@ -174,13 +182,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
-msgid "Login"
+msgid "Sign in"
 msgstr ""
 
-msgid "Register account"
+msgid "Create an account"
 msgstr ""
 
-msgid "Log out"
+msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"

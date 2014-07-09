@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-07 12:43+0200\n"
+"POT-Creation-Date: 2014-07-09 13:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,9 +43,6 @@ msgid "Kiosk view"
 msgstr ""
 
 msgid "Start chat"
-msgstr ""
-
-msgid "Start video call"
 msgstr ""
 
 msgid "Start audio conference"
@@ -82,6 +79,15 @@ msgid "Peer to peer"
 msgstr ""
 
 msgid "Close chat"
+msgstr ""
+
+msgid "Start video call"
+msgstr ""
+
+msgid "Upload files"
+msgstr ""
+
+msgid "Clear chat"
 msgstr ""
 
 msgid "is typing..."
@@ -173,13 +179,13 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 
-msgid "Login"
+msgid "Sign in"
 msgstr ""
 
-msgid "Register account"
+msgid "Create an account"
 msgstr ""
 
-msgid "Log out"
+msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
