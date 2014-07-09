@@ -102,7 +102,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				var loadErrorMessage;
 				switch (error) {
 				case "InvalidPDFException":
-					loadErrorMessage = translation._("Could not load PDF: Invalid or corrupted PDF file.");
+					loadErrorMessage = translation._("Could not load PDF: Please make sure to select a PDF document.");
 					break;
 				case "MissingPDFException":
 					loadErrorMessage = translation._("'Could not load PDF: Missing PDF file.");
