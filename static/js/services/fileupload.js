@@ -130,6 +130,55 @@ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 			this.supported = fileTransfer.supported;
 		};
 
+		FileUpload.prototype.bindClick = function(namespace, element, cb) {
+
+			// Helper to allow later modifications.
+			var binder = {
+				namespace: function() {
+					return namespace;
+				}
+			}
+
+			$(element).on("click", _.bind(function(event) {
+
+				event.preventDefault();
+
+				if (!this.supported) {
+					alertify.dialog.alert(translation._("Your browser does not support file transfer."));
+					return;
+				}
+
+				// Create new input.
+				var input = $('<input type="file" multiple>');
+				input.css({
+					visibility: "hidden",
+					position: "absolute",
+					left: "0px",
+					top: "0px",
+					height: "0px",
+					width: "0px"
+				});
+				input.change(function(ev) {
+					var dataTransfer = ev.target;
+					var files = [];
+					var i;
+					for (i = 0; i < dataTransfer.files.length; i++) {
+						files.push(fileData.createFile(binder.namespace(), dataTransfer.files[i]));
+					}
+					//console.log("click event", dataTransfer, files, files.length);
+					if (cb) {
+						cb(files);
+					}
+				});
+				input.click();
+
+			}, this));
+
+			// Return helper.
+			return binder;
+
+		};
+
 		FileUpload.prototype.bindDrop = function(namespace, element, cb) {
 			//console.log("Binding file upload drop to", namespace, element);
 
