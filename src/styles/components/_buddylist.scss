@@ -122,7 +122,7 @@
 }
 
 .buddy:hover {
-  background: $componentbg;
+  background: $buddylist-action-background;
 }
 
 .buddy {
@@ -207,9 +207,7 @@
     vertical-align:middle;
     display: inline-block;
     width: 130px;
-    height: 30px;
-    background: $buddylist-action-background;
-    padding: 6px 6px;
+    padding: 0px 6px;
   }
 }
 
