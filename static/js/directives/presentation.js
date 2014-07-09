@@ -280,6 +280,14 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				});
 			});
 
+			$scope.$on("pdfPageLoadError", function(event, page, errorMessage) {
+				alertify.dialog.alert(errorMessage);
+			});
+
+			$scope.$on("pdfPageRenderError", function(event, pageNumber, maxPageNumber, errorMessage) {
+				alertify.dialog.alert(errorMessage);
+			});
+
 			$scope.startPresentingFile = function(file, fileInfo) {
 				console.log("Advertising file", file, fileInfo);
 				// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file

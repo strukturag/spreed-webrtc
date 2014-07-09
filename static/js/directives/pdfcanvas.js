@@ -22,6 +22,8 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 
 	pdf.workerSrc = require.toUrl('pdf.worker') + ".js";
 
+	console.log("Using pdf.js " + pdf.version + " (build " + pdf.build + ")");
+
 	return ["$compile", "translation", function($compile, translation) {
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
@@ -32,13 +34,14 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				this.scope = scope;
 				this.canvases = canvases;
 				this.doc = null;
-				this.rendering = false;
 				this.currentPage = null;
 				this.currentPageNumber = null;
 				this.pendingPageNumber = null;
+				this.renderTask = null;
 			};
 
 			PDFCanvas.prototype._close = function() {
+				this._stopRendering();
 				if (this.currentPage) {
 					this.currentPage.destroy();
 					this.currentPage = null;
@@ -48,7 +51,6 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 					this.doc.destroy();
 					this.doc = null;
 				}
-				this.rendering = false;
 				this.pendingPageNumber = null;
 				this.currentPageNumber = -1;
 				this.scope.maxPageNumber = -1;
@@ -86,37 +88,63 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				}
 			};
 
+			PDFCanvas.prototype._pdfLoaded = function(source, doc) {
+				this.scope.$apply(_.bind(function(scope) {
+					this.doc = doc;
+					scope.maxPageNumber = doc.numPages;
+					this.currentPageNumber = -1;
+					console.log("PDF loaded", doc);
+					scope.$emit("pdfLoaded", source, doc);
+				}, this));
+			};
+
+			PDFCanvas.prototype._pdfLoadError = function(source, error, exception) {
+				var loadErrorMessage;
+				switch (error) {
+				case "InvalidPDFException":
+					loadErrorMessage = translation._("Could not load PDF: Invalid or corrupted PDF file.");
+					break;
+				case "MissingPDFException":
+					loadErrorMessage = translation._("'Could not load PDF: Missing PDF file.");
+					break;
+				default:
+					if (error) {
+						loadErrorMessage = translation._("An error occurred while loading the PDF (%s).", error);
+					} else {
+						loadErrorMessage = translation._("An unknown error occurred while loading the PDF.");
+					}
+					break;
+				}
+				this.scope.$apply(_.bind(function(scope) {
+					scope.$emit("pdfLoadError", source, loadErrorMessage);
+				}, this));
+			};
+
 			PDFCanvas.prototype._openFile = function(source) {
 				this.scope.$emit("pdfLoading", source);
 				pdf.getDocument(source).then(_.bind(function(doc) {
-					this.scope.$apply(_.bind(function(scope) {
-						this.doc = doc;
-						scope.maxPageNumber = doc.numPages;
-						this.currentPageNumber = -1;
-						console.log("PDF loaded", doc);
-						scope.$emit("pdfLoaded", source, doc);
-					}, this));
-				}, this), _.bind(function(error) {
-					var loadErrorMessage;
-					switch (error) {
-					case "InvalidPDFException":
-						loadErrorMessage = translation._("Could not load PDF: Invalid or corrupted PDF file.");
-						break;
-					case "MissingPDFException":
-						loadErrorMessage = translation._("'Could not load PDF: Missing PDF file.");
-						break;
-					default:
-						if (error) {
-							loadErrorMessage = translation._("An error occurred while loading the PDF (%s).", error);
-						} else {
-							loadErrorMessage = translation._("An unknown error occurred while loading the PDF.");
-						}
-						break;
-					}
-					this.scope.$apply(_.bind(function(scope) {
-						scope.$emit("pdfLoadError", source, loadErrorMessage);
-					}, this));
+					this._pdfLoaded(source, doc);
+				}, this), _.bind(function(error, exception) {
+					this._pdfLoadError(source, error, exception);
 				}, this));
+			};
+
+			PDFCanvas.prototype._pageLoaded = function(page, pageObject) {
+				console.log("Got page", pageObject);
+				this.scope.$emit("pdfPageLoaded", page, pageObject);
+				this.currentPage = pageObject;
+				this.drawPage(pageObject);
+			};
+
+			PDFCanvas.prototype._pageLoadError = function(page, error, exception) {
+				console.error("Could not load page", page, error, exception);
+				var loadErrorMessage;
+				if (error) {
+					loadErrorMessage = translation._("An error occurred while loading the PDF page (%s).", error);
+				} else {
+					loadErrorMessage = translation._("An unknown error occurred while loading the PDF page.");
+				}
+				this.scope.$emit("pdfPageLoadError", page, loadErrorMessage);
 			};
 
 			PDFCanvas.prototype._showPage = function(page) {
@@ -129,16 +157,51 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 					this.currentPage.destroy();
 					this.currentPage = null;
 				}
-				this.rendering = true;
 				this.currentPageNumber = page;
 				this.scope.$emit("pdfPageLoading", page);
 				this.doc.getPage(page).then(_.bind(function(pageObject) {
-					console.log("Got page", pageObject);
-					this.scope.$emit("pdfPageLoaded", page, pageObject);
-					this.currentPage = pageObject;
-					this.drawPage(pageObject);
+					this._pageLoaded(page, pageObject);
+				}, this), _.bind(function(error, exception) {
+					this._pageLoadError(page, error, exception);
 				}, this));
 			};
+
+			PDFCanvas.prototype._pageRendered = function(pageObject) {
+				this.renderTask = null;
+				this.scope.$apply(_.bind(function(scope) {
+					console.log("Rendered page", pageObject.pageNumber);
+					this.scope.$emit("pdfPageRendered", pageObject.pageNumber, scope.maxPageNumber);
+					// ...and flip the buffers...
+					scope.canvasIndex = 1 - scope.canvasIndex;
+					this.showQueuedPage();
+				}, this));
+			};
+
+			PDFCanvas.prototype._pageRenderError = function(pageObject, error, exception) {
+				if (error === "cancelled") {
+					return;
+				}
+				console.error("Could not render page", pageObject, error, exception);
+				this.renderTask = null;
+				var loadErrorMessage;
+				if (error) {
+					loadErrorMessage = translation._("An error occurred while rendering the PDF page (%s).", error);
+				} else {
+					loadErrorMessage = translation._("An unknown error occurred while rendering the PDF page.");
+				}
+				this.scope.$apply(_.bind(function(scope) {
+					this.scope.$emit("pdfPageRenderError", pageObject.pageNumber, scope.maxPageNumber, loadErrorMessage);
+				}, this));
+			};
+
+			PDFCanvas.prototype._stopRendering = function() {
+				if (this.renderTask) {
+					if (this.renderTask.internalRenderTask && this.renderTask.internalRenderTask.cancel) {
+						this.renderTask.internalRenderTask.cancel();
+					}
+					this.renderTask = null;
+				}
+			}
 
 			PDFCanvas.prototype.drawPage = function(pageObject) {
 				var pdfView = pageObject.view;
@@ -164,17 +227,15 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 
 				console.log("Rendering page", pageObject);
 				this.scope.$emit("pdfPageRendering", pageObject.pageNumber);
+
 				// TODO(fancycode): also render images in different resolutions for subscribed peers and send to them when ready
+				this._stopRendering();
 				var renderTask = pageObject.render(renderContext);
+				this.renderTask = renderTask;
 				renderTask.promise.then(_.bind(function() {
-					this.scope.$apply(_.bind(function(scope) {
-						console.log("Rendered page", pageObject.pageNumber);
-						this.scope.$emit("pdfPageRendered", pageObject.pageNumber, scope.maxPageNumber);
-						this.rendering = false;
-						// ...and flip the buffers...
-						scope.canvasIndex = 1 - scope.canvasIndex;
-						this.showQueuedPage();
-					}, this));
+					this._pageRendered(pageObject);
+				}, this), _.bind(function(error, exception) {
+					this._pageRenderError(pageObject, error, exception);
 				}, this));
 			};
 
@@ -186,7 +247,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 
 			PDFCanvas.prototype.showPage = function(page) {
 				if (page >= 1 && page <= this.scope.maxPageNumber) {
-					if (!this.doc || this.rendering) {
+					if (!this.doc) {
 						this.pendingPageNumber = page;
 				   } else {
 						this._showPage(page);
