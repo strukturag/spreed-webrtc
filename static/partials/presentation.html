@@ -1,10 +1,17 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
-		<pdfcanvas ng-hide="maxPageNumber === -1" />
-		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1">
+		<div class="welcome container-fluid" ng-show="downloading">
+			<h1>{{_('Downloading presentation...')}}</h1>
+			<div class="progress">
+				<span class="download-info">{{downloadSize|humanizeFilesize}} <span ng-show="downloading">/ {{downloadProgress}}%</span></span>
+				<div class="progress-bar progress-bar-success"></div>
+			</div>
+		</div>
+		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || downloading">
 			<h1>{{_('Please drop a PDF document here to present it to the other participants.')}}</h1>
 			<div class="presentation-target fa fa-file-pdf-o"></div>
 		</div>
+		<pdfcanvas ng-hide="maxPageNumber === -1 || downloading" />
 	</div>
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>

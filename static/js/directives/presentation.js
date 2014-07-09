@@ -26,6 +26,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			var presentationsCount = 0;
 			var pane = $element.find(".presentationpane");
+			var downloadProgressBar = $element.find(".progress-bar")[0];
 
 			$scope.layout.presentation = false;
 			$scope.isPresenter = false;
@@ -35,6 +36,9 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$scope.currentFileInfo = null;
 			$scope.currentPage = null;
 			$scope.receivedPage = null;
+			$scope.downloading = false;
+			$scope.downloadSize = 0;
+			$scope.downloadProgress = 0;
 
 			$scope.resetProperties = function() {
 				$scope.isPresenter = false;
@@ -45,6 +49,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
+				$scope.downloading = false;
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
 				} else if ($scope.pendingPageRequest !== null) {
@@ -57,8 +62,15 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			});
 
 			var downloadScope = $scope.$new();
+			downloadScope.$on("downloadedChunk", function(event, idx, byteLength, downloaded, total) {
+				var percentage = Math.ceil((downloaded / total) * 100);
+				$scope.downloadProgress = percentage;
+				downloadProgressBar.style.width = percentage + '%';
+			});
 			downloadScope.$on("downloadComplete", function(event) {
 				event.stopPropagation();
+				$scope.downloadProgress = 100;
+				downloadProgressBar.style.width = '100%';
 				finishDownloadPresentation();
 			});
 
@@ -87,6 +99,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				var token = fileInfo.id;
 				$scope.presentationLoaded = false;
 				$scope.pendingPageRequest = null;
+				downloadProgressBar.style.width = '0%';
+				$scope.downloadProgress = 0;
+				$scope.downloadSize = fileInfo.size;
+				$scope.downloading = true;
 				downloadScope.info = fileInfo;
 				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
 					//console.log("Presentation token request", currenttoken, data, type);

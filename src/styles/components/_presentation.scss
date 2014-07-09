@@ -30,8 +30,23 @@
 .presentation-target {
   width: 100%;
   font-size: 10em;
-  text-align: center;
   margin-top: 30px;
+}
+
+.presentationpane .welcome div {
+  text-align: center;
+}
+
+.presentationpane .welcome .progress span {
+  text-shadow: none;
+}
+
+.presentationpane .welcome .progress .download-info {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  color: $text-color;
+  text-shadow: 1px 1px 1px white;
 }
 
 .mainPresentation #presentation {
