@@ -304,16 +304,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				$scope.$emit("openPdf", file);
 			};
 
-			// create drag-drop target
-			var namespace = "file_" + $scope.id;
-			var binder = fileUpload.bindDrop(namespace, $element, _.bind(function(files) {
-				console.log("Files dragged", files);
+			var filesSelected = function(files) {
 				if (files.length > 1) {
 					alertify.dialog.alert(translation._("Only single PDF documents can be shared at this time."));
 					return;
 				}
 
-				_.each(files, _.bind(function(f) {
+				_.each(files, function(f) {
 					var info = $.extend({
 						id: f.id
 					}, f.info);
@@ -323,9 +320,25 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						return;
 					}
 					$scope.startPresentingFile(f, info);
-				}, this));
-			}, this));
+				});
+			};
+
+			// create drag-drop target
+			var namespace = "file_" + $scope.id;
+			var binder = fileUpload.bindDrop(namespace, $element, function(files) {
+				console.log("Files dragged", files);
+				filesSelected(files);
+			});
 			binder.namespace = function() {
+				// Inject own id into namespace.
+				return namespace + "_" + $scope.myid;
+			};
+
+			var clickBinder = fileUpload.bindClick(namespace, $element.find('.welcome button')[0], function(files) {
+				console.log("Files selected", files);
+				filesSelected(files);
+			});
+			clickBinder.namespace = function() {
 				// Inject own id into namespace.
 				return namespace + "_" + $scope.myid;
 			};
