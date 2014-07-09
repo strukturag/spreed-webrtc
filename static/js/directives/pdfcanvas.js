@@ -18,13 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) {
-
-	pdf.workerSrc = require.toUrl('pdf.worker') + ".js";
-
-	console.log("Using pdf.js " + pdf.version + " (build " + pdf.build + ")");
+define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 	return ["$compile", "translation", function($compile, translation) {
+
+		var pdfjs = null;
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -120,13 +118,30 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				}, this));
 			};
 
-			PDFCanvas.prototype._openFile = function(source) {
-				this.scope.$emit("pdfLoading", source);
-				pdf.getDocument(source).then(_.bind(function(doc) {
+			PDFCanvas.prototype._doOpenFile = function(source) {
+				pdfjs.getDocument(source).then(_.bind(function(doc) {
 					this._pdfLoaded(source, doc);
 				}, this), _.bind(function(error, exception) {
 					this._pdfLoadError(source, error, exception);
 				}, this));
+			};
+
+			PDFCanvas.prototype._openFile = function(source) {
+				this.scope.$emit("pdfLoading", source);
+				if (pdfjs === null) {
+					// load pdf.js lazily
+					require(['pdf'], _.bind(function(pdf) {
+						pdf.workerSrc = require.toUrl('pdf.worker') + ".js";
+
+						console.log("Using pdf.js " + pdf.version + " (build " + pdf.build + ")");
+
+						pdfjs = pdf;
+
+						this._doOpenFile(source);
+					}, this));
+				} else {
+					this._doOpenFile(source);
+				}
 			};
 
 			PDFCanvas.prototype._pageLoaded = function(page, pageObject) {
