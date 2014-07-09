@@ -38,7 +38,7 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				this.pendingPageNumber = null;
 			};
 
-			PDFCanvas.prototype.close = function() {
+			PDFCanvas.prototype._close = function() {
 				if (this.currentPage) {
 					this.currentPage.destroy();
 					this.currentPage = null;
@@ -55,11 +55,16 @@ define(['require', 'underscore', 'jquery', 'pdf'], function(require, _, $, pdf) 
 				// clear visible canvas so it's empty when we show the next document
 				var canvas = this.canvases[this.scope.canvasIndex];
 				canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+			};
+
+			PDFCanvas.prototype.close = function() {
+				this._close();
 				this.scope.$emit("pdfClosed");
 			};
 
 			PDFCanvas.prototype.open = function(file) {
 				console.log("Loading PDF from", file);
+				this._close();
 				if (typeof file === "string") {
 					// got a url
 					this._openFile(file);
