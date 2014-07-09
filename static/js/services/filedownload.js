@@ -40,6 +40,8 @@ define(["jquery", "underscore"], function($, _) {
 			this.end = scope.info.chunks - 1;
 			this.fragments = 100;
 			this.concurrent = 5;
+			this.downloadedBytes = 0;
+			this.totalBytes = scope.info.size;
 
 			this.jobs = [];
 			this.xfer_all = [];
@@ -212,7 +214,8 @@ define(["jquery", "underscore"], function($, _) {
 				var byte_position = file.scope.chunk_size * idx;
 				file.setChunk(idx, byte_position, data);
 				safeApply(this.scope, _.bind(function($scope) {
-					$scope.$emit("downloadedChunk", idx, data.byteLength);
+					this.downloadedBytes += data.byteLength;
+					$scope.$emit("downloadedChunk", idx, data.byteLength, this.downloadedBytes, this.totalBytes);
 					job.next();
 				}, this));
 			}, this));
