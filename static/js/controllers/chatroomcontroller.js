@@ -26,6 +26,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 		$scope.outputElement = $(".output", $element);
 		$scope.inputElement = $(".input", $element);
 		$scope.bodyElement = $(".chatbody", $element);
+		$scope.menuElement = $(".chatmenu", $element);
 		var lastSender = null;
 		var lastDate = null;
 		var lastMessageContainer = null;
@@ -350,9 +351,15 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 		};
 
 		$scope.$on("seen", function() {
-
 			knowMessage.seen();
+		});
 
+		$scope.$on("clear", function() {
+			knowMessage.seen();
+			lastSender = null;
+			lastDate = null;
+			lastMessageContainer = null;
+			$scope.outputElement.empty();
 		});
 
 		$scope.$on("p2p", function(event, state) {
@@ -367,9 +374,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 		});
 
 		$scope.$on("focus", function() {
-
 			$scope.focus();
-
 		});
 
 		$scope.$on("received", function(event, from, data) {

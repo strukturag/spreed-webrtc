@@ -293,6 +293,16 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 								subscope.$broadcast("p2p", state);
 							}
 						};
+						subscope.doCall = function() {
+							mediaStream.webrtc.doCall(subscope.id);
+						};
+						subscope.doUpload = function() {
+							// TODO(longsleep): implement me
+							console.log("doUpload not yet implemented.");
+						};
+						subscope.doClear = function() {
+							subscope.$broadcast("clear");
+						};
 						//console.log("Creating new chat room", controller, subscope, index);
 						subscope.$on("submit", function(event, input) {
 							subscope.seen();

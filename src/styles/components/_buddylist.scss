@@ -167,10 +167,10 @@
   }
   .buddyPictureSmall {
     margin:0px;
-    margin-left:-4px;
+    margin-left:0px;
     height:30px;
     width:30px;
-    margin-right:4px;
+    margin-right:0px;
     .#{$fa-css-prefix} {
       line-height: 30px;
       font-size: 2em;
@@ -206,7 +206,10 @@
     text-align:left;
     vertical-align:middle;
     display: inline-block;
-    width: 132px;
+    width: 130px;
+    height: 30px;
+    background: $buddylist-action-background;
+    padding: 6px 6px;
   }
 }
 
@@ -223,12 +226,14 @@
   transition-duration: .3s;
   white-space: nowrap;
   z-index: 5;
-  > .btn {
+  .btn {
     width: 42px;
     height: 40px;
     padding: 0px;
     text-align: center;
-    font-size: 2em;
+    vertical-align: middle;
+    line-height: 40px;
+    font-size: 1.6em;
   }
 }
 
@@ -241,15 +246,23 @@
   transition-delay: .1s;
   ul {
     padding-top: 10px;
-    margin: 0 10px 0 14px;
+    margin: 0 14px;
     padding-left: 0px;
     border-left: 1px dotted $bordercolor;
+    border-right: 1px dotted $bordercolor;
   }
   ul li {
-    margin-bottom: 4px;
-    margin-top: 2px;
+    margin-bottom: 2px;
     margin-left: 0px;
     list-style-type: none;
+    .btn-group {
+      visibility: hidden;
+    }
+    &:hover {
+      .btn-group {
+        visibility: visible;
+      }
+    }
   }
   .currentsession .buddy3 {
     font-weight: bold;

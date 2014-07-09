@@ -156,13 +156,25 @@
   }
 }
 
+.chatmenu {
+  position: absolute;
+  top: 36px;
+  left: 0px;
+  right: 0px;
+  height: 36px;
+  padding: 2px 4px;
+  @include breakpt($breakpoint-chat-small, max-height) {
+    display: none;
+  }
+}
+
 .chatbody {
   border-right: 1px solid $bordercolor;
   bottom: -1px;
   left: 0;
   position: absolute;
   right: 0;
-  top: 36px;
+  top: 74px;
   @include breakpt($breakpoint-chat-small, max-height) {
     border-top: 1px solid $bordercolor;
     top: 0px;
