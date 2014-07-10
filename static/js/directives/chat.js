@@ -20,7 +20,7 @@
  */
 define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function(_, templateChat, templateChatroom) {
 
-	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout) {
+	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
 
 		var displayName = safeDisplayName;
 		var group_chat_id = "";
@@ -295,6 +295,23 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 						};
 						subscope.doCall = function() {
 							mediaStream.webrtc.doCall(subscope.id);
+						};
+						subscope.shareGeolocation = function() {
+							geolocation.getCurrentPosition(function(pos) {
+								var info = {
+									accuracy: pos.coords.accuracy || null,
+									latitude: pos.coords.latitude || null,
+									longitude: pos.coords.longitude || null,
+									altitude: pos.coords.altitude || null,
+									altitudeAccuracy: pos.coords.altitudeAccuracy || null
+								}
+								console.log("Sending geo location", info, pos);
+								subscope.sendChat(subscope.id, "Geolocation", {
+										Geolocation: info
+								});
+							}, function(err) {
+								console.error("Failed to receive geolocation", err);
+							});
 						};
 						subscope.doClear = function() {
 							subscope.$broadcast("clear");

@@ -84,7 +84,7 @@ Sending vs receiving document data encapsulation
     Iid  : Request identifier to match this response to the calling
            request. Only available when sent by the client and the requested
            type implementation does support it (optional).
-    A    : Session attestation token. Only available for incoming data 
+    A    : Session attestation token. Only available for incoming data
            created by other sessions (optional).
 
 
@@ -512,6 +512,27 @@ Chat messages and status information
     a token peer connection for file transfer. It is up to the UI if the
     message is shown or not. For file transfer information the message is
     always "File".
+
+  Chat with geo location sharing
+
+    {
+        "Message": "Geolocation",
+        "Time": "2014-07-10T10:30:03+02:00",
+        "Status": {
+            "Geolocation": {
+                "accuracy": 25000
+                "latitude": 48.743342
+                "longitude": 9.320112,
+                "altitude": 278.691223
+                "altitudeAccuracy" 13.969156
+            }
+        }
+    }
+
+    The latitude and longitude attributes are geographic coordinates
+    specified in decimal degrees. Altitude and altitudeAccuracy are
+    specified in meters. All values are of type float64.
+
 
   Chat with contact request/confirm information
 

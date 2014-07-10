@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-09 13:19+0200\n"
+"POT-Creation-Date: 2014-07-10 12:10+0200\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -88,6 +88,9 @@ msgstr "开始视频通话"
 msgid "Upload files"
 msgstr "下载失败"
 
+msgid "Share my location"
+msgstr ""
+
 #, fuzzy
 msgid "Clear chat"
 msgstr "开始聊天"
@@ -103,6 +106,12 @@ msgstr "在此输入开始聊天..."
 
 msgid "Send"
 msgstr "发送"
+
+msgid "You have no contacts."
+msgstr ""
+
+msgid "Close"
+msgstr "关闭"
 
 msgid "File sharing"
 msgstr "分享文件"
@@ -194,6 +203,12 @@ msgstr ""
 msgid "Manage account"
 msgstr ""
 
+msgid "Contacts"
+msgstr ""
+
+msgid "Manage contacts"
+msgstr ""
+
 msgid "Media"
 msgstr ""
 
@@ -267,9 +282,6 @@ msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
 msgstr ""
-
-msgid "Close"
-msgstr "关闭"
 
 msgid "Share by Email"
 msgstr "电子邮件共享"
@@ -385,6 +397,12 @@ msgstr "分享文件："
 msgid "Incoming file:"
 msgstr "发来文件："
 
+msgid "You shared your location:"
+msgstr ""
+
+msgid "Location received:"
+msgstr ""
+
 msgid "You accepted the contact request."
 msgstr ""
 
@@ -473,6 +491,9 @@ msgstr ""
 
 msgid "Use browser language"
 msgstr "使用浏览器语言"
+
+msgid "Contacts Manager"
+msgstr ""
 
 msgid "Meet with me here:"
 msgstr "我们这里见："

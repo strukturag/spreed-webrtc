@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-09 13:19+0200\n"
-"PO-Revision-Date: 2014-07-09 13:20+0100\n"
+"POT-Creation-Date: 2014-07-10 12:10+0200\n"
+"PO-Revision-Date: 2014-07-10 12:11+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -87,6 +87,9 @@ msgstr "Video-Anruf starten"
 msgid "Upload files"
 msgstr "Dateien hochladen"
 
+msgid "Share my location"
+msgstr "Meinen Standort teilen"
+
 msgid "Clear chat"
 msgstr "Chat löschen"
 
@@ -101,6 +104,12 @@ msgstr "Nachricht hier eingeben..."
 
 msgid "Send"
 msgstr "Senden"
+
+msgid "You have no contacts."
+msgstr "Sie haben keine Kontakte."
+
+msgid "Close"
+msgstr "Schließen"
 
 msgid "File sharing"
 msgstr "Datei-Austausch"
@@ -193,6 +202,12 @@ msgstr "Abmelden"
 msgid "Manage account"
 msgstr "Konto verwalten"
 
+msgid "Contacts"
+msgstr "Kontakte"
+
+msgid "Manage contacts"
+msgstr "Kontakte verwalten"
+
 msgid "Media"
 msgstr "Kamera / Mikrofon"
 
@@ -268,9 +283,6 @@ msgid ""
 msgstr ""
 "Ihre ID bleibt dennoch gespeichert. Klicken Sie Ausloggen weiter oben um "
 "die ID zu löschen."
-
-msgid "Close"
-msgstr "Schließen"
 
 msgid "Share by Email"
 msgstr "Per E-Mail teilen"
@@ -387,6 +399,12 @@ msgstr "Sie geben eine Datei frei:"
 msgid "Incoming file:"
 msgstr "Eingehende Datei:"
 
+msgid "You shared your location:"
+msgstr "Sie haben Ihren Standort geteilt:"
+
+msgid "Location received:"
+msgstr "Standort erhalten:"
+
 msgid "You accepted the contact request."
 msgstr "Sie haben die Kontaktanfrage angenommen."
 
@@ -482,6 +500,9 @@ msgstr ""
 
 msgid "Use browser language"
 msgstr "Browsereinstellung"
+
+msgid "Contacts Manager"
+msgstr "Kontakte"
 
 msgid "Meet with me here:"
 msgstr "Meeting:"

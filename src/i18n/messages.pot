@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-09 13:19+0200\n"
+"POT-Creation-Date: 2014-07-10 12:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,6 +87,9 @@ msgstr ""
 msgid "Upload files"
 msgstr ""
 
+msgid "Share my location"
+msgstr ""
+
 msgid "Clear chat"
 msgstr ""
 
@@ -100,6 +103,12 @@ msgid "Type here to chat..."
 msgstr ""
 
 msgid "Send"
+msgstr ""
+
+msgid "You have no contacts."
+msgstr ""
+
+msgid "Close"
 msgstr ""
 
 msgid "File sharing"
@@ -191,6 +200,12 @@ msgstr ""
 msgid "Manage account"
 msgstr ""
 
+msgid "Contacts"
+msgstr ""
+
+msgid "Manage contacts"
+msgstr ""
+
 msgid "Media"
 msgstr ""
 
@@ -263,9 +278,6 @@ msgstr ""
 msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
-msgstr ""
-
-msgid "Close"
 msgstr ""
 
 msgid "Share by Email"
@@ -381,6 +393,12 @@ msgstr ""
 msgid "Incoming file:"
 msgstr ""
 
+msgid "You shared your location:"
+msgstr ""
+
+msgid "Location received:"
+msgstr ""
+
 msgid "You accepted the contact request."
 msgstr ""
 
@@ -465,6 +483,9 @@ msgid ""
 msgstr ""
 
 msgid "Use browser language"
+msgstr ""
+
+msgid "Contacts Manager"
 msgstr ""
 
 msgid "Meet with me here:"

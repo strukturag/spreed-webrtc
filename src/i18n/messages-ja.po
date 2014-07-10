@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-09 13:19+0200\n"
+"POT-Creation-Date: 2014-07-10 12:10+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -88,6 +88,9 @@ msgstr "テレビ電話を始める"
 msgid "Upload files"
 msgstr "ダウンロード失敗."
 
+msgid "Share my location"
+msgstr ""
+
 #, fuzzy
 msgid "Clear chat"
 msgstr "チャットを始める"
@@ -103,6 +106,12 @@ msgstr "ここに入力してチャット開始します..."
 
 msgid "Send"
 msgstr "送信"
+
+msgid "You have no contacts."
+msgstr ""
+
+msgid "Close"
+msgstr "閉じる"
 
 msgid "File sharing"
 msgstr "ファイル共有"
@@ -194,6 +203,12 @@ msgstr ""
 msgid "Manage account"
 msgstr ""
 
+msgid "Contacts"
+msgstr ""
+
+msgid "Manage contacts"
+msgstr ""
+
 msgid "Media"
 msgstr ""
 
@@ -267,9 +282,6 @@ msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
 msgstr ""
-
-msgid "Close"
-msgstr "閉じる"
 
 msgid "Share by Email"
 msgstr "Eメールでシェア"
@@ -385,6 +397,12 @@ msgstr "あなたの共有ファイル:"
 msgid "Incoming file:"
 msgstr "受信中ファイル:"
 
+msgid "You shared your location:"
+msgstr ""
+
+msgid "Location received:"
+msgstr ""
+
 msgid "You accepted the contact request."
 msgstr ""
 
@@ -474,6 +492,9 @@ msgstr ""
 
 msgid "Use browser language"
 msgstr "ブラウザの言語を使用"
+
+msgid "Contacts Manager"
+msgstr ""
 
 msgid "Meet with me here:"
 msgstr "ここで私と会う:"

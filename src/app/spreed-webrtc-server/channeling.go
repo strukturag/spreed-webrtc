@@ -113,6 +113,7 @@ type DataChatStatus struct {
 	Mid            string              `json:",omitempty"`
 	SeenMids       []string            `json:",omitempty"`
 	FileInfo       *DataFileInfo       `json:",omitempty"`
+	Geolocation    *DataGeolocation    `json:",omitempty"`
 	ContactRequest *DataContactRequest `json:",omitempty"`
 	AutoCall       *DataAutoCall       `json:",omitempty"`
 }
@@ -123,6 +124,14 @@ type DataFileInfo struct {
 	Name   string `json:"name"`
 	Size   uint64 `json:"size"`
 	Type   string `json:"type"`
+}
+
+type DataGeolocation struct {
+	Accuracy         float64 `json:"accuracy,omitempty"`
+	Latitude         float64 `json:"latitude,omitempty"`
+	Longitude        float64 `json:"longitude,omitempty"`
+	Altitude         float64 `json:"altitude,omitempty"`
+	AltitudeAccuracy float64 `json:"altitudeAccuracy,omitempty"`
 }
 
 type DataContactRequest struct {
