@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-10 12:10+0200\n"
-"PO-Revision-Date: 2014-07-10 12:11+0100\n"
+"POT-Creation-Date: 2014-07-10 14:48+0200\n"
+"PO-Revision-Date: 2014-07-10 14:52+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+msgid "Presentation"
+msgstr "Präsentation"
 
 msgid "Share your screen"
 msgstr "Bildschirm freigeben"
@@ -131,6 +134,30 @@ msgstr "Nochmal versuchen"
 
 msgid "Download failed."
 msgstr "Fehler beim Download."
+
+msgid "Loading presentation ..."
+msgstr "Präsentation wird geladen..."
+
+msgid "Please upload a PDF document"
+msgstr "PDF-Dokument hochladen"
+
+msgid "Documents are shared with everyone in this call."
+msgstr "Das Dokument wird mit allen Gesprächsteilnehmern geteilt."
+
+msgid "Upload"
+msgstr "Hochladen"
+
+msgid "You can drag files here too."
+msgstr "Sie können Dateien auch hier hin ziehen."
+
+msgid "Presentation controls"
+msgstr "Präsentations-Steuerung"
+
+msgid "Prev"
+msgstr "Zurück"
+
+msgid "Next"
+msgstr "Vor"
 
 msgid "Change room"
 msgstr "Raum wechseln"
@@ -484,6 +511,41 @@ msgstr "Sie sind nun im Raum %s ..."
 
 msgid "Your browser does not support file transfer."
 msgstr "Mit Ihrem Browser können keine Dateien übertragen werden."
+
+msgid "Could not load PDF: Please make sure to select a PDF document."
+msgstr ""
+"PDF konnte nicht geladen werden - Bitte stellen Sie sicher das Sie ein "
+"PDF ausgewählt haben."
+
+msgid "Could not load PDF: Missing PDF file."
+msgstr "Das PDF konnte nicht geladen werden: Datei fehlt."
+
+#, python-format
+msgid "An error occurred while loading the PDF (%s)."
+msgstr "Beim Laden des PDF's ist ein Fehler aufgetreten (%s)."
+
+msgid "An unknown error occurred while loading the PDF."
+msgstr "Beim Laden des PDF ist ein unbekannter Fehler aufgetreten."
+
+#, python-format
+msgid "An error occurred while loading the PDF page (%s)."
+msgstr "Beim Laden der PDF-Seite ist ein Fehler aufgetreten (%s)."
+
+msgid "An unknown error occurred while loading the PDF page."
+msgstr "Beim Laden der PDF-Seite ist ein unbekannter Fehler aufgetreten (%s)."
+
+#, python-format
+msgid "An error occurred while rendering the PDF page (%s)."
+msgstr "Beim Anzeigen der PDF-Seite ist ein Fehler aufgetreten (%s)."
+
+msgid "An unknown error occurred while rendering the PDF page."
+msgstr "Beim Anzeigen der PDF-Seite ist ein ubekannter Fehler aufgetreten."
+
+msgid "Only single PDF documents can be shared at this time."
+msgstr "Bitte laden Sie nur eine Datei gleichzeitig."
+
+msgid "Only PDF documents can be shared at this time."
+msgstr "Es können nur PDF-Dokumente als Präsentation verwendet werden."
 
 msgid ""
 "Permission to start screen sharing was denied. Make sure to have enabled "

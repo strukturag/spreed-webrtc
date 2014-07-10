@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-10 12:10+0200\n"
+"POT-Creation-Date: 2014-07-10 14:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+msgid "Presentation"
+msgstr ""
 
 msgid "Share your screen"
 msgstr ""
@@ -130,6 +133,30 @@ msgid "Retry"
 msgstr ""
 
 msgid "Download failed."
+msgstr ""
+
+msgid "Loading presentation ..."
+msgstr ""
+
+msgid "Please upload a PDF document"
+msgstr ""
+
+msgid "Documents are shared with everyone in this call."
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "You can drag files here too."
+msgstr ""
+
+msgid "Presentation controls"
+msgstr ""
+
+msgid "Prev"
+msgstr ""
+
+msgid "Next"
 msgstr ""
 
 msgid "Change room"
@@ -473,6 +500,39 @@ msgid "You are now in room %s ..."
 msgstr ""
 
 msgid "Your browser does not support file transfer."
+msgstr ""
+
+msgid "Could not load PDF: Please make sure to select a PDF document."
+msgstr ""
+
+msgid "Could not load PDF: Missing PDF file."
+msgstr ""
+
+#, python-format
+msgid "An error occurred while loading the PDF (%s)."
+msgstr ""
+
+msgid "An unknown error occurred while loading the PDF."
+msgstr ""
+
+#, python-format
+msgid "An error occurred while loading the PDF page (%s)."
+msgstr ""
+
+msgid "An unknown error occurred while loading the PDF page."
+msgstr ""
+
+#, python-format
+msgid "An error occurred while rendering the PDF page (%s)."
+msgstr ""
+
+msgid "An unknown error occurred while rendering the PDF page."
+msgstr ""
+
+msgid "Only single PDF documents can be shared at this time."
+msgstr ""
+
+msgid "Only PDF documents can be shared at this time."
 msgstr ""
 
 msgid ""

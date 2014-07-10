@@ -1,16 +1,20 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
 		<div class="welcome container-fluid" ng-show="downloading">
-			<h1>{{_('Downloading presentation...')}}</h1>
+			<h1>{{_('Loading presentation ...')}}</h1>
 			<div class="progress">
 				<span class="download-info">{{downloadSize|humanizeFilesize}} <span ng-show="downloading">/ {{downloadProgress}}%</span></span>
 				<div class="progress-bar progress-bar-success"></div>
 			</div>
 		</div>
 		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || downloading">
-			<h1>{{_('Please drop a PDF document here to present it to the other participants.')}}</h1>
-			<div class="presentation-target fa fa-file-pdf-o"></div>
-			<button class="btn btn-lg btn-primary center-block">Upload</button>
+			<h1>{{_('Please upload a PDF document')}}</h1>
+			<div class="center-block">
+				<p>{{_('Documents are shared with everyone in this call.')}}</p>
+				<div class="presentation-target fa fa-file-pdf-o"></div>
+				<p><button class="btn btn-lg btn-primary">{{_('Upload')}}</button></p>
+				<p>{{_('You can drag files here too.')}}</p>
+			</div>
 		</div>
 		<pdfcanvas ng-hide="maxPageNumber === -1 || downloading" />
 	</div>

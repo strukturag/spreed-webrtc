@@ -103,7 +103,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 					loadErrorMessage = translation._("Could not load PDF: Please make sure to select a PDF document.");
 					break;
 				case "MissingPDFException":
-					loadErrorMessage = translation._("'Could not load PDF: Missing PDF file.");
+					loadErrorMessage = translation._("Could not load PDF: Missing PDF file.");
 					break;
 				default:
 					if (error) {
