@@ -37,7 +37,9 @@ define([
 	'directives/socialshare',
 	'directives/page',
 	'directives/contactrequest',
-	'directives/defaultdialog'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog) {
+	'directives/defaultdialog',
+	'directives/pdfcanvas',
+	'directives/presentation'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, presentation) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -56,7 +58,9 @@ define([
 		socialShare: socialShare,
 		page: page,
 		contactRequest: contactRequest,
-		defaultDialog: defaultDialog
+		defaultDialog: defaultDialog,
+		pdfcanvas: pdfcanvas,
+		presentation: presentation
 	};
 
 	var initialize = function(angModule) {

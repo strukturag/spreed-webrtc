@@ -132,6 +132,7 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/fonts
 	$(INSTALL) -d $(SHARE)/www/static/translation
 	$(INSTALL) -d $(SHARE)/www/static/css
+	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) $(DIST_BIN)/* $(BIN)
 	$(INSTALL) -m 644 server.conf.in $(CONFIG_DIR)/$(CONFIG_FILE)
 	$(INSTALL) html/* $(SHARE)/www/html
@@ -142,6 +143,7 @@ install:
 	$(INSTALL) static/css/* $(SHARE)/www/static/css
 	$(INSTALL) -D static/js/libs/require/require.js $(SHARE)/www/static/js/libs/require/require.js
 	$(INSTALL) $(OUTPUT_JS)/*.js $(SHARE)/www/static/js
+	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(SHARE)/www/static/js/libs/pdf
 
 clean:
 	GOPATH=$(GOPATH) $(GO) clean -i $(PKG)

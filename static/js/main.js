@@ -49,6 +49,9 @@ require.config({
 		'humanize': 'libs/humanize',
 		'sha': 'libs/sha',
 		'sjcl': 'libs/sjcl',
+		'pdf': 'libs/pdf/pdf',
+		'pdf.worker': 'libs/pdf/pdf.worker',
+		'pdf.compatibility': 'libs/pdf/compatibility',
 
 		'partials': '../partials',
 		'sounds': '../sounds',
@@ -109,6 +112,10 @@ require.config({
 		},
 		'sjcl': {
 			exports: 'sjcl'
+		},
+		'pdf': {
+			deps: ['pdf.compatibility'],
+			exports: 'PDFJS'
 		}
 	}
 });
