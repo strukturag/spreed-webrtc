@@ -76,6 +76,7 @@
   canvas {
     position: relative;
     display: block;
+    margin: 0 auto;
   }
 }
 
@@ -118,9 +119,13 @@
   margin-top: 20px;
   width: 160px;
   display: inline-block;
-  margin-right: 20px;
+  margin-left: 20px;
   cursor: pointer;
   position: relative;
+}
+
+.presentation .thumbnail:first-child {
+  margin-left: 0;
 }
 
 .presentation .thumbnail .caption {
