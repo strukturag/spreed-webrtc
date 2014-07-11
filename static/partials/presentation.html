@@ -28,6 +28,12 @@
 				</div>
 			</div>
 			<div class="presentations nicescroll" ng-show="visibleSharedFiles.length">
+				<div class="thumbnail">
+					<div class="fa filetype fa-plus"></div>
+					<div class="caption">
+						<button class="btn btn-primary">{{_('Upload')}}</button>
+					</div>
+				</div>
 				<div class="thumbnail" ng-repeat="info in visibleSharedFiles | orderBy : 'sortkey'" ng-click="selectPresentation(info)" title="{{ info.name }}">
 					<div class="fa active fa-check" ng-show="info.id === currentFileInfo.id"></div>
 					<a class="btn btn-danger delete" ng-click="deletePresentation($event, info)"><i class="fa fa-trash-o fa-lg"></i></a>

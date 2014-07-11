@@ -403,6 +403,15 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				return namespace + "_" + $scope.myid;
 			};
 
+			var uploadBinder = fileUpload.bindClick(namespace, $element.find('.thumbnail button')[0], function(files) {
+				console.log("Files selected", files);
+				filesSelected(files);
+			});
+			uploadBinder.namespace = function() {
+				// Inject own id into namespace.
+				return namespace + "_" + $scope.myid;
+			};
+
 			$scope.showPresentation = function() {
 				console.log("Presentation active");
 				$scope.layout.presentation = true;
