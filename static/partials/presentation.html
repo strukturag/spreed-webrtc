@@ -1,13 +1,13 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
-		<div class="welcome container-fluid" ng-show="downloading">
+		<div class="welcome container-fluid" ng-show="loading">
 			<h1>{{_('Loading presentation ...')}}</h1>
-			<div class="progress">
+			<div class="progress" ng-show="downloadSize &gt; 0">
 				<span class="download-info">{{downloadSize|humanizeFilesize}} <span ng-show="downloading">/ {{downloadProgress}}%</span></span>
 				<div class="progress-bar progress-bar-success"></div>
 			</div>
 		</div>
-		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || downloading">
+		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || loading">
 			<h1>{{_('Please upload a PDF document')}}</h1>
 			<div class="center-block">
 				<p>{{_('Documents are shared with everyone in this call.')}}</p>
@@ -15,7 +15,7 @@
 				<p>{{_('You can drag files here too.')}}</p>
 			</div>
 		</div>
-		<pdfcanvas ng-hide="maxPageNumber === -1 || downloading" />
+		<pdfcanvas ng-hide="maxPageNumber === -1 || loading" />
 	</div>
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>

@@ -36,7 +36,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$scope.currentFileInfo = null;
 			$scope.currentPage = null;
 			$scope.receivedPage = null;
-			$scope.downloading = false;
+			$scope.loading = false;
 			$scope.downloadSize = 0;
 			$scope.downloadProgress = 0;
 			$scope.sharedFilesCache = {};
@@ -78,7 +78,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
-				$scope.downloading = false;
 				$scope.currentPageNumber = -1;
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
@@ -92,7 +91,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			});
 
 			$scope.$on("pdfLoadError", function(event, source, errorMessage, moreInfo) {
-				$scope.downloading = false;
+				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
 			});
 
@@ -131,6 +130,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			downloadScope.$on("writeComplete", function(event, url, fileInfo) {
 				event.stopPropagation();
+				$scope.downloadSize = 0;
 				// need to store for internal file it and received token
 				// to allow cleanup and prevent duplicate download
 				fileInfo.url = url;
@@ -153,6 +153,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 				$scope.presentationLoaded = false;
 				$scope.pendingPageRequest = null;
+				$scope.loading = true;
 
 				var token = fileInfo.id;
 				var existing = $scope.sharedFilesCache[token];
@@ -165,7 +166,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				downloadProgressBar.style.width = '0%';
 				$scope.downloadProgress = 0;
 				$scope.downloadSize = fileInfo.size;
-				$scope.downloading = true;
 				downloadScope.info = fileInfo;
 
 				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
@@ -317,6 +317,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			};
 
 			$scope.$on("pdfPageLoading", function(event, page) {
+				$scope.loading = false;
 				$scope.currentPageNumber = page;
 				if ($scope.receivedPage === page) {
 					// we received this page request, don't publish to others
@@ -334,10 +335,12 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			});
 
 			$scope.$on("pdfPageLoadError", function(event, page, errorMessage) {
+				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
 			});
 
 			$scope.$on("pdfPageRenderError", function(event, pageNumber, maxPageNumber, errorMessage) {
+				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
 			});
 
@@ -355,6 +358,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				$scope.isPresenter = true;
 				$scope.currentFileInfo = fileInfo;
 				$scope.receivedPage = null;
+				$scope.loading = true;
 				$scope.$emit("openPdf", file);
 				addVisibleSharedFile(file);
 				$scope.sharedFilesCache[fileInfo.id] = file;
