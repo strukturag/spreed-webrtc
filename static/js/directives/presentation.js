@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, _, template) {
+define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'], function($, _, template, BigScreen) {
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
 
@@ -482,6 +482,18 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				}
 			};
 
+			$scope.toggleFullscreen = function(elem) {
+
+				if (BigScreen.enabled) {
+					if (elem) {
+						BigScreen.toggle(elem);
+					} else {
+						BigScreen.toggle(pane.get(0));
+					}
+				}
+
+			};
+
 			mediaStream.webrtc.e.on("done", function() {
 				_.each($scope.sharedFilesCache, function(file, id) {
 					fileData.purgeFile(id);
@@ -536,12 +548,21 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 		}];
 
+		var compile = function(tElement, tAttr) {
+			return function(scope, iElement, iAttrs, controller) {
+				$(iElement).on("dblclick", ".canvasContainer", _.debounce(function(event) {
+					scope.toggleFullscreen(event.delegateTarget);
+				}, 100, true));
+			}
+		};
+
 		return {
 			restrict: 'E',
 			replace: true,
 			scope: true,
 			template: template,
-			controller: controller
+			controller: controller,
+			compile: compile
 		};
 
 	}];
