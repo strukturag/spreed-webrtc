@@ -99,6 +99,10 @@
   line-height: 28px;
 }
 
+.overlaybar-content .pagecontrol {
+  height: 30px;
+}
+
 .presentation .overlaybar a.btn-prev {
   left: 40px;
 }
@@ -118,13 +122,16 @@
   color: #333;
   margin-top: 20px;
   width: 160px;
+  height: 122px;
   display: inline-block;
   margin-left: 20px;
   cursor: pointer;
   position: relative;
+  vertical-align: middle;
 }
 
 .presentation .thumbnail:first-child {
+  cursor: default;
   margin-left: 0;
 }
 
@@ -145,6 +152,8 @@
   position: absolute;
   left: 0;
   right: 0;
+  top: 0;
+  bottom: 0;
   text-align: center;
 }
 
