@@ -1,3 +1,17 @@
+spreed-webrtc-server (0.20.0) precise; urgency=low
+
+  * Added presentation mode.
+  * Added geolocation sharing in chat.
+  * Muliple updates to 3rd party libraries.
+  * New welcome screen.
+  * Implmeneted session subscription.
+  * Reorganized styles.
+  * Icon changes.
+  * Added ES5 detection on startup.
+  * Implemented a contact manager.
+
+ -- Simon Eisenmann <longsleep@redemption.intranet.struktur.de>  Fri, 11 Jul 2014 19:12:00 +0200
+
 spreed-webrtc-server (0.19.1) precise; urgency=low
 
   * Added Dockerfile.
