@@ -269,6 +269,7 @@ Peer connection documents
                     busy          : Called user is busy.
                     reject        : Called user has rejected call.
                     pickuptimeout : Called user did not pick up.
+                    abort         : Calling user did hang up while calling.
 
     If you do not want to give a reason just send Bye as empty JSON mapping.
 
