@@ -70,9 +70,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				}
 			};
 
-			$scope.resetProperties = function(keepControlsBar) {
+			$scope.resetProperties = function() {
 				$scope.isPresenter = false;
-				$scope.hideControlsBar = !keepControlsBar;
 				$scope.currentFileInfo = null;
 				$scope.currentPage = null;
 				$scope.receivedPage = null;
@@ -80,7 +79,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				$scope.downloading = false;
-				$scope.hideControlsBar = !$scope.isPresenter;
 				$scope.currentPageNumber = -1;
 				if ($scope.isPresenter) {
 					$scope.$emit("showPdfPage", 1);
