@@ -245,7 +245,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 
 			// Updater function to bring in new calls.
 			var updater = function(event, state, currentcall) {
-				console.log("XXX updater", event, state, currentcall);
 				switch (state) {
 					case "completed":
 					case "connected":
@@ -429,6 +428,14 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$($window).on("resize", function() {
 				$scope.$emit("redrawPdf");
 			});
+
+			$scope.$watch("layout.main", function(newval, oldval) {
+				console.log("presentation main", newval);
+				if (newval && newval !== "presentation") {
+					$scope.hidePresentation();
+				}
+			});
+
 		}];
 
 		return {

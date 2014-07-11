@@ -290,6 +290,13 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 			});
 
+			$scope.$watch("layout.main", function(newval, oldval) {
+				console.log("screenshare main", newval);
+				if (newval && newval !== "screenshare") {
+					$scope.stopScreenshare();
+				}
+			});
+
 		}];
 
 		var compile = function(tElement, tAttr) {
