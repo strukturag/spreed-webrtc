@@ -540,7 +540,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			});
 
 			$scope.$watch("layout.main", function(newval, oldval) {
-				console.log("presentation main", newval);
 				if (newval && newval !== "presentation") {
 					$scope.hidePresentation();
 				}
