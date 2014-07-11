@@ -45,7 +45,7 @@
   }
 }
 
-.mainScreenshare #audiovideo {
+.mainScreenshare #audiovideo, .mainPresentation #audiovideo {
   @include breakpt($breakpoint-video-medium, max-width, only screen) {
     display: none;
   }
@@ -284,6 +284,8 @@
 
 .renderer-smally {
   width: 150px;
+  background: $componentbg;
+  border-right: 1px solid $bordercolor;
   .remoteVideos {
     padding-bottom: 85px;
   }
