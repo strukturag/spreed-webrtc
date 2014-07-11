@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, _, template) {
 
-	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen) {
+	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -39,10 +39,40 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			$scope.downloading = false;
 			$scope.downloadSize = 0;
 			$scope.downloadProgress = 0;
+			$scope.sharedFilesCache = {};
+			$scope.visibleSharedFiles = [];
 
-			$scope.resetProperties = function() {
+			var addVisibleSharedFile = function(file) {
+				if (file.writer) {
+					// only show files the user has uploaded
+					return;
+				} else if ($scope.sharedFilesCache[file.info.id]) {
+					// already added
+					return;
+				}
+				$scope.visibleSharedFiles.push({
+					"id": file.info.id,
+					"name": file.info.name,
+					"size": file.info.size,
+					"file": file,
+					"sortkey": (file.info.name || "").toLowerCase()
+				});
+			};
+
+			var removeVisibleSharedFile = function(fileInfo) {
+				var i;
+				for (i=0; i<$scope.visibleSharedFiles.length; i++) {
+					var file = $scope.visibleSharedFiles[i];
+					if (file.id === fileInfo.id) {
+						$scope.visibleSharedFiles.splice(i, 1);
+						break;
+					}
+				}
+			};
+
+			$scope.resetProperties = function(keepControlsBar) {
 				$scope.isPresenter = false;
-				$scope.hideControlsBar = true;
+				$scope.hideControlsBar = !keepControlsBar;
 				$scope.currentFileInfo = null;
 				$scope.currentPage = null;
 				$scope.receivedPage = null;
@@ -85,15 +115,31 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				finishDownloadPresentation();
 			});
 
-			downloadScope.$on("writeComplete", function(event, url, fileInfo) {
-				event.stopPropagation();
-				if (url.indexOf("blob:") === 0) {
+			$scope.openFileInfo = function(fileInfo) {
+				var url = fileInfo.url;
+				if (url && url.indexOf("blob:") === 0) {
 					$scope.$emit("openPdf", url);
 				} else {
-					fileInfo.file.file(function(fp) {
-						$scope.$emit("openPdf", fp);
-					});
+					var file = fileInfo.file;
+					if (file.hasOwnProperty("writer")) {
+						$scope.$emit("openPdf", file);
+					} else {
+						file.file(function(fp) {
+							$scope.$emit("openPdf", fp);
+						});
+					}
 				}
+			};
+
+			downloadScope.$on("writeComplete", function(event, url, fileInfo) {
+				event.stopPropagation();
+				// need to store for internal file it and received token
+				// to allow cleanup and prevent duplicate download
+				fileInfo.url = url;
+				$scope.sharedFilesCache[fileInfo.id] = fileInfo;
+				$scope.sharedFilesCache[fileInfo.info.id] = fileInfo;
+				addVisibleSharedFile(fileInfo);
+				$scope.openFileInfo(fileInfo);
 			});
 
 			var finishDownloadPresentation = function() {
@@ -107,14 +153,23 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 			var downloadPresentation = function(fileInfo, from) {
 				finishDownloadPresentation();
 
-				var token = fileInfo.id;
 				$scope.presentationLoaded = false;
 				$scope.pendingPageRequest = null;
+
+				var token = fileInfo.id;
+				var existing = $scope.sharedFilesCache[token];
+				if (existing) {
+					console.log("Found existing file", existing);
+					$scope.openFileInfo(existing);
+					return;
+				}
+
 				downloadProgressBar.style.width = '0%';
 				$scope.downloadProgress = 0;
 				$scope.downloadSize = fileInfo.size;
 				$scope.downloading = true;
 				downloadScope.info = fileInfo;
+
 				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
 					//console.log("Presentation token request", currenttoken, data, type);
 					fileDownload.handleRequest($scope, xfer, data);
@@ -123,21 +178,14 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				fileDownload.startDownload(downloadScope, from, token);
 			};
 
-			var uploadScope = $scope.$new();
-
-			var finishUploadPresentation = function() {
-				if (uploadScope.info) {
-					uploadScope.$emit("cancelUpload");
-					mediaStream.tokens.off(uploadScope.info.id, uploadScope.handler);
-					uploadScope.info = null;
-					uploadScope.handler = null;
-				}
-			};
-
 			var uploadPresentation = function(fileInfo) {
-				finishUploadPresentation();
-
 				var token = fileInfo.id;
+				if ($scope.sharedFilesCache.hasOwnProperty(token)) {
+					console.log("Already have an upload token for that presentation.");
+					return;
+				}
+
+				var uploadScope = $scope.$new();
 				uploadScope.info = fileInfo;
 				var session = fileUpload.startUpload(uploadScope, token);
 				// This binds the token to transfer and ui.
@@ -159,7 +207,15 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 						console.log("Received presentation file request", data);
 						$scope.$apply(function(scope) {
 							scope.resetProperties();
-							downloadPresentation(data.FileInfo, from);
+							if (data.FileInfo) {
+								downloadPresentation(data.FileInfo, from);
+							} else {
+								// close currently visible PDF
+								finishDownloadPresentation();
+								$scope.$emit("closePdf");
+								$scope.resetProperties();
+								// TODO(fancycode): also cleanup downloaded file
+							}
 						});
 						break;
 
@@ -287,8 +343,9 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				alertify.dialog.alert(errorMessage);
 			});
 
-			$scope.startPresentingFile = function(file, fileInfo) {
-				console.log("Advertising file", file, fileInfo);
+			$scope.startPresentingFile = function(file) {
+				console.log("Advertising file", file);
+				var fileInfo = file.info;
 				// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file
 				mediaStream.webrtc.callForEachCall(function(peercall) {
 					mediaStreamSendPresentation(peercall, currentToken, {
@@ -301,6 +358,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				$scope.currentFileInfo = fileInfo;
 				$scope.receivedPage = null;
 				$scope.$emit("openPdf", file);
+				addVisibleSharedFile(file);
+				$scope.sharedFilesCache[fileInfo.id] = file;
 			};
 
 			var filesSelected = function(files) {
@@ -310,15 +369,15 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				}
 
 				_.each(files, function(f) {
-					var info = $.extend({
-						id: f.id
-					}, f.info);
-					if (info.type !== "application/pdf") {
-						console.log("Not sharing file", f, info);
+					if (!f.info.hasOwnProperty("id")) {
+						f.info.id = f.id;
+					}
+					if (f.info.type !== "application/pdf") {
+						console.log("Not sharing file", f);
 						alertify.dialog.alert(translation._("Only PDF documents can be shared at this time."));
 						return;
 					}
-					$scope.startPresentingFile(f, info);
+					$scope.startPresentingFile(f);
 				});
 			};
 
@@ -383,7 +442,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 					currentToken = null;
 				}
 				$scope.$emit("closePdf");
-				finishUploadPresentation();
 				finishDownloadPresentation();
 				$scope.resetProperties();
 				$scope.layout.presentation = false;
@@ -391,6 +449,46 @@ define(['jquery', 'underscore', 'text!partials/presentation.html'], function($, 
 				$scope.$emit("mainview", "presentation", false);
 				mediaStream.webrtc.e.off("statechange", updater);
 			};
+
+			$scope.selectPresentation = function(fileInfo) {
+				if ($scope.currentFileInfo && fileInfo.id === $scope.currentFileInfo.id) {
+					// switch back to first page when clicked on current presentation
+					$scope.$emit("showPdfPage", 1);
+					return;
+				}
+				console.log("Selected", fileInfo);
+				$scope.startPresentingFile(fileInfo.file);
+			};
+
+			$scope.deletePresentation = function($event, fileInfo) {
+				$event.preventDefault();
+				var token = fileInfo.id;
+				fileData.purgeFile(token);
+				delete $scope.sharedFilesCache[token];
+				if (fileInfo.info) {
+					delete $scope.sharedFilesCache[fileInfo.info.id];
+				}
+				removeVisibleSharedFile(fileInfo);
+				mediaStream.tokens.off(token);
+				if ($scope.currentFileInfo && fileInfo.id === $scope.currentFileInfo.id) {
+					mediaStream.webrtc.callForEachCall(function(peercall) {
+						mediaStreamSendPresentation(peercall, currentToken, {
+							Type: "FileInfo",
+							FileInfo: null
+						});
+					});
+					$scope.$emit("closePdf");
+					$scope.resetProperties($scope.visibleSharedFiles.length > 0);
+				}
+			};
+
+			mediaStream.webrtc.e.on("done", function() {
+				_.each($scope.sharedFilesCache, function(file, id) {
+					fileData.purgeFile(id);
+				});
+				$scope.sharedFilesCache = {};
+				$scope.visibleSharedFiles = [];
+			});
 
 			$(document).on("keyup", function(event) {
 				if (!$scope.layout.presentation) {

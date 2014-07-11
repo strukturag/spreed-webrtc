@@ -76,6 +76,7 @@
   canvas {
     position: relative;
     display: block;
+    margin: 0 auto;
   }
 }
 
@@ -86,7 +87,11 @@
   text-align: center;
 }
 
-.presentation .overlaybar a.btn {
+.presentation .overlaybar .overlaybar-content {
+  max-width: 100%;
+}
+
+.presentation .overlaybar a.overlaybar-button {
   position: absolute;
   font-size: 20px;
   padding: 4px 6px;
@@ -100,13 +105,69 @@
 
 .presentation .overlaybar a.btn-next {
   right: 0px;
-}
-
-.presentation .overlaybar span {
-  line-height: 30px;
+  left: auto;
 }
 
 .pageinfo input {
   display: inline;
   width: 70px;
+}
+
+.presentation .thumbnail {
+  text-shadow: none;
+  color: #333;
+  margin-top: 20px;
+  width: 160px;
+  display: inline-block;
+  margin-left: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.presentation .thumbnail:first-child {
+  margin-left: 0;
+}
+
+.presentation .thumbnail .caption {
+  padding-bottom: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.presentation .thumbnail .caption .size {
+  font-size: 10px;
+}
+
+.presentation .thumbnail .active {
+  font-size: 10em;
+  color: #84b819;
+  opacity: 0.7;
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.presentation .thumbnail .delete {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  display: none;
+}
+
+.presentation .thumbnail:hover .delete {
+  display: block;
+}
+
+.presentation .thumbnail .filetype {
+  font-size: 5em;
+}
+
+.presentations {
+  height: 156px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  margin-right: 10px;
+  margin-left: -25px;
 }
