@@ -264,7 +264,11 @@ Peer connection documents
 
     Bye known keys:
 
-        Reason  : Reason for sending bye (busy, reject). (string).
+        Reason  : Reason for sending bye. (string).
+                  Possible reasons:
+                    busy          : Called user is busy.
+                    reject        : Called user has rejected call.
+                    pickuptimeout : Called user did not pick up.
 
     If you do not want to give a reason just send Bye as empty JSON mapping.
 
