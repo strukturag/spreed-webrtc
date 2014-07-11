@@ -74,6 +74,7 @@ type Hub struct {
 	sessionTable          map[string]*Session
 	roomTable             map[string]*RoomWorker
 	userTable             map[string]*User
+	fakesessionTable      map[string]*Session
 	version               string
 	config                *Config
 	sessionSecret         []byte
@@ -100,6 +101,7 @@ func NewHub(version string, config *Config, sessionSecret, encryptionSecret, tur
 		sessionTable:     make(map[string]*Session),
 		roomTable:        make(map[string]*RoomWorker),
 		userTable:        make(map[string]*User),
+		fakesessionTable: make(map[string]*Session),
 		version:          version,
 		config:           config,
 		sessionSecret:    sessionSecret,
@@ -237,11 +239,17 @@ func (h *Hub) CreateSession(request *http.Request, st *SessionToken) *Session {
 
 func (h *Hub) CreateFakeSession(userid string) *Session {
 
-	sid := fmt.Sprintf("fake-%s", NewRandomString(27))
-	id, _ := h.tickets.Encode("id", sid)
-	log.Println("Created new fake session id", id)
-	session := NewSession(h, id, sid)
-	session.SetUseridFake(userid)
+	h.mutex.Lock()
+	session, ok := h.fakesessionTable[userid]
+	if !ok {
+		sid := fmt.Sprintf("fake-%s", NewRandomString(27))
+		id, _ := h.tickets.Encode("id", sid)
+		log.Println("Created new fake session id", id)
+		session = NewSession(h, id, sid)
+		session.SetUseridFake(userid)
+		h.fakesessionTable[userid] = session
+	}
+	h.mutex.Unlock()
 	return session
 
 }
