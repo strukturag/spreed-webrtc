@@ -35,6 +35,11 @@ define([], function() {
 			updateContacts();
 		});
 
+		$scope.removeContact = function(id) {
+			contacts.remove(id);
+			updateContacts();
+		};
+
 	}];
 
 });

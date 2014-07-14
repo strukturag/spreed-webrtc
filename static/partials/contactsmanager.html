@@ -17,6 +17,9 @@
               <td class="name">
                 <span>{{contact.Status.displayName}}</span>
               </td>
+              <td class="action">
+                <button class="btn btn-danger" ng-click="removeContact(contact.Userid)">{{_('Remove')}}</button>
+              </td>
             </tr>
           </tbody>
         </table>
