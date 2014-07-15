@@ -92,6 +92,7 @@ $buddylist-tab-background: $componentbg !default;
 $buddylist-action-background: rgba(255,255,255,0.5) !default;
 $buddylist-buddy1: $componentfg1 !default;
 $buddylist-buddy2: $componentfg2 !default;
+$mobile-buddylist-top: 48px !default;
 
 // chat
 $chat-background: #e7e7e7 !default;
@@ -126,6 +127,8 @@ $chat-bottom-background: $chat-background !default;
 $chat-typing: $chat-meta !default;
 $chat-input-border-color: #66afe9 !default;
 
+$mobile-chat-top: $mobile-buddylist-top;
+
 // fileinfo
 $fileinfo-background: white !default;
 $fileinfo-border: #ddd !default;
@@ -139,6 +142,7 @@ $fileinfo-icon-background-color-remote: $fileinfo-icon-background-color !default
 $settings-version: #ccc !default;
 $form-help-text: #737373 !default;
 $settings-background: white !default;
+$mobile-settings-top: 153px !default;
 
 // social
 $social-email-color: #aaa !default;
