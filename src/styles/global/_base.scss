@@ -52,6 +52,87 @@ a {
   }
 }
 
+#loader {
+  background: $load-logo no-repeat center;
+  background-size: contain;
+  bottom: 15%;
+  left: 15%;
+  max-width: 200px;
+  max-height: 150px;
+  margin: auto;
+  opacity: 1;
+  pointer-events: none;
+  position: fixed;
+  right: 15%;
+  top: 15%;
+  z-index: 20000;
+  transition-property: opacity;
+  transition-duration: .5s;
+  &.done {
+    opacity: 0;
+  }
+  > div {
+    color: $loading;
+    display: block;
+    font-size: 2em;
+    left: 0;
+    margin: 0 auto;
+    right: 0;
+    position: absolute;
+    bottom: 0px;
+    margin-bottom: -40px;
+    text-align: center;
+    text-shadow: 0 0 5px black;
+  }
+  .loader-message {
+    font-size: 0.5em;
+  }
+}
+
+#page {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: $minbarheight;
+}
+
+.welcome {
+  color: $welcome;
+  font-size: 1.1em;
+  margin-top: 80px;
+  text-shadow: 0 0 5px black;
+  max-width:600px;
+
+  h1 {
+    text-align: center;
+  }
+
+  .welcome-container {
+    max-width: 450px;
+    margin: 0 auto;
+  }
+
+  .welcome-input {
+    position: relative;
+    input {
+      padding-right: 105px;
+    }
+  }
+
+  .welcome-input-buttons {
+    text-shadow: none;
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    a {
+      padding-right: .5em;
+      color: black;
+    }
+  }
+
+}
+
 .help-block {
   color: $form-help-text;
 }
