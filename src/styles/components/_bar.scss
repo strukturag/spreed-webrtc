@@ -24,12 +24,9 @@
   box-shadow: 0 2px 10px 0 $componentfg3;
   color: $componentfg1;
   font: bold 1em/40px $font-sans-serif;
-  // without height bar jumps and disappears on reload, use em to scale with text.
-  // height: #{$minbarheight/$base-font-size}em;
   text-align: center;
   touch-callout: none;
   user-select: none;
-  // @include debug-vertical-alignment();
   @include breakpt($breakpoint-medium) {
     height: auto;
     z-index: 60;
