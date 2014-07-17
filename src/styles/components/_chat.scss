@@ -28,16 +28,20 @@
   width: $chat-width;
   min-width: $chat-width;
   z-index: 45;
-  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .withChat {
   #chat {
-    display: block;
+    opacity: 1;
   }
   &.withChatMaximized #chat {
     left: 0;
     width: auto;
+  }
+  .chat {
+    pointer-events: auto;
   }
 }
 
@@ -126,7 +130,6 @@
   bottom: 0;
   left: 0;
   overflow: hidden;
-  pointer-events: auto;
   position: absolute;
   right: 0;
   top: 0;
