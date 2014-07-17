@@ -112,8 +112,8 @@
     top: 2px;
   }
   .btn {
-    background: transparent;
-    border-color: transparent;
+    background: $bar-btn-action-normal;
+    border-color: $bar-btn-action-normal-border;
     color: $bar-btn-action-color;
     height: 42px;
     font: 24px/40px $font-sans-serif;
