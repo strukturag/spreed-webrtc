@@ -20,15 +20,19 @@
  */
 
 #settings {
-  border-top: 1px solid $bordercolor;
+  border-left: 1px solid $bordercolor;
+  background: $settings-background;
   bottom: 0;
   padding-right: 20px;
   position: fixed;
   right: -520px;
-  top: 44px;
+  top: $minbarheight;
   transition: right 200ms ease-in-out;
   width: 520px;
   z-index: 50;
+  @include breakpt($breakpoint-medium) {
+    top: $mobile-settings-top;
+  }
 }
 
 #settings.show {

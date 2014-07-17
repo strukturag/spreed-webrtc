@@ -25,15 +25,18 @@
 
 // general
 $background: #e5e5e5 !default;
-$componentbg: #f5f5f5 !default;
+$componentbg: #f8f8f8 !default;
 $componentfg1: #262626 !default;
 $componentfg2: rgba(0,0,0,.5) !default;
 $componentfg3: rgba(0,0,0,.2) !default;
 $componentfg4: #737373 !default;
 $sidepanebg: white !default;
-$bordercolor: #ccc !default;
+$bordercolor: #e7e7e7 !default;
 $actioncolor1: rgb(132,184,25) !default;
 $actioncolor2: rgb(0,149,52) !default;
+$mobile-top-1: 48px !default;
+$mobile-top-2: 153px !default;
+$mobile-top-3: 99px !default;
 
 // branding
 $logo: url("../img/logo-small.png") !default;
@@ -42,8 +45,10 @@ $load-logo: $scalable-logo !default;
 
 
 // background
-$main-background: url("../img/bg-tiles.jpg") !default;
-$main-background-retina: url("../img/bg-tiles_x2.jpg") !default;
+$main-background-image: "../img/bg-tiles.jpg" !default;
+$main-background-image-retina: "../img/bg-tiles_x2.jpg" !default;
+$main-background: url($main-background-image) !default;
+$main-background-retina: url($main-background-image-retina) !default;
 
 // general action based colors
 $action-hover: rgba(0,0,0,.4) !default;
@@ -61,11 +66,25 @@ $base-line-height: 1.53846156; // compass vertical_rhythm mixin
 $font-color: lighten(#000, 20%) !default;
 $font-color-accent: lighten($font-color, 50%) !default;
 
+//pages
+$mobile-pages-top: $mobile-top-1;
+
+//view
+$mobile-view-top: $mobile-top-3;
+
+//presensation
+$mobile-presentation-top: $mobile-top-3;
+
 // audio video
 $audiovideolevel: $action-enable !default;
+$mobile-audiovideo-top: $mobile-top-3;
+
+//audiolevel
+$audiolevel-top: 43px !default;
+$mobile-audiolevel-top: 88px !default;
 
 // main navigation bar
-$minbarheight: 44px !default;
+$minbarheight: 51px !default;
 $bar-background: $componentbg;
 $bar-logo-text-desc: rgb(34,34,34) !default;
 $bar-btn-action-border: $bordercolor !default;
@@ -85,6 +104,9 @@ $video-onlyaudio-background: #666 !default;
 $video-onlyaudio: rgba(255,255,255,.3) !default;
 $video-overlayactions: rgba(0,0,0,.9) !default;
 
+// settings
+$settings-background: white;
+
 // buddylist
 $buddylist-background: $componentbg;
 $buddylist-tab-color: rgba(0,0,0,.3) !default;
@@ -92,6 +114,7 @@ $buddylist-tab-background: $componentbg !default;
 $buddylist-action-background: rgba(255,255,255,0.5) !default;
 $buddylist-buddy1: $componentfg1 !default;
 $buddylist-buddy2: $componentfg2 !default;
+$mobile-buddylist-top: $mobile-top-1;
 
 // chat
 $chat-background: #e7e7e7 !default;
@@ -126,6 +149,8 @@ $chat-bottom-background: $chat-background !default;
 $chat-typing: $chat-meta !default;
 $chat-input-border-color: #66afe9 !default;
 
+$mobile-chat-top: $mobile-top-1;
+
 // fileinfo
 $fileinfo-background: white !default;
 $fileinfo-border: #ddd !default;
@@ -139,6 +164,7 @@ $fileinfo-icon-background-color-remote: $fileinfo-icon-background-color !default
 $settings-version: #ccc !default;
 $form-help-text: #737373 !default;
 $settings-background: white !default;
+$mobile-settings-top: $mobile-top-2;
 
 // social
 $social-email-color: #aaa !default;

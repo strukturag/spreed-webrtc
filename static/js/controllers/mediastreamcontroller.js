@@ -136,6 +136,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		};
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
+		$scope.isCollapsed = true;
 		$scope.master = {
 			displayName: null,
 			buddyPicture: null,
