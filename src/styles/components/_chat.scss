@@ -28,9 +28,6 @@
   top: 0px;
   width: 260px;
   z-index: 45;
-  @include breakpt($breakpoint-medium) {
-    top: $mobile-chat-top;
-  }
 }
 
 .withChat {

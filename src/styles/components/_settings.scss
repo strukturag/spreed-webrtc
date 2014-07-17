@@ -30,9 +30,6 @@
   transition: right 200ms ease-in-out;
   width: 520px;
   z-index: 50;
-  @include breakpt($breakpoint-medium) {
-    top: $mobile-settings-top;
-  }
 }
 
 #settings.show {

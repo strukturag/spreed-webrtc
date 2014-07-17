@@ -27,9 +27,6 @@
   right: 0;
   top: $minbarheight;
   user-select: none;
-  @include breakpt($breakpoint-medium) {
-    top: $mobile-audiovideo-top;
-  }
 }
 
 #audiovideo {

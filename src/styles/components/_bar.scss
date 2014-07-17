@@ -22,23 +22,11 @@
 .bar {
   background: $bar-background;
   color: $componentfg1;
-  font: bold 1em/40px $font-sans-serif;
+  font: bold 1em/50px $font-sans-serif;
   text-align: center;
   touch-callout: none;
   user-select: none;
-  z-index: 5;
-  @include breakpt($breakpoint-medium) {
-    height: auto;
-    z-index: 60;
-    box-shadow: none;
-  }
-  .btn {
-    position: relative;
-  }
-  .navbar-nav {
-    display: inline-block;
-    vertical-align: middle;
-  }
+  z-index: 10;
 }
 
 .bar .left {
@@ -66,25 +54,38 @@
 }
 
 .bar .middle {
-  float: none;
-  margin-top: 5px;
-  @include breakpt($breakpoint-medium) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  pointer-events: none;
+  text-align: center;
+
+  > span {
+    display: inline-block;
+    background: $bar-background;
+    min-height: 50px;
+    pointer-events: auto;
   }
+
   .userpicture {
     border-radius: 2px;
     display: inline-block;
-    height: 46px;
-    margin: -5px .5em 0 .5em;
     width: 46px;
+    height: 46px;
+    margin: -8px .5em 0 .5em;
     @include breakpt($breakpoint-medium) {
       display: none;
     }
   }
-  &.status-connected,
-  &.status-conference {
+
+  .status-connected,
+  .status-conference,
+  .status-connecting,
+  .status-closed,
+  .status-reconnecting,
+  .status-error,
+  .status-ringing {
     @include breakpt($breakpoint-medium) {
       max-width: 100%;
       left: 0;
@@ -92,32 +93,15 @@
       right: 0;
     }
   }
-  &.status-connecting,
-  &.status-closed,
-  &.status-reconnecting,
-  &.status-error,
-  &.status-ringing  {
-    @include breakpt($breakpoint-medium) {
-      border-bottom: 1px solid $bordercolor;
-      max-width: 100%;
-      min-height: 45px;
-    }
-  }
-  // TODO(theurere): cleanup
-  &.status-connecting .actions,
-  &.status-closed .actions,
-  &.status-reconnecting .actions,
-  &.status-error .actions,
-  &.status-ringing .actions {
-    @include breakpt($breakpoint-medium) {
-      display: block;
-      padding: .2em 0 .8em 0;
-    }
+  .status-connecting .actions,
+  .status-closed .actions,
+  .status-reconnecting .actions,
+  .status-error .actions,
+  .status-ringing .actions {
   }
 }
 
 .bar .right {
-  margin-top: 3px;
   padding-right: 8px;
   .badge {
     background-color: $actioncolor1;

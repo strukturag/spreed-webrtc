@@ -26,9 +26,6 @@
   top: 0;
   width: 285px;
   z-index: 50;
-  @include breakpt($breakpoint-medium) {
-    top: $mobile-buddylist-top;
-  }
 }
 
 #buddylist:before {

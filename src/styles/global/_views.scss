@@ -27,7 +27,6 @@
   right: 0;
   top: $minbarheight;
   @include breakpt($breakpoint-medium) {
-    top: $mobile-view-top;
     left: 0px;
   }
 }
