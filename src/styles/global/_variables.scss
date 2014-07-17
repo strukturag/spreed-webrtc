@@ -74,8 +74,8 @@ $minbarheight: 51px !default;
 $bar-background: $componentbg;
 $bar-logo-text-desc: rgb(34,34,34) !default;
 $bar-btn-action-border: $bordercolor !default;
-$bar-btn-action-color: rgba(0,0,0,.3) !default;
-$bar-btn-action-hover: $action-hover !default;
+$bar-btn-action-color: #333 !default;
+$bar-btn-action-hover: #666 !default;
 $bar-btn-action-mute: $action-mute !default;
 $bar-btn-action-enable: $action-enable !default;
 
