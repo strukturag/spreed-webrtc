@@ -25,7 +25,11 @@
   left: 150px;
   position: absolute;
   right: 0;
-  top: 44px;
+  top: $minbarheight;
+  @include breakpt($breakpoint-medium) {
+    top: $mobile-view-top;
+    left: 0px;
+  }
 }
 
 .withChat,

@@ -24,9 +24,13 @@
   margin: 0 auto;
   position: fixed;
   right: 0;
-  top: 38px;
+  top: $audiolevel-top;
   width: 400px;
   z-index: 6;
+  @include breakpt($breakpoint-medium) {
+    z-index: 60;
+    top: $mobile-audiolevel-top;
+  }
   .audio-level {
     background: $audiovideolevel; /* Old browsers */
     background: gradient(linear, left top, left bottom, color-stop(0%,$audiovideolevel), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */

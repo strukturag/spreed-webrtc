@@ -27,6 +27,7 @@
   text-align: center;
   touch-callout: none;
   user-select: none;
+  z-index: 5;
   @include breakpt($breakpoint-medium) {
     height: auto;
     z-index: 60;
