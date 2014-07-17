@@ -18,29 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([
-	'underscore',
+define([], function() {
 
-	'filters/displayname',
-	'filters/buddyimagesrc',
-	'filters/displayconference',
-	'filters/displayuserid'], function(_, displayName, buddyImageSrc, displayConference, displayUserid) {
-
-	var filters = {
-		displayName: displayName,
-		buddyImageSrc: buddyImageSrc,
-		displayConference: displayConference,
-		displayUserid: displayUserid
-	};
-
-	var initialize = function(angModule) {
-		_.each(filters, function(filter, name) {
-			angModule.filter(name, filter);
-		})
-	}
-
-	return {
-		initialize: initialize
-	};
+	// displayUserid
+	return [function() {
+		return function(id) {
+			// This filter does nothing - it is there for plugin support.
+			return id;
+		};
+	}];
 
 });

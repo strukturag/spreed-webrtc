@@ -3,33 +3,35 @@
   <div class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
     <fieldset>
 
-      <legend>{{_('Profile')}}</legend>
-      <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+      <settings-profile>
+        <legend>{{_('Profile')}}</legend>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+            <div class="col-xs-8">
+              <label>
+                <buddy-picture></buddy-picture>
+              </label>
+            </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Your name')}}</label>
           <div class="col-xs-8">
-            <label>
-              <buddy-picture/>
-            </label>
+            <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
           </div>
-      </div>
-      <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Your name')}}</label>
-        <div class="col-xs-8">
-          <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Status message')}}</label>
-        <div class="col-xs-8">
-          <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Status message')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-xs-8 col-xs-offset-4">
-          {{_('Profile information is public.')}}
+        <div class="form-group">
+          <div class="col-xs-8 col-xs-offset-4">
+            <p class="help-block">{{_('Profile information is public.')}}</p>
+          </div>
         </div>
-      </div>
-      <div ng-controller="UsersettingsController as usersettings">
+      </settings-profile>
+      <settings-account ng-controller="UsersettingsController as usersettings">
         <div ng-if="(withUsers && withUsersRegistration) || userid">
           <legend>{{_('Account')}}</legend>
           <div class="form-group">
@@ -37,32 +39,32 @@
             <div ng-switch="withUsersMode">
               <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
                 <div ng-if="!userid">
-                  <keygen style="display:none" name="pubkey"/>
+                  <keygen class="hidden" name="pubkey"/>
                   <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
                     <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
                   </label>
-                  <iframe style="display:none" name="users_registration_certificate_iframe"></iframe>
+                  <iframe class="hidden" name="users_registration_certificate_iframe"></iframe>
                 </div>
                 <div ng-if="userid">
-                  <pre class="small">{{userid}}</pre>
+                  <pre class="small">{{userid|displayUserid}}</pre>
                   <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
                 </div>
               </form>
               <div ng-switch-default class="col-xs-8">
                 <div ng-if="!userid && withUsersRegistration">
                   <label ng-if="usersettings.loginUserid">
-                    <button class="btn btn-small btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
+                    <button class="btn btn-small btn-primary btn-sign-in" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
+                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
                   </label>
                 </div>
-                <pre class="small" ng-if="userid">{{userid}}</pre>
+                <pre class="small" ng-if="userid">{{userid|displayUserid}}</pre>
                 <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
-                  <button class="btn btn-small btn-default" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
+                  <button class="btn btn-small btn-default btn-sign-out" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
                 </label>
                 <label ng-if="userid && usersettings.accountUserid">
-                  <button class="btn btn-small btn-link" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
+                  <button class="btn btn-small btn-link btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
                 </label>
               </div>
             </div>
@@ -74,8 +76,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div ng-show="mediaSources.supported || isChrome">
+      </settings-account>
+      <settings-media ng-show="mediaSources.supported || isChrome">
         <legend>{{_('Media')}}</legend>
         <div ng-show="mediaSources.supported">
           <div class="form-group">
@@ -101,36 +103,38 @@
             </div>
           </div>
         </div>
-      </div>
-      <legend>{{_('Settings')}}</legend>
-      <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Language')}}</label>
-        <div class="col-xs-8">
-          <select class="form-control" ng-model="user.settings.language" ng-options="l.code as l.name for l in availableLanguages | orderBy:'code'"></select>
-          <span class="help-block">{{_('Language changes become active on reload.')}}</span>
+      </settings-media>
+      <settings-settings>
+        <legend>{{_('Settings')}}</legend>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Language')}}</label>
+          <div class="col-xs-8">
+            <select class="form-control" ng-model="user.settings.language" ng-options="l.code as l.name for l in availableLanguages | orderBy:'code'"></select>
+            <span class="help-block">{{_('Language changes become active on reload.')}}</span>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-xs-4 control-label">{{_('Default room')}}</label>
-        <div class="col-xs-8">
-          <input type="text" class="form-control" ng-model="user.settings.defaultRoom" placeholder="{{_('Main')}}" />
-          <span class="help-block">{{_('Set alternative room to join at start.')}}</span>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Default room')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.settings.defaultRoom" placeholder="{{_('Main')}}" />
+            <span class="help-block">{{_('Set alternative room to join at start.')}}</span>
+          </div>
         </div>
-      </div>
-      <div class="form-group" ng-show="desktopNotify.supported">
-        <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
-        <div class="col-xs-8">
-          <p class="form-control-static" ng-switch="desktopNotify.level">
-            <a ng-switch-when="default" class="btn btn-small btn-success" ng-click="requestDesktopNotifyPermission()">{{_('Enable')}}</a>
-            <span class="text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</span>
-            <span class="text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</span>
-          </p>
+        <div class="form-group" ng-show="desktopNotify.supported">
+          <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
+          <div class="col-xs-8">
+            <p class="form-control-static" ng-switch="desktopNotify.level">
+              <a ng-switch-when="default" class="btn btn-small btn-success" ng-click="requestDesktopNotifyPermission()">{{_('Enable')}}</a>
+              <span class="text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</span>
+              <span class="text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</span>
+            </p>
+          </div>
         </div>
-      </div>
+      </settings-settings>
 
-      <div settings-extra></div>
+      <settings-extra settings-extra></settings-extra>
 
-      <div class="collapse" collapse="showAdvancedSettings" style="padding-top:15px">
+      <settings-advanced class="collapse" collapse="showAdvancedSettings">
 
         <legend>{{_('Advanced settings')}}</legend>
 
@@ -161,17 +165,9 @@
 
         </div>
 
-        <!--<div ng-show="isChrome">
+        <settings-advanced-extra settings-advanced-extra></settings-advanced-extra>
 
-          <legend>{{_('Experimental settings')}}</legend>
-
-          <div></div>
-
-        </div>-->
-
-        <div settings-advanced-extra></div>
-
-      </div>
+      </settings-advanced>
 
       <div class="form-group">
          <div class="col-xs-4 control-label"></div>
@@ -183,14 +179,17 @@
       <hr/>
 
       <div class="form-group">
-         <div class="col-xs-4 control-label"></div>
-         <div class="col-xs-8">
-          <div class="checkbox" style="padding-bottom:1em">
+        <div class="col-xs-8 col-xs-offset-4">
+          <div class="checkbox">
             <label>
                <input type="checkbox" ng-model="rememberSettings"> {{_('Remember settings')}}
-           </label>
-            <p class="text-warning" style="margin-top:4px" ng-show="userid &&!rememberSettings && loadedUserlogin"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
+            </label>
+            <p class="text-warning" ng-show="userid &&!rememberSettings && loadedUserlogin"><strong>{{_('Your ID will still be kept - press the log out button above to delete the ID.')}}</strong></p>
           </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-8 col-xs-offset-4">
           <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
         </div>
       </div>
