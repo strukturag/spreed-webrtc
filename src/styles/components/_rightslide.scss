@@ -25,7 +25,7 @@
   pointer-events: none;
   position: absolute;
   right: -260px;
-  top: 44px;
+  top: $minbarheight;
   transition: right 200ms ease-in-out;
   z-index: 5;
 }
