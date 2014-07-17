@@ -40,7 +40,6 @@ $logo: url("../img/logo-small.png") !default;
 $scalable-logo: url("../img/logo.svg") !default;
 $load-logo: $scalable-logo !default;
 
-
 // background
 $main-background-image: "../img/bg-tiles.jpg" !default;
 $main-background-image-retina: "../img/bg-tiles_x2.jpg" !default;
@@ -55,6 +54,9 @@ $action-enable: $actioncolor1 !default;
 // base
 $welcome: #aaa !default;
 $loading: #ddd !default;
+
+// panes
+$pane-width: 260px !default;
 
 // font
 $font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif !default;
@@ -91,10 +93,11 @@ $video-onlyaudio: rgba(255,255,255,.3) !default;
 $video-overlayactions: rgba(0,0,0,.9) !default;
 
 // settings
-$settings-background: white;
+$settings-background: white !default;
 
 // buddylist
-$buddylist-background: $componentbg;
+$buddylist-width: $pane-width !default;
+$buddylist-background: $componentbg !default;
 $buddylist-tab-color: rgba(0,0,0,.3) !default;
 $buddylist-tab-background: $componentbg !default;
 $buddylist-action-background: rgba(255,255,255,0.5) !default;
@@ -102,6 +105,7 @@ $buddylist-buddy1: $componentfg1 !default;
 $buddylist-buddy2: $componentfg2 !default;
 
 // chat
+$chat-width: $pane-width !default;
 $chat-background: #e7e7e7 !default;
 $chat-header: rgba(255,255,255,0.9) !default;
 $chat-disabled: #aaa !default;

@@ -20,42 +20,35 @@
  */
 
 #chat {
-  bottom: 0px;
-  perspective: 1000;
   pointer-events: none;
   position: absolute;
-  right: 260px;
+  bottom: 0px;
+  right: $chat-width;
   top: 0px;
-  width: 260px;
+  width: $chat-width;
+  min-width: $chat-width;
   z-index: 45;
+  display: none;
 }
 
 .withChat {
-  #chat .chatcontainer {
-    left: 0;
-  }
-  .chatpane.flip {
-    transform: rotateY(360deg);
+  #chat {
+    display: block;
   }
   &.withChatMaximized #chat {
     left: 0;
     width: auto;
-      .chatcontainer {
-        width: auto;
-      }
   }
 }
 
 .chatcontainer {
   background: $chat-background;
-  bottom: 0;
-  left: 260px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
   overflow: hidden;
   position: absolute;
-  right: 0;
-  top: 0;
-  //transition: left 200ms ease-in-out;
-  width: 260px;
 }
 
 .showchatlist {
@@ -72,7 +65,6 @@
   bottom: 0;
   left: 100%;
   position: absolute;
-  //transition: left 200ms ease-in-out;
   top: 0;
   width: 100%;
   .list-group {
@@ -125,8 +117,6 @@
   position: absolute;
   right: 0;
   top: 0;
-  //transition: 0.3s;
-  //transform-style: preserve-3d;
   width: 100%;
 }
 

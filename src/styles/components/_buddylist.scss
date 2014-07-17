@@ -24,7 +24,7 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: 285px;
+  width: $buddylist-width + 25;
   z-index: 50;
 }
 
@@ -50,11 +50,14 @@
   position: absolute;
   text-align: center;
   top: 0;
-  width: 25px;
+  width: 26px;
+  z-index: 1;
+  padding-right: 4px;
 }
 
 .withBuddylist #buddylist:before {
   content: "\f101";
+  padding-right: 0px;
 }
 
 .withBuddylistAutoHide #buddylist:before {
