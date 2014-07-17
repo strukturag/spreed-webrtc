@@ -66,7 +66,8 @@
 
 .buddylist {
   background: $buddylist-background;
-  border-top: 1px solid $bordercolor;
+  //border-top: 1px solid $bordercolor;
+  border-left: 1px solid $bordercolor;
   bottom: 0;
   left: 25px;
   overflow-x: hidden;

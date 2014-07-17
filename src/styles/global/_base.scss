@@ -39,7 +39,7 @@ a {
 }
 
 #background {
-  background: $main-background repeat;
+  background: $main-background;
   bottom: 0;
   left: 0;
   position:fixed;
@@ -48,7 +48,7 @@ a {
   z-index: 0;
   @include hidpi {
     background-image: $main-background-retina;
-    background-size: 198px 200px;
+    background-size: image-width($main-background-image-retina)/2 image-height($main-background-image-retina)/2;
   }
 }
 

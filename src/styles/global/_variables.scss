@@ -25,13 +25,13 @@
 
 // general
 $background: #e5e5e5 !default;
-$componentbg: #f5f5f5 !default;
+$componentbg: #f8f8f8 !default;
 $componentfg1: #262626 !default;
 $componentfg2: rgba(0,0,0,.5) !default;
 $componentfg3: rgba(0,0,0,.2) !default;
 $componentfg4: #737373 !default;
 $sidepanebg: white !default;
-$bordercolor: #ccc !default;
+$bordercolor: #e7e7e7 !default;
 $actioncolor1: rgb(132,184,25) !default;
 $actioncolor2: rgb(0,149,52) !default;
 $mobile-top-1: 48px !default;
@@ -45,8 +45,10 @@ $load-logo: $scalable-logo !default;
 
 
 // background
-$main-background: url("../img/bg-tiles.jpg") !default;
-$main-background-retina: url("../img/bg-tiles_x2.jpg") !default;
+$main-background-image: "../img/bg-tiles.jpg" !default;
+$main-background-image-retina: "../img/bg-tiles_x2.jpg" !default;
+$main-background: url($main-background-image) !default;
+$main-background-retina: url($main-background-image-retina) !default;
 
 // general action based colors
 $action-hover: rgba(0,0,0,.4) !default;
@@ -101,6 +103,9 @@ $video-background: rgba(0,0,0,.4) !default;
 $video-onlyaudio-background: #666 !default;
 $video-onlyaudio: rgba(255,255,255,.3) !default;
 $video-overlayactions: rgba(0,0,0,.9) !default;
+
+// settings
+$settings-background: white;
 
 // buddylist
 $buddylist-background: $componentbg;

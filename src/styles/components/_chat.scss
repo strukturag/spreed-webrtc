@@ -172,7 +172,7 @@
 }
 
 .chatbody {
-  border-right: 1px solid $bordercolor;
+  border-left: 1px solid $bordercolor;
   bottom: -1px;
   left: 0;
   position: absolute;
@@ -186,9 +186,8 @@
 
 .chatheader {
   background: $chat-header;
-  border-top: 1px solid $bordercolor;
   border-bottom: 1px solid $bordercolor;
-  border-right: 1px solid $bordercolor;
+  border-left: 1px solid $bordercolor;
   height: 36px;
   left: 0;
   line-height: 34px;

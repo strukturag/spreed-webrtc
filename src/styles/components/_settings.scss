@@ -20,7 +20,8 @@
  */
 
 #settings {
-  border-top: 1px solid $bordercolor;
+  border-left: 1px solid $bordercolor;
+  background: $settings-background;
   bottom: 0;
   padding-right: 20px;
   position: fixed;
