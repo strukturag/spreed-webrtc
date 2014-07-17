@@ -103,7 +103,7 @@ $buddylist-buddy2: $componentfg2 !default;
 
 // chat
 $chat-background: #e7e7e7 !default;
-$chat-header: $componentbg !default;
+$chat-header: rgba(255,255,255,0.9) !default;
 $chat-disabled: #aaa !default;
 $chat-badge: #84b819 !default;
 $chat-ctrl: rgba(0,0,0,.3) !default;
