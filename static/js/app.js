@@ -86,10 +86,15 @@ define([
 			$locationProvider.html5Mode(true);
 		}]);
 
-		app.run(["$rootScope", "mediaStream", "translation", function($rootScope, mediaStream, translation) {
+		app.run(["$rootScope", "$timeout", "mediaStream", "translation", "continueConnector", function($rootScope, $timeout, mediaStream, translation, continueConnector) {
 			translation.inject($rootScope);
 			console.log("Initializing ...");
+			var initialize = continueConnector.defer();
 			mediaStream.initialize($rootScope, translation);
+			$timeout(function() {
+				console.log("Initializing complete.")
+				initialize.resolve();
+			}, 0);
 		}]);
 
 		app.constant("availableLanguages", languages);

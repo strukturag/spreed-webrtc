@@ -24,7 +24,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
 	return ["mediaStream", function(mediaStream) {
 
-		var controller = ['$scope', "mediaStream", "safeApply", "$timeout", "localStorage", function($scope, mediaStream, safeApply, $timeout, localStorage) {
+		var controller = ['$scope', "mediaStream", "safeApply", "$timeout", "localStorage", "continueConnector", function($scope, mediaStream, safeApply, $timeout, localStorage, continueConnector) {
 
 			var pending = true;
 			var complete = false;
@@ -37,12 +37,15 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 			};
 			ctrl.setInfo("waiting");
 
+			var continueDeferred = continueConnector.defer();
+
 			$scope.continueConnect = function(status) {
 				safeApply($scope, function() {
 					pending = false;
 					if (status) {
 						localStorage.setItem("mediastream-mediacheck", MEDIA_CHECK)
-						$scope.connect()
+						console.log("Continue with connect after media check ...");
+						continueDeferred.resolve();
 						if (mediaStream.config.DefaultRoomEnabled !== true) {
 							ctrl.setInfo("initializing");
 							initializer = $timeout(function() {
@@ -81,7 +84,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 			// Toplevel watcher for connect function to become available.
 			$scope.$watch("connect", function() {
 				if ($scope.connect) {
-					console.log("Connecting ...");
+					console.log("Checking for media access ...");
 					ctrl.setInfo("checking");
 					$timeout(function() {
 						if (pending) {

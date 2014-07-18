@@ -535,7 +535,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				_.delay(function() {
 					if (autoreconnect && !reconnecting) {
 						reconnecting = true;
-						mediaStream.connector.reconnect()
+						console.log("Requesting to reconnect ...");
+						mediaStream.reconnect();
 					}
 				}, 500);
 				$scope.setStatus("reconnecting");

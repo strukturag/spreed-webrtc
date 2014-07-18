@@ -30,7 +30,7 @@ define([
 
 ], function($, _, uaparser, Modernizr, Connector, Api, WebRTC, tokens) {
 
-	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage) {
+	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector) {
 
 		var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
 		var version = context.Cfg.Version || "unknown";
@@ -194,6 +194,18 @@ define([
 					localStorage.removeItem("mediastream-login-" + context.Cfg.UsersMode);
 				}
 			},
+			connect: function() {
+				continueConnector.then(function() {
+					console.log("Connecting ...");
+					connector.connect(url);
+				});
+			},
+			reconnect: function() {
+				continueConnector.then(function() {
+					console.log("Reconnecting ...");
+					connector.reconnect();
+				});
+			},
 			initialize: function($rootScope, translation) {
 
 				var cont = false;
@@ -203,6 +215,7 @@ define([
 				$rootScope.roomid = null;
 				$rootScope.roomlink = null;
 				$rootScope.roomstatus = false;
+				$rootScope.connect = false;
 
 				var connect = function() {
 					// We need websocket support to connect.
@@ -212,10 +225,10 @@ define([
 					}
 					if (ready && cont) {
 						// Inject connector function into scope, so that controllers can pick it up.
+						console.log("Ready to connect ...");
+						mediaStream.connect();
 						safeApply($rootScope, function(scope) {
-							scope.connect = function() {
-								connector.connect(url);
-							};
+							scope.connect = true;
 						});
 					}
 				};

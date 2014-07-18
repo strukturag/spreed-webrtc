@@ -52,7 +52,8 @@ define([
 	'services/animationframe',
 	'services/dialogs',
 	'services/geolocation',
-	'services/screensharing'], function(_,
+	'services/screensharing',
+	'services/continueconnector'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -84,7 +85,8 @@ localStorage,
 animationFrame,
 dialogs,
 geolocation,
-screensharing) {
+screensharing,
+continueConnector) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -118,7 +120,8 @@ screensharing) {
 		animationFrame: animationFrame,
 		dialogs: dialogs,
 		geolocation: geolocation,
-		screensharing: screensharing
+		screensharing: screensharing,
+		continueConnector: continueConnector
 	};
 
 	var initialize = function(angModule) {
