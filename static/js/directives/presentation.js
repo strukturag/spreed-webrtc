@@ -22,64 +22,197 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
 
+		var DownloadPresentation = function(scope, fileInfo, token, owner) {
+			this.e = $({});
+			this.info = fileInfo;
+			this.token = token;
+			this.owner = owner;
+			this.scope = scope.$new();
+			this.scope.info = fileInfo;
+			this.progress = 0;
+			this.handler = null;
+			this.session = null;
+			this.fileid = null;
+			this.file = null;
+			this.url = null;
+			this.sortkey = (fileInfo.name || "").toLowerCase();
+			this.presentable = false;
+			this.downloading = true;
+			this.uploaded = false;
+
+			this.scope.$on("downloadedChunk", _.bind(function(event, idx, byteLength, downloaded, total) {
+				var percentage = Math.ceil((downloaded / total) * 100);
+				this.progress = percentage;
+			}, this));
+
+			this.scope.$on("downloadComplete", _.bind(function(event) {
+				event.stopPropagation();
+				this.progress = 100;
+			}, this));
+
+			this.scope.$on("writeComplete", _.bind(function(event, url, fileInfo) {
+				event.stopPropagation();
+				this.fileid = fileInfo.id;
+				this.file = fileInfo.file;
+				this.url = url;
+				this.downloading = false;
+				this.e.triggerHandler("available", [this, url, fileInfo]);
+				this.stop();
+			}, this));
+		};
+
+		DownloadPresentation.prototype.open = function($scope) {
+			$scope.loading = true;
+			if (this.downloading) {
+				console.log("Presentation download not finished yet, not showing", this);
+				return;
+			}
+			if (this.url && this.url.indexOf("blob:") === 0) {
+				$scope.$emit("openPdf", this.url);
+				return;
+			}
+			if (this.file.hasOwnProperty("writer")) {
+				$scope.$emit("openPdf", this.file);
+			} else {
+				this.file.file(function(fp) {
+					$scope.$emit("openPdf", fp);
+				});
+			}
+		};
+
+		DownloadPresentation.prototype.close = function($scope) {
+			$scope.$emit("closePdf");
+		};
+
+		DownloadPresentation.prototype.start = function() {
+			this.handler = mediaStream.tokens.on(this.token, _.bind(function(event, currenttoken, to, data, type, to2, from, xfer) {
+				//console.log("Presentation token request", currenttoken, data, type);
+				fileDownload.handleRequest(this.scope, xfer, data);
+			}, this), "xfer");
+
+			this.session = fileDownload.startDownload(this.scope, this.owner, this.token);
+		};
+
+		DownloadPresentation.prototype.stop = function() {
+			if (this.handler) {
+				mediaStream.tokens.off(this.token, this.handler);
+				this.handler = null;
+			}
+			if (this.session) {
+				this.session.cancel();
+				this.session = null;
+			}
+		};
+
+		DownloadPresentation.prototype.clear = function() {
+			this.stop();
+			if (this.scope) {
+				this.scope.$emit("cancelDownload");
+				this.scope.$destroy();
+				this.scope = null;
+			}
+			if (this.fileid) {
+				fileData.purgeFile(this.fileid);
+			}
+			this.file = null;
+			this.e.off();
+		};
+
+		var UploadPresentation = function(scope, file, token) {
+			this.e = $({});
+			this.file = file;
+			this.info = file.info;
+			this.token = token;
+			this.scope = scope.$new();
+			this.scope.info = file.info;
+			this.sortkey = (file.info.name || "").toLowerCase();
+			this.presentable = true;
+			this.uploaded = true;
+			this.session = null;
+			this.handler = null;
+		};
+
+		UploadPresentation.prototype.open = function($scope) {
+			$scope.loading = true;
+			$scope.$emit("openPdf", this.file);
+		};
+
+		UploadPresentation.prototype.close = function($scope) {
+			$scope.$emit("closePdf");
+		};
+
+		UploadPresentation.prototype.start = function() {
+			this.session = fileUpload.startUpload(this.scope, this.token);
+			// This binds the token to transfer and ui.
+			this.handler = mediaStream.tokens.on(this.token, _.bind(function(event, currenttoken, to, data, type, to2, from, xfer) {
+				//console.log("Presentation token request", currenttoken, data, type);
+				this.session.handleRequest(this.scope, xfer, data);
+			}, this), "xfer");
+		};
+
+		UploadPresentation.prototype.stop = function() {
+			if (this.handler) {
+				mediaStream.tokens.off(this.token, this.handler);
+				this.handler = null;
+			}
+		};
+
+		UploadPresentation.prototype.clear = function() {
+			this.stop();
+			if (this.scope) {
+				this.scope.$emit("cancelUpload");
+				this.scope.$destroy();
+				this.scope = null;
+			}
+			fileData.purgeFile(this.token);
+			this.session = null;
+			this.file = null;
+			this.e.off();
+		};
+
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			var presentationsCount = 0;
 			var pane = $element.find(".presentationpane");
-			var downloadProgressBar = $element.find(".progress-bar")[0];
 
 			$scope.layout.presentation = false;
-			$scope.isPresenter = false;
 			$scope.hideControlsBar = true;
+			$scope.currentPageNumber = -1;
+			$scope.maxPageNumber = -1;
 			$scope.pendingPageRequest = null;
 			$scope.presentationLoaded = false;
-			$scope.currentFileInfo = null;
+			$scope.currentPresentation = null;
 			$scope.currentPage = null;
 			$scope.receivedPage = null;
 			$scope.loading = false;
-			$scope.downloadSize = 0;
-			$scope.downloadProgress = 0;
-			$scope.sharedFilesCache = {};
-			$scope.visibleSharedFiles = [];
+			$scope.activeDownloads = [];
+			$scope.availablePresentations = [];
 
-			var addVisibleSharedFile = function(file) {
-				if (file.writer) {
-					// only show files the user has uploaded
-					return;
-				} else if ($scope.sharedFilesCache[file.info.id]) {
-					// already added
-					return;
-				}
-				$scope.visibleSharedFiles.push({
-					"id": file.info.id,
-					"name": file.info.name,
-					"size": file.info.size,
-					"file": file,
-					"sortkey": (file.info.name || "").toLowerCase()
+			$scope.getPresentation = function(token) {
+				// TODO(fancycode): better not use linear search,
+				// however we need a list for "ng-repeat" to allow
+				// sorting.
+				var result = _.find($scope.availablePresentations, function(presentation) {
+					return (presentation.token === token);
 				});
-			};
-
-			var removeVisibleSharedFile = function(fileInfo) {
-				var i;
-				for (i=0; i<$scope.visibleSharedFiles.length; i++) {
-					var file = $scope.visibleSharedFiles[i];
-					if (file.id === fileInfo.id) {
-						$scope.visibleSharedFiles.splice(i, 1);
-						break;
-					}
-				}
+				return result || null;
 			};
 
 			$scope.resetProperties = function() {
-				$scope.isPresenter = false;
-				$scope.currentFileInfo = null;
+				$scope.currentPageNumber = -1;
+				$scope.maxPageNumber = -1;
+				$scope.pendingPageRequest = null;
+				$scope.presentationLoaded = false;
+				$scope.currentPresentation = null;
 				$scope.currentPage = null;
 				$scope.receivedPage = null;
+				$scope.loading = false;
 			};
 
 			$scope.$on("pdfLoaded", function(event, source, doc) {
 				$scope.currentPageNumber = -1;
-				if ($scope.isPresenter) {
+				$scope.maxPageNumber = doc.numPages;
+				if ($scope.currentPresentation && $scope.currentPresentation.presentable) {
 					$scope.$emit("showPdfPage", 1);
 				} else if ($scope.pendingPageRequest !== null) {
 					$scope.$emit("showPdfPage", $scope.pendingPageRequest);
@@ -99,98 +232,53 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				$scope.$emit("showPdfPage", newval);
 			});
 
-			var downloadScope = $scope.$new();
-			downloadScope.$on("downloadedChunk", function(event, idx, byteLength, downloaded, total) {
-				var percentage = Math.ceil((downloaded / total) * 100);
-				$scope.downloadProgress = percentage;
-				downloadProgressBar.style.width = percentage + '%';
-			});
-			downloadScope.$on("downloadComplete", function(event) {
-				event.stopPropagation();
-				$scope.downloadProgress = 100;
-				downloadProgressBar.style.width = '100%';
-				finishDownloadPresentation();
-			});
-
-			$scope.openFileInfo = function(fileInfo) {
-				var url = fileInfo.url;
-				if (url && url.indexOf("blob:") === 0) {
-					$scope.$emit("openPdf", url);
-				} else {
-					var file = fileInfo.file;
-					if (file.hasOwnProperty("writer")) {
-						$scope.$emit("openPdf", file);
-					} else {
-						file.file(function(fp) {
-							$scope.$emit("openPdf", fp);
-						});
-					}
-				}
-			};
-
-			downloadScope.$on("writeComplete", function(event, url, fileInfo) {
-				event.stopPropagation();
-				$scope.downloadSize = 0;
-				// need to store for internal file it and received token
-				// to allow cleanup and prevent duplicate download
-				fileInfo.url = url;
-				$scope.sharedFilesCache[fileInfo.id] = fileInfo;
-				$scope.sharedFilesCache[fileInfo.info.id] = fileInfo;
-				addVisibleSharedFile(fileInfo);
-				$scope.openFileInfo(fileInfo);
-			});
-
-			var finishDownloadPresentation = function() {
-				if (downloadScope.info) {
-					mediaStream.tokens.off(downloadScope.info.id, downloadScope.handler);
-					downloadScope.info = null;
-					downloadScope.handler = null;
-				}
-			};
-
 			var downloadPresentation = function(fileInfo, from) {
-				finishDownloadPresentation();
-
-				$scope.presentationLoaded = false;
-				$scope.pendingPageRequest = null;
-				$scope.loading = true;
-
 				var token = fileInfo.id;
-				var existing = $scope.sharedFilesCache[token];
+				var existing = $scope.getPresentation(token);
 				if (existing) {
-					console.log("Found existing file", existing);
-					$scope.openFileInfo(existing);
+					console.log("Found existing presentation", existing);
+					$scope.currentPresentation = existing;
+					existing.open($scope);
 					return;
 				}
 
-				downloadProgressBar.style.width = '0%';
-				$scope.downloadProgress = 0;
-				$scope.downloadSize = fileInfo.size;
-				downloadScope.info = fileInfo;
+				var download = _.find($scope.activeDownloads, function(download) {
+					return (download.token === token);
+				});
+				if (download) {
+					// already downloading presentation, wait for completion
+					console.log("Still downloading presentation", download);
+					return;
+				}
 
-				downloadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
-					//console.log("Presentation token request", currenttoken, data, type);
-					fileDownload.handleRequest($scope, xfer, data);
-				}, "xfer");
-
-				fileDownload.startDownload(downloadScope, from, token);
+				download = new DownloadPresentation($scope, fileInfo, token, from);
+				download.e.one("available", function(event, download, url, fileInfo) {
+					var pos = _.indexOf($scope.activeDownloads, download);
+					if (pos !== -1) {
+						$scope.activeDownloads.splice(pos, 1);
+					}
+					if ($scope.currentPresentation === download) {
+						console.log("Current presentation finished downloading, open", download)
+						download.open($scope);
+					}
+				});
+				$scope.activeDownloads.push(download);
+				$scope.availablePresentations.push(download);
+				download.start();
 			};
 
-			var uploadPresentation = function(fileInfo) {
-				var token = fileInfo.id;
-				if ($scope.sharedFilesCache.hasOwnProperty(token)) {
-					console.log("Already have an upload token for that presentation.");
-					return;
+			var uploadPresentation = function(file) {
+				var token = file.info.id;
+				var existing = $scope.getPresentation(token);
+				if (existing) {
+					console.log("Already uploaded presentation", existing);
+					return existing;
 				}
 
-				var uploadScope = $scope.$new();
-				uploadScope.info = fileInfo;
-				var session = fileUpload.startUpload(uploadScope, token);
-				// This binds the token to transfer and ui.
-				uploadScope.handler = mediaStream.tokens.on(token, function(event, currenttoken, to, data, type, to2, from, xfer) {
-					//console.log("Presentation token request", currenttoken, data, type);
-					session.handleRequest(uploadScope, xfer, data);
-				}, "xfer");
+				var upload = new UploadPresentation($scope, file, token);
+				$scope.availablePresentations.push(upload);
+				upload.start();
+				return upload;
 			};
 
 			mediaStream.api.e.on("received.presentation", function(event, id, from, data, p2p) {
@@ -204,15 +292,20 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					case "FileInfo":
 						console.log("Received presentation file request", data);
 						$scope.$apply(function(scope) {
-							scope.resetProperties();
-							if (data.FileInfo) {
-								downloadPresentation(data.FileInfo, from);
-							} else {
-								// close currently visible PDF
-								finishDownloadPresentation();
-								$scope.$emit("closePdf");
-								$scope.resetProperties();
-								// TODO(fancycode): also cleanup downloaded file
+							downloadPresentation(data.FileInfo, from);
+						});
+						break;
+
+					case "Delete":
+						console.log("Received presentation delete request", data);
+						$scope.$apply(function(scope) {
+							var token = data.Delete;
+							var existing = _.find(scope.availablePresentations, function(presentation) {
+								// only allow deleting of presentations we downloaded
+								return (!presentation.uploaded && presentation.token === token);
+							});
+							if (existing) {
+								scope.deletePresentation(existing);
 							}
 						});
 						break;
@@ -231,6 +324,22 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 						console.log("Received presentation hide request", data);
 						$scope.$apply(function(scope) {
 							scope.layout.presentation = false;
+						});
+						break;
+
+					case "Select":
+						console.log("Received presentation select request", data);
+						$scope.$apply(function(scope) {
+							var token = data.Select;
+							var existing = _.find(scope.availablePresentations, function(presentation) {
+								// only allow deleting of presentations we downloaded
+								return (!presentation.uploaded && presentation.token === token);
+							});
+							if (existing) {
+								scope.doSelectPresentation(existing);
+							} else {
+								console.log("No presentation found for token", token);
+							}
 						});
 						break;
 
@@ -283,17 +392,26 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					Type: "Show",
 					Show: true
 				});
-				if ($scope.currentFileInfo !== null) {
+				_.each($scope.availablePresentations, function(presentation) {
+					if (presentation.uploaded) {
+						mediaStreamSendPresentation(peercall, token, {
+							Type: "FileInfo",
+							FileInfo: presentation.info
+						});
+					}
+				});
+				if ($scope.currentPresentation && $scope.currentPresentation.uploaded) {
 					mediaStreamSendPresentation(peercall, token, {
-						Type: "FileInfo",
-						FileInfo: $scope.currentFileInfo
+						Type: "Select",
+						Select: $scope.currentPresentation.token
 					});
-				}
-				if ($scope.currentPage !== null) {
-					mediaStreamSendPresentation(peercall, token, {
-						Type: "Page",
-						Page: $scope.currentPage
-					});
+
+					if ($scope.currentPage !== null) {
+						mediaStreamSendPresentation(peercall, token, {
+							Type: "Page",
+							Page: $scope.currentPage
+						});
+					}
 				}
 			};
 
@@ -344,7 +462,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				alertify.dialog.alert(errorMessage);
 			});
 
-			$scope.startPresentingFile = function(file) {
+			$scope.advertiseFile = function(file) {
 				console.log("Advertising file", file);
 				var fileInfo = file.info;
 				// TODO(fancycode): other peers should either request the file or subscribe rendered images (e.g. for mobile app), for now we send the whole file
@@ -354,32 +472,32 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 						FileInfo: fileInfo
 					});
 				});
-				uploadPresentation(fileInfo);
-				$scope.isPresenter = true;
-				$scope.currentFileInfo = fileInfo;
-				$scope.receivedPage = null;
-				$scope.loading = true;
-				$scope.$emit("openPdf", file);
-				addVisibleSharedFile(file);
-				$scope.sharedFilesCache[fileInfo.id] = file;
+				var presentation = uploadPresentation(file);
+				if ($scope.availablePresentations.length === 1) {
+					// this is the first presentation, show immediately
+					$scope.selectPresentation(presentation);
+				}
 			};
 
 			var filesSelected = function(files) {
-				if (files.length > 1) {
-					alertify.dialog.alert(translation._("Only single PDF documents can be shared at this time."));
-					return;
-				}
-
+				var valid_files = [];
 				_.each(files, function(f) {
-					if (!f.info.hasOwnProperty("id")) {
-						f.info.id = f.id;
-					}
 					if (f.info.type !== "application/pdf") {
 						console.log("Not sharing file", f);
 						alertify.dialog.alert(translation._("Only PDF documents can be shared at this time."));
+						valid_files = null;
 						return;
 					}
-					$scope.startPresentingFile(f);
+					if (valid_files !== null) {
+						valid_files.push(f);
+					}
+				});
+
+				_.each(valid_files, function(f) {
+					if (!f.info.hasOwnProperty("id")) {
+						f.info.id = f.id;
+					}
+					$scope.advertiseFile(f);
 				});
 			};
 
@@ -453,7 +571,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					currentToken = null;
 				}
 				$scope.$emit("closePdf");
-				finishDownloadPresentation();
 				$scope.resetProperties();
 				$scope.layout.presentation = false;
 				peers = {};
@@ -461,36 +578,57 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				mediaStream.webrtc.e.off("statechange", updater);
 			};
 
-			$scope.selectPresentation = function(fileInfo) {
-				if ($scope.currentFileInfo && fileInfo.id === $scope.currentFileInfo.id) {
+			$scope.selectPresentation = function(presentation) {
+				if (!presentation.presentable) {
+					// can't show this presentation
+					return;
+				}
+				if ($scope.currentPresentation === presentation) {
 					// switch back to first page when clicked on current presentation
 					$scope.$emit("showPdfPage", 1);
 					return;
 				}
-				console.log("Selected", fileInfo);
-				$scope.startPresentingFile(fileInfo.file);
+				mediaStream.webrtc.callForEachCall(function(peercall) {
+					mediaStreamSendPresentation(peercall, currentToken, {
+						Type: "Select",
+						Select: presentation.token
+					});
+				});
+				$scope.doSelectPresentation(presentation);
+			}
+
+			$scope.doSelectPresentation = function(presentation) {
+				console.log("Selected", presentation);
+				$scope.currentPageNumber = -1;
+				$scope.maxPageNumber = -1;
+				$scope.currentPresentation = presentation;
+				$scope.receivedPage = null;
+				$scope.presentationLoaded = false;
+				$scope.pendingPageRequest = null;
+				presentation.open($scope);
 			};
 
-			$scope.deletePresentation = function($event, fileInfo) {
-				$event.preventDefault();
-				var token = fileInfo.id;
-				fileData.purgeFile(token);
-				delete $scope.sharedFilesCache[token];
-				if (fileInfo.info) {
-					delete $scope.sharedFilesCache[fileInfo.info.id];
+			$scope.deletePresentation = function(presentation, $event) {
+				if ($event) {
+					$event.preventDefault();
 				}
-				removeVisibleSharedFile(fileInfo);
-				mediaStream.tokens.off(token);
-				if ($scope.currentFileInfo && fileInfo.id === $scope.currentFileInfo.id) {
+				var pos = _.indexOf($scope.availablePresentations, presentation);
+				if (pos !== -1) {
+					$scope.availablePresentations.splice(pos, 1);
+				}
+				if (presentation.uploaded) {
 					mediaStream.webrtc.callForEachCall(function(peercall) {
 						mediaStreamSendPresentation(peercall, currentToken, {
-							Type: "FileInfo",
-							FileInfo: null
+							Type: "Delete",
+							Delete: presentation.token
 						});
 					});
-					$scope.$emit("closePdf");
-					$scope.resetProperties($scope.visibleSharedFiles.length > 0);
 				}
+				if ($scope.currentPresentation === presentation) {
+					presentation.close($scope);
+					$scope.resetProperties();
+				}
+				presentation.clear();
 			};
 
 			$scope.toggleFullscreen = function(elem) {
@@ -506,11 +644,11 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			};
 
 			mediaStream.webrtc.e.on("done", function() {
-				_.each($scope.sharedFilesCache, function(file, id) {
-					fileData.purgeFile(id);
+				_.each($scope.availablePresentations, function(download) {
+					download.clear();
 				});
-				$scope.sharedFilesCache = {};
-				$scope.visibleSharedFiles = [];
+				$scope.availablePresentations = [];
+				$scope.activeDownloads = [];
 			});
 
 			$(document).on("keyup", function(event) {

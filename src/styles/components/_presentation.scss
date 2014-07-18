@@ -125,13 +125,15 @@
   height: 122px;
   display: inline-block;
   margin-left: 20px;
-  cursor: pointer;
   position: relative;
   vertical-align: middle;
 }
 
+.presentation .thumbnail.presentable {
+  cursor: pointer;
+}
+
 .presentation .thumbnail:first-child {
-  cursor: default;
   margin-left: 0;
 }
 
@@ -145,6 +147,21 @@
   font-size: 10px;
 }
 
+.presentation .thumbnail .caption .progress {
+  position: relative;
+}
+
+.presentation .thumbnail .caption .download-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  line-height: 20px;
+  text-shadow: 1px 1px 1px white;
+  color: $text-color;
+}
+
 .presentation .thumbnail .active {
   font-size: 10em;
   color: #84b819;
@@ -155,6 +172,23 @@
   top: 0;
   bottom: 0;
   text-align: center;
+}
+
+.presentation .thumbnail .notavailable {
+  display: none;
+  font-size: 10em;
+  color: #d2322d;
+  opacity: 0.25;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+}
+
+.presentation .thumbnail:hover .notavailable {
+  display: block;
 }
 
 .presentation .thumbnail .delete {

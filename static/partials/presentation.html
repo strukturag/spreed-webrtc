@@ -1,10 +1,10 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
-		<div class="welcome container-fluid" ng-show="loading">
+		<div class="welcome container-fluid" ng-show="loading || (maxPageNumber === -1 && activeDownloads.length)">
 			<h1>{{_('Loading presentation ...')}}</h1>
-			<div class="progress" ng-show="downloadSize &gt; 0">
-				<span class="download-info">{{downloadSize|humanizeFilesize}} <span ng-show="downloading">/ {{downloadProgress}}%</span></span>
-				<div class="progress-bar progress-bar-success"></div>
+			<div class="progress" ng-repeat="download in activeDownloads | orderBy: 'sortkey'">
+				<span class="download-info">{{download.info.name}} ({{download.info.size|humanizeFilesize}} / {{download.progress}}%)</span>
+				<div class="progress-bar progress-bar-success" ng-style="{'width': download.progress+'%'}"></div>
 			</div>
 		</div>
 		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || loading">
@@ -20,27 +20,35 @@
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>
 		<div class="overlaybar-content">
-			<div class="pagecontrol" ng-show="(maxPageNumber !== -1 && !downloading) || visibleSharedFiles.length">
-				<div class="clearfix" ng-show="maxPageNumber !== -1 && !downloading">
+			<div class="pagecontrol" ng-show="maxPageNumber !== -1 || availablePresentations.length">
+				<div class="clearfix" ng-show="maxPageNumber !== -1">
 					<a class="overlaybar-button btn-prev" ng-click="prevPage()" ng-show="currentPageNumber &gt; 1" title="{{_('Prev')}}"><i class="fa fa-backward"></i></a>
 					<div class="pageinfo center-block"><input class="form-control input-sm" type="number" ng-model="currentPageNumber" /> / {{ maxPageNumber }}</div>
 					<a class="overlaybar-button btn-next" ng-click="nextPage()" ng-show="currentPageNumber &lt; maxPageNumber" title="{{_('Next')}}"><i class="fa fa-forward"></i></a>
 				</div>
 			</div>
-			<div class="presentations nicescroll" ng-show="visibleSharedFiles.length">
+			<div class="presentations nicescroll" ng-show="availablePresentations.length">
 				<div class="thumbnail">
 					<div class="fa filetype fa-plus"></div>
 					<div class="caption">
 						<button class="btn btn-primary">{{_('Upload')}}</button>
 					</div>
 				</div>
-				<div class="thumbnail" ng-repeat="info in visibleSharedFiles | orderBy : 'sortkey'" ng-click="selectPresentation(info)" title="{{ info.name }}">
-					<div class="fa active fa-check" ng-show="info.id === currentFileInfo.id"></div>
-					<a class="btn btn-danger delete" ng-click="deletePresentation($event, info)"><i class="fa fa-trash-o fa-lg"></i></a>
+				<div class="thumbnail" ng-repeat="presentation in availablePresentations | orderBy : 'sortkey'"
+									   ng-class="{'presentable': presentation.presentable}"
+									   ng-click="selectPresentation(presentation)"
+									   title="{{ presentation.info.name }}">
+					<div class="fa active fa-check" ng-show="presentation === currentPresentation"></div>
+					<div class="fa notavailable fa-ban" ng-show="presentation !== currentPresentation && !presentation.presentable"></div>
+					<a class="btn btn-danger delete" ng-show="presentation.uploaded" ng-click="deletePresentation(presentation, $event)"><i class="fa fa-trash-o fa-lg"></i></a>
 					<div class="fa filetype fa-file-pdf-o"></div>
 					<div class="caption">
-						<span class="name">{{ info.name }}</span><br>
-						<span class="size">{{ info.size|humanizeFilesize }}</span>
+						<span class="name">{{ presentation.info.name }}</span><br>
+						<span ng-show="!presentation.downloading" class="size">{{ presentation.info.size|humanizeFilesize }}</span>
+						<div ng-show="presentation.downloading" class="progress">
+							<span class="download-info">{{presentation.info.size|humanizeFilesize}} / {{presentation.progress}}%</span>
+							<div class="progress-bar progress-bar-success" ng-style="{'width': presentation.progress+'%'}"></div>
+						</div>
 					</div>
 				</div>
 			</div>
