@@ -46,8 +46,8 @@
                   <iframe class="hidden" name="users_registration_certificate_iframe"></iframe>
                 </div>
                 <div ng-if="userid">
-                  <pre class="small">{{userid|displayUserid}}</pre>
-                  <span class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</span>
+                  <p class="form-control-static well well-sm">{{userid|displayUserid}}</p>
+                  <p class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</p>
                 </div>
               </form>
               <div ng-switch-default class="col-xs-8">
@@ -59,7 +59,7 @@
                     <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
                   </label>
                 </div>
-                <pre class="small" ng-if="userid">{{userid|displayUserid}}</pre>
+                <p class="form-control-static well well-sm" ng-if="userid">{{userid|displayUserid}}</p>
                 <label ng-if="userid && withUsersForget && usersettings.forgetUserid">
                   <button class="btn btn-small btn-default btn-sign-out" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
                 </label>
