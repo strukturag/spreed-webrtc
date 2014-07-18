@@ -18,9 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'desktop-notify'], function($, _) {
+define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 	return ["$window", function($window) {
+
+		// Retrieve URL from CSS.
+		var defaultIconUrl = (function() {
+			var iconElement = $("<span>").addClass("desktopnotify-icon hidden");
+			iconElement.appendTo("body");
+			var url = iconElement.css('background-image');
+    		url = /^url\((['"]?)(.*)\1\)$/.exec(url);
+    		url = url ? url[2] : "";
+			iconElement.remove();
+			return url;
+		}());
 
 		var helper = notify;
 
@@ -86,7 +97,7 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _) {
 
 			var opts = {
 				body: body,
-				icon: "static/img/notify.ico",
+				icon: defaultIconUrl,
 				timeout: 7000
 			}
 			$.extend(opts, options);
