@@ -549,6 +549,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			var t = event.type;
 			var opts = $.extend({}, options);
 			$timeout.cancel(ttlTimeout);
+			$scope.userid = $scope.suserid = null;
 			switch (t) {
 				case "open":
 					t = "waiting";
@@ -559,7 +560,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 					if (opts.soft) {
 						return;
 					}
-					$scope.userid = $scope.suserid = null;
 					break;
 				case "error":
 					if (reconnecting || connected) {
