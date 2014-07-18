@@ -24,6 +24,12 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', function($scope, safeApply, $timeout, $q) {
 
+			// Buddy picutre capture size.
+			$scope.captureSize = {
+				width: 128,
+				height: 128
+			};
+
 			$scope.showTakePicture = false;
 			$scope.waitingForPermission = false;
 			$scope.previewPicture = false;
@@ -175,6 +181,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, 
 			$scope.flash = $element.find(".videoFlash");
 			$scope.canvasPic = $element.find("canvas.videoPic").get(0);
 			$scope.canvasPrev = $element.find("canvas.videoPrev").get(0);
+			$($scope.canvasPic).attr($scope.captureSize);
 
 		};
 
