@@ -148,6 +148,23 @@ Available end points with request methods and content-type:
         Please see the implementation on exact fields of Runtime and Hub stats.
 
 
+  /static/img/buddy/{flags}/{imageid}/{idx:.*}
+
+    This endpoint provides application with user icons
+
+    GET application/x-www-form-urlencoded
+      details: 
+        flags: at the moment the only know flag is s{icon_size_in_pixels},
+               the icons are always squares so only one dimension is needed 
+               example: s46
+        imageid and idx: image id received via Channeling API (please refer to Channeling API for details)
+      example: https://example.com/static/img/buddy/s46/8nG33oDk8Yv8fvK6IphL/6vjI2NLigcET/picture.jpg
+      Response 200:
+        {image}
+
+
+
+
 End of REST API.
 
 For latest version of Spreed WebRTC check
