@@ -51,7 +51,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				}
 				this.pendingPageNumber = null;
 				this.currentPageNumber = -1;
-				this.scope.maxPageNumber = -1;
+				this.maxPageNumber = -1;
 				// clear visible canvas so it's empty when we show the next document
 				var canvas = this.canvases[this.scope.canvasIndex];
 				canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
@@ -89,7 +89,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			PDFCanvas.prototype._pdfLoaded = function(source, doc) {
 				this.scope.$apply(_.bind(function(scope) {
 					this.doc = doc;
-					scope.maxPageNumber = doc.numPages;
+					this.maxPageNumber = doc.numPages;
 					this.currentPageNumber = -1;
 					console.log("PDF loaded", doc);
 					scope.$emit("pdfLoaded", source, doc);
@@ -167,7 +167,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 					return;
 				}
 
-				console.log("Showing page", page, "/", this.scope.maxPageNumber);
+				console.log("Showing page", page, "/", this.maxPageNumber);
 				if (this.currentPage) {
 					this.currentPage.destroy();
 					this.currentPage = null;
@@ -185,7 +185,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				this.renderTask = null;
 				this.scope.$apply(_.bind(function(scope) {
 					console.log("Rendered page", pageObject.pageNumber);
-					this.scope.$emit("pdfPageRendered", pageObject.pageNumber, scope.maxPageNumber);
+					this.scope.$emit("pdfPageRendered", pageObject.pageNumber, this.maxPageNumber);
 					// ...and flip the buffers...
 					scope.canvasIndex = 1 - scope.canvasIndex;
 					this.showQueuedPage();
@@ -205,7 +205,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 					loadErrorMessage = translation._("An unknown error occurred while rendering the PDF page.");
 				}
 				this.scope.$apply(_.bind(function(scope) {
-					this.scope.$emit("pdfPageRenderError", pageObject.pageNumber, scope.maxPageNumber, loadErrorMessage);
+					this.scope.$emit("pdfPageRenderError", pageObject.pageNumber, this.maxPageNumber, loadErrorMessage);
 				}, this));
 			};
 
@@ -261,7 +261,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			};
 
 			PDFCanvas.prototype.showPage = function(page) {
-				if (page >= 1 && page <= this.scope.maxPageNumber) {
+				if (page >= 1 && page <= this.maxPageNumber) {
 					if (!this.doc) {
 						this.pendingPageNumber = page;
 				   } else {
@@ -285,7 +285,6 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				}
 			};
 
-			$scope.maxPageNumber = -1;
 			$scope.canvasIndex = 0;
 
 			var canvases = container.find("canvas");
