@@ -309,6 +309,12 @@ Additional types for session listing and notifications
 
     }
 
+    'buddyPicture' can be in next formats: 
+    1. Base64 encoded string of an image. 
+      Example: data:image/jpeg;base64,/9j/4...
+    2. url subpath to query REST API. Please refer to REST API for more information
+      Example: img:8nG33oDk8Yv8fvK6IphL/6vjI2NLigcET/picture.jpg
+
     Note: buddyPicture content needs to be in the format of HTML data urls'.
 
     Rev is the status update sequence for this status update entry. It
