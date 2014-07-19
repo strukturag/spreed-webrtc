@@ -23,106 +23,121 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 	// screensharing
 	return ["$window", "$q", "chromeExtension", function($window, $q, chromeExtension) {
 
-		// Check if we can do screensharing.
-		var supported = false;
+		var Screensharing = function() {
+			this.initialize();
+			chromeExtension.e.on("available", _.bind(function() {
+				this.initialize();
+			}, this));
+		};
 
-		// Define our helpers.
-		var prepare = null;
-		var cancel = null;
+		Screensharing.prototype.initialize = function() {
 
-		// Chrome support.
-		if ($window.webrtcDetectedBrowser === "chrome") {
-			if ($window.webrtcDetectedVersion >= 32 &&
-				$window.webrtcDetectedVersion < 37) {
-				// Support for flag based developer screen sharing came in Chrome 32.
-				// It was removed in Chrome 37 in favour of chrome.chooseDesktopMedia
-				// https://code.google.com/p/chromium/issues/detail?id=347641
-				supported = true;
-				prepare = function(options) {
-					// This generates constrains for the flag based screen screensharing
-					// support in Chrome 31+ to 36. Flag to be enabled is found at:
-					// chrome://flags/#enable-usermedia-screen-capture
-					var d = $q.defer()
-					var opts = _.extend({
-						chromeMediaSource: "screen"
-					}, options);
-					d.resolve(opts);
-					return d.promise;
-				};
-			} else if ($window.webrtcDetectedVersion >= 37) {
-				// We need a extension to support screen sharing. See
-				// https://developer.chrome.com/extensions/desktopCapture#method-chooseDesktopMedia
-				// for details.
-			}
+			// Check if we can do screensharing.
+			this.supported = false;
 
-			if (chromeExtension.available) {
-				supported = true;
-				var pending = null;
-				prepare = function(options) {
-					var select = chromeExtension.call({
-						Type: "Action",
-						Action: "chooseDesktopMedia"
-					});
-					var d = $q.defer();
-					select.then(function(id) {
-						// Success with id.
-						pending = null;
-						if (id) {
-							var opts = _.extend({
-								chromeMediaSource: "desktop",
-								chromeMediaSourceId: id
-							}, options);
-							d.resolve(opts);
-						} else {
-							d.resolve(null);
-						}
-					}, function(err) {
-						// Error.
-						pending = null;
-						console.log("Failed to prepare screensharing", err);
-						d.reject(err);
-					}, function(data) {
-						// Notify.
-						pending = data;
-					});
-					return d.promise;
-				};
-				cancel = function() {
-					if (pending !== null) {
-						chromeExtension.call({
+			// Define our helpers.
+			this.prepare = null;
+			this.cancel = null;
+
+			// Chrome support.
+			if ($window.webrtcDetectedBrowser === "chrome") {
+
+				if ($window.webrtcDetectedVersion >= 32 &&
+					$window.webrtcDetectedVersion < 37) {
+					// Support for flag based developer screen sharing came in Chrome 32.
+					// It was removed in Chrome 37 in favour of chrome.chooseDesktopMedia
+					// https://code.google.com/p/chromium/issues/detail?id=347641
+					this.supported = true;
+					this.prepare = function(options) {
+						// This generates constrains for the flag based screen screensharing
+						// support in Chrome 31+ to 36. Flag to be enabled is found at:
+						// chrome://flags/#enable-usermedia-screen-capture
+						var d = $q.defer()
+						var opts = _.extend({
+							chromeMediaSource: "screen"
+						}, options);
+						d.resolve(opts);
+						return d.promise;
+					};
+				} else if ($window.webrtcDetectedVersion >= 37) {
+					// We need a extension to support screen sharing. See
+					// https://developer.chrome.com/extensions/desktopCapture#method-chooseDesktopMedia
+					// for details.
+				}
+
+				if (chromeExtension.available) {
+					this.supported = true;
+					var pending = null;
+					this.prepare = function(options) {
+						var select = chromeExtension.call({
 							Type: "Action",
-							Action: "cancelChooseDesktopMedia",
-							Args: pending
+							Action: "chooseDesktopMedia"
 						});
-						pending = null;
-					}
-				};
+						var d = $q.defer();
+						select.then(function(id) {
+							// Success with id.
+							pending = null;
+							if (id) {
+								var opts = _.extend({
+									chromeMediaSource: "desktop",
+									chromeMediaSourceId: id
+								}, options);
+								d.resolve(opts);
+							} else {
+								d.resolve(null);
+							}
+						}, function(err) {
+							// Error.
+							pending = null;
+							console.log("Failed to prepare screensharing", err);
+							d.reject(err);
+						}, function(data) {
+							// Notify.
+							pending = data;
+						});
+						return d.promise;
+					};
+					this.cancel = function() {
+						if (pending !== null) {
+							chromeExtension.call({
+								Type: "Action",
+								Action: "cancelChooseDesktopMedia",
+								Args: pending
+							});
+							pending = null;
+						}
+					};
+				}
+
+			} else {
+				// Currently Chrome only - sorry.
+				// Firefox 33 might get screen sharing support.
+				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
 			}
 
-		} else {
-			// Currently Chrome only - sorry.
-			// Firefox 33 might get screen sharing support.
-			// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
-		}
+			console.log("Screensharing support", this.supported);
 
-		// public API.
-		return {
-			supported: supported,
-			getScreen: function(options) {
-				if (prepare) {
-					return prepare(options);
-				} else {
-					var d = $q.defer()
-					d.reject("No implementation to get screen.");
-					return d.promise;
-				}
-			},
-			cancelGetScreen: function() {
-				if (cancel) {
-					cancel();
-				}
+		};
+
+		Screensharing.prototype.getScreen = function(options) {
+			if (this.prepare) {
+				return this.prepare(options);
+			} else {
+				var d = $q.defer()
+				d.reject("No implementation to get screen.");
+				return d.promise;
 			}
-		}
+		};
+
+		Screensharing.prototype.cancelGetScreen = function() {
+			if (this.cancel) {
+				this.cancel();
+			}
+		};
+
+		// Expose.
+		var screensharing = new Screensharing();
+		return screensharing;
 
 	}];
 

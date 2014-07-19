@@ -18,21 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["underscore"], function(_) {
+define(["underscore", "jquery"], function(_, $) {
 
 	// chromeExtension
 	return ["$window", "$q", function($window, $q) {
 
-		var available = false;
-		var marker = $window.document.getElementById("chromeextension-available");
-		if (marker) {
-			available = true;
-			console.log("Chrome extension is available.");
-		}
-
 		var ChromeExtension = function() {
+			this.available = false;
 			this.registry = {};
 			this.count = 0;
+			this.e = $({});
+			this.initialize();
+		};
+
+		ChromeExtension.prototype.initialize = function() {
+			var marker = $window.document.getElementById("chromeextension-available");
+			if (marker && !this.available) {
+				this.available = true;
+				console.log("Chrome extension is available.");
+				this.e.triggerHandler("available", true);
+			} else if (!marker && this.available) {
+				this.available = false;
+				console.log("Chrome extension is no longer available.");
+				this.e.triggerHandler("available", false);
+			}
 		};
 
 		ChromeExtension.prototype.call = function(data) {
@@ -75,33 +84,27 @@ define(["underscore"], function(_) {
 					console.warn("Unknown call reference received", data, this.registry, this);
 				}
 				break;
+			case "Upgrade":
+				console.log("Extension installed or upgraded", data);
+				this.initialize();
+				break;
 			default:
 				console.log("Unknown message type", data.Type, data);
 				break;
 			}
 		};
 
-		var extension;
-		if (available) {
-			extension = new ChromeExtension();
-
-			$window.addEventListener("message", function(event) {
-				//console.log("message", event.origin, event.source === window, event);
-				if (event.source === window && event.data.answer) {
-					// Only process answers to avoid loops.
-					extension.onMessage(event);
-				}
-			});
-
-		}
-
-		// public API.
-		return {
-			available: available,
-			call: function(data) {
-				return extension.call(data);
+		var extension = new ChromeExtension();
+		$window.addEventListener("message", function(event) {
+			//console.log("message", event.origin, event.source === window, event);
+			if (event.source === window && event.data.answer) {
+				// Only process answers to avoid loops.
+				extension.onMessage(event);
 			}
-		}
+		});
+
+		// Expose.
+		return extension;
 
 	}];
 
