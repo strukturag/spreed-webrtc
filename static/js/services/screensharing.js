@@ -18,13 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['webrtc.adapter'], function() {
+define(['underscore', 'webrtc.adapter'], function(_) {
 
 	// screensharing
-	return ["$window", function($window) {
+	return ["$window", "$q", "chromeExtension", function($window, $q, chromeExtension) {
 
 		// Check if we can do screensharing.
 		var supported = false;
+		var prepare = null;
 		if ($window.webrtcDetectedBrowser === "chrome") {
 			if ($window.webrtcDetectedVersion >= 32 &&
 				$window.webrtcDetectedVersion < 37) {
@@ -32,18 +33,66 @@ define(['webrtc.adapter'], function() {
 				// It was removed in Chrome 37 in favour of chrome.chooseDesktopMedia
 				// https://code.google.com/p/chromium/issues/detail?id=347641
 				supported = true;
+				prepare = function(options) {
+					// This generates constrains for the flag based screen screensharing
+					// support in Chrome 31+ to 36. Flag to be enabled is found at:
+					// chrome://flags/#enable-usermedia-screen-capture
+					var d = $q.defer()
+					var opts = _.extend({
+						chromeMediaSource: "screen"
+					}, options);
+					d.resolve(opts);
+					return d.promise;
+				};
 			} else if ($window.webrtcDetectedVersion >= 37) {
 				// We need a extension to support screen sharing. See
 				// https://developer.chrome.com/extensions/desktopCapture#method-chooseDesktopMedia
 				// for details.
 			}
+
+			if (chromeExtension.available) {
+				supported = true;
+				prepare = function(options) {
+					var select = chromeExtension.call({
+						Type: "Action",
+						Action: "chooseDesktopMedia"
+					});
+					var d = $q.defer();
+					select.then(function(id) {
+						//console.log("Prepare screensharing success", id);
+						if (id) {
+							var opts = _.extend({
+								chromeMediaSource: "desktop",
+								chromeMediaSourceId: id
+							}, options);
+							d.resolve(opts);
+						} else {
+							d.resolve(null);
+						}
+					}, function(err) {
+						console.log("Failed to prepare screensharing", err);
+						d.reject(err);
+					});
+					return d.promise;
+				};
+			}
+
 		} else {
 			// Currently Chrome only.
 		}
 
 		// public API.
 		return {
-			supported: supported
+			supported: supported,
+			getScreen: function(options) {
+				if (prepare) {
+					return prepare(options);
+				} else {
+					var d = $q.defer()
+					d.reject("No implementation to get screen.");
+					return d.promise;
+				}
+			}
 		}
 
 	}];

@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -168,9 +168,24 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 
 				$scope.layout.screenshare = true;
+				screensharing.getScreen().then(function(options) {
+					if (options) {
+						$scope.startScreenshare(options);
+					} else {
+						// No options received - assume cancel.
+						$scope.stopScreenshare();
+					}
+				}, function(err) {
+					console.log("Screen sharing request returned error", err);
+					$scope.stopScreenshare();
+				});
+
+			};
+
+			$scope.startScreenshare = function(options) {
 
 				// Create userMedia with screen share type.
-				var usermedia = mediaStream.webrtc.doScreenshare();
+				var usermedia = mediaStream.webrtc.doScreenshare(options);
 				var handler;
 				var peers = {};
 				var screenshares = [];
