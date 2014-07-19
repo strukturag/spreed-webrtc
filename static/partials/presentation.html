@@ -1,13 +1,13 @@
 <div class="presentation">
 	<div class="presentationpane nicescroll">
-		<div class="welcome container-fluid" ng-show="loading || (maxPageNumber === -1 && activeDownloads.length)">
+		<div class="welcome container-fluid" ng-show="loading || (!currentPresentation && activeDownloads.length)">
 			<h1>{{_('Loading presentation ...')}}</h1>
 			<div class="progress" ng-repeat="download in activeDownloads | orderBy: 'sortkey'">
 				<span class="download-info">{{download.info.name}} ({{download.info.size|humanizeFilesize}} / {{download.progress}}%)</span>
 				<div class="progress-bar progress-bar-success" ng-style="{'width': download.progress+'%'}"></div>
 			</div>
 		</div>
-		<div class="welcome container-fluid" ng-hide="maxPageNumber !== -1 || loading">
+		<div class="welcome container-fluid" ng-hide="currentPresentation || loading">
 			<h1>{{_('Please upload a PDF document')}}</h1>
 			<div class="center-block">
 				<p>{{_('Documents are shared with everyone in this call.')}}</p>
@@ -15,13 +15,15 @@
 				<p>{{_('You can drag files here too.')}}</p>
 			</div>
 		</div>
-		<pdfcanvas ng-hide="maxPageNumber === -1 || loading" />
+		<div class="canvasContainer" ng-if="currentPresentation" ng-hide="loading" ng-switch="currentPresentation.type">
+			<pdfcanvas ng-switch-when="pdf" />
+		</div>
 	</div>
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>
 		<div class="overlaybar-content">
-			<div class="pagecontrol" ng-show="maxPageNumber !== -1 || availablePresentations.length">
-				<div class="clearfix" ng-show="maxPageNumber !== -1">
+			<div class="pagecontrol" ng-show="currentPresentation || availablePresentations.length">
+				<div class="clearfix" ng-show="currentPresentation && maxPageNumber !== -1">
 					<a class="overlaybar-button btn-prev" ng-click="prevPage()" ng-show="currentPageNumber &gt; 1" title="{{_('Prev')}}"><i class="fa fa-backward"></i></a>
 					<div class="pageinfo center-block"><input class="form-control input-sm" type="number" ng-model="currentPageNumber" /> / {{ maxPageNumber }}</div>
 					<a class="overlaybar-button btn-next" ng-click="nextPage()" ng-show="currentPageNumber &lt; maxPageNumber" title="{{_('Next')}}"><i class="fa fa-forward"></i></a>
