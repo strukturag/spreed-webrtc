@@ -101,6 +101,8 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 
 		} else {
 			// Currently Chrome only - sorry.
+			// Firefox 33 might get screen sharing support.
+			// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
 		}
 
 		// public API.
