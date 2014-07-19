@@ -71,7 +71,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		var screenWidth = window.screen.width;
 		var screenHeight = window.screen.height;
 
-		// Constains which define what actually gets shared need to
+		// Constraints which define what actually gets shared need to
 		// be provided in options.
 		var mandatoryVideoConstraints = $.extend({
 			maxWidth: screenWidth,
