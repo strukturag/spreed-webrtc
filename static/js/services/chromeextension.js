@@ -54,14 +54,22 @@ define(["underscore"], function(_) {
 			case "Call":
 				var deferred = this.registry[data.n];
 				if (deferred) {
-					delete this.registry[data.n];
 					var call = data.Call;
-					if (call.Type === "Result") {
+					switch (call.Type) {
+					case "Result":
+						delete this.registry[data.n];
 						//console.log("Call complete with result", call);
 						deferred.resolve(call.Result);
-					} else {
+						break;
+					case "Notify":
+						//console.log("Notify", call);
+						deferred.notify(call.Notify);
+						break;
+					case "Error":
+						delete this.registry[data.n];
 						//console.log("Call failed with error", call);
 						deferred.reject(call.Error);
+						break
 					}
 				} else {
 					console.warn("Unknown call reference received", data, this.registry, this);
@@ -80,7 +88,7 @@ define(["underscore"], function(_) {
 			$window.addEventListener("message", function(event) {
 				//console.log("message", event.origin, event.source === window, event);
 				if (event.source === window && event.data.answer) {
-					// Only let through our own messages marked as answer.
+					// Only process answers to avoid loops.
 					extension.onMessage(event);
 				}
 			});

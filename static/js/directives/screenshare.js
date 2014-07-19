@@ -281,7 +281,10 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					console.log("Screen share stopped.");
 				}
 
-				$scope.layout.screenshare = false;
+				if ($scope.layout.screenshare) {
+					screensharing.cancelGetScreen();
+					$scope.layout.screenshare = false;
+				}
 
 			};
 
@@ -296,6 +299,10 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 
 			};
+
+			mediaStream.webrtc.e.on("done", function() {
+				$scope.stopScreenshare();
+			});
 
 			$scope.$watch("layout.screenshare", function(newval, oldval) {
 				if (newval && !oldval) {

@@ -25,7 +25,12 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 
 		// Check if we can do screensharing.
 		var supported = false;
+
+		// Define our helpers.
 		var prepare = null;
+		var cancel = null;
+
+		// Chrome support.
 		if ($window.webrtcDetectedBrowser === "chrome") {
 			if ($window.webrtcDetectedVersion >= 32 &&
 				$window.webrtcDetectedVersion < 37) {
@@ -52,6 +57,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 
 			if (chromeExtension.available) {
 				supported = true;
+				var pending = null;
 				prepare = function(options) {
 					var select = chromeExtension.call({
 						Type: "Action",
@@ -59,7 +65,8 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 					});
 					var d = $q.defer();
 					select.then(function(id) {
-						//console.log("Prepare screensharing success", id);
+						// Success with id.
+						pending = null;
 						if (id) {
 							var opts = _.extend({
 								chromeMediaSource: "desktop",
@@ -70,15 +77,30 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 							d.resolve(null);
 						}
 					}, function(err) {
+						// Error.
+						pending = null;
 						console.log("Failed to prepare screensharing", err);
 						d.reject(err);
+					}, function(data) {
+						// Notify.
+						pending = data;
 					});
 					return d.promise;
+				};
+				cancel = function() {
+					if (pending !== null) {
+						chromeExtension.call({
+							Type: "Action",
+							Action: "cancelChooseDesktopMedia",
+							Args: pending
+						});
+						pending = null;
+					}
 				};
 			}
 
 		} else {
-			// Currently Chrome only.
+			// Currently Chrome only - sorry.
 		}
 
 		// public API.
@@ -91,6 +113,11 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 					var d = $q.defer()
 					d.reject("No implementation to get screen.");
 					return d.promise;
+				}
+			},
+			cancelGetScreen: function() {
+				if (cancel) {
+					cancel();
 				}
 			}
 		}
