@@ -17,6 +17,7 @@
 		</div>
 		<div class="canvasContainer" ng-if="currentPresentation" ng-hide="loading" ng-switch="currentPresentation.type">
 			<pdfcanvas ng-switch-when="pdf" />
+			<odfcanvas ng-switch-when="odf" />
 		</div>
 	</div>
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">

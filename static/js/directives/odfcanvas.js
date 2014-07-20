@@ -1,0 +1,244 @@
+/*
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+define(['require', 'underscore', 'jquery'], function(require, _, $) {
+
+	return ["$window", "$compile", "translation", "safeApply", function($window, $compile, translation, safeApply) {
+
+		var webodf = null;
+
+		var nsResolver = function(prefix) {
+			var ns = {
+				'draw': "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0",
+				'presentation': "urn:oasis:names:tc:opendocument:xmlns:presentation:1.0",
+				'text': "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+				'office': "urn:oasis:names:tc:opendocument:xmlns:office:1.0"
+			};
+			return ns[prefix] || console.log('prefix [' + prefix + '] unknown.');
+		}
+
+		var ODFCanvas_read = function(path, offset, length, callback) {
+			if (typeof path === "string") {
+				webodf.runtime.orig_read.call(webodf.runtime, path, offset, length, callback);
+				return;
+			}
+
+			var fp = path.file || path;
+			if (typeof URL !== "undefined" && URL.createObjectURL) {
+				var url = URL.createObjectURL(fp);
+				webodf.runtime.orig_read.call(webodf.runtime, url, offset, length, callback);
+				return;
+			}
+
+			console.error("TODO(fancycode): implement read for", path);
+		};
+
+		var ODFCanvas_getFileSize = function(path, callback) {
+			if (typeof path === "string") {
+				webodf.runtime.orig_getFileSize.call(webodf.runtime, path, callback);
+				return;
+			}
+
+			var size = path.size || path.info.size;
+			if (typeof size !== "undefined") {
+				callback(size);
+				return;
+			}
+
+			console.error("TODO(fancycode): implement getFileSize for", path);
+			callback(-1);
+		};
+
+		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+
+			var ODFCanvas = function(scope, container, canvasDom) {
+				this.scope = scope;
+				this.container = container;
+				this.canvasDom = canvasDom;
+				this.canvas = null;
+				this.odfcontainer = null;
+				this.maxPageNumber = -1;
+				this.currentPageNumber = -1;
+				this.pendingPageNumber = null;
+			};
+
+			ODFCanvas.prototype._close = function() {
+				if (this.canvas) {
+					this.canvas.destroy(function() {
+						// ignore callback
+					});
+					this.canvas = null;
+				}
+				this.odfcontainer = null;
+				this.maxPageNumber = -1;
+				this.currentPageNumber = -1;
+				this.pendingPageNumber = null;
+			};
+
+			ODFCanvas.prototype.close = function() {
+				this._close();
+			};
+
+			ODFCanvas.prototype.open = function(presentation) {
+				this.scope.$emit("presentationOpening", presentation);
+				presentation.open(_.bind(function(source) {
+					console.log("Loading ODF from", source);
+					this._openFile(source);
+				}, this));
+			};
+
+			ODFCanvas.prototype._doOpenFile = function(source) {
+				this.scope.$emit("presentationLoading", source);
+				this.container.hide();
+				this.canvas = new webodf.odf.OdfCanvas(this.canvasDom[0]);
+				this.canvas.load(source);
+				this.canvas.addListener("statereadychange", _.bind(function(odfcontainer) {
+					this.scope.$apply(_.bind(function(scope) {
+						this.odfcontainer = odfcontainer;
+						// pages only supported for presentations
+						var pages = odfcontainer.rootElement.getElementsByTagNameNS(nsResolver('draw'), 'page');
+						this.maxPageNumber = Math.max(1, pages.length);
+						this.currentPageNumber = -1;
+						console.log("ODF loaded", odfcontainer);
+						var odfDoc = {
+							numPages: this.maxPageNumber
+						};
+						scope.$emit("presentationLoaded", source, odfDoc);
+						if (this.pendingPageNumber !== null) {
+							this._showPage(this.pendingPageNumber);
+							this.pendingPageNumber = null;
+						}
+					}, this));
+				}, this));
+			};
+
+			ODFCanvas.prototype._openFile = function(source) {
+				if (webodf === null) {
+					// load webodf.js lazily
+					require(['webodf'], _.bind(function(webodf_) {
+						console.log("Using webodf.js " + webodf_.webodf.Version);
+
+						webodf = webodf_;
+
+						// monkey-patch IO functions
+						webodf.runtime.orig_read = webodf.runtime.read;
+						webodf.runtime.read = ODFCanvas_read;
+						webodf.runtime.orig_getFileSize = webodf.runtime.getFileSize;
+						webodf.runtime.getFileSize = ODFCanvas_getFileSize;
+
+						this.scope.$apply(_.bind(function(scope) {
+							this._doOpenFile(source);
+						}, this));
+					}, this));
+				} else {
+					this._doOpenFile(source);
+				}
+			};
+
+			ODFCanvas.prototype._showPage = function(page) {
+				if (page === this.currentPageNumber) {
+					return;
+				}
+
+				console.log("Showing page", page, "/", this.maxPageNumber);
+				this.scope.$emit("presentationPageLoading", page);
+				this.scope.$emit("presentationPageLoaded", page, null);
+				// actual rendering of first page must happen after the
+				// previously hidden DOM elements are visible again to
+				// make initial scaling work, so defer it
+				_.defer(_.bind(function() {
+					this.scope.$apply(_.bind(function() {
+						if (this.currentPageNumber === -1) {
+							this.container.show();
+							this.redrawPage();
+						}
+						this.currentPageNumber = page;
+						this.canvas.showPage(page);
+						this.scope.$emit("presentationPageRendering", page);
+						this.scope.$emit("presentationPageRendered", page, this.maxPageNumber);
+					}, this));
+				}, this));
+			};
+
+			ODFCanvas.prototype.redrawPage = function() {
+				if (this.canvas) {
+					this.canvas.fitSmart(this.container.width(), this.container.height());
+				}
+			};
+
+			ODFCanvas.prototype.showPage = function(page) {
+				if (page >= 1 && page <= this.maxPageNumber) {
+					if (!this.canvas) {
+						this.pendingPageNumber = page;
+					} else {
+						this._showPage(page);
+					}
+				}
+			};
+
+			var container = $($element);
+			var canvas = $($element).find(".odfcanvas");
+			var odfCanvas = new ODFCanvas($scope, container, canvas);
+
+			$scope.$watch("currentPresentation", function(presentation, previousPresentation) {
+				if (presentation) {
+					safeApply($scope, function(scope) {
+						odfCanvas.open(presentation);
+					});
+				} else {
+					if (previousPresentation) {
+						previousPresentation.close();
+					}
+					odfCanvas.close();
+				}
+			});
+
+			$scope.$on("$destroy", function() {
+				odfCanvas.close();
+				odfCanvas = null;
+			});
+
+			$scope.$watch("currentPageNumber", function(page, oldValue) {
+				if (page === oldValue) {
+					// no change
+					return;
+				}
+
+				odfCanvas.showPage(page);
+			});
+
+			$($window).on("resize", function() {
+				$scope.$apply(function(scope) {
+					odfCanvas.redrawPage();
+				});
+			});
+
+		}];
+
+		return {
+			restrict: 'E',
+			replace: true,
+			template: '<div class="canvasContainer odfcontainer"><div class="odfcanvas"></div></div>',
+			controller: controller
+		};
+
+	}];
+
+});

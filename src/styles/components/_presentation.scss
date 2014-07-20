@@ -78,6 +78,16 @@
     display: block;
     margin: 0 auto;
   }
+  .odfcanvas {
+    user-select: none;
+    cursor: default;
+  }
+  .odfcontainer {
+    overflow: hidden;
+    display: none;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .presentation .overlaybar {
