@@ -53,7 +53,8 @@ define([
 	'services/dialogs',
 	'services/geolocation',
 	'services/screensharing',
-	'services/continueconnector'], function(_,
+	'services/continueconnector',
+	'services/chromeextension'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -86,7 +87,8 @@ animationFrame,
 dialogs,
 geolocation,
 screensharing,
-continueConnector) {
+continueConnector,
+chromeExtension) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -121,7 +123,8 @@ continueConnector) {
 		dialogs: dialogs,
 		geolocation: geolocation,
 		screensharing: screensharing,
-		continueConnector: continueConnector
+		continueConnector: continueConnector,
+		chromeExtension: chromeExtension
 	};
 
 	var initialize = function(angModule) {

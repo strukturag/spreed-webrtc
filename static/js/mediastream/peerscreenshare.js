@@ -71,19 +71,16 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		var screenWidth = window.screen.width;
 		var screenHeight = window.screen.height;
 
-		// NOTE(longsleep): This generates constrains for the experiental Screen sharing
-		// support in Chrome 31+. This needs to be enabled in flags:
-		// chrome://flags/#enable-usermedia-screen-capture
+		// Constraints which define what actually gets shared need to
+		// be provided in options.
 		var mandatoryVideoConstraints = $.extend({
-			chromeMediaSource: 'screen',
 			maxWidth: screenWidth,
 			maxHeight: screenHeight
 		}, options);
 		var mediaConstraints = {
 			audio: false,
 			video: {
-				mandatory: mandatoryVideoConstraints,
-				optional: []
+				mandatory: mandatoryVideoConstraints
 			}
 		}
 		console.log("Setting screen sharing media constraints", mandatoryVideoConstraints);

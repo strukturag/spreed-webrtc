@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen'], function($, _, template, templatePeer, BigScreen) {
+define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -168,9 +168,24 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 
 				$scope.layout.screenshare = true;
+				screensharing.getScreen().then(function(options) {
+					if (options) {
+						$scope.startScreenshare(options);
+					} else {
+						// No options received - assume cancel.
+						$scope.stopScreenshare();
+					}
+				}, function(err) {
+					console.log("Screen sharing request returned error", err);
+					$scope.stopScreenshare();
+				});
+
+			};
+
+			$scope.startScreenshare = function(options) {
 
 				// Create userMedia with screen share type.
-				var usermedia = mediaStream.webrtc.doScreenshare();
+				var usermedia = mediaStream.webrtc.doScreenshare(options);
 				var handler;
 				var peers = {};
 				var screenshares = [];
@@ -251,8 +266,20 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					$scope.$apply(function(scope) {
 						scope.stopScreenshare();
 					});
-					if (error && error.name === "PermissionDeniedError") {
-						alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
+					if (error && error.name) {
+						switch (error.name) {
+						case "PermissionDeniedError":
+							if ($window.webrtcDetectedVersion >= 32 &&
+								$window.webrtcDetectedVersion < 37) {
+								alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
+							} else {
+								alertify.dialog.alert(translation._("Permission to start screen sharing was denied."));
+							}
+							break;
+						default:
+							alertify.dialog.alert(translation._("Failed to start screen sharing (%s).", error.name));
+							break
+						}
 					}
 				});
 
@@ -266,7 +293,10 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					console.log("Screen share stopped.");
 				}
 
-				$scope.layout.screenshare = false;
+				if ($scope.layout.screenshare) {
+					screensharing.cancelGetScreen();
+					$scope.layout.screenshare = false;
+				}
 
 			};
 
@@ -281,6 +311,10 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 
 			};
+
+			mediaStream.webrtc.e.on("done", function() {
+				$scope.stopScreenshare();
+			});
 
 			$scope.$watch("layout.screenshare", function(newval, oldval) {
 				if (newval && !oldval) {
