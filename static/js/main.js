@@ -52,6 +52,7 @@ require.config({
 		'pdf': 'libs/pdf/pdf',
 		'pdf.worker': 'libs/pdf/pdf.worker',
 		'pdf.compatibility': 'libs/pdf/compatibility',
+		'webodf': 'libs/webodf',
 
 		'partials': '../partials',
 		'sounds': '../sounds',
@@ -116,6 +117,16 @@ require.config({
 		'pdf': {
 			deps: ['pdf.compatibility'],
 			exports: 'PDFJS'
+		},
+		'webodf': {
+			exports: 'odf',
+			init: function() {
+				return {
+					webodf: webodf,
+					odf: odf,
+					runtime: runtime
+				}
+			}
 		}
 	}
 });
