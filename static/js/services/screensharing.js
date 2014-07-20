@@ -125,39 +125,38 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 					var d = $q.defer();
 					var install = chromeExtension.autoinstall.install();
 					install.then(function() {
-						that.initialize();
-						if (that.autoinstall) {
-							// We are still on auto install - must have failed.
-							d.reject("Auto install failed");
-						} else {
-							// Seems we triggered install - this can take a while.
-							console.log("Auto install success");
-							waiting = true;
-							$timeout(function() {
-								var starter = function() {
-									waiting = false;
-									var prepare = that.prepare(options);
-									prepare.then(function(id) {
-										d.resolve(id);
-									}, function(err) {
-										d.reject(err);
-									});
-								};
-								if (!that.autoinstall && that.supported) {
-									// Got something.
-									starter();
-								} else {
-									// Wait for it.
-									chromeExtension.e.one("available", function() {
-										$timeout(function() {
-											if (waiting && !that.autoinstall && that.supported) {
-												starter();
-											}
-										}, 0);
-									});
-								}
-							}, 0);
-						}
+						// Seems we triggered install - this can take a while.
+						console.log("Auto install success");
+						waiting = true;
+						$timeout(function() {
+							var starter = function() {
+								waiting = false;
+								var prepare = that.prepare(options);
+								prepare.then(function(id) {
+									d.resolve(id);
+								}, function(err) {
+									d.reject(err);
+								});
+							};
+							if (!that.autoinstall && that.supported) {
+								// Got something.
+								starter();
+							} else {
+								// Wait for it.
+								chromeExtension.e.one("available", function() {
+									$timeout(function() {
+										if (waiting && !that.autoinstall && that.supported) {
+											starter();
+										}
+									}, 0);
+								});
+							}
+						}, 100);
+						// Add a timeout of 30 seconds.
+						$timeout(function() {
+							waiting = false;
+							d.reject("Timeout while waiting for extension getting installed");
+						}, 30000);
 					}, function(err) {
 						d.reject(err);
 					});
