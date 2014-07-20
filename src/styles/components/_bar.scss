@@ -26,7 +26,7 @@
   text-align: center;
   touch-callout: none;
   user-select: none;
-  z-index: 10;
+  z-index: 60;
 }
 
 .bar .left {
@@ -50,13 +50,24 @@
     span a {
       color: $bar-logo-text-desc;
     }
+    @include breakpt($breakpoint-medium) {
+      background: $scalable-logo no-repeat center;
+      width: 46px;
+      height: 46px;
+      span {
+        display: none;
+      }
+    }
+  }
+  @include breakpt($breakpoint-medium) {
+    padding: 2px 5px 0px 11px;
   }
 }
 
 .bar .middle {
   position: absolute;
   left: 0px;
-  right: 0px;
+  right: 60px;
   top: 0px;
   pointer-events: none;
   text-align: center;
