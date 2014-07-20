@@ -24,9 +24,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 	return ["$window", "$q", "chromeExtension", function($window, $q, chromeExtension) {
 
 		var Screensharing = function() {
-			this.autoinstall = {
-				enabled: false
-			};
+			this.autoinstall = false;
 			this.initialize();
 			chromeExtension.e.on("available", _.bind(function() {
 				this.initialize();
@@ -118,20 +116,20 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
 			}
 
-			// Auto install support. Auto install itself needs to be implemented in plugin though.
-			if (!this.supported && this.autoinstall.install) {
-				this.supported = true;
-				this.autoinstall.enabled = true;
+			// Auto install support.
+			if (!this.supported && chromeExtension.autoinstall.install) {
+				this.supported = this.autoinstall = true;
 				var that = this;
 				this.prepare = function(options) {
 					var d = $q.defer();
-					var install = this.autoinstall.install();
+					var install = chromeExtension.autoinstall.install();
 					install.then(function() {
-						that.initialize(true);
-						if (that.autoinstall.enabled) {
+						that.initialize();
+						if (that.autoinstall) {
 							// We are still on auto install - must have failed.
 							d.reject("Auto install failed");
 						} else {
+							// Seems we can do it now.
 							var prepare = that.prepare(options);
 							prepare.then(function(id) {
 								d.resolve(id);
@@ -144,12 +142,16 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 					});
 					return d.promise;
 				};
-				this.cancel = this.autoinstall.cancel;
+				this.cancel = function() {
+					if (chromeExtension.autoinstall.cancel) {
+						chromeExtension.autoinstall.cancel();
+					}
+				};
 			} else {
-				this.autoinstall.enabled = false;
+				this.autoinstall = false;
 			}
 
-			console.log("Screensharing support", this.supported, this.autoinstall.enabled ? "autoinstall" : "");
+			console.log("Screensharing support", this.supported, this.autoinstall ? "autoinstall" : "");
 
 		};
 
@@ -169,15 +171,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 			}
 		};
 
-		Screensharing.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc) {
 
-			this.autoinstall.install = installFunc;
-			this.autoinstall.cancel = cancelInstallFunc;
-			if (!this.supported) {
-				this.initialize();
-			}
-
-		};
 
 		// Expose.
 		var screensharing = new Screensharing();

@@ -28,6 +28,7 @@ define(["underscore", "jquery"], function(_, $) {
 			this.registry = {};
 			this.count = 0;
 			this.e = $({});
+			this.autoinstall = {};
 			this.initialize();
 		};
 
@@ -92,6 +93,16 @@ define(["underscore", "jquery"], function(_, $) {
 				console.log("Unknown message type", data.Type, data);
 				break;
 			}
+		};
+
+		ChromeExtension.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc) {
+
+			this.autoinstall.install = installFunc;
+			this.autoinstall.cancel = cancelInstallFunc;
+			if (!this.available && installFunc) {
+				this.e.triggerHandler("available", true);
+			}
+
 		};
 
 		var extension = new ChromeExtension();
