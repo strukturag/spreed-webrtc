@@ -34,7 +34,7 @@ define(["underscore", "jquery"], function(_, $) {
 
 		ChromeExtension.prototype.initialize = function() {
 			var marker = $window.document.getElementById("chromeextension-available");
-			if (marker && !this.available) {
+			if (marker) {
 				this.available = true;
 				console.log("Chrome extension is available.");
 				this.e.triggerHandler("available", true);
