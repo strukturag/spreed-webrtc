@@ -21,7 +21,7 @@
 define(['underscore', 'webrtc.adapter'], function(_) {
 
 	// screensharing
-	return ["$window", "$q", "chromeExtension", function($window, $q, chromeExtension) {
+	return ["$window", "$q", "$timeout", "chromeExtension", function($window, $q, $timeout, chromeExtension) {
 
 		var Screensharing = function() {
 			this.autoinstall = false;
@@ -120,6 +120,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 			if (!this.supported && chromeExtension.autoinstall.install) {
 				this.supported = this.autoinstall = true;
 				var that = this;
+				var waiting = false;
 				this.prepare = function(options) {
 					var d = $q.defer();
 					var install = chromeExtension.autoinstall.install();
@@ -129,13 +130,33 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 							// We are still on auto install - must have failed.
 							d.reject("Auto install failed");
 						} else {
-							// Seems we can do it now.
-							var prepare = that.prepare(options);
-							prepare.then(function(id) {
-								d.resolve(id);
-							}, function(err) {
-								d.reject(err);
-							});
+							// Seems we triggered install - this can take a while.
+							console.log("Auto install success");
+							waiting = true;
+							$timeout(function() {
+								var starter = function() {
+									waiting = false;
+									var prepare = that.prepare(options);
+									prepare.then(function(id) {
+										d.resolve(id);
+									}, function(err) {
+										d.reject(err);
+									});
+								};
+								if (!that.autoinstall && that.supported) {
+									// Got something.
+									starter();
+								} else {
+									// Wait for it.
+									chromeExtension.e.one("available", function() {
+										$timeout(function() {
+											if (waiting && !that.autoinstall && that.supported) {
+												starter();
+											}
+										}, 0);
+									});
+								}
+							}, 0);
 						}
 					}, function(err) {
 						d.reject(err);
@@ -146,6 +167,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 					if (chromeExtension.autoinstall.cancel) {
 						chromeExtension.autoinstall.cancel();
 					}
+					waiting = false;
 				};
 			} else {
 				this.autoinstall = false;
