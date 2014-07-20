@@ -24,6 +24,9 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 	return ["$window", "$q", "chromeExtension", function($window, $q, chromeExtension) {
 
 		var Screensharing = function() {
+			this.autoinstall = {
+				enabled: false
+			};
 			this.initialize();
 			chromeExtension.e.on("available", _.bind(function() {
 				this.initialize();
@@ -115,7 +118,38 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
 			}
 
-			console.log("Screensharing support", this.supported);
+			// Auto install support. Auto install itself needs to be implemented in plugin though.
+			if (!this.supported && this.autoinstall.install) {
+				this.supported = true;
+				this.autoinstall.enabled = true;
+				var that = this;
+				this.prepare = function(options) {
+					var d = $q.defer();
+					var install = this.autoinstall.install();
+					install.then(function() {
+						that.initialize(true);
+						if (that.autoinstall.enabled) {
+							// We are still on auto install - must have failed.
+							d.reject("Auto install failed");
+						} else {
+							var prepare = that.prepare(options);
+							prepare.then(function(id) {
+								d.resolve(id);
+							}, function(err) {
+								d.reject(err);
+							});
+						}
+					}, function(err) {
+						d.reject(err);
+					});
+					return d.promise;
+				};
+				this.cancel = this.autoinstall.cancel;
+			} else {
+				this.autoinstall.enabled = false;
+			}
+
+			console.log("Screensharing support", this.supported, this.autoinstall.enabled ? "autoinstall" : "");
 
 		};
 
@@ -133,6 +167,16 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 			if (this.cancel) {
 				this.cancel();
 			}
+		};
+
+		Screensharing.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc) {
+
+			this.autoinstall.install = installFunc;
+			this.autoinstall.cancel = cancelInstallFunc;
+			if (!this.supported) {
+				this.initialize();
+			}
+
 		};
 
 		// Expose.
