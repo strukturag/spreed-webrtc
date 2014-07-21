@@ -210,14 +210,21 @@
   display: block;
 }
 
-.presentation .thumbnail .delete {
+.presentation .thumbnail .presentation-action {
   position: absolute;
   top: 1px;
-  right: 1px;
   display: none;
 }
 
-.presentation .thumbnail:hover .delete {
+.presentation .thumbnail .download {
+  left: 1px;
+}
+
+.presentation .thumbnail .delete {
+  right: 1px;
+}
+
+.presentation .thumbnail:hover .presentation-action {
   display: block;
 }
 
