@@ -188,7 +188,7 @@
     top: 45%;
   }
   &.onlyaudio video {
-    display: none;
+    visibility: hidden;
   }
   &.onlyaudio .onlyaudio {
     display: block;
