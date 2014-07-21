@@ -25,7 +25,7 @@
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('Presentation controls')}}"><i class="fa fa-cogs"></i></a>
 		<div class="overlaybar-content">
 			<div class="pagecontrol" ng-show="currentPresentation || availablePresentations.length">
-				<div class="clearfix" ng-show="currentPresentation && maxPageNumber !== -1">
+				<div class="clearfix" ng-show="currentPresentation && maxPageNumber &gt; 1">
 					<a class="overlaybar-button btn-prev" ng-click="prevPage()" ng-show="currentPageNumber &gt; 1" title="{{_('Prev')}}"><i class="fa fa-backward"></i></a>
 					<div class="pageinfo center-block"><input class="form-control input-sm" type="number" ng-model="currentPageNumber" /> / {{ maxPageNumber }}</div>
 					<a class="overlaybar-button btn-next" ng-click="nextPage()" ng-show="currentPageNumber &lt; maxPageNumber" title="{{_('Next')}}"><i class="fa fa-forward"></i></a>
