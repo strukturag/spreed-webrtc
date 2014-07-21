@@ -54,10 +54,22 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 			var data = new Blob(dataBuffer, {
 				type: this.owner.info.type || "application/octet-stream"
 			});
+			var url = null;
 			this.file = {
 				toURL: function() {
-					// TODO: only create once and revoke URL when no longer needed
-					return URL.createObjectURL(data);
+					if (!url) {
+						url = URL.createObjectURL(data);
+					}
+					return url;
+				},
+				remove: function(callback) {
+					if (url) {
+						URL.revokeObjectURL(url);
+						url = null;
+					}
+					if (callback) {
+						callback();
+					}
 				}
 			}
 			this.owner.file = this.file;
