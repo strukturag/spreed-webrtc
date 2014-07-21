@@ -267,7 +267,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				var existing = $scope.getPresentation(token);
 				if (existing) {
 					console.log("Found existing presentation", existing);
-					$scope.currentPresentation = existing;
 					return;
 				}
 
