@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-11 17:30+0200\n"
-"PO-Revision-Date: 2014-07-11 17:31+0100\n"
+"POT-Creation-Date: 2014-07-21 11:19+0200\n"
+"PO-Revision-Date: 2014-07-21 11:21+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -110,6 +110,9 @@ msgstr "Senden"
 
 msgid "You have no contacts."
 msgstr "Sie haben keine Kontakte."
+
+msgid "Remove"
+msgstr "Entfernen"
 
 msgid "Close"
 msgstr "Schließen"
@@ -291,9 +294,6 @@ msgstr "Max. Bildwiederholrate"
 
 msgid "auto"
 msgstr "auto"
-
-msgid "Experimental settings"
-msgstr "Experimentelle Einstellungen"
 
 msgid "Show advanced settings"
 msgstr "Erweiterte Einstellungen anzeigen"
@@ -541,9 +541,6 @@ msgstr "Beim Anzeigen der PDF-Seite ist ein Fehler aufgetreten (%s)."
 msgid "An unknown error occurred while rendering the PDF page."
 msgstr "Beim Anzeigen der PDF-Seite ist ein ubekannter Fehler aufgetreten."
 
-msgid "Only single PDF documents can be shared at this time."
-msgstr "Bitte laden Sie nur eine Datei gleichzeitig."
-
 msgid "Only PDF documents can be shared at this time."
 msgstr "Es können nur PDF-Dokumente als Präsentation verwendet werden."
 
@@ -559,6 +556,13 @@ msgstr ""
 "usermedia-screen-capture und öffnen Sie diese Adresse in Ihrem Browser. "
 "Aktivieren Sie die oberste Einstellung und starten dann den Browser neu. "
 "Anschließend können Sie die Bildschirmfreigabe benutzen."
+
+msgid "Permission to start screen sharing was denied."
+msgstr "Die Berechtigung den Bildschirm freizugeben wurde verweigert."
+
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr "Die Bildschirmfreigabe konnte nicht gestartet werden (%s)."
 
 msgid "Use browser language"
 msgstr "Browsereinstellung"
@@ -583,6 +587,13 @@ msgstr "Weitere Informationen nötig"
 
 msgid "Ok"
 msgstr "Ok"
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+" screen sharing extension to Chrome and try again."
+msgstr ""
+"Die Bildschrimfreigabe benötigt eine Browser-Erweiterung. Bitte fügen Sie"
+" die \"Spreed WebRTC screen sharing\" Erweiterung zu Chrome hinzu."
 
 msgid "Access code required"
 msgstr "Bitte Zugriffscode eingeben"

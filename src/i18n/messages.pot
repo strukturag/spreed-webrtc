@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-11 17:30+0200\n"
+"POT-Creation-Date: 2014-07-21 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,6 +109,9 @@ msgid "Send"
 msgstr ""
 
 msgid "You have no contacts."
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Close"
@@ -288,9 +291,6 @@ msgid "Max video frame rate"
 msgstr ""
 
 msgid "auto"
-msgstr ""
-
-msgid "Experimental settings"
 msgstr ""
 
 msgid "Show advanced settings"
@@ -529,9 +529,6 @@ msgstr ""
 msgid "An unknown error occurred while rendering the PDF page."
 msgstr ""
 
-msgid "Only single PDF documents can be shared at this time."
-msgstr ""
-
 msgid "Only PDF documents can be shared at this time."
 msgstr ""
 
@@ -540,6 +537,13 @@ msgid ""
 "screen sharing access for your browser. Copy chrome://flags/#enable-"
 "usermedia-screen-capture and open it with your browser and enable the "
 "flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+
+msgid "Permission to start screen sharing was denied."
+msgstr ""
+
+#, python-format
+msgid "Failed to start screen sharing (%s)."
 msgstr ""
 
 msgid "Use browser language"
@@ -564,6 +568,11 @@ msgid "More information required"
 msgstr ""
 
 msgid "Ok"
+msgstr ""
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+" screen sharing extension to Chrome and try again."
 msgstr ""
 
 msgid "Access code required"
