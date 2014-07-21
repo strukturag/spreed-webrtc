@@ -373,7 +373,13 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 	File.prototype.stop = function() {
 
 		this.e.triggerHandler("stop", [this]);
-		this.file = null;
+		if (this.file && this.file.remove) {
+			var file = this.file;
+			this.file.remove(_.bind(function() {
+				console.log("File removed", file);
+			}, this));
+			this.file = null;
+		}
 		if (this.writer) {
 			this.writer.stop();
 			this.writer = null;
