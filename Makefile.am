@@ -144,6 +144,7 @@ install:
 	$(INSTALL) -D static/js/libs/require/require.js $(SHARE)/www/static/js/libs/require/require.js
 	$(INSTALL) $(OUTPUT_JS)/*.js $(SHARE)/www/static/js
 	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
 
 clean:
 	GOPATH=$(GOPATH) $(GO) clean -i $(PKG)

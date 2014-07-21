@@ -22,23 +22,64 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
 
-		var DownloadPresentation = function(scope, fileInfo, token, owner) {
+		var SUPPORTED_TYPES = {
+			// rendered by pdfcanvas directive
+			"application/pdf": "pdf",
+			// rendered by odfcanvas directive
+			// TODO(fancycode): check which formats really work, allow all odf for now
+			"application/vnd.oasis.opendocument.text": "odf",
+			"application/vnd.oasis.opendocument.spreadsheet": "odf",
+			"application/vnd.oasis.opendocument.presentation": "odf",
+			"application/vnd.oasis.opendocument.graphics": "odf",
+			"application/vnd.oasis.opendocument.chart": "odf",
+			"application/vnd.oasis.opendocument.formula": "odf",
+			"application/vnd.oasis.opendocument.image": "odf",
+			"application/vnd.oasis.opendocument.text-master": "odf"
+		};
+
+		var BasePresentation = function(scope, fileInfo, token) {
 			this.e = $({});
+			if (scope) {
+				this.scope = scope.$new();
+				this.scope.info = fileInfo;
+			}
 			this.info = fileInfo;
+			if (fileInfo) {
+				this.sortkey = (fileInfo.name || "").toLowerCase();
+				this.type = SUPPORTED_TYPES[fileInfo.type] || "unknown";
+			}
 			this.token = token;
-			this.owner = owner;
-			this.scope = scope.$new();
-			this.scope.info = fileInfo;
-			this.progress = 0;
-			this.handler = null;
-			this.session = null;
 			this.fileid = null;
 			this.file = null;
+			this.handler = null;
+			this.session = null;
+		};
+
+		BasePresentation.prototype.stop = function() {
+			if (this.handler) {
+				mediaStream.tokens.off(this.token, this.handler);
+				this.handler = null;
+			}
+		};
+
+		BasePresentation.prototype.clear = function() {
+			if (this.fileid) {
+				fileData.purgeFile(this.fileid);
+				this.fileid = null;
+			}
+			this.file = null;
+			this.e.off();
+		};
+
+		var DownloadPresentation = function(scope, fileInfo, token, owner) {
+			BasePresentation.call(this, scope, fileInfo, token);
+			this.owner = owner;
+			this.progress = 0;
 			this.url = null;
-			this.sortkey = (fileInfo.name || "").toLowerCase();
 			this.presentable = false;
 			this.downloading = true;
 			this.uploaded = false;
+			this.openCallback = null;
 
 			this.scope.$on("downloadedChunk", _.bind(function(event, idx, byteLength, downloaded, total) {
 				var percentage = Math.ceil((downloaded / total) * 100);
@@ -58,30 +99,38 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				this.downloading = false;
 				this.e.triggerHandler("available", [this, url, fileInfo]);
 				this.stop();
+				if (this.openCallback) {
+					var callback = this.openCallback;
+					this.openCallback = null;
+					this.open(callback);
+				}
 			}, this));
 		};
 
-		DownloadPresentation.prototype.open = function($scope) {
-			$scope.loading = true;
+		DownloadPresentation.prototype = new BasePresentation();
+		DownloadPresentation.prototype.constructor = DownloadPresentation;
+
+		DownloadPresentation.prototype.open = function(callback) {
 			if (this.downloading) {
 				console.log("Presentation download not finished yet, not showing", this);
+				this.openCallback = callback;
 				return;
 			}
 			if (this.url && this.url.indexOf("blob:") === 0) {
-				$scope.$emit("openPdf", this.url);
+				callback(this.url);
 				return;
 			}
 			if (this.file.hasOwnProperty("writer")) {
-				$scope.$emit("openPdf", this.file);
+				callback(this.file);
 			} else {
 				this.file.file(function(fp) {
-					$scope.$emit("openPdf", fp);
+					callback(fp);
 				});
 			}
 		};
 
-		DownloadPresentation.prototype.close = function($scope) {
-			$scope.$emit("closePdf");
+		DownloadPresentation.prototype.close = function() {
+			this.openCallback = null;
 		};
 
 		DownloadPresentation.prototype.start = function() {
@@ -94,10 +143,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 		};
 
 		DownloadPresentation.prototype.stop = function() {
-			if (this.handler) {
-				mediaStream.tokens.off(this.token, this.handler);
-				this.handler = null;
-			}
+			BasePresentation.prototype.stop.call(this);
 			if (this.session) {
 				this.session.cancel();
 				this.session = null;
@@ -111,63 +157,50 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				this.scope.$destroy();
 				this.scope = null;
 			}
-			if (this.fileid) {
-				fileData.purgeFile(this.fileid);
-			}
-			this.file = null;
-			this.e.off();
+			this.openCallback = null;
+			BasePresentation.prototype.clear.call(this);
 		};
 
 		var UploadPresentation = function(scope, file, token) {
-			this.e = $({});
+			BasePresentation.call(this, scope, file.info, token);
 			this.file = file;
-			this.info = file.info;
-			this.token = token;
-			this.scope = scope.$new();
-			this.scope.info = file.info;
-			this.sortkey = (file.info.name || "").toLowerCase();
 			this.presentable = true;
 			this.uploaded = true;
-			this.session = null;
-			this.handler = null;
+			this.fileid = token;
 		};
 
-		UploadPresentation.prototype.open = function($scope) {
-			$scope.loading = true;
-			$scope.$emit("openPdf", this.file);
+		UploadPresentation.prototype = new BasePresentation();
+		UploadPresentation.prototype.constructor = UploadPresentation;
+
+		UploadPresentation.prototype.open = function(callback) {
+			callback(this.file);
 		};
 
-		UploadPresentation.prototype.close = function($scope) {
-			$scope.$emit("closePdf");
+		UploadPresentation.prototype.close = function() {
 		};
 
 		UploadPresentation.prototype.start = function() {
 			this.session = fileUpload.startUpload(this.scope, this.token);
 			// This binds the token to transfer and ui.
 			this.handler = mediaStream.tokens.on(this.token, _.bind(function(event, currenttoken, to, data, type, to2, from, xfer) {
-				//console.log("Presentation token request", currenttoken, data, type);
 				this.session.handleRequest(this.scope, xfer, data);
 			}, this), "xfer");
 		};
 
 		UploadPresentation.prototype.stop = function() {
-			if (this.handler) {
-				mediaStream.tokens.off(this.token, this.handler);
-				this.handler = null;
-			}
+			BasePresentation.prototype.stop.call(this);
 		};
 
 		UploadPresentation.prototype.clear = function() {
 			this.stop();
+			this.close();
 			if (this.scope) {
 				this.scope.$emit("cancelUpload");
 				this.scope.$destroy();
 				this.scope = null;
 			}
-			fileData.purgeFile(this.token);
 			this.session = null;
-			this.file = null;
-			this.e.off();
+			BasePresentation.prototype.clear.call(this);
 		};
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
@@ -209,27 +242,24 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				$scope.loading = false;
 			};
 
-			$scope.$on("pdfLoaded", function(event, source, doc) {
-				$scope.currentPageNumber = -1;
+			$scope.$on("presentationOpening", function(event, presentation) {
+				$scope.loading = true;
+			});
+
+			$scope.$on("presentationLoaded", function(event, source, doc) {
 				$scope.maxPageNumber = doc.numPages;
 				if ($scope.currentPresentation && $scope.currentPresentation.presentable) {
-					$scope.$emit("showPdfPage", 1);
+					$scope.currentPageNumber = 1;
 				} else if ($scope.pendingPageRequest !== null) {
-					$scope.$emit("showPdfPage", $scope.pendingPageRequest);
+					$scope.currentPageNumber = $scope.pendingPageRequest;
 					$scope.pendingPageRequest = null;
-				} else {
-					$scope.$emit("showQueuedPdfPage");
 				}
 				$scope.presentationLoaded = true;
 			});
 
-			$scope.$on("pdfLoadError", function(event, source, errorMessage, moreInfo) {
+			$scope.$on("presentationLoadError", function(event, source, errorMessage, moreInfo) {
 				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
-			});
-
-			$scope.$watch("currentPageNumber", function(newval, oldval) {
-				$scope.$emit("showPdfPage", newval);
 			});
 
 			var downloadPresentation = function(fileInfo, from) {
@@ -237,8 +267,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				var existing = $scope.getPresentation(token);
 				if (existing) {
 					console.log("Found existing presentation", existing);
-					$scope.currentPresentation = existing;
-					existing.open($scope);
 					return;
 				}
 
@@ -256,10 +284,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					var pos = _.indexOf($scope.activeDownloads, download);
 					if (pos !== -1) {
 						$scope.activeDownloads.splice(pos, 1);
-					}
-					if ($scope.currentPresentation === download) {
-						console.log("Current presentation finished downloading, open", download)
-						download.open($scope);
 					}
 				});
 				$scope.activeDownloads.push(download);
@@ -351,7 +375,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 								scope.pendingPageRequest = data.Page;
 							} else {
 								console.log("Received presentation page request", data);
-								scope.$emit("showPdfPage", data.Page);
+								scope.currentPageNumber = data.Page;
 							}
 						});
 						break;
@@ -434,7 +458,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				}
 			};
 
-			$scope.$on("pdfPageLoading", function(event, page) {
+			$scope.$on("presentationPageLoading", function(event, page) {
 				$scope.loading = false;
 				$scope.currentPageNumber = page;
 				if ($scope.receivedPage === page) {
@@ -452,12 +476,12 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				});
 			});
 
-			$scope.$on("pdfPageLoadError", function(event, page, errorMessage) {
+			$scope.$on("presentationPageLoadError", function(event, page, errorMessage) {
 				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
 			});
 
-			$scope.$on("pdfPageRenderError", function(event, pageNumber, maxPageNumber, errorMessage) {
+			$scope.$on("presentationPageRenderError", function(event, pageNumber, maxPageNumber, errorMessage) {
 				$scope.loading = false;
 				alertify.dialog.alert(errorMessage);
 			});
@@ -482,9 +506,9 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			var filesSelected = function(files) {
 				var valid_files = [];
 				_.each(files, function(f) {
-					if (f.info.type !== "application/pdf") {
+					if (!SUPPORTED_TYPES.hasOwnProperty(f.info.type)) {
 						console.log("Not sharing file", f);
-						alertify.dialog.alert(translation._("Only PDF documents can be shared at this time."));
+						alertify.dialog.alert(translation._("Only PDF documents and OpenDocument files can be shared at this time."));
 						valid_files = null;
 						return;
 					}
@@ -493,11 +517,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					}
 				});
 
-				_.each(valid_files, function(f) {
-					if (!f.info.hasOwnProperty("id")) {
-						f.info.id = f.id;
-					}
-					$scope.advertiseFile(f);
+				$scope.$apply(function(scope) {
+					_.each(valid_files, function(f) {
+						if (!f.info.hasOwnProperty("id")) {
+							f.info.id = f.id;
+						}
+						scope.advertiseFile(f);
+					});
 				});
 			};
 
@@ -570,7 +596,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					mediaStream.tokens.off(currentToken, tokenHandler);
 					currentToken = null;
 				}
-				$scope.$emit("closePdf");
 				$scope.resetProperties();
 				$scope.layout.presentation = false;
 				peers = {};
@@ -585,7 +610,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				}
 				if ($scope.currentPresentation === presentation) {
 					// switch back to first page when clicked on current presentation
-					$scope.$emit("showPdfPage", 1);
+					$scope.currentPageNumber = 1;
 					return;
 				}
 				mediaStream.webrtc.callForEachCall(function(peercall) {
@@ -599,13 +624,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 
 			$scope.doSelectPresentation = function(presentation) {
 				console.log("Selected", presentation);
-				$scope.currentPageNumber = -1;
-				$scope.maxPageNumber = -1;
+				$scope.resetProperties();
 				$scope.currentPresentation = presentation;
-				$scope.receivedPage = null;
-				$scope.presentationLoaded = false;
-				$scope.pendingPageRequest = null;
-				presentation.open($scope);
 			};
 
 			$scope.deletePresentation = function(presentation, $event) {
@@ -625,7 +645,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					});
 				}
 				if ($scope.currentPresentation === presentation) {
-					presentation.close($scope);
+					$scope.currentPresentation = null;
 					$scope.resetProperties();
 				}
 				presentation.clear();
@@ -643,9 +663,21 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 
 			};
 
+			$scope.prevPage = function() {
+				if ($scope.currentPageNumber > 1) {
+					$scope.currentPageNumber -= 1;
+				}
+			};
+
+			$scope.nextPage = function() {
+				if ($scope.currentPageNumber < $scope.maxPageNumber) {
+					$scope.currentPageNumber += 1;
+				}
+			};
+
 			mediaStream.webrtc.e.on("done", function() {
-				_.each($scope.availablePresentations, function(download) {
-					download.clear();
+				_.each($scope.availablePresentations, function(presentation) {
+					presentation.clear();
 				});
 				$scope.availablePresentations = [];
 				$scope.activeDownloads = [];
@@ -662,14 +694,14 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					switch (event.keyCode) {
 					case 37:
 						// left arrow
-						$scope.$emit("prevPage");
+						$scope.prevPage();
 						event.preventDefault();
 						break;
 					case 39:
 						// right arrow
 					case 32:
 						// space
-						$scope.$emit("nextPage");
+						$scope.nextPage();
 						event.preventDefault();
 						break;
 					}
@@ -682,10 +714,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				} else if (!newval && oldval) {
 					$scope.hidePresentation();
 				}
-			});
-
-			$($window).on("resize", function() {
-				$scope.$emit("redrawPdf");
 			});
 
 			$scope.$watch("layout.main", function(newval, oldval) {

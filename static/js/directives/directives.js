@@ -39,7 +39,8 @@ define([
 	'directives/contactrequest',
 	'directives/defaultdialog',
 	'directives/pdfcanvas',
-	'directives/presentation'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, presentation) {
+	'directives/odfcanvas',
+	'directives/presentation'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPicture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -60,6 +61,7 @@ define([
 		contactRequest: contactRequest,
 		defaultDialog: defaultDialog,
 		pdfcanvas: pdfcanvas,
+		odfcanvas: odfcanvas,
 		presentation: presentation
 	};
 
