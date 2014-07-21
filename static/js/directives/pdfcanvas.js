@@ -36,6 +36,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				this.currentPageNumber = null;
 				this.pendingPageNumber = null;
 				this.renderTask = null;
+				this.url = null;
 			};
 
 			PDFCanvas.prototype._close = function() {
@@ -48,6 +49,10 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 					this.doc.cleanup();
 					this.doc.destroy();
 					this.doc = null;
+				}
+				if (this.url) {
+					URL.revokeObjectURL(this.url);
+					this.url = null;
 				}
 				this.pendingPageNumber = null;
 				this.currentPageNumber = -1;
@@ -74,8 +79,8 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 					var fp = source.file || source;
 					if (typeof URL !== "undefined" && URL.createObjectURL) {
-						var url = URL.createObjectURL(fp);
-						this._openFile(url);
+						this.url = URL.createObjectURL(fp);
+						this._openFile(this.url);
 					} else {
 						var fileReader = new FileReader();
 						fileReader.onload = _.bind(function(evt) {
