@@ -54,9 +54,22 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 			var data = new Blob(dataBuffer, {
 				type: this.owner.info.type || "application/octet-stream"
 			});
+			var url = null;
 			this.file = {
 				toURL: function() {
-					return URL.createObjectURL(data);
+					if (!url) {
+						url = URL.createObjectURL(data);
+					}
+					return url;
+				},
+				remove: function(callback) {
+					if (url) {
+						URL.revokeObjectURL(url);
+						url = null;
+					}
+					if (callback) {
+						callback();
+					}
 				}
 			}
 			this.owner.file = this.file;
@@ -373,7 +386,13 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 	File.prototype.stop = function() {
 
 		this.e.triggerHandler("stop", [this]);
-		this.file = null;
+		if (this.file && this.file.remove) {
+			var file = this.file;
+			this.file.remove(_.bind(function() {
+				console.log("File removed", file);
+			}, this));
+			this.file = null;
+		}
 		if (this.writer) {
 			this.writer.stop();
 			this.writer = null;
