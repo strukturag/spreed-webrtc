@@ -24,6 +24,10 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 		var webodf = null;
 
+		var DOCUMENT_TYPE_PRESENTATION = "presentation";
+		var DOCUMENT_TYPE_SPREADSHEET = "spreadsheet";
+		var DOCUMENT_TYPE_TEXT = "text";
+
 		var nsResolver = function(prefix) {
 			var ns = {
 				'draw': "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0",
@@ -73,7 +77,6 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				this.container = container;
 				this.canvasDom = canvasDom;
 				this.canvas = null;
-				this.odfcontainer = null;
 				this.maxPageNumber = -1;
 				this.currentPageNumber = -1;
 				this.pendingPageNumber = null;
@@ -86,7 +89,6 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 					});
 					this.canvas = null;
 				}
-				this.odfcontainer = null;
 				this.maxPageNumber = -1;
 				this.currentPageNumber = -1;
 				this.pendingPageNumber = null;
@@ -104,29 +106,49 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				}, this));
 			};
 
+			ODFCanvas.prototype._odfLoaded = function() {
+				this.scope.$apply(_.bind(function(scope) {
+					var odfcontainer = this.canvas.odfContainer();
+					this.document_type = odfcontainer.getDocumentType();
+					// pages only supported for presentations
+					var pages = [];
+					switch (this.document_type) {
+					case DOCUMENT_TYPE_PRESENTATION:
+						pages = odfcontainer.rootElement.getElementsByTagNameNS(nsResolver('draw'), 'page');
+						this.container.addClass("showonepage");
+						break;
+
+					default:
+						this.container.removeClass("showonepage");
+						break;
+					}
+
+					this.maxPageNumber = Math.max(1, pages.length);
+					this.currentPageNumber = -1;
+					console.log("ODF loaded", odfcontainer);
+					var odfDoc = {
+						numPages: this.maxPageNumber
+					};
+					scope.$emit("presentationLoaded", odfcontainer.getUrl(), odfDoc);
+					if (this.pendingPageNumber !== null) {
+						this._showPage(this.pendingPageNumber);
+						this.pendingPageNumber = null;
+					}
+				}, this));
+			};
+
 			ODFCanvas.prototype._doOpenFile = function(source) {
 				this.scope.$emit("presentationLoading", source);
 				this.container.hide();
-				this.canvas = new webodf.odf.OdfCanvas(this.canvasDom[0]);
-				this.canvas.load(source);
-				this.canvas.addListener("statereadychange", _.bind(function(odfcontainer) {
-					this.scope.$apply(_.bind(function(scope) {
-						this.odfcontainer = odfcontainer;
-						// pages only supported for presentations
-						var pages = odfcontainer.rootElement.getElementsByTagNameNS(nsResolver('draw'), 'page');
-						this.maxPageNumber = Math.max(1, pages.length);
-						this.currentPageNumber = -1;
-						console.log("ODF loaded", odfcontainer);
-						var odfDoc = {
-							numPages: this.maxPageNumber
-						};
-						scope.$emit("presentationLoaded", source, odfDoc);
-						if (this.pendingPageNumber !== null) {
-							this._showPage(this.pendingPageNumber);
-							this.pendingPageNumber = null;
-						}
+				if (!this.canvas) {
+					this.canvas = new webodf.odf.OdfCanvas(this.canvasDom[0]);
+					this.canvas.addListener("statereadychange", _.bind(function() {
+						this._odfLoaded();
 					}, this));
-				}, this));
+				}
+
+				this.canvas.setZoomLevel(1);
+				this.canvas.load(source);
 			};
 
 			ODFCanvas.prototype._openFile = function(source) {
@@ -179,7 +201,15 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 			ODFCanvas.prototype.redrawPage = function() {
 				if (this.canvas) {
-					this.canvas.fitSmart(this.container.width(), this.container.height());
+					switch (this.document_type) {
+					case DOCUMENT_TYPE_PRESENTATION:
+						this.canvas.fitToContainingElement(this.container.width(), this.container.height());
+						break;
+
+					default:
+						this.canvas.fitToWidth(this.container.width());
+						break;
+					}
 				}
 			};
 

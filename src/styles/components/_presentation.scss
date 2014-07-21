@@ -81,12 +81,17 @@
   .odfcanvas {
     user-select: none;
     cursor: default;
+    body {
+      background-color: transparent;
+    }
   }
   .odfcontainer {
-    overflow: hidden;
     display: none;
     padding: 0;
     margin: 0;
+  }
+  .odfcontainer.showonepage {
+    overflow: hidden;
   }
 }
 
