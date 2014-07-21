@@ -53,6 +53,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			this.file = null;
 			this.handler = null;
 			this.session = null;
+			this.url = null;
 		};
 
 		BasePresentation.prototype.stop = function() {
@@ -75,7 +76,6 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			BasePresentation.call(this, scope, fileInfo, token);
 			this.owner = owner;
 			this.progress = 0;
-			this.url = null;
 			this.presentable = false;
 			this.downloading = true;
 			this.uploaded = false;
@@ -129,6 +129,15 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			}
 		};
 
+		DownloadPresentation.prototype.browserOpen = function(target) {
+			target = target || "_blank";
+			if (this.downloading) {
+				console.log("Presentation download not finished yet, not opening", this);
+				return;
+			}
+			$window.open(this.url, target);
+		};
+
 		DownloadPresentation.prototype.close = function() {
 			this.openCallback = null;
 		};
@@ -176,6 +185,14 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			callback(this.file);
 		};
 
+		UploadPresentation.prototype.browserOpen = function(target) {
+			target = target || "_blank";
+			if (!this.url) {
+				this.url = URL.createObjectURL(this.file.file);
+			}
+			$window.open(this.url, target);
+		};
+
 		UploadPresentation.prototype.close = function() {
 		};
 
@@ -198,6 +215,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				this.scope.$emit("cancelUpload");
 				this.scope.$destroy();
 				this.scope = null;
+			}
+			if (this.url) {
+				URL.revokeObjectURL(this.url);
+				this.url = null;
 			}
 			this.session = null;
 			BasePresentation.prototype.clear.call(this);
@@ -649,6 +670,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					$scope.resetProperties();
 				}
 				presentation.clear();
+			};
+
+			$scope.downloadPresentation = function(presentation, $event) {
+				if ($event) {
+					$event.preventDefault();
+				}
+				presentation.browserOpen();
 			};
 
 			$scope.toggleFullscreen = function(elem) {

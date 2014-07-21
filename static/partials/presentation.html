@@ -44,7 +44,8 @@
 									   title="{{ presentation.info.name }}">
 					<div class="fa active fa-check" ng-show="presentation === currentPresentation"></div>
 					<div class="fa notavailable fa-ban" ng-show="presentation !== currentPresentation && !presentation.presentable"></div>
-					<a class="btn btn-danger delete" ng-show="presentation.uploaded" ng-click="deletePresentation(presentation, $event)"><i class="fa fa-trash-o fa-lg"></i></a>
+					<a class="btn btn-primary presentation-action download" ng-show="presentation.uploaded || !presentation.downloading" ng-click="downloadPresentation(presentation, $event)"><i class="fa fa-download fa-lg"></i></a>
+					<a class="btn btn-danger presentation-action delete" ng-show="presentation.uploaded" ng-click="deletePresentation(presentation, $event)"><i class="fa fa-trash-o fa-lg"></i></a>
 					<div class="fa filetype fa-file-pdf-o"></div>
 					<div class="caption">
 						<span class="name">{{ presentation.info.name }}</span><br>
