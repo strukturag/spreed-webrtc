@@ -18,10 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["underscore", "jquery"], function(_, $) {
+define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 
 	// chromeExtension
-	return ["$window", "$q", function($window, $q) {
+	return ["$window", "$q", "alertify", "translation", function($window, $q, alertify, translation) {
 
 		var ChromeExtension = function() {
 			this.available = false;
@@ -105,6 +105,7 @@ define(["underscore", "jquery"], function(_, $) {
 
 		};
 
+		// Create extension api and wait for messages.
 		var extension = new ChromeExtension();
 		$window.addEventListener("message", function(event) {
 			//console.log("message", event.origin, event.source === window, event);
@@ -113,6 +114,17 @@ define(["underscore", "jquery"], function(_, $) {
 				extension.onMessage(event);
 			}
 		});
+
+		// Always register default auto install which tells user that extension is required
+		// if screen sharing can only work with extension.
+		if ($window.webrtcDetectedBrowser === "chrome" && $window.webrtcDetectedVersion >= 37) {
+			extension.registerAutoInstall(function() {
+				var d = $q.defer();
+				alertify.dialog.alert(translation._("Screen sharing requires a browser extension. Please add the Spreed WebRTC screen sharing extension to Chrome and try again."));
+				d.reject("Manual extension installation required");
+				return d.promise;
+			});
+		}
 
 		// Expose.
 		return extension;
