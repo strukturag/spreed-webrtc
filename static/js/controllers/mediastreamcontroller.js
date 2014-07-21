@@ -29,10 +29,10 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			event.preventDefault();
 		});
 
-		// Avoid accidential reloads or exits.
+		// Avoid accidential reloads or exits when in a call.
 		var manualUnload = false;
 		$($window).on("beforeunload", function(event) {
-			if (manualUnload && !$scope.peer) {
+			if (manualUnload || !$scope.peer) {
 				return;
 			}
 			return translation._("Close this window and disconnect?");
@@ -329,7 +329,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			} else {
 				$window.location.reload(true);
 			}
-
 		};
 
 		$scope.toggleBuddylist = (function() {
