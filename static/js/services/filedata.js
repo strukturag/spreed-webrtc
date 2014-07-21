@@ -56,6 +56,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 			});
 			this.file = {
 				toURL: function() {
+					// TODO: only create once and revoke URL when no longer needed
 					return URL.createObjectURL(data);
 				}
 			}
