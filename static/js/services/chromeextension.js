@@ -95,10 +95,11 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 			}
 		};
 
-		ChromeExtension.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc) {
+		ChromeExtension.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc, force) {
 
 			this.autoinstall.install = installFunc;
 			this.autoinstall.cancel = cancelInstallFunc;
+			this.autoinstall.force = !!force;
 			if (!this.available && installFunc) {
 				this.e.triggerHandler("available", true);
 			}

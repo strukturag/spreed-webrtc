@@ -67,6 +67,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 				}
 
 				if (chromeExtension.available) {
+
 					this.supported = true;
 					var pending = null;
 					this.prepare = function(options) {
@@ -108,6 +109,14 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 							pending = null;
 						}
 					};
+
+				} else {
+
+					// Check if we always should do autoinstall if the extension is not there.
+					if (chromeExtension.autoinstall.force) {
+						this.supported = false;
+					}
+
 				}
 
 			} else {
