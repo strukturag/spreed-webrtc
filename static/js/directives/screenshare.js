@@ -269,6 +269,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					if (error && error.name) {
 						switch (error.name) {
 						case "PermissionDeniedError":
+						case "InvalidStateError":
 							if ($window.webrtcDetectedVersion >= 32 &&
 								$window.webrtcDetectedVersion < 37) {
 								alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
