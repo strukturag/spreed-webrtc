@@ -548,7 +548,10 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			var t = event.type;
 			var opts = $.extend({}, options);
 			$timeout.cancel(ttlTimeout);
-			$scope.userid = $scope.suserid = null;
+			if (!opts.soft) {
+				// Reset login information for anything not soft.
+				$scope.userid = $scope.suserid = null;
+			}
 			switch (t) {
 				case "open":
 					t = "waiting";
