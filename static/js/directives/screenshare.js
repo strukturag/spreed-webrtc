@@ -177,6 +177,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					}
 				}, function(err) {
 					console.log("Screen sharing request returned error", err);
+					alertify.dialog.alert(translation._("Failed to start screen sharing (%s).", err));
 					$scope.stopScreenshare();
 				});
 

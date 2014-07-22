@@ -130,6 +130,7 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 				this.supported = this.autoinstall = true;
 				var that = this;
 				var waiting = false;
+				var prepareAlternative = this.prepare;
 				this.prepare = function(options) {
 					var d = $q.defer();
 					var install = chromeExtension.autoinstall.install();
@@ -167,7 +168,17 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 							d.reject("Timeout while waiting for extension getting installed");
 						}, 30000);
 					}, function(err) {
-						d.reject(err);
+						console.log("Auto install of extension failed.", err);
+						if (prepareAlternative) {
+							var alternative = prepareAlternative(options);
+							alternative.then(function(id) {
+								d.resolve(id);
+							}, function() {
+								d.reject(err);
+							});
+						} else {
+							d.reject(err);
+						}
 					});
 					return d.promise;
 				};
