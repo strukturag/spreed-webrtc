@@ -192,6 +192,9 @@ define(['jquery', 'underscore'], function($, _) {
 			case "Presentation":
 				this.e.triggerHandler("received.presentation", [d.To, d.From, data.Presentation, d.p2p]);
 				break;
+			case "YouTubeVideo":
+				this.e.triggerHandler("received.youtubevideo", [d.To, d.From, data.YouTubeVideo, d.p2p]);
+				break;
 			case "Alive":
 				// Do nothing.
 				//console.log("Alive response received.");
@@ -357,6 +360,23 @@ define(['jquery', 'underscore'], function($, _) {
 		}
 
 		return this.send("Presentation", data);
+
+	};
+
+	Api.prototype.sendYouTubeVideo = function(id, video_id, video_data) {
+
+		var data = {
+			Id: id,
+			Type: "YouTubeVideo",
+			YouTubeVideo: {
+				id: video_id
+			}
+		}
+		if (video_data) {
+			data.YouTubeVideo = _.extend(data.YouTubeVideo, video_data);
+		}
+
+		return this.send("YouTubeVideo", data);
 
 	};
 

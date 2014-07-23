@@ -1,0 +1,62 @@
+<div class="youtubevideo">
+	<div class="youtubevideopane nicescroll">
+		<form class="container-fluid form" role="form">
+
+			<div class="welcome container-fluid" ng-show="!playbackActive">
+				<div class="welcome-logo fa fa-youtube"></div>
+				<h1>{{_("Share a video with everyone in the call")}}</h1>
+				<div class="welcome-container">
+					<p>
+					  <div class="form-group welcome-input">
+						<input type="text" class="form-control input-lg" ng-model="youtubeurl" placeholder="{{_('YouTube URL')}}">
+						<div class="welcome-input-buttons">
+						  <button class="btn btn-primary" type="button" ng-disabled="!youtubeurl" ng-click="shareVideo(youtubeurl)">{{_("Share")}}</button>
+						</div>
+					  </div>
+					</p>
+					<center>
+						<p ng-show="roomdata.name"><i class="fa fa-external-link"></i> <a href="{{roomdata.link}}" ng-click="changeRoomToId(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></p>
+					</center>
+				</div>
+			</div>
+			<!--
+			<div class="row welcome" ng-show="!playbackActive">
+				<h1 class="fa fa-youtube"></h1>
+				<div class="center-block">
+					<p>{{_('Videos are shared with everyone in this call.')}}</p>
+				</div>
+			</div>
+			-->
+
+			<div ng-show="playbackActive">
+				<div class="row" id="youtubecontainer">
+					<div class="embed-responsive embed-responsive-16by9">
+						<div id="youtubeplayer"></div>
+					</div>
+					<div id="youtubeplayerinfo">
+						<div>{{_('Currently playing')}}<br>{{ currentVideoUrl }}</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
+		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('YouTube controls')}}"><i class="fa fa-cogs"></i></a>
+		<div class="overlaybar-content">
+			<div class="container-fluid form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-2" for="youtubeurl">YouTube URL to share</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="button" class="btn btn-primary" ng-click="shareVideo(youtubeurl)" ng-disabled="youtubeurl === ''">{{_('Share')}}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
