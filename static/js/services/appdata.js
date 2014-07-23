@@ -37,6 +37,10 @@ define(["jquery"], function($) {
 	// - mainStatus(event, status)
 	//     status (string)  : Status id (connected, waiting, ...)
 
+	// appData properties:
+	//
+	// - language (string): ISO language code of active language
+
 	// appData
 	return [function() {
 
@@ -44,6 +48,7 @@ define(["jquery"], function($) {
 			data: null,
 			e: $({})
 		}
+		var html = document.getElementsByTagName("html")[0];
 		var appData = {
 			get: function() {
 				return data.data;
@@ -52,7 +57,8 @@ define(["jquery"], function($) {
 				data.data = d;
 				return d;
 			},
-			e: data.e
+			e: data.e,
+			language: html.getAttribute("lang")
 		}
 		return appData;
 
