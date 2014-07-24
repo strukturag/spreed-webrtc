@@ -4,9 +4,10 @@
 
 			<div class="welcome container-fluid" ng-show="!playbackActive">
 				<div class="welcome-logo fa fa-youtube"></div>
-				<h1>{{_("Share a video with everyone in the call")}}</h1>
+				<h1>{{_('Share a YouTube video')}}</h1>
 				<div class="welcome-container">
 					<p>
+					  <div>{{_("Videos are shared with everyone in this call.")}}</div>
 					  <div class="form-group welcome-input">
 						<input type="text" class="form-control input-lg" ng-model="youtubeurl" placeholder="{{_('YouTube URL')}}">
 						<div class="welcome-input-buttons">
