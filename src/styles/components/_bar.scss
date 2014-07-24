@@ -128,7 +128,7 @@
     color: $bar-btn-action-color;
     height: 42px;
     font: 24px/40px $font-sans-serif;
-    margin-left: -4px;
+    margin-left: -2px;
     padding: 0;
     text-align: center;
     width: 42px;
@@ -139,12 +139,12 @@
       box-shadow: 0;
     }
     &:hover {
-      background-color: none;
+      background-color: transparent;
       border-color: $bar-btn-action-border;
       color: $bar-btn-action-hover;
     }
     &.active {
-      background-color: none;
+      background-color: transparent;
       border-color: $bordercolor;
       color: $bar-btn-action-hover;
     }
