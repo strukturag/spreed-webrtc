@@ -36,8 +36,10 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			var isPublisher = null;
 			var isPaused = null;
 			var seekDetector = null;
+			var playReceivedNow = null;
 			var prevTime = null;
 			var prevNow = null;
+			var initialState = null;
 
 			var stateEvents = {
 				"-1": "youtube.unstarted",
@@ -58,6 +60,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.playbackActive = false;
 			$scope.hideControlsBar = true;
 			$scope.currentVideoUrl = null;
+			$scope.currentVideoId = null;
 			$scope.youtubeurl = "http://www.youtube.com/watch?v=_C92v6uKCIU";
 
 			var onPlayerReady = function(event) {
@@ -151,6 +154,12 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			};
 
 			$scope.$on("youtube.playing", function() {
+				if (initialState === 2) {
+					initialState = null;
+					player.pauseVideo();
+					return;
+				}
+
 				prevTime = null;
 				startDetectSeek();
 				if (isPaused) {
@@ -158,13 +167,20 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					mediaStream.webrtc.callForEachCall(function(peercall) {
 						mediaStreamSendYouTubeVideo(peercall, currentToken, {
 							Type: "Resume",
-							Resume: true
+							Resume: {
+								position: player.getCurrentTime()
+							}
 						});
 					});
 				}
 			});
 
 			$scope.$on("youtube.buffering", function() {
+				if (initialState === 2) {
+					initialState = null;
+					player.pauseVideo();
+				}
+
 				startDetectSeek();
 			});
 
@@ -179,7 +195,9 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					mediaStream.webrtc.callForEachCall(function(peercall) {
 						mediaStreamSendYouTubeVideo(peercall, currentToken, {
 							Type: "Pause",
-							Pause: true
+							Pause: {
+								position: player.getCurrentTime()
+							}
 						});
 					});
 				}
@@ -198,20 +216,34 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					mediaStreamSendYouTubeVideo(peercall, currentToken, {
 						Type: "Seek",
 						Seek: {
-							"position": position
+							position: position
 						}
 					});
 				});
 			});
 
-			var playVideo = function(id) {
+			var playVideo = function(id, position, state) {
 				playerReady.done(function() {
 					$("#youtubeplayer").show();
 					$scope.playbackActive = true;
 					prevTime = null;
 					prevNow = null;
 					isPaused = null;
-					player.loadVideoById(id);
+					if (playReceivedNow) {
+						var delta = ((new Date()) - playReceivedNow) * 0.001;
+						playReceivedNow = null;
+						if (position) {
+							position += delta;
+						} else {
+							position = delta;
+						}
+					}
+					initialState = state;
+					if (position) {
+						player.loadVideoById(id, position);
+					} else {
+						player.loadVideoById(id);
+					}
 				});
 			};
 
@@ -273,6 +305,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				createVideoPlayer(true);
 				$scope.youtubeurl = "";
 				$scope.currentVideoUrl = url;
+				$scope.currentVideoId = id;
 				playVideo(id);
 			};
 
@@ -300,10 +333,16 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 					case "Play":
 						console.log("Received YouTubeVideo play request", data);
+						playReceivedNow = new Date();
 						$scope.$apply(function(scope) {
 							createVideoPlayer(false);
-							scope.currentVideoUrl = data.Play.url;
-							playVideo(data.Play.id);
+							playerReady.done(function() {
+								safeApply(scope, function(scope) {
+									scope.currentVideoUrl = data.Play.url;
+									scope.currentVideoId = data.Play.id;
+									playVideo(data.Play.id, data.Play.position, data.Play.state);
+								});
+							});
 						});
 						break;
 
@@ -312,6 +351,9 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 						$scope.$apply(function(scope) {
 							if (player) {
 								player.pauseVideo();
+								if (data.Pause.position) {
+									player.seekTo(data.Pause.position, true);
+								}
 							}
 						});
 						break;
@@ -320,6 +362,9 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 						console.log("Received YouTubeVideo resume request", data);
 						$scope.$apply(function(scope) {
 							if (player) {
+								if (data.Resume.position) {
+									player.seekTo(data.Resume.position, true);
+								}
 								player.playVideo();
 							}
 						});
@@ -370,6 +415,20 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					Type: "Show",
 					Show: true
 				});
+				if (isPublisher && $scope.currentVideoUrl) {
+					var playInfo = {
+						url: $scope.currentVideoUrl,
+						id: $scope.currentVideoId
+					};
+					if (player) {
+						playInfo.position = player.getCurrentTime();
+						playInfo.state = player.getPlayerState();
+					}
+					mediaStreamSendYouTubeVideo(peercall, token, {
+						Type: "Play",
+						Play: playInfo
+					});
+				}
 			};
 
 			// Updater function to bring in new calls.
@@ -439,9 +498,12 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				}
 				isPublisher = null;
 				$scope.playbackActive = false;
+				$scope.currentVideoUrl = null;
+				$scope.currentVideoId = null;
 				peers = {};
 				stopDetectSeek();
 				playerReady = null;
+				initialState = null;
 				mediaStream.webrtc.e.off("statechange", updater);
 			};
 
