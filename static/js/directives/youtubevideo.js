@@ -33,7 +33,6 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			var addedIframeScript = false;
 			var player = null;
 			var playerReady = null;
-			var isPublisher = null;
 			var isPaused = null;
 			var seekDetector = null;
 			var playReceivedNow = null;
@@ -57,6 +56,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				"150": "notAllowedEmbedded"
 			};
 
+			$scope.isPublisher = null;
 			$scope.playbackActive = false;
 			$scope.hideControlsBar = true;
 			$scope.currentVideoUrl = null;
@@ -186,7 +186,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 			$scope.$on("youtube.paused", function() {
 				stopDetectSeek();
-				if (!isPublisher || !currentToken) {
+				if (!$scope.isPublisher || !currentToken) {
 					return;
 				}
 
@@ -208,7 +208,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			});
 
 			$scope.$on("youtube.seeked", function($event, position) {
-				if (!isPublisher || !currentToken) {
+				if (!$scope.isPublisher || !currentToken) {
 					return;
 				}
 
@@ -248,7 +248,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			};
 
 			var createVideoPlayer = function(with_controls) {
-				if (player && isPublisher !== with_controls) {
+				if (player && $scope.isPublisher !== with_controls) {
 					player.destroy();
 					player = null;
 					playerReady = null;
@@ -280,7 +280,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 								"onStateChange": onPlayerStateChange
 							}
 						});
-						isPublisher = with_controls;
+						$scope.isPublisher = with_controls;
 					}
 				});
 			};
@@ -415,7 +415,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					Type: "Show",
 					Show: true
 				});
-				if (isPublisher && $scope.currentVideoUrl) {
+				if ($scope.isPublisher && $scope.currentVideoUrl) {
 					var playInfo = {
 						url: $scope.currentVideoUrl,
 						id: $scope.currentVideoId
@@ -496,7 +496,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					player.destroy();
 					player = null;
 				}
-				isPublisher = null;
+				$scope.isPublisher = null;
 				$scope.playbackActive = false;
 				$scope.currentVideoUrl = null;
 				$scope.currentVideoId = null;

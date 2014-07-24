@@ -64,6 +64,15 @@
   font-size: 2em;
 }
 
+.youtubevideo .click-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+}
+
 .youtubevideo .welcome {
   max-width: 700px;
 }
