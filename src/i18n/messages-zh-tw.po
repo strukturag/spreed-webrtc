@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-21 15:13+0200\n"
+"POT-Creation-Date: 2014-07-24 12:14+0200\n"
 "PO-Revision-Date: 2014-05-21 09:55+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+msgid "Share a YouTube video"
+msgstr ""
 
 msgid "Share a file as presentation"
 msgstr ""
@@ -372,9 +375,6 @@ msgstr "拒絕"
 msgid "Waiting for camera/microphone access"
 msgstr "等待攝像頭/麥克風連接"
 
-msgid "Please wait"
-msgstr "請等候"
-
 msgid "Checking camera and microphone access."
 msgstr "正在檢查攝像頭及麥克風連接"
 
@@ -397,6 +397,22 @@ msgstr "點擊這裡獲取幫助 (Google Chrome)"
 
 msgid "Please set your user details and settings."
 msgstr "請設定您的用戶信息及設置"
+
+msgid "Share a video with everyone in the call"
+msgstr ""
+
+msgid "YouTube URL"
+msgstr ""
+
+#, fuzzy
+msgid "Share"
+msgstr "停止分享"
+
+msgid "Currently playing"
+msgstr ""
+
+msgid "YouTube controls"
+msgstr ""
 
 msgid "Create a room and talk together"
 msgstr ""
@@ -539,6 +555,10 @@ msgstr ""
 msgid "Only PDF documents and OpenDocument files can be shared at this time."
 msgstr ""
 
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr ""
+
 msgid ""
 "Permission to start screen sharing was denied. Make sure to have enabled "
 "screen sharing access for your browser. Copy chrome://flags/#enable-"
@@ -551,10 +571,6 @@ msgstr ""
 msgid "Permission to start screen sharing was denied."
 msgstr ""
 
-#, python-format
-msgid "Failed to start screen sharing (%s)."
-msgstr ""
-
 msgid "Use browser language"
 msgstr "使用瀏覽器語言"
 
@@ -563,6 +579,9 @@ msgstr ""
 
 msgid "Meet with me here:"
 msgstr "我們這裡見："
+
+msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
+msgstr ""
 
 msgid "Error"
 msgstr "錯誤"

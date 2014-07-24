@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-21 15:13+0200\n"
+"POT-Creation-Date: 2014-07-24 12:14+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+
+msgid "Share a YouTube video"
+msgstr ""
 
 msgid "Share a file as presentation"
 msgstr ""
@@ -372,9 +375,6 @@ msgstr "거부"
 msgid "Waiting for camera/microphone access"
 msgstr "카메라/마이크 사용을 기다림"
 
-msgid "Please wait"
-msgstr "기다리세요"
-
 msgid "Checking camera and microphone access."
 msgstr "카메라와 마이크의 사용을 확인 하세요"
 
@@ -397,6 +397,22 @@ msgstr "도움말을 원하면 여기를 클릭 하세요 (구글 크롬)"
 
 msgid "Please set your user details and settings."
 msgstr "사용자의 세부상세와 설정을 지정하세요 "
+
+msgid "Share a video with everyone in the call"
+msgstr ""
+
+msgid "YouTube URL"
+msgstr ""
+
+#, fuzzy
+msgid "Share"
+msgstr "비공유"
+
+msgid "Currently playing"
+msgstr ""
+
+msgid "YouTube controls"
+msgstr ""
 
 msgid "Create a room and talk together"
 msgstr ""
@@ -539,6 +555,10 @@ msgstr ""
 msgid "Only PDF documents and OpenDocument files can be shared at this time."
 msgstr ""
 
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr ""
+
 msgid ""
 "Permission to start screen sharing was denied. Make sure to have enabled "
 "screen sharing access for your browser. Copy chrome://flags/#enable-"
@@ -552,10 +572,6 @@ msgstr ""
 msgid "Permission to start screen sharing was denied."
 msgstr ""
 
-#, python-format
-msgid "Failed to start screen sharing (%s)."
-msgstr ""
-
 msgid "Use browser language"
 msgstr "브라우저 언어 사용"
 
@@ -564,6 +580,9 @@ msgstr ""
 
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
+
+msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
+msgstr ""
 
 msgid "Error"
 msgstr "오류"
