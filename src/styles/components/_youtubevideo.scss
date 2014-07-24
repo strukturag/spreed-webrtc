@@ -81,15 +81,6 @@
   display: block;
 }
 
-.youtubevideo .row {
-  margin-bottom: 15px;
-}
-
-.youtubevideo label {
-  color: white;
-  text-shadow: 1px 1px 1px $text-color;
-}
-
 .youtubevideo .overlaybar {
   bottom: 0;
   left: 0;
@@ -99,4 +90,16 @@
 .youtubevideo .overlaybar-content {
   width: 100%;
   max-width: 100%;
+}
+
+.youtubevideo .overlaybar-input {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+}
+
+.youtubevideo .overlaybar-content form .overlaybar-buttons {
+  position: absolute;
+  right: 23px;
+  top: 6px;
 }

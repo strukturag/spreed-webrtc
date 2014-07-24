@@ -19,14 +19,6 @@
 					</center>
 				</div>
 			</div>
-			<!--
-			<div class="row welcome" ng-show="!playbackActive">
-				<h1 class="fa fa-youtube"></h1>
-				<div class="center-block">
-					<p>{{_('Videos are shared with everyone in this call.')}}</p>
-				</div>
-			</div>
-			-->
 
 			<div ng-show="playbackActive">
 				<div class="row" id="youtubecontainer">
@@ -44,19 +36,17 @@
 	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('YouTube controls')}}"><i class="fa fa-cogs"></i></a>
 		<div class="overlaybar-content">
-			<div class="container-fluid form-horizontal">
+			<form class="container-fluid" role="form">
 				<div class="form-group">
-					<label class="col-sm-2" for="youtubeurl">YouTube URL to share</label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
+					<label for="youtubeurl">YouTube URL to share</label>
+					<div class="overlaybar-input">
+						<input type="text" class="form-control input-lg" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
+						<div class="overlaybar-buttons">
+							<button type="button" class="btn btn-primary" ng-click="shareVideo(youtubeurl)" ng-disabled="youtubeurl === ''">{{_('Share')}}</button>
+						</div>
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="col-sm-offset-2 col-sm-10">
-						<button type="button" class="btn btn-primary" ng-click="shareVideo(youtubeurl)" ng-disabled="youtubeurl === ''">{{_('Share')}}</button>
-					</div>
-				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 </div>
