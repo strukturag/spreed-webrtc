@@ -61,7 +61,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.hideControlsBar = true;
 			$scope.currentVideoUrl = null;
 			$scope.currentVideoId = null;
-			$scope.youtubeurl = "http://www.youtube.com/watch?v=_C92v6uKCIU";
+			$scope.youtubeurl = "";
 
 			var onPlayerReady = function(event) {
 				$scope.$apply(function(scope) {
