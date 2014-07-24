@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-07-24 12:14+0200\n"
+"POT-Creation-Date: 2014-07-24 13:51+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -398,7 +398,7 @@ msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "あなたのプロフィールとアプリの動作を設定してください."
 
-msgid "Share a video with everyone in the call"
+msgid "Videos are shared with everyone in this call."
 msgstr ""
 
 msgid "YouTube URL"
@@ -412,6 +412,9 @@ msgid "Currently playing"
 msgstr ""
 
 msgid "YouTube controls"
+msgstr ""
+
+msgid "YouTube video to share"
 msgstr ""
 
 msgid "Create a room and talk together"
