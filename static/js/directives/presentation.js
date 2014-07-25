@@ -518,8 +518,8 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					});
 				});
 				var presentation = uploadPresentation(file);
-				if ($scope.availablePresentations.length === 1) {
-					// this is the first presentation, show immediately
+				if (!$scope.currentPresentation) {
+					// no presentation active, show immediately
 					$scope.selectPresentation(presentation);
 				}
 			};
