@@ -1,3 +1,23 @@
+spreed-webrtc-server (0.21.0) precise; urgency=low
+
+  * The language is now available in appData service.
+  * Implemented YouTube video sharing.
+  * Fixed userid resets on soft close.
+  * Show proper error message if screen sharing fails.
+  * Implemented inline install hooks for Chrome extension.
+  * Presentations now support ODF format with help of WebODF.
+  * Implemented Chrome exension bridge API.
+  * Implemented deferred based initialization service.
+  * Buddy images can now be larger and are scaled down.
+  * Fixed presentation multiple downloads.
+  * Updated notification image to use CSS.
+  * Improved top bar styles and behaviour on small screens.
+  * Top bar is now a bootstrap nav bar.
+  * Contacts can now be removed in contact manager.
+  * Various other bug fixes.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 25 Jul 2014 17:53:34 +0200
+
 spreed-webrtc-server (0.20.0) precise; urgency=low
 
   * Added presentation mode.
