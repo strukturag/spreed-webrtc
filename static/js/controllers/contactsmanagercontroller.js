@@ -26,6 +26,14 @@ define([], function() {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
+		$scope.tmp = {};
+		$scope.tmp.displayName = data.contact && data.contact.Status.displayName;
+		$scope.contact = data.contact;
+
+		var totalUnnamed = 0;
+		$scope.unnamed = function() {
+			return totalUnnamed += 1;
+		};
 
 		var updateContacts = function() {
 			$scope.contacts = contactData.getAll();
@@ -35,9 +43,28 @@ define([], function() {
 			updateContacts();
 		});
 
-		$scope.removeContact = function(id) {
-			contacts.remove(id);
+		var setContactInfo = function(contact) {
+			contact.Status.displayName = $scope.tmp.displayName;
+			contacts.update({Id: contact.Id, Success: contact.Success, Token: contact.Token, Userid: contact.Userid}, contact.Status);
+		};
+
+		$scope.removeContact = function() {
+			contacts.remove($scope.contact.Userid);
 			updateContacts();
+			$modalInstance.close();
+		};
+
+		$scope.edit = function(contact) {
+			$modalInstance.close(contact);
+		};
+
+		$scope.save = function() {
+			setContactInfo(data.contact);
+			$modalInstance.close();
+		};
+
+		$scope.cancel = function(contact) {
+			$modalInstance.dismiss();
 		};
 
 	}];
