@@ -21,7 +21,7 @@
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", function($scope, $modalInstance, contactData, data, contacts) {
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddySession', function($scope, $modalInstance, contactData, data, contacts, buddySession) {
 
 		$scope.header = data.header;
 		$scope.contacts = [];
@@ -29,6 +29,17 @@ define([], function() {
 		$scope.tmp = {};
 		$scope.tmp.displayName = data.contact && data.contact.Status.displayName;
 		$scope.contact = data.contact;
+		$scope.session = null;
+
+		if(data.contact) {
+			var sessions = buddySession.sessions();
+			for (var id in sessions) {
+				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
+					$scope.session = sessions[id] && sessions[id].sessions[id];
+					//console.log('contact manager session', $scope.session);
+				}
+			}
+		}
 
 		var totalUnnamed = 0;
 		$scope.unnamed = function() {
@@ -52,6 +63,10 @@ define([], function() {
 			contacts.remove($scope.contact.Userid);
 			updateContacts();
 			$modalInstance.close();
+		};
+
+		$scope.syncContactInfo = function() {
+			$scope.tmp.displayName = $scope.session.Status.displayName;
 		};
 
 		$scope.edit = function(contact) {
