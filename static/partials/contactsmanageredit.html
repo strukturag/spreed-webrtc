@@ -1,0 +1,37 @@
+<div>
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="$close()">×</button>
+    <h3 class="modal-title" ng-bind-html="header"></h3>
+  </div>
+  <div  class="modal-header">
+    <div class="row">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Name')}}</label>
+          <div class="col-xs-6">
+            <input type="text" class="form-control" ng-model="tmp.displayName">
+          </div>
+        </div>
+        <div class="form-group" ng-if="session.Type">
+          <label class="col-xs-4 control-label">{{_('Sync')}}</label>
+          <div class="col-xs-6">
+            <button class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-2">
+        <button class="btn btn-danger" ng-click="removeContact()">{{_('Remove')}}</button>
+      </div>
+      <div class="col-xs-offset-4 col-xs-6">
+        <div class="pull-right">
+          <button class="btn btn-default" ng-click="cancel()">{{_('Cancel')}}</button> 
+          <button class="btn btn-primary" ng-click="save()">{{_('Save')}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -129,7 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "buddyPicture", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, buddyPicture, fastScroll, mediaStream, animationFrame, $q) {
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "buddyPicture", "fastScroll", "mediaStream", "animationFrame", "$q", '$timeout', function($window, $compile, playSound, buddyData, buddySession, buddyPicture, fastScroll, mediaStream, animationFrame, $q, $timeout) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -585,7 +585,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				scope.contact = contact;
 				var sessionData = scope.session.get();
 				if (sessionData) {
-					if (contact.Status === null && sessionData.Status) {
+					if (angular.isString(contact.Status) && sessionData.Status) {
 						// Update contact status with session.Status
 						var status = contact.Status = _.extend({}, sessionData.Status);
 						// Remove status message.
@@ -602,7 +602,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 						console.log("Injected status into contact", contact);
 					}
 					this.updateDisplay(sessionData.Id, scope, contact, "status");
-					scope.$apply();
+					// keep asyc nature but eliminate $apply conflicts
+					$timeout(function() {
+						scope.$apply();
+					}, 0, false);
 				}
 			} else {
 				// Create new scope for contact.

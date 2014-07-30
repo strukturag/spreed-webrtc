@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html'], function(underscore, $, Modernizr, sjcl, templateContactsManager) {
+define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(underscore, $, Modernizr, sjcl, templateContactsManager, templateContactsManagerEdit) {
 
 	var Database = function(name) {
 		this.version = 3;
@@ -124,6 +124,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 
 		// Inject our templates.
 		$templateCache.put('/contactsmanager/main.html', templateContactsManager);
+		$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
 
 		var Contacts = function() {
 
@@ -259,6 +260,12 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 				}
 				this.e.triggerHandler("contactremoved", contact);
 			}
+		};
+
+		Contacts.prototype.update = function(request, status) {
+			console.log("contact update", status);
+			this.remove(request.Userid);
+			this.add(request, status);
 		};
 
 		return new Contacts();
