@@ -18,8 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/buddypicture.html'], function($, _, template) {
+define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], function($, _, template) {
 
+	// buddyPictureCapture
 	return ["$compile", function($compile) {
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', function($scope, safeApply, $timeout, $q) {
