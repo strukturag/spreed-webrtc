@@ -20,7 +20,9 @@
  */
 define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'], function($, _, template, BigScreen) {
 
-	return ["$window", "mediaStream", "alertify", "translation", "safeApply", "appData", function($window, mediaStream, alertify, translation, safeApply, appData) {
+	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", function($window, $document, mediaStream, alertify, translation, safeApply, appData) {
+
+		var YOUTUBE_IFRAME_API_URL = "https://www.youtube.com/iframe_api";
 
 		var isYouTubeIframeAPIReady = $.Deferred();
 		$window.onYouTubeIframeAPIReady = function() {
@@ -62,6 +64,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.currentVideoUrl = null;
 			$scope.currentVideoId = null;
 			$scope.youtubeurl = "";
+			$scope.youtubeAPIReady = false;
+
+			isYouTubeIframeAPIReady.done(function() {
+				$scope.$apply(function(scope) {
+					scope.youtubeAPIReady = true;
+				});
+			});
 
 			var onPlayerReady = function(event) {
 				$scope.$apply(function(scope) {
@@ -335,6 +344,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 						console.log("Received YouTubeVideo play request", data);
 						playReceivedNow = new Date();
 						$scope.$apply(function(scope) {
+							scope.currentVideoUrl = data.Play.url;
 							createVideoPlayer(false);
 							playerReady.done(function() {
 								safeApply(scope, function(scope) {
@@ -450,11 +460,24 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				}
 			};
 
-			$scope.showYouTubeVideo = function() {
+			$scope.loadYouTubeAPI = function() {
 				if (!addedIframeScript) {
-					$element.append($('<script src="https://www.youtube.com/iframe_api"></script>'));
+					var head = $document[0].getElementsByTagName('head')[0];
+					var script = $document[0].createElement('script');
+					script.type = "text/javascript";
+					script.src = YOUTUBE_IFRAME_API_URL;
+					script.onerror = function(event) {
+						alertify.dialog.alert(translation._("Could not load YouTube player API, please check your network / firewall settings."));
+						head.removeChild(script);
+						addedIframeScript = false;
+					};
+					head.appendChild(script);
 					addedIframeScript = true;
 				}
+			};
+
+			$scope.showYouTubeVideo = function() {
+				$scope.loadYouTubeAPI();
 				$scope.layout.youtubevideo = true;
 				$scope.$emit("mainview", "youtubevideo", true);
 				if (currentToken) {

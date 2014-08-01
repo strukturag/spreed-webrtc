@@ -2,7 +2,7 @@
 	<div class="youtubevideopane nicescroll">
 		<form class="container-fluid form" role="form">
 
-			<div class="welcome container-fluid" ng-show="!playbackActive">
+			<div class="welcome container-fluid" ng-show="!playbackActive && youtubeAPIReady">
 				<div class="welcome-logo fa fa-youtube"></div>
 				<h1>{{_('Share a YouTube video')}}</h1>
 				<div class="welcome-container">
@@ -15,9 +15,20 @@
 						</div>
 					  </div>
 					</p>
-					<center>
-						<p ng-show="roomdata.name"><i class="fa fa-external-link"></i> <a href="{{roomdata.link}}" ng-click="changeRoomToId(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></p>
-					</center>
+				</div>
+			</div>
+
+			<div class="welcome container-fluid" ng-show="!youtubeAPIReady">
+				<div class="welcome-logo fa fa-youtube"></div>
+				<h1>{{_('Share a YouTube video')}}</h1>
+				<div class="welcome-container text-center">
+					<p>
+					  <p>{{_("Could not load YouTube player API, please check your network / firewall settings.")}}</p>
+					  <p ng-if="currentVideoUrl">{{_('Currently playing')}}<br><a href="{{ currentVideoUrl }}" rel="external" target="_blank">{{ currentVideoUrl }}</a></p>
+					  <p class="form-group welcome-input">
+						<button class="btn btn-primary btn-lg" type="button" ng-click="loadYouTubeAPI()">{{_("Retry")}}</button>
+					  </p>
+					</p>
 				</div>
 			</div>
 
@@ -36,14 +47,14 @@
 		</form>
 	</div>
 
-	<div class="overlaybar form-horizontal" ng-class="{notvisible: hideControlsBar}">
+	<div class="overlaybar form-horizontal" ng-if="youtubeAPIReady" ng-class="{notvisible: hideControlsBar}">
 		<a class="overlaybar-button" ng-model="hideControlsBar" btn-checkbox btn-checkbox btn-checkbox-true="0" btn-checkbox-false="1" title="{{_('YouTube controls')}}"><i class="fa fa-cogs"></i></a>
 		<div class="overlaybar-content">
 			<form class="container-fluid" role="form">
 				<div class="form-group">
 					<label for="youtubeurl">{{_('YouTube video to share')}}</label>
 					<div class="overlaybar-input">
-						<input type="text" class="form-control input-lg" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
+						<input type="text" class="form-control input-lg" ng-disabled="!youtubeAPIReady" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
 						<div class="overlaybar-buttons">
 							<button type="button" class="btn btn-primary" ng-click="shareVideo(youtubeurl)" ng-disabled="youtubeurl === ''">{{_('Share')}}</button>
 						</div>
