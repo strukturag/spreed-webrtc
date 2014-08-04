@@ -12,7 +12,7 @@
             <input type="text" class="form-control" ng-model="tmp.displayName">
           </div>
         </div>
-        <div class="form-group" ng-if="session.Type === 'Online'">
+        <div class="form-group" ng-if="session.Type">
           <label class="col-xs-4 control-label">{{_('Sync')}}</label>
           <div class="col-xs-6">
             <button class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
