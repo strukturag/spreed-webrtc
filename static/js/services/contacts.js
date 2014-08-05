@@ -36,6 +36,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			console.info("Created contacts database.")
 		};
 		request.onsuccess = _.bind(that.onsuccess, that);
+		request.onerror = _.bind(that.onerror, that);
 	};
 	Database.prototype.init = function(db) {
 		var createOrUpdateStore = function(name, obj) {
