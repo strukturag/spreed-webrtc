@@ -22,42 +22,46 @@ define([], function() {
 
 	// ContactsmanagerController
 	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddySession', function($scope, $modalInstance, contactData, data, contacts, buddySession) {
-
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
-		$scope.tmp = {};
-		$scope.tmp.displayName = data.contact && data.contact.Status.displayName;
-		$scope.contact = data.contact;
+		$scope.contact = null;
 		$scope.session = null;
 
-		if(data.contact) {
+		var tmp = {
+			displayName: data.contact ? data.contact.Status.displayName : null
+		};
+		var setContactInfo = function(contact) {
+			contacts.update(contact.Userid, contact.Status);
+		};
+		var updateContacts = function(async) {
+			if (async) {
+				$scope.$apply(function(scope) {
+					scope.contacts = contactData.getAll();
+				});
+			} else {
+				$scope.contacts = contactData.getAll();
+			}
+		};
+		updateContacts();
+		contacts.e.on('contactadded', function() {
+			updateContacts(true);
+		});
+		contacts.e.on('contactupdated', function() {
+			updateContacts(true);
+		});
+
+		// Values to check include 0, so check for number to get around incorrect 'false' type conversion
+		if(angular.isNumber(data.contactIndex)) {
+			$scope.contact = $scope.contacts[data.contactIndex];
 			var sessions = buddySession.sessions();
 			for (var id in sessions) {
 				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
-					$scope.session = sessions[id] && sessions[id].sessions[id];
+					$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
 					//console.log('contact manager session', $scope.session);
 				}
 			}
 		}
-
-		var totalUnnamed = 0;
-		$scope.unnamed = function() {
-			return totalUnnamed += 1;
-		};
-
-		var updateContacts = function() {
-			$scope.contacts = contactData.getAll();
-		};
-		updateContacts();
-		contacts.e.on('contactadded', function() {
-			updateContacts();
-		});
-
-		var setContactInfo = function(contact) {
-			contact.Status.displayName = $scope.tmp.displayName;
-			contacts.update({Id: contact.Id, Success: contact.Success, Token: contact.Token, Userid: contact.Userid}, contact.Status);
-		};
 
 		$scope.removeContact = function() {
 			contacts.remove($scope.contact.Userid);
@@ -66,22 +70,22 @@ define([], function() {
 		};
 
 		$scope.syncContactInfo = function() {
-			$scope.tmp.displayName = $scope.session.Status.displayName;
-		};
-
-		$scope.edit = function(contact) {
-			$modalInstance.close(contact);
+			$scope.contact.Status.displayName = $scope.session.Status.displayName;
 		};
 
 		$scope.save = function() {
-			setContactInfo(data.contact);
+			setContactInfo($scope.contact);
 			$modalInstance.close();
 		};
 
 		$scope.cancel = function(contact) {
+			$scope.contact.Status.displayName = tmp.displayName;
 			$modalInstance.dismiss();
 		};
 
+		$scope.edit = function(index) {
+			$scope.$broadcast('openEditContact', index);
+		};
 	}];
 
 });

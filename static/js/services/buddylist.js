@@ -129,7 +129,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 	};
 
 	// buddyList
-	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "buddyPicture", "fastScroll", "mediaStream", "animationFrame", "$q", '$timeout', function($window, $compile, playSound, buddyData, buddySession, buddyPicture, fastScroll, mediaStream, animationFrame, $q, $timeout) {
+	return ["$window", "$compile", "playSound", "buddyData", "buddySession", "buddyPicture", "fastScroll", "mediaStream", "animationFrame", "$q", function($window, $compile, playSound, buddyData, buddySession, buddyPicture, fastScroll, mediaStream, animationFrame, $q) {
 
 		var buddyTemplate = $compile(templateBuddy);
 		var buddyActions = $compile(templateBuddyActions);
@@ -450,6 +450,15 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
+		Buddylist.prototype.onContactUpdated = function(data) {
+			var scope = buddyData.get(data.Userid);
+			if (scope && scope.contact) {
+				scope.contact.Status = angular.extend(scope.contact.Status, data.Status);
+			}
+			this.updateDisplay(data.Id, scope, data, "status");
+			//console.log("onContactUpdated", 'data', data, 'scope', scope);
+		};
+
 		Buddylist.prototype.onStatus = function(data) {
 
 			//console.log("onStatus", data);
@@ -585,7 +594,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				scope.contact = contact;
 				var sessionData = scope.session.get();
 				if (sessionData) {
-					if (angular.isString(contact.Status) && sessionData.Status) {
+					if (contact.Status === null && sessionData.Status) {
 						// Update contact status with session.Status
 						var status = contact.Status = _.extend({}, sessionData.Status);
 						// Remove status message.
@@ -602,10 +611,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 						console.log("Injected status into contact", contact);
 					}
 					this.updateDisplay(sessionData.Id, scope, contact, "status");
-					// keep asyc nature but eliminate $apply conflicts
-					$timeout(function() {
-						scope.$apply();
-					}, 0, false);
+					scope.$apply();
 				}
 			} else {
 				// Create new scope for contact.

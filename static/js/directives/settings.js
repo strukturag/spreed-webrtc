@@ -51,6 +51,17 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				}
 			});
 
+			$scope.openContactsManager = function() {
+				return dialogs.create(
+					"/contactsmanager/main.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Contacts Manager")
+					}, {
+						wc: "contactsmanager"
+					}
+				);
+			};
 			$scope.saveSettings = function() {
 				var form = $scope.settingsform;
 				if (form.$valid && form.$dirty) {

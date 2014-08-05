@@ -53,7 +53,7 @@ define(['jquery', 'underscore'], function($, _) {
 				var buddy = buddyData.lookup($scope.id);
 				var status = {};
 				if (buddy) {
-					 status = angular.isObject(buddy.status) ? angular.extend(status, buddy.status) : buddy.status;
+					$.extend(status, buddy.status);
 				}
 				$scope.addContact(request, status);
 			}

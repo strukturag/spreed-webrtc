@@ -29,6 +29,7 @@ define([], function() {
 		var user_text = translation._("User");
 		var someone_text = translation._("Someone");
 		var me_text = translation._("Me");
+		var contact_text = translation._("Unnamed Contact");
 		return function(id, me_ok) {
 			if (id === group_chat_id) {
 				return "";
@@ -37,6 +38,9 @@ define([], function() {
 			if (scope) {
 				if (scope.display.displayName) {
 					return scope.display.displayName;
+				}
+				if(me_ok === "contactsmanager") {
+					return contact_text + " " + scope.buddyIndex;
 				}
 				return user_text + " " + scope.buddyIndex;
 			} else {
