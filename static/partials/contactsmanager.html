@@ -15,7 +15,7 @@
               </td>
               <td class="name">
                 <span ng-if="contact.Status.displayName">{{contact.Status.displayName}}</span>
-                <span ng-if="!contact.Status.displayName" ng-init="i = unnamed()">Unnamed Contact {{i}}</span>
+                <span ng-if="!contact.Status.displayName" ng-init="i = incrementUnnamedCount()">Unnamed Contact {{i}}</span>
               </td>
               <td class="action">
                 <!-- <button class="btn btn-danger" ng-click="removeContact(contact.Userid)">{{_('Remove')}}</button> -->
