@@ -26,6 +26,7 @@ define([
 	'directives/statusmessage',
 	'directives/buddylist',
 	'directives/buddypicturecapture',
+	'directives/buddypictureupload',
 	'directives/settings',
 	'directives/chat',
 	'directives/audiovideo',
@@ -41,7 +42,7 @@ define([
 	'directives/pdfcanvas',
 	'directives/odfcanvas',
 	'directives/presentation',
-	'directives/youtubevideo',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo) {
+	'directives/youtubevideo',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload,settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -49,6 +50,7 @@ define([
 		statusMessage: statusMessage,
 		buddyList: buddyList,
 		buddyPictureCapture: buddyPictureCapture,
+		buddyPictureUpload: buddyPictureUpload,
 		settings: settings,
 		chat: chat,
 		audioVideo: audioVideo,
