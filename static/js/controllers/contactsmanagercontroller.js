@@ -26,23 +26,23 @@ define([], function() {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
-		$scope.tmp = {};
-		$scope.tmp.displayName = data.contact && data.contact.Status.displayName;
+		var tmp = {};
+		tmp.displayName = data.contact ? data.contact.Status.displayName : null;
 		$scope.contact = data.contact;
 		$scope.session = null;
 
-		if(data.contact) {
+		if (data.contact) {
 			var sessions = buddySession.sessions();
 			for (var id in sessions) {
 				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
-					$scope.session = sessions[id] && sessions[id].sessions[id];
+					$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
 					//console.log('contact manager session', $scope.session);
 				}
 			}
 		}
 
 		var totalUnnamed = 0;
-		$scope.unnamed = function() {
+		$scope.incrementUnnamedCount = function() {
 			return totalUnnamed += 1;
 		};
 
@@ -55,7 +55,6 @@ define([], function() {
 		});
 
 		var setContactInfo = function(contact) {
-			contact.Status.displayName = $scope.tmp.displayName;
 			contacts.update({Id: contact.Id, Success: contact.Success, Token: contact.Token, Userid: contact.Userid}, contact.Status);
 		};
 
@@ -66,7 +65,7 @@ define([], function() {
 		};
 
 		$scope.syncContactInfo = function() {
-			$scope.tmp.displayName = $scope.session.Status.displayName;
+			$scope.contact.Status.displayName = $scope.session.Status.displayName;
 		};
 
 		$scope.edit = function(contact) {
@@ -79,6 +78,7 @@ define([], function() {
 		};
 
 		$scope.cancel = function(contact) {
+			$scope.contact.Status.displayName = tmp.displayName;
 			$modalInstance.dismiss();
 		};
 
