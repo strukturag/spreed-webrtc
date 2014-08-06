@@ -4,11 +4,11 @@
           <div ng-switch-when="initializing"></div>
           <div ng-switch-when="checking"><i class="fa fa-refresh fa-spin fa-4x pull-right"></i>{{_("Checking camera and microphone access.")}}</div>
           <div ng-switch-when="usermedia"><i><i class="fa fa-hand-o-up fa-4x pull-right"></i>{{_("Please allow access to your camera and microphone.")}}</i></div>
-          <div ng-switch-when="denied"><i><i class="fa fa-exclamation-triangle fa-4x pull-right"></i>{{_("Camera / microphone access required.")}}</i></div>
+          <div ng-switch-when="denied">{{_("Camera / microphone access required.")}}</i></div>
         </div>
         <div ng-show="usabilityInfo=='denied'" class="help-subline">
             <p><i>{{_("Please check your browser settings and allow camera and microphone access for this site.")}}</i></p>
-            <p><a ng-click="testMediaAccess()" class="btn btn-primary"><span class="fa fa-refresh"></span> {{_("Retry")}}</a> <a ng-click="continueConnect(true)" class="btn">{{_("Skip check")}}</a></p>
+            <p><a ng-click="testMediaAccess()" class="btn btn-primary">{{_("Retry")}}</a> <a ng-click="continueConnect(true)" class="btn btn-default">{{_("Skip check")}}</a></p>
             <p style="font-size:0.7em" ng-show="isChrome"><i><a rel="external" target="_blank" href="https://support.google.com/chrome/answer/2693767">{{_("Click here for help (Google Chrome).")}}</a></i></p>
         </div>
     </div>

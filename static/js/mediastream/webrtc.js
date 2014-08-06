@@ -329,7 +329,9 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		var success = function(stream) {
 			console.info("testMediaAccess success");
-			stream.stop();
+			if (stream) {
+				stream.stop();
+			}
 			cb(true);
 		}
 		var failed = function() {

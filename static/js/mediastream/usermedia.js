@@ -61,15 +61,38 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 	UserMedia.testGetUserMedia = function(success_cb, error_cb) {
 
 		console.log("Requesting testGetUserMedia");
-		try {
-			getUserMedia({
-				video: true,
-				audio: true
-			}, success_cb, error_cb);
-		} catch (e) {
-			console.error('getUserMedia failed with exception: ' + e.message);
-			error_cb(e);
-		}
+		(function(complete) {
+			var success_helper = function() {
+				if (complete.done) {
+					return;
+				}
+				complete.done = true;
+				var args = Array.prototype.slice.call(arguments, 1);
+				success_cb.apply(this, args);
+			};
+			var error_helper = function() {
+				if (complete.done) {
+					return;
+				}
+				complete.done = true;
+				var args = Array.prototype.slice.call(arguments, 1);
+				error_cb.apply(this, args);
+			};
+			try {
+				getUserMedia({
+					video: true,
+					audio: true
+				}, success_helper, error_helper);
+			} catch (e) {
+				console.error('getUserMedia failed with exception: ' + e.message);
+				error_helper(e);
+			}
+			setTimeout(function() {
+				var e = new Error("Timeout while waiting for getUserMedia");
+				console.error('getUserMedia timed out');
+				error_helper(e);
+			}, 10000);
+		})({});
 
 	};
 
