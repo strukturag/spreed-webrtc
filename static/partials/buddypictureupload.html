@@ -3,7 +3,7 @@
 		<canvas class="uploadPrev hidden"></canvas>
 		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-show="previewUpload" ng-src="{{previewUpload}}" />
 		<p>Please choose a picture to upload</p>
-		<div><input type="file"></div>
+		<div><input id="uploadFile" type="file"></div>
 		<br>
 	</div>
 	<a class="btn btn-small btn-default" ng-click="showUploadPicture = false"> {{_('Cancel')}}</a>
