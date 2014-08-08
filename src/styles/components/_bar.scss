@@ -84,7 +84,7 @@
     display: inline-block;
     width: 46px;
     height: 46px;
-    margin: -8px .5em 0 .5em;
+    margin: -1px .5em 0 .5em;
     @include breakpt($breakpoint-medium) {
       display: none;
     }
@@ -113,7 +113,8 @@
 }
 
 .bar .right {
-  padding-right: 8px;
+  padding-right: 4px;
+  margin-top: -1px;
   .badge {
     background-color: $actioncolor1;
     border: 1px solid white;
