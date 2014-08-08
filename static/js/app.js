@@ -65,11 +65,19 @@ define([
 	var appConfig = {};
 
 	// Implement translation store.
-	var TranslationData = function() {
+	var TranslationData = function(default_language) {
 		// Create data structure.
 		this.data = {
 			locale_data: {}
 		};
+		this.lang = this.default_lang = default_language;
+	};
+	TranslationData.prototype.language = function() {
+		// Return language.
+		return this.lang;
+	};
+	TranslationData.prototype.default_language = function() {
+		return this.default_lang;
 	};
 	TranslationData.prototype.add = function(domain, data) {
 		var src;
@@ -105,7 +113,7 @@ define([
 	TranslationData.prototype.get = function() {
 		return this.data;
 	};
-	var translationData = new TranslationData();
+	var translationData = new TranslationData("en");
 
 	var create = function(ms) {
 
@@ -150,6 +158,8 @@ define([
 			// Make available functions for config phase.
 			this.add = _.bind(translationData.add, translationData);
 			this.load = _.bind(translationData.load, translationData);
+			this.language = _.bind(translationData.language, translationData);
+			this.default_language = _.bind(translationData.default_language, translationData);
 
 			// Out creater returns raw data.
 			this.$get = [function translationDataFactory() {
@@ -204,11 +214,10 @@ define([
 			return lang;
 		}());
 
-		// Inject language to config.
-		appConfig.lang = lang;
-
-		if (lang === "en") {
-			// No need to load english as this is built in.
+		// Set language.
+		translationData.lang = lang;
+		if (lang === translationData.default_language) {
+			// No need to load default language as it is built in.
 			deferred.resolve();
 		} else {
 			// Load default translation catalog.
