@@ -105,7 +105,7 @@ define([
 				that.add(domain, data);
 			},
 			error: function(err, textStatus, errorThrown) {
-				console.warn("Failed to load translation data " + url + ": " + errorThrown);
+				console.warn("Failed to load translation data: " + errorThrown);
 				that.add(domain, null);
 			}
 		});
@@ -214,14 +214,15 @@ define([
 			return lang;
 		}());
 
-		// Set language.
+		// Set language and load default translations.
 		translationData.lang = lang;
-		if (lang === translationData.default_language) {
+		var domain = "messages";
+		if (lang === translationData.default_lang) {
 			// No need to load default language as it is built in.
+			translationData.add(domain, null);
 			deferred.resolve();
 		} else {
 			// Load default translation catalog.
-			var domain = "messages";
 			var url = require.toUrl('translation/' + domain + "-" + lang + '.json');
 			$.when(translationData.load(domain, url)).always(function() {
 				deferred.resolve();
