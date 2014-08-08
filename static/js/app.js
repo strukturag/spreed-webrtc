@@ -61,7 +61,53 @@ define([
 		})(window.location.search.substr(1).split("&"));
 	}());
 
-	var initialize = function(ms) {
+	// Base application config shared during initialization.
+	var appConfig = {};
+
+	// Implement translation store.
+	var TranslationData = function() {
+		// Create data structure.
+		this.data = {
+			locale_data: {}
+		};
+	};
+	TranslationData.prototype.add = function(domain, data) {
+		var src;
+		if (data && data.locale_data) {
+			src = data.locale_data[domain];
+		}
+		var dst = this.data.locale_data[domain];
+		if (!dst) {
+			dst = this.data.locale_data[domain] = {
+				"": {
+					"domain": domain,
+					"plural_forms": "nplurals=2; plural=(n != 1);"
+				}
+			}
+			_.extend(dst, src);
+		}
+	};
+	TranslationData.prototype.load = function(domain, url) {
+		var that = this;
+		return $.ajax({
+			dataType: "json",
+			url: url,
+			success: function(data) {
+				//console.log("loaded translation data", data);
+				that.add(domain, data);
+			},
+			error: function(err, textStatus, errorThrown) {
+				console.warn("Failed to load translation data " + url + ": " + errorThrown);
+				that.add(domain, null);
+			}
+		});
+	};
+	TranslationData.prototype.get = function() {
+		return this.data;
+	};
+	var translationData = new TranslationData();
+
+	var create = function(ms) {
 
 		var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute'];
 		if (ms && ms.length) {
@@ -99,92 +145,16 @@ define([
 
 		app.constant("availableLanguages", languages);
 
-		angular.element(document).ready(function() {
+		app.provider("translationData", function translationDataProvider() {
 
-			var globalContext = JSON.parse($("#globalcontext").text());
-			app.constant("globalContext", globalContext);
+			// Make available functions for config phase.
+			this.add = _.bind(translationData.add, translationData);
+			this.load = _.bind(translationData.load, translationData);
 
-			// Configure language.
-			var lang = (function() {
-				var lang = "en";
-				var wanted = [];
-				var html = document.getElementsByTagName("html")[0];
-				// Get from storage.
-				if (modernizr.localstorage) {
-					var lsl = localStorage.getItem("mediastream-language");
-					if (lsl && lsl !== "undefined") {
-						wanted.push(lsl);
-					}
-				}
-				// Get from query.
-				var qsl = urlQuery.lang;
-				if (qsl) {
-					wanted.push(qsl);
-				}
-				// Expand browser languages with combined fallback.
-				_.each(globalContext.Languages, function(l) {
-					wanted.push(l);
-					if (l.indexOf("-") != -1) {
-						wanted.push(l.split("-")[0]);
-					}
-				});
-				// Loop through browser languages and use first one we got.
-				for (var i = 0; i < wanted.length; i++) {
-					if (languages.hasOwnProperty(wanted[i])) {
-						lang = wanted[i];
-						break;
-					}
-				}
-				html.setAttribute("lang", lang);
-				return lang;
-			}());
-
-			// Prepare bootstrap function with injected locale data.
-			var domain = "messages";
-			var catalog = domain + "-" + lang;
-			var bootstrap = function(translationData) {
-				if (!translationData) {
-					// Fallback catalog in case translation could not be loaded.
-					lang = "en";
-					translationData = {};
-					translationData.locale_data = {};
-					translationData.domain = domain;
-					translationData.locale_data[domain] = {
-						"": {
-							"domain": domain,
-							"lang": lang,
-							"plural_forms": "nplurals=2; plural=(n != 1);"
-						}
-					};
-				}
-				// Set date language too.
-				moment.lang([lang, "en"]);
-				// Inject translation data globally.
-				app.constant("translationData", translationData);
-				// Bootstrap AngularJS app.
-				console.log("Bootstrapping ...");
-				angular.bootstrap(document, ['app']);
-			};
-
-			if (lang !== "en") {
-				// Load translation file.
-				//console.log("Loading translation data: " + lang);
-				$.ajax({
-					dataType: "json",
-					url: require.toUrl('translation/' + catalog + '.json'),
-					success: function(data) {
-						//console.log("Loaded translation data.");
-						bootstrap(data);
-					},
-					error: function(err, textStatus, errorThrown) {
-						console.warn("Failed to load translation data " + catalog + ": " + errorThrown);
-						bootstrap(null);
-					}
-				});
-			} else {
-				// No need to load english as this is built in.
-				_.defer(bootstrap);
-			}
+			// Out creater returns raw data.
+			this.$get = [function translationDataFactory() {
+				return translationData.get();
+			}];
 
 		});
 
@@ -192,8 +162,73 @@ define([
 
 	};
 
+	var initialize = function(app) {
+
+		var deferred = $.Deferred();
+
+		var globalContext = JSON.parse($("#globalcontext").text());
+		app.constant("globalContext", globalContext);
+
+		// Configure language.
+		var lang = (function() {
+			var lang = "en";
+			var wanted = [];
+			var html = document.getElementsByTagName("html")[0];
+			// Get from storage.
+			if (modernizr.localstorage) {
+				var lsl = localStorage.getItem("mediastream-language");
+				if (lsl && lsl !== "undefined") {
+					wanted.push(lsl);
+				}
+			}
+			// Get from query.
+			var qsl = urlQuery.lang;
+			if (qsl) {
+				wanted.push(qsl);
+			}
+			// Expand browser languages with combined fallback.
+			_.each(globalContext.Languages, function(l) {
+				wanted.push(l);
+				if (l.indexOf("-") != -1) {
+					wanted.push(l.split("-")[0]);
+				}
+			});
+			// Loop through browser languages and use first one we got.
+			for (var i = 0; i < wanted.length; i++) {
+				if (languages.hasOwnProperty(wanted[i])) {
+					lang = wanted[i];
+					break;
+				}
+			}
+			html.setAttribute("lang", lang);
+			return lang;
+		}());
+
+		// Inject language to config.
+		appConfig.lang = lang;
+
+		if (lang === "en") {
+			// No need to load english as this is built in.
+			deferred.resolve();
+		} else {
+			// Load default translation catalog.
+			var domain = "messages";
+			var url = require.toUrl('translation/' + domain + "-" + lang + '.json');
+			$.when(translationData.load(domain, url)).always(function() {
+				deferred.resolve();
+			});
+		}
+
+		return deferred.promise();
+
+	};
+
 	return {
-		initialize: initialize
+		create: create,
+		initialize: initialize,
+		query: urlQuery,
+		config: appConfig,
+		translationData: translationData
 	};
 
 });
