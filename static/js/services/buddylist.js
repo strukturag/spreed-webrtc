@@ -585,7 +585,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 				scope.contact = contact;
 				var sessionData = scope.session.get();
 				if (sessionData) {
-					if (angular.isString(contact.Status) && sessionData.Status) {
+					if (contact.Status === null && sessionData.Status) {
 						// Update contact status with session.Status
 						var status = contact.Status = _.extend({}, sessionData.Status);
 						// Remove status message.
