@@ -46,16 +46,25 @@ define([], function() {
 			return totalUnnamed += 1;
 		};
 
-		var updateContacts = function() {
-			$scope.contacts = contactData.getAll();
+		var updateContacts = function(async) {
+			if (async) {
+				$scope.$apply(function(scope) {
+					scope.contacts = contactData.getAll();
+				});
+			} else {
+				$scope.contacts = contactData.getAll();
+			}
 		};
 		updateContacts();
 		contacts.e.on('contactadded', function() {
-			updateContacts();
+			updateContacts(true);
+		});
+		contacts.e.on('contactupdated', function() {
+			updateContacts(true);
 		});
 
 		var setContactInfo = function(contact) {
-			contacts.update({Id: contact.Id, Success: contact.Success, Token: contact.Token, Userid: contact.Userid}, contact.Status);
+			contacts.update(contact.Userid, contact.Status);
 		};
 
 		$scope.removeContact = function() {
@@ -73,7 +82,7 @@ define([], function() {
 		};
 
 		$scope.save = function() {
-			setContactInfo(data.contact);
+			setContactInfo($scope.contact);
 			$modalInstance.close();
 		};
 

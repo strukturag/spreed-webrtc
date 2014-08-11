@@ -450,6 +450,15 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		};
 
+		Buddylist.prototype.onContactUpdated = function(data) {
+			var scope = buddyData.get(data.Userid);
+			if (scope && scope.contact) {
+				scope.contact.Status = angular.extend(scope.contact.Status, data.Status);
+			}
+			this.updateDisplay(data.Id, scope, data, "status");
+			//console.log("onContactUpdated", 'data', data, 'scope', scope);
+		};
+
 		Buddylist.prototype.onStatus = function(data) {
 
 			//console.log("onStatus", data);
@@ -602,10 +611,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 						console.log("Injected status into contact", contact);
 					}
 					this.updateDisplay(sessionData.Id, scope, contact, "status");
-					// keep asyc nature but eliminate $apply conflicts
-					$timeout(function() {
-						scope.$apply();
-					}, 0, false);
+					scope.$apply();
 				}
 			} else {
 				// Create new scope for contact.
