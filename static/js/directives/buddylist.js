@@ -84,6 +84,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			var onStatus = _.bind(buddylist.onStatus, buddylist);
 			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
 			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
+			var onContactUpdated = _.bind(buddylist.onContactUpdated, buddylist);
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);
@@ -118,6 +119,9 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			});
 			contacts.e.on("contactremoved", function(event, data) {
 				onContactRemoved(data);
+			});
+			contacts.e.on("contactupdated", function(event, data) {
+				onContactUpdated(data);
 			});
 
 		}];
