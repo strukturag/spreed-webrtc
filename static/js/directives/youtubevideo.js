@@ -544,11 +544,23 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				}
 			});
 
+			$scope.toggleFullscreen = function(elem) {
+
+				if (BigScreen.enabled) {
+					if (elem) {
+						BigScreen.toggle(elem);
+					} else {
+						BigScreen.toggle(pane.get(0));
+					}
+				}
+
+			};
+
 		}];
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).on("dblclick", ".videoContainer", _.debounce(function(event) {
+				$(iElement).on("dblclick", "#youtubecontainer", _.debounce(function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
 				}, 100, true));
 			}
