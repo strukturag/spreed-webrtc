@@ -41,6 +41,7 @@ define([
 		var connector = new Connector(version);
 		var api = new Api(connector);
 		var webrtc = new WebRTC(api);
+		var connectMarker = null;
 
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
@@ -195,15 +196,23 @@ define([
 				}
 			},
 			connect: function() {
+				var myMarker = {};
+				connectMarker = myMarker;
 				continueConnector.then(function() {
-					console.log("Connecting ...");
-					connector.connect(url);
+					if (connectMarker === myMarker) {
+						console.log("Connecting ...");
+						connector.connect(url);
+					}
 				});
 			},
 			reconnect: function() {
+				var myMarker = {};
+				connectMarker = myMarker;
 				continueConnector.then(function() {
-					console.log("Reconnecting ...");
-					connector.reconnect();
+					if (connectMarker === myMarker) {
+						console.log("Reconnecting ...");
+						connector.reconnect();
+					}
 				});
 			},
 			initialize: function($rootScope, translation) {
