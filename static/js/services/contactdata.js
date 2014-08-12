@@ -55,7 +55,7 @@ define(['underscore', 'jquery'], function(underscore, $) {
 					Userid: userid,
 					Token: token,
 					Status: null
-				};
+				}
 				return contact;
 			},
 			addByData: function(data) {
