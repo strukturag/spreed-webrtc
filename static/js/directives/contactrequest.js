@@ -51,7 +51,10 @@ define(['jquery', 'underscore'], function($, _) {
 			var request = $scope.request;
 			if (request.Success && request.Userid && request.Token) {
 				var buddy = buddyData.lookup($scope.id);
-				var status = null;
+				var status = {};
+				if (buddy) {
+					$.extend(status, buddy.status);
+				}
 				$scope.addContact(request, status);
 			}
 

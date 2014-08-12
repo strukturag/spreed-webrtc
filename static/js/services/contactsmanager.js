@@ -20,6 +20,7 @@
  */
 define(['underscore', 'jquery', 'modernizr', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(_, $, Modernizr, templateContactsManager, templateContactsManagerEdit) {
 
+	// contactsManager
 	return ["dialogs", "translation", "$templateCache", function(dialogs, translation, $templateCache) {
 
 		// Inject our templates.
@@ -56,7 +57,7 @@ define(['underscore', 'jquery', 'modernizr', 'text!partials/contactsmanager.html
 
 			dlgMain = that._mainDialog();
 			dlgMain.result.then(function(contact) {
-				if(contact && contact.Id) {
+				if (contact && contact.Id) {
 					that.setupContactsManagerEdit(contact);
 				}
 			});
