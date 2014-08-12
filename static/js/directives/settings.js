@@ -36,7 +36,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			$scope.withUsers = mediaStream.config.UsersEnabled;
 			$scope.withUsersRegistration = mediaStream.config.UsersAllowRegistration;
 			$scope.withUsersMode = mediaStream.config.UsersMode;
-			$scope.contactsManager = contactsManager;
 
 			_.each(availableLanguages, function(name, code) {
 				$scope.availableLanguages.push({
