@@ -41,20 +41,9 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var setUploadImageDimension = function(data) {
 				var img = new Image();
 				img.onload = function() {
-					if(this.width < previewWidth && this.height < previewHeight) {
-						$scope.prevImage.style.height = null;
-						$scope.prevImage.style.width = null;
-						return;
-					}
-					if (this.width < this.height) {
-						$scope.prevImage.style.width = previewWidth + 'px';
-						$scope.prevImage.style.height = null;
-						console.log('changed width');
-					} else {
-						$scope.prevImage.style.height = previewHeight + 'px';
-						$scope.prevImage.style.width = null;
-						console.log('changed height');
-					}
+					var dim = getAutoFitDimensions(this, {width: previewWidth, height: previewHeight});
+					$scope.prevImage.style.width = dim.width + 'px';
+					$scope.prevImage.style.height = dim.height + 'px';
 				};
 				img.src = data;
 			};
@@ -108,8 +97,33 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 
+			// Auto fit by smallest dimension
+			var getAutoFitDimensions = function(from, to) {
+				if(!from.width && !from.height && !to.width && !to.height) {
+					return null;
+				}
+				var width = null;
+				var height = null;
+
+				if (from.width < from.height) {
+					height = to.width * (from.height/from.width);
+					width = to.width;
+				} else {
+					height = to.height;
+					width = to.height * (from.width/from.height);
+				}
+				return{width: width, height: height};
+			};
+
+			var writeUploadToCanvas = function(canvas, img) {
+				var x = 0;
+				var y = 0;
+				var dim = getAutoFitDimensions(img, canvas);
+				canvas.getContext("2d").drawImage(img, x, y, dim.width, dim.height);
+			};
+
 			$scope.usePicture = function() {
-				$scope.writeToCanvas($scope.canvasPic, $scope.prevImage);
+				writeUploadToCanvas($scope.canvasPic, $scope.prevImage);
 				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
 				$scope.reset();
 				safeApply($scope);

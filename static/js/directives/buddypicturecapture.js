@@ -61,7 +61,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				}
 			};
 
-			$scope.writeToCanvas = function(canvas, data) {
+			var writeVideoToCanvas = function(canvas) {
 
 				var videoWidth = $scope.video.videoWidth;
 				var videoHeight = $scope.video.videoHeight;
@@ -83,12 +83,12 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 					height = height * aspectRatio;
 
 				}
-				canvas.getContext("2d").drawImage(data, x, y, width, height);
+				canvas.getContext("2d").drawImage($scope.video, x, y, width, height);
 
 			}
 
 			var writePreviewPic = function() {
-				$scope.writeToCanvas($scope.canvasPrev, $scope.video);
+				writeVideoToCanvas($scope.canvasPrev);
 				$scope.preview = $scope.canvasPrev.toDataURL("image/jpeg");
 			};
 
@@ -167,7 +167,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 			};
 
 			$scope.setAsProfilePicture = function() {
-				$scope.writeToCanvas($scope.canvasPic, $scope.video);
+				writeVideoToCanvas($scope.canvasPic);
 				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
 				//console.info("Image size", $scope.user.buddyPicture.length);
 				$scope.cancelPicture();
