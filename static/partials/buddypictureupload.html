@@ -1,11 +1,13 @@
-<div class="collapse" collapse="!showUploadPicture">
-	<div class="buddyPictureUpload">
+<div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
+	<div class="showUploadPicture"  ng-show="previewUpload">
 		<canvas class="uploadPrev hidden"></canvas>
-		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-show="previewUpload" ng-src="{{previewUpload}}" />
-		<p>Please choose a picture to upload</p>
-		<div><input id="uploadFile" type="file"></div>
-		<br>
+		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-src="{{imgData}}" />
 	</div>
-	<a class="btn btn-small btn-default" ng-click="showUploadPicture = false"> {{_('Cancel')}}</a>
-	<a class="btn btn-small btn-primary" ng-click="setAsProfilePicture()"> {{_('Set as Profile Picture')}}</a>
+	<div class="alert alert-warning" ng-if="error.msg">{{error.msg}}<button type="button" class="close" ng-click="error.msg = null"><span>&times;</span></button></div>
+	<p ng-if="!previewUpload">{{text.initial}}</p>
+	<p ng-if="previewUpload">{{text.again}}</p>
+	<div><input id="uploadFile" type="file"></div>
+	<br>
+	<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
+	<a class="btn btn-small btn-primary" ng-click="usePicture()"> {{_('Set as Profile Picture')}}</a>
 </div>
