@@ -54,20 +54,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				img.src = data;
 			};
 
-			var handleImageDrag = function(evt) {
-				evt.preventDefault();
-				console.log('draggin image', evt.offsetX, evt.offsetY);
-			};
-			var handleImageDrop = function(evt) {
-				evt.preventDefault();
-				console.log('dropped image', evt);
-			};
-			$scope.addImageMoveHandlers = function() {
-				$scope.prevImage.addEventListener('dragover', handleImageDrag);
-				$scope.prevImage.addEventListener('drop', handleImageDrop);
-			};
-
-
 			$scope.reset = function() {
 				$scope.showUploadPicture = false;
 				$scope.previewUpload = false;
@@ -75,7 +61,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			$scope.handleUpload = function(event) {
 				var file = event.target.files[0];
-				if(!file) {
+				if (!file) {
 					return;
 				}
 				console.log('file', file);
@@ -93,19 +79,19 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				};
 				var error = function(event) {
 					console.log('file error', event);
-					if(event.target.error.name == 'NotReadableError') {
+					if (event.target.error.name == 'NotReadableError') {
 						$scope.$apply(function(scope) {
 							scope.error.msg = "The file couldn't be read";
 						});
 					}
-					if(event.target.error.name == 'NotImage') {
+					if (event.target.error.name == 'NotImage') {
 						$scope.$apply(function(scope) {
 							scope.error.msg = "The file is not an image.";
 						});
 					}
 				};
 
-				if(!file.type.match(/image/)) {
+				if (!file.type.match(/image/)) {
 					error({target: {error: {name: 'NotImage'}}});
 				} else {
 					var reader = new FileReader();
@@ -123,7 +109,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			// Auto fit by smallest dimension
 			var getAutoFitDimensions = function(from, to) {
-				if(!from.width && !from.height && !to.width && !to.height) {
+				if (!from.width && !from.height && !to.width && !to.height) {
 					return null;
 				}
 				var width = null;
@@ -136,12 +122,12 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					height = to.height;
 					width = to.height * (from.width/from.height);
 				}
-				return{width: width, height: height};
+				return {width: width, height: height};
 			};
 
 			// (image, canvas) -> object
 			var getScaledDimensions = function(from, to) {
-				if(!from.style.width && !from.style.height && !to.width && !to.height) {
+				if (!from.style.width && !from.style.height && !to.width && !to.height) {
 					return null;
 				}
 				var current = {
@@ -156,14 +142,14 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				var height = current.height / scaleFactorY;
 				var x = current.left / scaleFactorX;
 				var y = current.top / scaleFactorY;
-				if(current.width < previewWidth) {
+				if (current.width < previewWidth) {
 					x = ((previewWidth - current.width) / scaleFactorX ) / 2;
 				}
-				if(current.height < previewHeight) {
+				if (current.height < previewHeight) {
 					y = ((previewHeight - current.height) / scaleFactorY ) / 2;
 				}
 
-				return{width: width, height: height, x: x, y: y};
+				return {width: width, height: height, x: x, y: y};
 			};
 
 
@@ -184,7 +170,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var link = function($scope, $element) {
 			$scope.prevImage = $(".showUploadPicture .preview").get(0);
-			$scope.addImageMoveHandlers();
 			$element.find("#uploadFile").on('change', $scope.handleUpload);
 			$scope.uploadPrev = $element.find("canvas.uploadPrev").get(0);
 			$($scope.uploadPrev).attr($scope.captureSize);
@@ -220,7 +205,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
 			};
 			var changeImage = function(evt) {
-				if(evt.data.intervalNum.num || !evt.data.action) {
+				if (evt.data.intervalNum.num || !evt.data.action) {
 					clearInterval(evt.data.intervalNum.num);
 					evt.data.intervalNum.num = null;
 				} else {
