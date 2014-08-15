@@ -1,6 +1,20 @@
 <div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
-	<div class="showUploadPicture"  ng-show="previewUpload">
+	<div class="showUploadPicture">
 		<canvas class="uploadPrev hidden"></canvas>
+		<div class="moveImage">
+			<div class="moveHorizontal">
+				<i id="arrow-left" class="fa fa-long-arrow-left"></i>
+				<i id="arrow-right" class="fa fa-long-arrow-right"></i>
+			</div>
+			<div class="moveVertical">
+				<div class="item">
+					<i id="arrow-up" class="fa fa-long-arrow-up"></i>
+				</div>
+				<div class="item">
+					<i id="arrow-down" class="fa fa-long-arrow-down"></i>
+				</div>
+			</div>
+		</div>
 		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-src="{{imgData}}" />
 	</div>
 	<div class="alert alert-warning" ng-if="error.msg">{{error.msg}}<button type="button" class="close" ng-click="error.msg = null"><span>&times;</span></button></div>

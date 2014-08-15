@@ -25,11 +25,14 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
-			var previewWidth = 198;
-			var previewHeight = 198;
+			var previewWidth = 200;
+			var previewHeight = 200;
+			$scope.moveHorizontal = false;
+			$scope.moveVertical = false;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
+			$scope.showEditTools = false;
 			$scope.error = {
 				msg: null
 			};
@@ -44,9 +47,26 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					var dim = getAutoFitDimensions(this, {width: previewWidth, height: previewHeight});
 					$scope.prevImage.style.width = dim.width + 'px';
 					$scope.prevImage.style.height = dim.height + 'px';
+					$scope.prevImage.style.top = '0px';
+					$scope.prevImage.style.left = '0px';
+					safeApply($scope);
 				};
 				img.src = data;
 			};
+
+			var handleImageDrag = function(evt) {
+				evt.preventDefault();
+				console.log('draggin image', evt.offsetX, evt.offsetY);
+			};
+			var handleImageDrop = function(evt) {
+				evt.preventDefault();
+				console.log('dropped image', evt);
+			};
+			$scope.addImageMoveHandlers = function() {
+				$scope.prevImage.addEventListener('dragover', handleImageDrag);
+				$scope.prevImage.addEventListener('drop', handleImageDrop);
+			};
+
 
 			$scope.reset = function() {
 				$scope.showUploadPicture = false;
@@ -97,29 +117,49 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 
+			var getNumFromPx = function(px) {
+				return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
+			};
+
 			// Auto fit by smallest dimension
+			// (image, canvas) -> object
 			var getAutoFitDimensions = function(from, to) {
 				if(!from.width && !from.height && !to.width && !to.height) {
 					return null;
 				}
 				var width = null;
 				var height = null;
+				var x = null;
+				var y = null;
+				var fromAspectRatio = 1;
+				var scaleFactorX = 1;
+				var scaleFactorY = 1;
 
 				if (from.width < from.height) {
-					height = to.width * (from.height/from.width);
+					fromAspectRatio = from.height/from.width;
+					scaleFactorX = to.width/from.width;
+					scaleFactorY = to.height/from.height;
 					width = to.width;
+					height = to.width * fromAspectRatio;
+					x = scaleFactorX * getNumFromPx(from.style.left);
+					y = (scaleFactorY * getNumFromPx(from.style.top)) * fromAspectRatio;
 				} else {
+					fromAspectRatio = from.width/from.height;
+					scaleFactorX = to.width/from.width;
+					scaleFactorY = to.height/from.height;
+					width = to.height * fromAspectRatio;
 					height = to.height;
-					width = to.height * (from.width/from.height);
+					x = (scaleFactorX * getNumFromPx(from.style.left)) * fromAspectRatio;
+					y = scaleFactorY * getNumFromPx(from.style.top);
 				}
-				return{width: width, height: height};
+
+				return{width: width, height: height, x: x, y: y};
 			};
 
 			var writeUploadToCanvas = function(canvas, img) {
-				var x = 0;
-				var y = 0;
 				var dim = getAutoFitDimensions(img, canvas);
-				canvas.getContext("2d").drawImage(img, x, y, dim.width, dim.height);
+				canvas.getContext("2d").drawImage(img, dim.x, dim.y, dim.width, dim.height);
+				console.log('writeUploadToCanvas', dim);
 			};
 
 			$scope.usePicture = function() {
@@ -133,9 +173,53 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var link = function($scope, $element) {
 			$scope.prevImage = $(".showUploadPicture .preview").get(0);
+			$scope.addImageMoveHandlers();
 			$element.find("#uploadFile").on('change', $scope.handleUpload);
 			$scope.uploadPrev = $element.find("canvas.uploadPrev").get(0);
 			$($scope.uploadPrev).attr($scope.captureSize);
+
+			var intervalNum = {
+				num: null
+			};
+
+			var incrementPx = function(num) {
+				return ((Number(num.match(/[\-0-9]+/)) + 5) + 'px');
+			};
+			var decrementPx = function(num) {
+				return ((Number(num.match(/[\-0-9]+/)) - 5) + 'px');
+			};
+			var moveImageUp = function() {
+				$scope.prevImage.style.top = decrementPx($scope.prevImage.style.top);
+			};
+			var moveImageDown = function() {
+				$scope.prevImage.style.top = incrementPx($scope.prevImage.style.top);
+			};
+			var moveImageLeft = function() {
+				$scope.prevImage.style.left = decrementPx($scope.prevImage.style.left);
+			};
+			var moveImageRight = function() {
+				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left);
+			};
+			var moveImage = function(evt) {
+				if(evt.data.intervalNum.num || !evt.data.action) {
+					clearInterval(evt.data.intervalNum.num);
+					evt.data.intervalNum.num = null;
+				} else {
+					evt.data.intervalNum.num = setInterval(function() {
+						evt.data.action();
+					}, 50);
+				}
+			};
+
+			$element.find("#arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, moveImage);
+			$element.find("#arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, moveImage);
+			$element.find("#arrow-up").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
+			$element.find("#arrow-down").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
+
+			$element.find("#arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, moveImage);
+			$element.find("#arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, moveImage);
+			$element.find("#arrow-left").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
+			$element.find("#arrow-right").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
 		};
 
 		return {

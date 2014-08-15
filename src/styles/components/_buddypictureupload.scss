@@ -34,5 +34,39 @@
   }
   .preview {
     position: relative;
+    top: 0px;
+    left: 0px;
+  }
+  .moveImage {
+    position: relative;
+    visibility:hidden;
+    z-index: 1;
+    .fa {
+      cursor: pointer;
+      color: $componentbg;
+      text-shadow: 0 0 5px black;
+      opacity: 0.8;
+      font-size: 40px;
+    }
+  }
+  .showUploadPicture:hover .moveImage {
+    visibility:visible;
+  }
+  .moveHorizontal {
+    width: 200px;
+    position: absolute;
+    top: -75px;
+    left: 0;
+    .fa {
+      width: 50px;
+    }
+  }
+  .moveVertical {
+    position: absolute;
+    top: -30px;
+    left: 174px;
+    .item {
+      height: 50px;
+    }
   }
 }
