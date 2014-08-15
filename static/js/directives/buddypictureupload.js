@@ -122,42 +122,53 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 
 			// Auto fit by smallest dimension
-			// (image, canvas) -> object
 			var getAutoFitDimensions = function(from, to) {
 				if(!from.width && !from.height && !to.width && !to.height) {
 					return null;
 				}
 				var width = null;
 				var height = null;
-				var x = null;
-				var y = null;
-				var fromAspectRatio = 1;
-				var scaleFactorX = 1;
-				var scaleFactorY = 1;
 
 				if (from.width < from.height) {
-					fromAspectRatio = from.height/from.width;
-					scaleFactorX = to.width/from.width;
-					scaleFactorY = to.height/from.height;
+					height = to.width * (from.height/from.width);
 					width = to.width;
-					height = to.width * fromAspectRatio;
-					x = scaleFactorX * getNumFromPx(from.style.left);
-					y = (scaleFactorY * getNumFromPx(from.style.top)) * fromAspectRatio;
 				} else {
-					fromAspectRatio = from.width/from.height;
-					scaleFactorX = to.width/from.width;
-					scaleFactorY = to.height/from.height;
-					width = to.height * fromAspectRatio;
 					height = to.height;
-					x = (scaleFactorX * getNumFromPx(from.style.left)) * fromAspectRatio;
-					y = scaleFactorY * getNumFromPx(from.style.top);
+					width = to.height * (from.width/from.height);
+				}
+				return{width: width, height: height};
+			};
+
+			// (image, canvas) -> object
+			var getScaledDimensions = function(from, to) {
+				if(!from.style.width && !from.style.height && !to.width && !to.height) {
+					return null;
+				}
+				var current = {
+					width: getNumFromPx(from.style.width),
+					height: getNumFromPx(from.style.height),
+					top: getNumFromPx(from.style.top),
+					left: getNumFromPx(from.style.left)
+				};
+				var scaleFactorX = previewWidth / to.width;
+				var scaleFactorY = previewHeight / to.height;
+				var width = current.width / scaleFactorX;
+				var height = current.height / scaleFactorY;
+				var x = current.left / scaleFactorX;
+				var y = current.top / scaleFactorY;
+				if(current.width < previewWidth) {
+					x = ((previewWidth - current.width) / scaleFactorX ) / 2;
+				}
+				if(current.height < previewHeight) {
+					y = ((previewHeight - current.height) / scaleFactorY ) / 2;
 				}
 
 				return{width: width, height: height, x: x, y: y};
 			};
 
+
 			var writeUploadToCanvas = function(canvas, img) {
-				var dim = getAutoFitDimensions(img, canvas);
+				var dim = getScaledDimensions(img, canvas);
 				canvas.getContext("2d").drawImage(img, dim.x, dim.y, dim.width, dim.height);
 				console.log('writeUploadToCanvas', dim);
 			};
@@ -200,7 +211,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var moveImageRight = function() {
 				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left);
 			};
-			var moveImage = function(evt) {
+			var makeImageLarger = function() {
+				$scope.prevImage.style.height = incrementPx($scope.prevImage.style.height);
+				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
+			};
+			var makeImageSmaller = function() {
+				$scope.prevImage.style.height = decrementPx($scope.prevImage.style.height);
+				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
+			};
+			var changeImage = function(evt) {
 				if(evt.data.intervalNum.num || !evt.data.action) {
 					clearInterval(evt.data.intervalNum.num);
 					evt.data.intervalNum.num = null;
@@ -211,15 +230,20 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 
-			$element.find("#arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, moveImage);
-			$element.find("#arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, moveImage);
-			$element.find("#arrow-up").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
-			$element.find("#arrow-down").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
+			$element.find("#arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
+			$element.find("#arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
+			$element.find("#arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find("#arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			$element.find("#arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, moveImage);
-			$element.find("#arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, moveImage);
-			$element.find("#arrow-left").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
-			$element.find("#arrow-right").on('mouseup', null, {intervalNum: intervalNum}, moveImage);
+			$element.find("#arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, changeImage);
+			$element.find("#arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, changeImage);
+			$element.find("#arrow-left").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find("#arrow-right").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+
+			$element.find("#larger").on('mousedown', null, {intervalNum: intervalNum, action: makeImageLarger}, changeImage);
+			$element.find("#smaller").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
+			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 		};
 
 		return {

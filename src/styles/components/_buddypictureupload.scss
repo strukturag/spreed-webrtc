@@ -37,9 +37,11 @@
     top: 0px;
     left: 0px;
   }
-  .moveImage {
-    position: relative;
-    visibility:hidden;
+  .imageUtilites {
+    line-height: 30px;
+    position: absolute;
+    visibility: hidden;
+    width: 200px;
     z-index: 1;
     .fa {
       cursor: pointer;
@@ -47,26 +49,23 @@
       text-shadow: 0 0 5px black;
       opacity: 0.8;
       font-size: 40px;
+      width: 50px;
+      height: 50px;
     }
   }
-  .showUploadPicture:hover .moveImage {
+  .showUploadPicture:hover .imageUtilites {
     visibility:visible;
   }
   .moveHorizontal {
-    width: 200px;
-    position: absolute;
-    top: -75px;
-    left: 0;
-    .fa {
-      width: 50px;
-    }
+    top: -4px;
+    position: relative;
   }
   .moveVertical {
     position: absolute;
-    top: -30px;
-    left: 174px;
-    .item {
-      height: 50px;
-    }
+    left: 158px;
+  }
+  .resize {
+    position: relative;
+    top: 108px;
   }
 }

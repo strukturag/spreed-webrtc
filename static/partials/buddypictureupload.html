@@ -1,18 +1,18 @@
 <div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
 	<div class="showUploadPicture">
 		<canvas class="uploadPrev hidden"></canvas>
-		<div class="moveImage">
+		<div class="imageUtilites">
 			<div class="moveHorizontal">
 				<i id="arrow-left" class="fa fa-long-arrow-left"></i>
 				<i id="arrow-right" class="fa fa-long-arrow-right"></i>
 			</div>
 			<div class="moveVertical">
-				<div class="item">
-					<i id="arrow-up" class="fa fa-long-arrow-up"></i>
-				</div>
-				<div class="item">
-					<i id="arrow-down" class="fa fa-long-arrow-down"></i>
-				</div>
+				<i id="arrow-up" class="fa fa-long-arrow-up"></i>
+				<i id="arrow-down" class="fa fa-long-arrow-down"></i>
+			</div>
+			<div class="resize">
+				<i id="larger" class="fa fa-plus"></i>
+				<i id="smaller" class="fa fa-minus"></i>
 			</div>
 		</div>
 		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-src="{{imgData}}" />
