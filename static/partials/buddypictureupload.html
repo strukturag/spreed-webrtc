@@ -1,6 +1,5 @@
 <div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
 	<div class="showUploadPicture">
-		<canvas class="uploadPrev hidden"></canvas>
 		<div class="imageUtilites">
 			<div class="moveHorizontal">
 				<i id="arrow-left" class="fa fa-long-arrow-left"></i>
@@ -15,9 +14,9 @@
 				<i id="smaller" class="fa fa-minus"></i>
 			</div>
 		</div>
-		<img class="preview" ng-class="{previewUpload: previewUpload}" ng-src="{{imgData}}" />
+		<img class="preview" ng-class="{previewUpload: previewUpload}" />
 	</div>
-	<div class="alert alert-warning" ng-if="error.msg">{{error.msg}}<button type="button" class="close" ng-click="error.msg = null"><span>&times;</span></button></div>
+	<div class="alert alert-warning" ng-if="error.current">{{error.current}}<button type="button" class="close" ng-click="error.current = null"><span>&times;</span></button></div>
 	<p ng-if="!previewUpload">{{text.initial}}</p>
 	<p ng-if="previewUpload">{{text.again}}</p>
 	<div><input id="uploadFile" type="file"></div>

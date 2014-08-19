@@ -25,16 +25,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
-			var previewWidth = 200;
-			var previewHeight = 200;
-			$scope.moveHorizontal = false;
-			$scope.moveVertical = false;
+			var previewWidth = 205;
+			var previewHeight = 205;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
-			$scope.showEditTools = false;
 			$scope.error = {
-				msg: null
+				read: "The file couldn't be read",
+				image: "The file is not an image.",
+				current: null
 			};
 			$scope.text = {
 				initial: 'Please choose a picture to upload',
@@ -42,16 +41,18 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 
 			var setUploadImageDimension = function(data) {
-				var img = new Image();
-				img.onload = function() {
+				$scope.prevImage.onload = function() {
+					// clear old dimensions
+					this.style.cssText = null;
+					// get new dimensions
 					var dim = getAutoFitDimensions(this, {width: previewWidth, height: previewHeight});
-					$scope.prevImage.style.width = dim.width + 'px';
-					$scope.prevImage.style.height = dim.height + 'px';
-					$scope.prevImage.style.top = '0px';
-					$scope.prevImage.style.left = '0px';
+					this.style.width = dim.width + 'px';
+					this.style.height = dim.height + 'px';
+					this.style.top = '0px';
+					this.style.left = '0px';
 					safeApply($scope);
 				};
-				img.src = data;
+				$scope.prevImage.src = data;
 			};
 
 			$scope.reset = function() {
@@ -81,12 +82,12 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					console.log('file error', event);
 					if (event.target.error.name == 'NotReadableError') {
 						$scope.$apply(function(scope) {
-							scope.error.msg = "The file couldn't be read";
+							scope.error.current = scope.error.read;
 						});
 					}
 					if (event.target.error.name == 'NotImage') {
 						$scope.$apply(function(scope) {
-							scope.error.msg = "The file is not an image.";
+							scope.error.current = scope.error.image;
 						});
 					}
 				};
@@ -155,7 +156,9 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var writeUploadToCanvas = function(canvas, img) {
 				var dim = getScaledDimensions(img, canvas);
-				canvas.getContext("2d").drawImage(img, dim.x, dim.y, dim.width, dim.height);
+				var context = canvas.getContext("2d");
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				context.drawImage(img, dim.x, dim.y, dim.width, dim.height);
 				console.log('writeUploadToCanvas', dim);
 			};
 
@@ -171,8 +174,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 		var link = function($scope, $element) {
 			$scope.prevImage = $(".showUploadPicture .preview").get(0);
 			$element.find("#uploadFile").on('change', $scope.handleUpload);
-			$scope.uploadPrev = $element.find("canvas.uploadPrev").get(0);
-			$($scope.uploadPrev).attr($scope.captureSize);
 
 			var intervalNum = {
 				num: null
