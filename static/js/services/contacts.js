@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(_, $, Modernizr, sjcl) {
+define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(_, $, Modernizr, sjcl, templateContactsManager, templateContactsManagerEdit) {
 
 	var Database = function(name) {
 		this.version = 3;
@@ -121,7 +121,11 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl'], function(_, $, Modernizr, 
 	};
 
 	// contacts
-	return ["appData", "contactData", "mediaStream", function(appData, contactData, mediaStream) {
+	return ["appData", "contactData", "mediaStream", "$templateCache", function(appData, contactData, mediaStream, $templateCache) {
+
+		// Inject our templates.
+		$templateCache.put('/contactsmanager/main.html', templateContactsManager);
+		$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
 
 		var Contacts = function() {
 
