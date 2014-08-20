@@ -25,23 +25,25 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
+			var previewWidth = 205;
+			var previewHeight = 205;
+			var maxUploadMb = 8;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
 			$scope.error = {
 				read: "The file couldn't be read",
 				image: "The file is not an image.",
+				size: "The file is too large. Max upload size is " + maxUploadMb + 'Mb',
 				current: null
 			};
 			$scope.text = {
-				initial: 'Please choose a picture to upload',
+				initial: 'Please choose a picture to upload, max ' + maxUploadMb + 'Mb',
 				again: 'Upload a different picture'
 			};
 			$scope.upload = {
 				status: 0
 			};
-			var previewWidth = 205;
-			var previewHeight = 205;
 
 			var completedUpload = function() {
 				$scope.upload.status = 99;
@@ -77,10 +79,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					return;
 				}
 				console.log('file', file);
-				$scope.$apply(function(scope) {
-					$scope.upload.status = 5;
-				});
-
 				var progress = function(event) {
 					console.log('file progress', event);
 					$scope.$apply(function(scope) {
@@ -107,11 +105,21 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 							scope.error.current = scope.error.image;
 						});
 					}
+					if (event.target.error.name == 'Size') {
+						$scope.$apply(function(scope) {
+							scope.error.current = scope.error.size;
+						});
+					}
 				};
 
 				if (!file.type.match(/image/)) {
 					error({target: {error: {name: 'NotImage'}}});
+				} else if (file.size > maxUploadMb * 1024 * 1024) {
+					error({target: {error: {name: 'Size'}}});
 				} else {
+					$scope.$apply(function(scope) {
+						$scope.upload.status = 5;
+					});
 					var reader = new FileReader();
 					reader.readAsDataURL(file);
 
