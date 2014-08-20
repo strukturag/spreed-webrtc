@@ -25,8 +25,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
-			var previewWidth = 205;
-			var previewHeight = 205;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
@@ -39,6 +37,18 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				initial: 'Please choose a picture to upload',
 				again: 'Upload a different picture'
 			};
+			$scope.upload = {
+				status: 0
+			};
+			var previewWidth = 205;
+			var previewHeight = 205;
+
+			var completedUpload = function() {
+				$scope.upload.status = 99;
+				$timeout(function() {
+					$scope.upload.status = 100;
+				}, 500);
+			};
 
 			var setUploadImageDimension = function(data) {
 				$scope.prevImage.onload = function() {
@@ -50,6 +60,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					this.style.height = dim.height + 'px';
 					this.style.top = '0px';
 					this.style.left = '0px';
+					completedUpload();
 					safeApply($scope);
 				};
 				$scope.prevImage.src = data;
@@ -66,9 +77,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					return;
 				}
 				console.log('file', file);
+				$scope.$apply(function(scope) {
+					$scope.upload.status = 5;
+				});
 
 				var progress = function(event) {
 					console.log('file progress', event);
+					$scope.$apply(function(scope) {
+						$scope.upload.status = event.loaded/event.total * 100;
+					});
 				};
 				var load = function(event) {
 					console.log('file load', event);

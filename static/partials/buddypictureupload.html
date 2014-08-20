@@ -20,6 +20,10 @@
 	<p ng-if="!previewUpload">{{text.initial}}</p>
 	<p ng-if="previewUpload">{{text.again}}</p>
 	<div><input id="uploadFile" type="file"></div>
+	<div ng-if="upload.status != 100 && upload.status != 0">
+		<br>
+		<progressbar class="progress-striped active" value="upload.status"><i>{{upload.status | number:0}}%</i></progressbar>
+	</div>
 	<br>
 	<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
 	<a class="btn btn-small btn-primary" ng-click="usePicture()"> {{_('Set as Profile Picture')}}</a>
