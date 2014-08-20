@@ -25,7 +25,8 @@ define([
 	'controllers/statusmessagecontroller',
 	'controllers/chatroomcontroller',
 	'controllers/roomchangecontroller',
-	'controllers/usersettingscontroller',], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController, UsersettingsController) {
+	'controllers/usersettingscontroller',
+	'controllers/contactsmanagercontroller',], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController, UsersettingsController, ContactsmanagerController) {
 
 	var controllers = {
 		MediastreamController: MediastreamController,
@@ -33,6 +34,7 @@ define([
 		ChatroomController: ChatroomController,
 		RoomchangeController: RoomchangeController,
 		UsersettingsController: UsersettingsController,
+		ContactsmanagerController: ContactsmanagerController
 	};
 
 	var initialize = function(angModule) {

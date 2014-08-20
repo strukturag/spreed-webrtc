@@ -18,103 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(_, $, Modernizr, templateContactsManager, templateContactsManagerEdit) {
+define(['underscore', 'jquery', 'modernizr'], function(_, $, Modernizr) {
 
 	// contactsManager
 	return [function() {
 
-		var ContactsmanagerModalController = ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddySession', function($scope, $modalInstance, contactData, data, contacts, buddySession) {
-			$scope.header = data.header;
-			$scope.contacts = [];
-			$scope.search = {};
-			var tmp = {};
-			tmp.displayName = data.contact ? data.contact.Status.displayName : null;
-			$scope.contact = data.contact;
-			$scope.session = null;
-
-			if (data.contact) {
-				var sessions = buddySession.sessions();
-				for (var id in sessions) {
-					if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
-						$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
-						//console.log('contact manager session', $scope.session);
-					}
-				}
-			}
-
-			var totalUnnamed = 0;
-			$scope.incrementUnnamedCount = function() {
-				return totalUnnamed += 1;
-			};
-
-			var updateContacts = function(async) {
-				if (async) {
-					$scope.$apply(function(scope) {
-						scope.contacts = contactData.getAll();
-					});
-				} else {
-					$scope.contacts = contactData.getAll();
-				}
-			};
-			updateContacts();
-			contacts.e.on('contactadded', function() {
-				updateContacts(true);
-			});
-			contacts.e.on('contactupdated', function() {
-				updateContacts(true);
-			});
-
-			var setContactInfo = function(contact) {
-				contacts.update(contact.Userid, contact.Status);
-			};
-
-			$scope.removeContact = function() {
-				contacts.remove($scope.contact.Userid);
-				updateContacts();
-				$modalInstance.close();
-			};
-
-			$scope.syncContactInfo = function() {
-				$scope.contact.Status.displayName = $scope.session.Status.displayName;
-			};
-
-			$scope.edit = function(contact) {
-				$modalInstance.close(contact);
-			};
-
-			$scope.save = function() {
-				setContactInfo($scope.contact);
-				$modalInstance.close();
-			};
-
-			$scope.cancel = function(contact) {
-				$scope.contact.Status.displayName = tmp.displayName;
-				$modalInstance.dismiss();
-			};
-
-		}];
-
 		var controller = ['$scope', 'dialogs', 'translation', '$templateCache', function($scope, dialogs, translation, $templateCache) {
 
-			$templateCache.put('/contactsmanager/main.html', templateContactsManager);
-			$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
-
 			var ContactsManager = {};
-			ContactsManager._mainDialog = function() {
-				return dialogs.create(
-					"/contactsmanager/main.html",
-					ContactsmanagerModalController,
-					{
-						header: translation._("Contacts Manager")
-					}, {
-						wc: "contactsmanager"
-					}
-				);
-			};
 			ContactsManager._editDialog = function(contact) {
 				return dialogs.create(
 					"/contactsmanager/edit.html",
-					ContactsmanagerModalController,
+					"ContactsmanagerController",
 					{
 						header: translation._("Edit Contact"),
 						contact: contact,
@@ -123,32 +38,28 @@ define(['underscore', 'jquery', 'modernizr', 'text!partials/contactsmanager.html
 					}
 				);
 			};
-			ContactsManager.setupContactsManager = function() {
+			ContactsManager.openMainModal = function() {
 				var that = this;
 
-				var dlgMain = that._mainDialog();
+				var dlgMain = $scope.dlg.openContactsManager();
 				dlgMain.result.then(function(contact) {
 					if (contact && contact.Id) {
-						that.setupContactsManagerEdit(contact);
+						that.openEditModal(contact);
 					}
 				});
 			};
-			ContactsManager.setupContactsManagerEdit = function(contact) {
+			ContactsManager.openEditModal = function(contact) {
 				var that = this;
 
 				var dlgEdit = that._editDialog(contact);
 				dlgEdit.result.finally(function(final) {
-					that.setupContactsManager();
+					that.openMainModal();
 				});
 			};
-			ContactsManager.open = function() {
-				this.setupContactsManager();
-			};
 
-			$scope.openContactsManager = function() {
-				ContactsManager.open();
+			$scope.dlg.openEditContact = function(contact) {
+				ContactsManager.openEditModal(contact);
 			};
-
 		}];
 
 		return {
