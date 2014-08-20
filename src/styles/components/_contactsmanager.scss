@@ -45,22 +45,6 @@
   .uploadbtn {
     margin-top: 7px;
   }
-  .buddyPicture {
-    position: relative;
-    width: 46px;
-    height: 46px;
-    background: $actioncolor1;
-    border-radius: 2px;
-    margin: 0 auto;
-    &:after {
-        content: "\f007";
-        color: $actioncolor2;
-        font-family: fontAwesome;
-        font-size: 3em;
-        position: relative;
-        top: -6px;
-    }
-  }
   .editlist {
     max-height: 250px;
     overflow-y: auto;
@@ -71,10 +55,9 @@
       border-top: none;
     }
     .picture {
-      width: 15%;
+      border-bottom: 0;
+      cursor: auto;
       min-height: 46px;
-      text-align: center;
-      vertical-align: middle;
     }
     .name {
       width: 70%;

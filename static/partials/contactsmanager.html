@@ -10,9 +10,8 @@
         <table class="table table-hover table-condensed">
           <tbody>
             <tr ng-repeat="contact in contacts">
-              <td class="picture">
-                <img ng-show="contact.Status.buddyPicture" ng-src="{{contact.Status.buddyPicture}}">
-                <div ng-show="!contact.Status.buddyPicture" class="buddyPicture"></div>
+              <td class="picture buddy">
+                <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>
               </td>
               <td class="name">
                 <span>{{contact.Status.displayName}}</span>
