@@ -78,15 +78,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				if (!file) {
 					return;
 				}
-				console.log('file', file);
+				//console.log('file', file);
 				var progress = function(event) {
-					console.log('file progress', event);
+					//console.log('file progress', event);
 					$scope.$apply(function(scope) {
 						$scope.upload.status = event.loaded/event.total * 100;
 					});
 				};
 				var load = function(event) {
-					console.log('file load', event);
+					//console.log('file load', event);
 					$scope.$apply(function(scope) {
 						scope.imgData = event.target.result;
 						setUploadImageDimension(scope.imgData);
@@ -94,7 +94,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					});
 				};
 				var error = function(event) {
-					console.log('file error', event);
+					//console.log('file error', event);
 					if (event.target.error.name == 'NotReadableError') {
 						$scope.$apply(function(scope) {
 							scope.error.current = scope.error.read;
@@ -184,7 +184,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				var context = canvas.getContext("2d");
 				context.clearRect(0, 0, canvas.width, canvas.height);
 				context.drawImage(img, dim.x, dim.y, dim.width, dim.height);
-				console.log('writeUploadToCanvas', dim);
+				//console.log('writeUploadToCanvas', dim);
 			};
 
 			$scope.usePicture = function() {
