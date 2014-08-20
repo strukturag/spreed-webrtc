@@ -27,19 +27,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var previewWidth = 205;
 			var previewHeight = 205;
-			var maxUploadMb = 8;
+			$scope.maxUploadMb = 8;
+			var maxUploadBytes = $scope.maxUploadMb * 1024 * 1024;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
 			$scope.error = {
-				read: "The file couldn't be read",
-				image: "The file is not an image.",
-				size: "The file is too large. Max upload size is " + maxUploadMb + 'Mb',
-				current: null
-			};
-			$scope.text = {
-				initial: 'Please choose a picture to upload, max ' + maxUploadMb + 'Mb',
-				again: 'Upload a different picture'
+				read: null,
+				image: null,
+				size: null
 			};
 			$scope.upload = {
 				status: 0
@@ -66,67 +62,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					safeApply($scope);
 				};
 				$scope.prevImage.src = data;
-			};
-
-			$scope.reset = function() {
-				$scope.showUploadPicture = false;
-				$scope.previewUpload = false;
-			};
-
-			$scope.handleUpload = function(event) {
-				var file = event.target.files[0];
-				if (!file) {
-					return;
-				}
-				//console.log('file', file);
-				var progress = function(event) {
-					//console.log('file progress', event);
-					$scope.$apply(function(scope) {
-						$scope.upload.status = event.loaded/event.total * 100;
-					});
-				};
-				var load = function(event) {
-					//console.log('file load', event);
-					$scope.$apply(function(scope) {
-						scope.imgData = event.target.result;
-						setUploadImageDimension(scope.imgData);
-						$scope.previewUpload = true;
-					});
-				};
-				var error = function(event) {
-					//console.log('file error', event);
-					if (event.target.error.name == 'NotReadableError') {
-						$scope.$apply(function(scope) {
-							scope.error.current = scope.error.read;
-						});
-					}
-					if (event.target.error.name == 'NotImage') {
-						$scope.$apply(function(scope) {
-							scope.error.current = scope.error.image;
-						});
-					}
-					if (event.target.error.name == 'Size') {
-						$scope.$apply(function(scope) {
-							scope.error.current = scope.error.size;
-						});
-					}
-				};
-
-				if (!file.type.match(/image/)) {
-					error({target: {error: {name: 'NotImage'}}});
-				} else if (file.size > maxUploadMb * 1024 * 1024) {
-					error({target: {error: {name: 'Size'}}});
-				} else {
-					$scope.$apply(function(scope) {
-						$scope.upload.status = 5;
-					});
-					var reader = new FileReader();
-					reader.readAsDataURL(file);
-
-					reader.onprogress = progress;
-					reader.onload = load;
-					reader.onerror = error;
-				}
 			};
 
 			var getNumFromPx = function(px) {
@@ -178,7 +113,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				return {width: width, height: height, x: x, y: y};
 			};
 
-
 			var writeUploadToCanvas = function(canvas, img) {
 				var dim = getScaledDimensions(img, canvas);
 				var context = canvas.getContext("2d");
@@ -192,6 +126,71 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
 				$scope.reset();
 				safeApply($scope);
+			};
+
+			$scope.reset = function() {
+				$scope.showUploadPicture = false;
+				$scope.previewUpload = false;
+			};
+
+			$scope.handleUpload = function(event) {
+				var file = event.target.files[0];
+				if (!file) {
+					return;
+				}
+				//console.log('file', file);
+				var progress = function(event) {
+					//console.log('file progress', event);
+					var percentComplete = event.loaded/event.total * 100;
+					// show complete only when src is loaded in image element
+					if(percentComplete != 100) {
+						$scope.$apply(function(scope) {
+							$scope.upload.status = percentComplete;
+						});
+					}
+				};
+				var load = function(event) {
+					//console.log('file load', event);
+					$scope.$apply(function(scope) {
+						scope.imgData = event.target.result;
+						setUploadImageDimension(scope.imgData);
+						$scope.previewUpload = true;
+					});
+				};
+				var error = function(event) {
+					//console.log('file error', event);
+					if (event.target.error.name == 'NotReadableError') {
+						$scope.$apply(function(scope) {
+							scope.error.read = true;
+						});
+					}
+					if (event.target.error.name == 'NotImage') {
+						$scope.$apply(function(scope) {
+							scope.error.image = true;
+						});
+					}
+					if (event.target.error.name == 'Size') {
+						$scope.$apply(function(scope) {
+							scope.error.size = true;
+						});
+					}
+				};
+
+				if (!file.type.match(/image/)) {
+					error({target: {error: {name: 'NotImage'}}});
+				} else if (file.size > maxUploadBytes) {
+					error({target: {error: {name: 'Size'}}});
+				} else {
+					$scope.$apply(function(scope) {
+						$scope.upload.status = 5;
+					});
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+
+					reader.onprogress = progress;
+					reader.onload = load;
+					reader.onerror = error;
+				}
 			};
 
 		}];
@@ -259,7 +258,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		return {
 			restrict: 'E',
-			transclude: true,
 			replace: false,
 			template: template,
 			controller: controller,
