@@ -162,10 +162,12 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 								});
 							}
 						}, 100);
-						// Add a timeout of 30 seconds.
+						// The installation has been installed, but initialization might not work
 						$timeout(function() {
-							waiting = false;
-							d.reject("Timeout while waiting for extension getting installed");
+							if (waiting) {
+								waiting = false;
+								d.reject("Timeout while waiting for extension to become available");
+							}
 						}, 30000);
 					}, function(err) {
 						console.log("Auto install of extension failed.", err);
