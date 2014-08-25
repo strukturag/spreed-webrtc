@@ -42,7 +42,7 @@ define([
 	'directives/pdfcanvas',
 	'directives/odfcanvas',
 	'directives/presentation',
-	'directives/youtubevideo',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload,settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo) {
+	'directives/youtubevideo',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo) {
 
 	var directives = {
 		onEnter: onEnter,
