@@ -1,0 +1,32 @@
+<div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
+	<div class="showUploadPicture">
+		<div class="imageUtilites">
+			<div class="moveHorizontal">
+				<i id="arrow-left" class="fa fa-long-arrow-left"></i>
+				<i id="arrow-right" class="fa fa-long-arrow-right"></i>
+			</div>
+			<div class="moveVertical">
+				<i id="arrow-up" class="fa fa-long-arrow-up"></i>
+				<i id="arrow-down" class="fa fa-long-arrow-down"></i>
+			</div>
+			<div class="resize">
+				<i id="larger" class="fa fa-plus"></i>
+				<i id="smaller" class="fa fa-minus"></i>
+			</div>
+		</div>
+		<img class="preview" ng-class="{previewUpload: previewUpload}" />
+	</div>
+	<div class="alert alert-warning" ng-if="error.read">{{_('The file couldn\'t be read.')}}<button type="button" class="close" ng-click="error.read = null"><span>&times;</span></button></div>
+	<div class="alert alert-warning" ng-if="error.image">{{_('The file is not an image.')}}<button type="button" class="close" ng-click="error.image = null"><span>&times;</span></button></div>
+	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max upload size is %d Mb', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>
+	<p ng-if="!imgData">{{_('Please choose a picture to upload, max %d Mb', maxUploadMb)}}</p>
+	<p ng-if="imgData">{{_('Upload a different picture')}}</p>
+	<div><input id="uploadFile" type="file"></div>
+	<div ng-if="upload.status != 100 && upload.status != 0">
+		<br>
+		<progressbar class="progress-striped active" value="upload.status"><i>{{upload.status | number:0}}%</i></progressbar>
+	</div>
+	<br>
+	<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
+	<a class="btn btn-small btn-primary" ng-click="usePicture()"> {{_('Set as Profile Picture')}}</a>
+</div>

@@ -18,7 +18,9 @@
 			<a class="btn btn-small btn-primary" ng-disabled="!previewPicture || waitingForPermission" ng-click="setAsProfilePicture()"> {{_('Set as Profile Picture')}}</a>
 		</div>
 	</div>
-	<a class="btn btn-small btn-primary" ng-show="!showTakePicture" ng-disabled="waitingForPermission" ng-click="initPicture()"> {{_('Take picture')}}</a>
+	<buddy-picture-upload></buddy-picture-upload>
+	<a class="btn btn-small btn-primary" ng-show="!showTakePicture && !showUploadPicture" ng-disabled="waitingForPermission" ng-click="initPicture()"> {{_('Take picture')}}</a>
+	<a class="btn btn-small btn-primary" ng-show="!showTakePicture && !showUploadPicture" ng-model="showUploadPicture" btn-checkbox>{{_('Upload picture')}}</a>
 	<span ng-show="waitingForPermission">
 		<i class="fa fa-circle-o-notch fa-spin"></i> {{_('Waiting for camera')}}
 	</span>
