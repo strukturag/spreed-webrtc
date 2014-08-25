@@ -31,12 +31,9 @@ define([], function() {
 		var tmp = {
 			displayName: data.contact ? data.contact.Status.displayName : null
 		};
-		var totalUnnamed = 0;
-
-		$scope.incrementUnnamedCount = function() {
-			return totalUnnamed += 1;
+		var setContactInfo = function(contact) {
+			contacts.update(contact.Userid, contact.Status);
 		};
-
 		var updateContacts = function(async) {
 			if (async) {
 				$scope.$apply(function(scope) {
@@ -65,10 +62,6 @@ define([], function() {
 				}
 			}
 		}
-
-		var setContactInfo = function(contact) {
-			contacts.update(contact.Userid, contact.Status);
-		};
 
 		$scope.removeContact = function() {
 			contacts.remove($scope.contact.Userid);
