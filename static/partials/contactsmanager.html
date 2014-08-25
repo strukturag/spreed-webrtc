@@ -1,4 +1,4 @@
-<div default-dialog contacts-manager>
+<div default-dialog contactsmanager>
   <div class="row head">
      <div class="col-xs-7" ng-if="contacts.length === 0">
       <p>{{_('You have no contacts.')}}</p>
@@ -18,7 +18,7 @@
                 <span ng-if="!contact.Status.displayName" ng-init="i = incrementUnnamedCount()">Unnamed Contact {{i}}</span>
               </td>
               <td class="action">
-                <button class="btn btn-primary" ng-click="edit(contact)">{{_('Edit')}}</button>
+                <button class="btn btn-primary" ng-click="edit($index)">{{_('Edit')}}</button>
               </td>
             </tr>
           </tbody>
