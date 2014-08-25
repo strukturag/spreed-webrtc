@@ -43,7 +43,7 @@ define([
 	'directives/odfcanvas',
 	'directives/presentation',
 	'directives/youtubevideo',
-	'directives/contactsmanager',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, contactsManager) {
+	'directives/contactsmanager',], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, contactsmanager) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -68,7 +68,7 @@ define([
 		odfcanvas: odfcanvas,
 		presentation: presentation,
 		youtubevideo: youtubevideo,
-		contactsManager: contactsManager
+		contactsmanager: contactsmanager
 	};
 
 	var initialize = function(angModule) {
