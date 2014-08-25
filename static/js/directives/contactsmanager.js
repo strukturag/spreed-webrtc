@@ -20,7 +20,7 @@
  */
 define(['underscore', 'jquery', 'modernizr'], function(_, $, Modernizr) {
 
-	// contactsManager
+	// contactsmanager
 	return [function() {
 
 		var controller = ['$scope', 'dialogs', 'translation', '$templateCache', function($scope, dialogs, translation, $templateCache) {
