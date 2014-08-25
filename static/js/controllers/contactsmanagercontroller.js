@@ -25,27 +25,14 @@ define([], function() {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
-		var tmp = {};
-		tmp.displayName = data.contact ? data.contact.Status.displayName : null;
-		$scope.contact = data.contact;
+		$scope.contact = null;
 		$scope.session = null;
-		// Reference to use in contactsmanager directive
-		$scope.dlg = {
-			openEditContact: null,
-			openContactsManager: data.setupContactsManager
+
+		var tmp = {
+			displayName: data.contact ? data.contact.Status.displayName : null
 		};
-
-		if (data.contact) {
-			var sessions = buddySession.sessions();
-			for (var id in sessions) {
-				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
-					$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
-					//console.log('contact manager session', $scope.session);
-				}
-			}
-		}
-
 		var totalUnnamed = 0;
+
 		$scope.incrementUnnamedCount = function() {
 			return totalUnnamed += 1;
 		};
@@ -66,6 +53,18 @@ define([], function() {
 		contacts.e.on('contactupdated', function() {
 			updateContacts(true);
 		});
+
+		// Values to check include 0, so check for number to get around incorrect 'false' type conversion
+		if(angular.isNumber(data.contactIndex)) {
+			$scope.contact = $scope.contacts[data.contactIndex];
+			var sessions = buddySession.sessions();
+			for (var id in sessions) {
+				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
+					$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
+					//console.log('contact manager session', $scope.session);
+				}
+			}
+		}
 
 		var setContactInfo = function(contact) {
 			contacts.update(contact.Userid, contact.Status);
@@ -91,8 +90,8 @@ define([], function() {
 			$modalInstance.dismiss();
 		};
 
-		$scope.edit = function(contact) {
-			$modalInstance.close($scope.dlg.openEditContact(contact));
+		$scope.edit = function(index) {
+			$scope.$broadcast('openEditContact', index);
 		};
 	}];
 

@@ -18,48 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr'], function(_, $, Modernizr) {
+define(['underscore', 'jquery'], function(_, $) {
 
 	// contactsmanager
 	return [function() {
 
-		var controller = ['$scope', 'dialogs', 'translation', '$templateCache', function($scope, dialogs, translation, $templateCache) {
+		var controller = ['$scope', 'dialogs', 'translation', function($scope, dialogs, translation) {
 
-			var ContactsManager = {};
-			ContactsManager._editDialog = function(contact) {
+			var editContactDialog = function(index) {
 				return dialogs.create(
 					"/contactsmanager/edit.html",
 					"ContactsmanagerController",
 					{
 						header: translation._("Edit Contact"),
-						contact: contact,
+						contactIndex: index,
 					}, {
 						wc: "contactsmanager"
 					}
 				);
 			};
-			ContactsManager.openMainModal = function() {
-				var that = this;
 
-				var dlgMain = $scope.dlg.openContactsManager();
-				dlgMain.result.then(function(contact) {
-					if (contact && contact.Id) {
-						that.openEditModal(contact);
-					}
-				});
-			};
-			ContactsManager.openEditModal = function(contact) {
-				var that = this;
-
-				var dlgEdit = that._editDialog(contact);
-				dlgEdit.result.finally(function(final) {
-					that.openMainModal();
-				});
-			};
-
-			$scope.dlg.openEditContact = function(contact) {
-				ContactsManager.openEditModal(contact);
-			};
+			$scope.$on('openEditContact', function(event, index) {
+				editContactDialog(index);
+			});
 		}];
 
 		return {

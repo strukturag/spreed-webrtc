@@ -52,19 +52,15 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			});
 
 			$scope.openContactsManager = function() {
-				var setupContactsManager = function() {
-					return dialogs.create(
-						"/contactsmanager/main.html",
-						"ContactsmanagerController",
-						{
-							header: translation._("Contacts Manager"),
-							setupContactsManager: setupContactsManager
-						}, {
-							wc: "contactsmanager"
-						}
-					);
-				};
-				setupContactsManager();
+				return dialogs.create(
+					"/contactsmanager/main.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Contacts Manager")
+					}, {
+						wc: "contactsmanager"
+					}
+				);
 			};
 			$scope.saveSettings = function() {
 				var user = $scope.user;
