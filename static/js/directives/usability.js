@@ -105,7 +105,11 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 						initializer = null;
 					}
 					// Check if we should show settings per default when in a room.
-					$scope.layout.settings = $scope.loadedUser ? false : true;
+					if(room && !$scope.loadedUser) {
+						$scope.layout.settings = true;
+					} else {
+						$scope.layout.settings = false;
+					}
 					ctrl.setInfo("ok");
 				}
 			});

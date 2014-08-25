@@ -7,7 +7,7 @@
 		    <input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdata.name" placeholder="{{_('Creating room ...')}}">
 		    <div class="welcome-input-buttons">
 		      <a class="fa fa-refresh" ng-click="refreshRoom()"></a>
-		      <button class="btn btn-primary" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">{{_("Create")}}</button>
+		      <button class="btn btn-primary roomcreate-btn" type="button" ng-disabled="!roomdata.link" ng-click="changeRoomToId(roomdata.name)">{{_("Create")}}</button>
 		    </div>
 		  </div>
 		</p>
