@@ -59,6 +59,7 @@ define([], function() {
 				ctrl.getRoom(function(roomdata) {
 					console.info("Retrieved room data", roomdata);
 					$scope.roomdata = roomdata;
+					$element.find(".btn-roomcreate").get(0).focus();
 				});
 			}
 		};
