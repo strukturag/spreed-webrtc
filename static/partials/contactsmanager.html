@@ -14,7 +14,7 @@
                 <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>
               </td>
               <td class="name">
-                <span>{{contact.Userid|displayName:'contactsmanager'}}</span>
+                <span>{{contact.Userid|displayName}}</span>
               </td>
               <td class="action">
                 <button class="btn btn-primary" ng-click="edit($index)">{{_('Edit')}}</button>

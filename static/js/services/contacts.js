@@ -278,7 +278,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 				var d = this.decrypt(data.contact);
 				if (d) {
 					var contact = contactData.addByData(d);
-					if (contact.Userid == userid) {
+					if (contact.Userid === userid) {
 						//console.log('found contact in database', contact);
 						updateContact(contact);
 					}
