@@ -64,15 +64,18 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					localStorage.removeItem("mediastream-access-code");
 				}
 			};
+
 			$scope.cancelSettings = function() {
 				$scope.reset();
 				$scope.layout.settings = false;
 			};
+
 			$scope.requestDesktopNotifyPermission = function() {
 				$scope.desktopNotify.requestPermission(function() {
 					safeApply($scope);
 				});
 			};
+
 			$scope.openContactsManager = function() {
 				dialogs.create(
 					"/contactsmanager/main.html",
@@ -103,9 +106,11 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				//console.log("master sources updates", $scope.master);
 				$scope.refreshWebrtcSettings();
 			};
+
 			$scope.mediaSources.refresh(function() {
 				safeApply($scope, $scope.checkDefaultMediaSources);
 			});
+
 			$scope.$watch("layout.settings", function(showSettings, oldValue) {
 				if (showSettings) {
 					$scope.desktopNotify.refresh();
@@ -129,6 +134,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					$scope.saveSettings();
 				}
 			});
+
 		}];
 
 		var link = function($scope, $element) {};

@@ -23,8 +23,9 @@ define(["jquery"], function($) {
 	// appData.e events:
 	// subscribe these events with appData.e.on(eventname, function() {}).
 	//
-	// - authenticationChanged(event, userid)
-	//     userid (string) : Public user id of the authenitcated user.
+	// - authenticationChanged(event, userid, suserid)
+	//     userid (string)  : Public user id of the authenticated user.
+	//     suserid (string) : Private user id of the authenticated user.
 	//
 	// - selfReceived(event, self)
 	//     self (object) : Self document as received from API.

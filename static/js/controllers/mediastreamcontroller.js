@@ -142,7 +142,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
-		$scope.master = {
+		$scope.defaults = {
 			displayName: null,
 			buddyPicture: null,
 			message: null,
@@ -154,6 +154,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				language: ""
 			}
 		};
+		$scope.master = angular.copy($scope.defaults);
 
 		// Data voids.
 		var cache = {};
@@ -166,6 +167,10 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				$scope.refreshWebrtcSettings();
 			}
 
+		};
+
+		$scope.reset = function() {
+			$scope.user = angular.copy($scope.master);
 		};
 
 		$scope.setStatus = function(status) {
@@ -194,10 +199,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				}
 			};
 		}());
-
-		$scope.reset = function() {
-			$scope.user = angular.copy($scope.master);
-		};
 
 		$scope.refreshWebrtcSettings = function() {
 
@@ -331,6 +332,26 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 		};
 
+		// Load user settings.
+		$scope.loadUserSettings = function(norefresh, clear) {
+			if (clear) {
+				$scope.master = angular.copy($scope.defaults);
+			}
+			var storedUser = userSettingsData.load();
+			if (storedUser) {
+				$scope.user = $.extend(true, {}, $scope.master, storedUser);
+				$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
+				$scope.update($scope.user, norefresh);
+				$scope.loadedUser = storedUser.displayName && true;
+				// Add room definition to root to be availale on initial connect.
+				$rootScope.roomid = $scope.user.settings.defaultRoom || "";
+			} else {
+				$scope.loadedUser = false;
+			}
+			$scope.reset();
+		};
+		$scope.loadUserSettings(true);
+
 		$scope.toggleBuddylist = (function() {
 			var oldState = null;
 			return function(status, force) {
@@ -350,18 +371,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		$scope.$watch("microphoneMute", function(cameraMute) {
 			mediaStream.webrtc.setAudioMute(cameraMute);
 		});
-
-		// Load user settings.
-		var storedUser = userSettingsData.load();
-		if (storedUser) {
-			$scope.user = $.extend(true, {}, $scope.master, storedUser);
-			$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
-			$scope.update($scope.user, true);
-			$scope.loadedUser = storedUser.displayName && true;
-			// Add room definition to root to be availale on initial connect.
-			$rootScope.roomid = $scope.user.settings.defaultRoom || "";
-		}
-		$scope.reset();
 
 		var ringer = playSound.interval("ring", null, 4000);
 		var dialer = playSound.interval("dial", null, 4000);
@@ -410,6 +419,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 						console.error("Failed to authorize session", status, data);
 						mediaStream.users.forget();
 					});
+				} else {
+					$scope.loadedUserlogin = false;
 				}
 			}
 
@@ -641,6 +652,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				console.info("Session is now authenticated:", userid, suserid);
 			}
 			appData.e.triggerHandler("authenticationChanged", [userid, suserid]);
+			// Load user settings after authentication changed.
+			$scope.loadUserSettings(false, true);
 		});
 
 		// Apply all layout stuff as classes to our element.

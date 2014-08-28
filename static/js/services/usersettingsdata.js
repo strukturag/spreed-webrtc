@@ -18,32 +18,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([], function() {
+define(["sjcl"], function(sjcl) {
 
 	// userSettingsData
-	return ["localStorage", function(localStorage) {
+	return ["localStorage", "mediaStream", "appData", function(localStorage, mediaStream, appData) {
 
-		var UserSettingsData = function(key) {
-			this.key = key
+		var UserSettingsData = function(prefix) {
+			this.prefix = prefix
+			this.suffix = "";
+			this.key = null;
 		};
 
 		UserSettingsData.prototype.getId = function() {
-			return this.key;
+			var id = this.prefix;
+			if (this.suffix) {
+				id = id + "_" + this.suffix;
+			}
+			return id;
+		};
+
+		UserSettingsData.prototype.setEncryption = function(id, secret) {
+
+			if (id) {
+				this.key = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(secret+mediaStream.config.Token));
+				var hmac = new sjcl.misc.hmac(this.key);
+				this.suffix = sjcl.codec.base64.fromBits(hmac.encrypt(id+this.prefix));
+			} else {
+				this.suffix = "";
+				this.key = null;
+			}
+
 		};
 
 		UserSettingsData.prototype.load = function() {
 			var raw = localStorage.getItem(this.getId());
-			console.log("Found stored user data:", raw);
 			if (raw) {
 				try {
+					if (this.key) {
+						raw = sjcl.decrypt(this.key, raw);
+					}
+					console.log("Found stored user data:", raw);
 					return JSON.parse(raw);
-				} catch(e) {}
+				} catch(e) {
+					console.warn("Failed to load stored user data:", e);
+				}
 			}
 			return null;
 		};
 
 		UserSettingsData.prototype.save = function(data) {
 			var raw = JSON.stringify(data);
+			if (this.key) {
+				// Encrypt.
+				raw = sjcl.encrypt(this.key, raw);
+			}
 			localStorage.setItem(this.getId(), raw)
 		};
 
@@ -51,7 +79,15 @@ define([], function() {
 			localStorage.removeItem(this.getId());
 		};
 
-		return new UserSettingsData("mediastream-user");
+		// Create our default instance.
+		var userSettingsData = new UserSettingsData("mediastream-user");
+
+		// Bind to authentication to encrypt stored data per user.
+		appData.e.on("authenticationChanged", function(event, userid, suserid) {
+			userSettingsData.setEncryption(userid, suserid);
+		});
+
+		return userSettingsData;
 
 	}];
 
