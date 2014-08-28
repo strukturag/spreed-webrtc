@@ -182,23 +182,21 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			return $scope.status;
 		};
 
-		$scope.updateStatus = (function() {
-			return function() {
-				// This is the user status.
-				var status = {
-					displayName: $scope.master.displayName || null,
-					buddyPicture: $scope.master.buddyPicture || null,
-					message: $scope.master.message || null
-				}
-				if (_.isEqual(status, cache.status)) {
-					console.log("Status update skipped, as status has not changed.")
-				} else {
-					console.log("Updating own status", status);
-					mediaStream.api.updateStatus(status);
-					cache.status = _.clone(status);
-				}
-			};
-		}());
+		$scope.updateStatus = function() {
+			// This is the user status.
+			var status = {
+				displayName: $scope.master.displayName || null,
+				buddyPicture: $scope.master.buddyPicture || null,
+				message: $scope.master.message || null
+			}
+			if (_.isEqual(status, cache.status)) {
+				console.log("Status update skipped, as status has not changed.")
+			} else {
+				console.log("Updating own status", status);
+				mediaStream.api.updateStatus(status);
+				cache.status = _.clone(status);
+			}
+		};
 
 		$scope.refreshWebrtcSettings = function() {
 
