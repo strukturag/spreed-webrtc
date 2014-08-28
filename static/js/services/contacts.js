@@ -33,7 +33,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			var transaction = event.target.transaction;
 			transaction.onerror = _.bind(that.onerror, that);
 			that.init(db);
-			console.log("Created contacts database.")
+			console.info("Created contacts database.")
 		};
 		request.onsuccess = _.bind(that.onsuccess, that);
 	};
@@ -57,7 +57,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 	Database.prototype.onsuccess = function(event) {
 		this.db = event.target.result;
 		this.ready = true;
-		console.log("Openend database", this.db);
+		//console.log("Openend database", this.db);
 		this.e.triggerHandler("ready");
 	};
 	Database.prototype.put = function(storename, data, successCallback, errorCallback) {
@@ -172,7 +172,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 				this.key = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(suserid+mediaStream.config.Token));
 				// Create database name for user which.
 				var id = "mediastream-" + this.id(userid);
-				console.log("Open of database:", id);
+				//console.log("Open of database:", id);
 				var database = this.database = new Database(id);
 				return database;
 			} else {
@@ -210,7 +210,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 
 		Contacts.prototype.load = function() {
 			if (this.database) {
-				console.log("Load contacts from storage", this);
+				//console.log("Load contacts from storage", this);
 				var remove = [];
 				this.database.all("contacts", _.bind(function(data) {
 					var d = this.decrypt(data.contact);
@@ -251,7 +251,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 
 		Contacts.prototype.remove = function(userid) {
 			var contact = contactData.get(userid);
-			console.log("contacts remove", userid, contact);
+			//console.log("contacts remove", userid, contact);
 			if (contact) {
 				contactData.remove(userid);
 				if (this.database) {

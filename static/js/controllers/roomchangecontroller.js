@@ -71,7 +71,10 @@ define([], function() {
 
 		$scope.roomdata = {};
 		$scope.$watch("roomdata.name", function(n) {
-			console.log("roomdata.name changed", n);
+			//console.log("roomdata.name changed", n);
+			if (!n) {
+				n = "";
+			}
 			var u = encodeURIComponent(n);
 			$scope.roomdata.url = "/" + u;
 			$scope.roomdata.link = mediaStream.url.room(n);

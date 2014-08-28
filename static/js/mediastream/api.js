@@ -139,7 +139,7 @@ define(['jquery', 'underscore'], function($, _) {
 
 		switch (dataType) {
 			case "Self":
-				console.log("Self received", data);
+				//console.log("Self received", data);
 				if (data.Token) {
 					this.connector.token = data.Token;
 				}
@@ -148,7 +148,7 @@ define(['jquery', 'underscore'], function($, _) {
 				this.e.triggerHandler("received.self", [data]);
 				break;
 			case "Offer":
-				console.log("Offer received", data.To, data.Offer);
+				//console.log("Offer received", data.To, data.Offer);
 				this.e.triggerHandler("received.offer", [data.To, data.Offer, data.Type, d.To, d.From]);
 				break;
 			case "Candidate":
@@ -156,11 +156,11 @@ define(['jquery', 'underscore'], function($, _) {
 				this.e.triggerHandler("received.candidate", [data.To, data.Candidate, data.Type, d.To, d.From]);
 				break;
 			case "Answer":
-				console.log("Answer received", data.To, data.Answer);
+				//console.log("Answer received", data.To, data.Answer);
 				this.e.triggerHandler("received.answer", [data.To, data.Answer, data.Type, d.To, d.From]);
 				break;
 			case "Users":
-				console.log("Connected users: " + data.Users.length);
+				//console.log("Connected users: " + data.Users.length);
 				this.e.triggerHandler("received.users", [data.Users]);
 				break;
 			case "Bye":
@@ -169,7 +169,7 @@ define(['jquery', 'underscore'], function($, _) {
 				break;
 			case "Joined":
 			case "Left":
-				console.log("User action received", dataType, data);
+				//console.log("User action received", dataType, data);
 				this.e.triggerHandler("received.userleftorjoined", [dataType, data]);
 				break;
 			case "Status":

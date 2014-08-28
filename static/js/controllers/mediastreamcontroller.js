@@ -267,34 +267,23 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			if ($window.webrtcDetectedBrowser === "chrome") {
 				// NOTE(longsleep): We can always enable SCTP data channels, as we have a workaround
 				// using the "active" event for Firefox < 27.
-				if (true) {
-					// SCTP does not work correctly with Chrome 31. Require M32.
-					if ($window.webrtcDetectedVersion >= 32) {
-						// SCTP is supported from Chrome M31.
-						// No need to pass DTLS constraint as it is on by default in Chrome M31.
-						// For SCTP, reliable and ordered is true by default.
-						console.info("Using SCTP based Data Channels.");
-					} else {
-						// Chrome < M31 does not yet do DTLS-SRTP by default whereas Firefox only
-						// does DTLS-SRTP. In order to get interop, you must supply Chrome
-						// with a PC constructor constraint to enable DTLS.
-						optionalPcConstraints.push({
-							DtlsSrtpKeyAgreement: true
-						});
-					}
+				// SCTP does not work correctly with Chrome 31. Require M32.
+				if ($window.webrtcDetectedVersion >= 32) {
+					// SCTP is supported from Chrome M31.
+					// No need to pass DTLS constraint as it is on by default in Chrome M31.
+					// For SCTP, reliable and ordered is true by default.
 				} else {
-					// NOTE(longsleep): This disables SCTP data channels, which hacks Firefox
-					// support by forcing old style Chrome Rtp data channels. SCTP Data Channels
-					// between Firefox and Chrome will not work until FF 27.
-					// See https://code.google.com/p/webrtc/issues/detail?id=2279 and
-					// https://code.google.com/p/chromium/issues/detail?id=295771
+					// Chrome < M32 does not yet do DTLS-SRTP by default whereas Firefox only
+					// does DTLS-SRTP. In order to get interop, you must supply Chrome
+					// with a PC constructor constraint to enable DTLS.
+					console.warn("Turning on SCTP combatibility - please update your Chrome.");
 					optionalPcConstraints.push({
-						RtpDataChannels: true
+						DtlsSrtpKeyAgreement: true
 					});
 				}
 			}
 
-			console.log("WebRTC settings", mediaStream.webrtc.settings);
+			//console.log("WebRTC settings", mediaStream.webrtc.settings);
 
 		};
 

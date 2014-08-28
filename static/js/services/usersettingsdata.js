@@ -57,7 +57,7 @@ define(["sjcl"], function(sjcl) {
 					if (this.key) {
 						raw = sjcl.decrypt(this.key, raw);
 					}
-					console.log("Found stored user data:", raw);
+					//console.log("Found stored user data:", raw);
 					return JSON.parse(raw);
 				} catch(e) {
 					console.warn("Failed to load stored user data:", e);
