@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-08-06 17:11+0200\n"
+"POT-Creation-Date: 2014-08-28 10:45+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -71,6 +71,10 @@ msgstr ""
 
 msgid "Take picture"
 msgstr "사진 찍음"
+
+#, fuzzy
+msgid "Upload picture"
+msgstr "사용자 사진"
 
 msgid "Waiting for camera"
 msgstr "카메라 대기중"
