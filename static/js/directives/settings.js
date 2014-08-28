@@ -22,7 +22,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'dialogs', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, dialogs) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'dialogs', 'userSettingsData', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, dialogs, userSettingsData) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -56,10 +56,10 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$scope.update(user);
 				$scope.layout.settings = false;
 				if ($scope.rememberSettings) {
-					localStorage.setItem("mediastream-user", JSON.stringify(user));
+					userSettingsData.save(user);
 					localStorage.setItem("mediastream-language", user.settings.language || "");
 				} else {
-					localStorage.removeItem("mediastream-user");
+					userSettingsData.clear();
 					localStorage.removeItem("mediastream-language");
 					localStorage.removeItem("mediastream-access-code");
 				}
