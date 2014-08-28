@@ -197,7 +197,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			if (_.isEqual(status, cache.status)) {
 				//console.log("Status update skipped, as status has not changed.")
 			} else {
-				console.log("Updating own status", JSON.stringify(status), JSON.stringify(cache.status));
+				//console.log("Updating own status", JSON.stringify(status));
 				mediaStream.api.updateStatus(status);
 				cache.status = _.clone(status);
 			}
