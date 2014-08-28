@@ -159,10 +159,15 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		// Data voids.
 		var cache = {};
 		var resurrect = null;
+		var reconnecting = false;
+		var connected = false;
+		var autoreconnect = true;
 
 		$scope.update = function(user, noRefresh) {
 			$scope.master = angular.copy(user);
-			$scope.updateStatus();
+			if (connected) {
+				$scope.updateStatus();
+			}
 			if (!noRefresh) {
 				$scope.refreshWebrtcSettings();
 			}
@@ -190,9 +195,9 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				message: $scope.master.message || null
 			}
 			if (_.isEqual(status, cache.status)) {
-				console.log("Status update skipped, as status has not changed.")
+				//console.log("Status update skipped, as status has not changed.")
 			} else {
-				console.log("Updating own status", status);
+				console.log("Updating own status", JSON.stringify(status), JSON.stringify(cache.status));
 				mediaStream.api.updateStatus(status);
 				cache.status = _.clone(status);
 			}
@@ -522,10 +527,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 			alertify.dialog.alert(translation._("Oops") + "<br/>" + message);
 		});
-
-		var reconnecting = false;
-		var connected = false;
-		var autoreconnect = true;
 
 		var reconnect = function() {
 			if (connected && autoreconnect) {
