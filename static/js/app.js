@@ -168,6 +168,13 @@ define([
 
 		});
 
+		app.directive("spreedWebrtc", [function() {
+			return {
+				restrict: "A",
+				controller: "MediastreamController"
+			}
+		}]);
+
 		return app;
 
 	};
