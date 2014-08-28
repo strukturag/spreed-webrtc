@@ -21,12 +21,12 @@
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddySession', function($scope, $modalInstance, contactData, data, contacts, buddySession) {
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddyData', function($scope, $modalInstance, contactData, data, contacts, buddyData) {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
 		$scope.contact = null;
-		$scope.session = null;
+		$scope.buddySyncable = false;
 
 		var tmp = {
 			displayName: data.contact ? data.contact.Status.displayName : null
@@ -52,14 +52,12 @@ define([], function() {
 		});
 
 		// Values to check include 0, so check for number to get around incorrect 'false' type conversion
-		if(angular.isNumber(data.contactIndex)) {
+		if (angular.isNumber(data.contactIndex)) {
 			$scope.contact = $scope.contacts[data.contactIndex];
-			var sessions = buddySession.sessions();
-			for (var id in sessions) {
-				if (sessions.hasOwnProperty(id) && sessions[id].Userid === $scope.contact.Userid) {
-					$scope.session = sessions[id] ? sessions[id].sessions[id] : null;
-					//console.log('contact manager session', $scope.session);
-				}
+			var scope = buddyData.lookup($scope.contact.Userid, false, false);
+			if(scope) {
+				var session = scope.session.get();
+				$scope.buddySyncable = session.Type ? true : false;
 			}
 		}
 
@@ -70,7 +68,11 @@ define([], function() {
 		};
 
 		$scope.syncContactInfo = function() {
-			$scope.contact.Status.displayName = $scope.session.Status.displayName;
+			var scope = buddyData.lookup($scope.contact.Userid, false, false);
+			if(scope) {
+				var session = scope.session.get();
+				$scope.contact.Status.displayName = session.Status.displayName;
+			}
 		};
 
 		$scope.save = function() {

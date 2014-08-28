@@ -12,7 +12,7 @@
             <input placeholder="{{_('Unnamed')}}" type="text" class="form-control" ng-model="contact.Status.displayName">
           </div>
         </div>
-        <div class="form-group" ng-if="session.Type">
+        <div class="form-group" ng-if="buddySyncable">
           <label class="col-xs-4 control-label">{{_('Sync')}}</label>
           <div class="col-xs-6">
             <button class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
