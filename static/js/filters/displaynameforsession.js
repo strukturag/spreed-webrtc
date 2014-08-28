@@ -18,31 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([
-	'underscore',
+define(["jquery"], function($) {
 
-	'filters/displayname',
-	'filters/buddyimagesrc',
-	'filters/displayconference',
-	'filters/displayuserid',
-	'filters/displaynameforsession'], function(_, displayName, buddyImageSrc, displayConference, displayUserid, displayNameForSession) {
+	// displayNameForSession
+	return ["$filter", function($filter) {
 
-	var filters = {
-		displayName: displayName,
-		buddyImageSrc: buddyImageSrc,
-		displayConference: displayConference,
-		displayUserid: displayUserid,
-		displayNameForSession: displayNameForSession
-	};
+		return function(displayName, id) {
+			if ($.trim(displayName) !== "") {
+				return displayName;
+			}
+			return $filter("displayName")(id)
+		};
 
-	var initialize = function(angModule) {
-		_.each(filters, function(filter, name) {
-			angModule.filter(name, filter);
-		})
-	}
-
-	return {
-		initialize: initialize
-	};
+	}];
 
 });
