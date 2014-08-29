@@ -53,6 +53,7 @@ require.config({
 		'pdf.worker': 'libs/pdf/pdf.worker',
 		'pdf.compatibility': 'libs/pdf/compatibility',
 		'webodf': 'libs/webodf',
+		'bootstrap-file-input': 'libs/bootstrap.file-input',
 
 		'partials': '../partials',
 		'sounds': '../sounds',
@@ -125,9 +126,13 @@ require.config({
 					webodf: webodf,
 					odf: odf,
 					runtime: runtime
-				}
+				};
 			}
-		}
+		},
+		'bootstrap-file-input': {
+			deps: ['jquery'],
+			exports: 'BootstrapFileInput'
+		},
 	}
 });
 

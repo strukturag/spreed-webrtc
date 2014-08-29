@@ -1,5 +1,6 @@
 <div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
-	<div class="showUploadPicture">
+	<div class="showUploadPicture" ng-class="{imgData: imgData}">
+		<p class="chooseUploadPicture">{{_('Choose a picture')}}</p>
 		<div class="imageUtilites">
 			<div class="moveHorizontal">
 				<i id="arrow-left" class="fa fa-long-arrow-left"></i>
@@ -21,7 +22,7 @@
 	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max upload size is %d Mb', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>
 	<p ng-if="!imgData">{{_('Please choose a picture to upload, max %d Mb', maxUploadMb)}}</p>
 	<p ng-if="imgData">{{_('Upload a different picture')}}</p>
-	<div><input id="uploadFile" type="file"></div>
+	<div><input id="uploadFile" type="file" data-filename-placement="outside"></div>
 	<div ng-if="upload.status != 100 && upload.status != 0">
 		<br>
 		<progressbar class="progress-striped active" value="upload.status"><i>{{upload.status | number:0}}%</i></progressbar>
