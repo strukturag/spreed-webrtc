@@ -55,7 +55,8 @@ define([
 	'services/screensharing',
 	'services/continueconnector',
 	'services/chromeextension',
-	'services/usersettingsdata'], function(_,
+	'services/usersettingsdata',
+	'services/localstatus'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -90,7 +91,8 @@ geolocation,
 screensharing,
 continueConnector,
 chromeExtension,
-userSettingsData) {
+userSettingsData,
+localStatus) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -127,14 +129,15 @@ userSettingsData) {
 		screensharing: screensharing,
 		continueConnector: continueConnector,
 		chromeExtension: chromeExtension,
-		userSettingsData: userSettingsData
+		userSettingsData: userSettingsData,
+		localStatus: localStatus
 	};
 
 	var initialize = function(angModule) {
 		_.each(services, function(service, name) {
 			angModule.factory(name, service);
 		})
-	}
+	};
 
 	return {
 		initialize: initialize

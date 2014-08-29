@@ -401,6 +401,10 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 			//console.log("updateDisplay", data, scope);
 			var status = data.Status;
+			if (!status) {
+				return;
+			}
+
 			var display = scope.display;
 			var contact = scope.contact && scope.contact.Status;
 			// Update display name.

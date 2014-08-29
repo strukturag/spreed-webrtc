@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -157,7 +157,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		$scope.master = angular.copy($scope.defaults);
 
 		// Data voids.
-		var cache = {};
 		var resurrect = null;
 		var reconnecting = false;
 		var connected = false;
@@ -187,20 +186,17 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			return $scope.status;
 		};
 
-		$scope.updateStatus = function() {
+		$scope.updateStatus = function(clear) {
 			// This is the user status.
 			var status = {
 				displayName: $scope.master.displayName || null,
 				buddyPicture: $scope.master.buddyPicture || null,
 				message: $scope.master.message || null
 			}
-			if (_.isEqual(status, cache.status)) {
-				//console.log("Status update skipped, as status has not changed.")
-			} else {
-				//console.log("Updating own status", JSON.stringify(status));
-				mediaStream.api.updateStatus(status);
-				cache.status = _.clone(status);
+			if (clear) {
+				localStatus.clear();
 			}
+			localStatus.update(status);
 		};
 
 		$scope.refreshWebrtcSettings = function() {
@@ -554,8 +550,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 					t = "waiting";
 					connected = true;
 					reconnecting = false;
-					cache = {}; // Start fresh.
-					$scope.updateStatus();
+					$scope.updateStatus(true);
 					if (opts.soft) {
 						return;
 					}
