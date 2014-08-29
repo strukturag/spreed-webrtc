@@ -18,33 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([
-	'underscore',
+define([], function() {
 
-	'filters/displayname',
-	'filters/buddyimagesrc',
-	'filters/displayconference',
-	'filters/displayuserid',
-	'filters/displaynameforsession',
-	'filters/geolocation'], function(_, displayName, buddyImageSrc, displayConference, displayUserid, displayNameForSession, geolocation) {
-
-	var filters = {
-		displayName: displayName,
-		buddyImageSrc: buddyImageSrc,
-		displayConference: displayConference,
-		displayUserid: displayUserid,
-		displayNameForSession: displayNameForSession,
-		geolocation: geolocation
-	};
-
-	var initialize = function(angModule) {
-		_.each(filters, function(filter, name) {
-			angModule.filter(name, filter);
-		})
-	}
-
-	return {
-		initialize: initialize
-	};
+	// geolocation
+	/* Purpose: append appropriate sign next to distance, supports converting
+		metres to kilometres. Defaults to metres
+		Using: number-in-metres | geolocation[:'m'][:'km']
+	*/
+	return [function() {
+		return function(distance, units) {
+			switch (units) {
+				case 'km':
+					return distance/1000 + units;
+				default:
+					return distance + 'm';
+			}
+		};
+	}];
 
 });
