@@ -21,34 +21,29 @@
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddyData', function($scope, $modalInstance, contactData, data, contacts, buddyData) {
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddyData', 'safeApply', function($scope, $modalInstance, contactData, data, contacts, buddyData, safeApply) {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
 		$scope.contact = null;
 		$scope.buddySyncable = false;
 
-		var tmp = {
-			displayName: data.contact ? data.contact.Status.displayName : null
-		};
 		var setContactInfo = function(contact) {
 			contacts.update(contact.Userid, contact.Status);
 		};
-		var updateContacts = function(async) {
-			if (async) {
-				$scope.$apply(function(scope) {
-					scope.contacts = contactData.getAll();
-				});
-			} else {
-				$scope.contacts = contactData.getAll();
-			}
+		var updateContacts = function() {
+			$scope.contacts = contactData.getAll();
+			safeApply($scope);
 		};
 		updateContacts();
 		contacts.e.on('contactadded', function() {
-			updateContacts(true);
+			updateContacts();
 		});
 		contacts.e.on('contactupdated', function() {
-			updateContacts(true);
+			updateContacts();
+		});
+		contacts.e.on('contactremoved', function() {
+			updateContacts();
 		});
 
 		// Values to check include 0, so check for number to get around incorrect 'false' type conversion
@@ -60,10 +55,13 @@ define([], function() {
 				$scope.buddySyncable = session.Type ? true : false;
 			}
 		}
+		var tmp = {
+			displayName: $scope.contact ? $scope.contact.Status.displayName : null
+		};
 
 		$scope.removeContact = function() {
+			// async, see contactremoved callback
 			contacts.remove($scope.contact.Userid);
-			updateContacts();
 			$modalInstance.close();
 		};
 
