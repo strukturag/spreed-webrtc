@@ -399,7 +399,7 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 
 		Buddylist.prototype.updateDisplay = function(id, scope, data, queueName) {
 
-			//console.log("updateDisplay", 'data', data, 'scope', scope);
+			//console.log("updateDisplay", data, scope);
 			var status = data.Status;
 			var display = scope.display;
 			var contact = scope.contact && scope.contact.Status;
