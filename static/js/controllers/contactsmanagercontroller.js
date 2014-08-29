@@ -21,25 +21,71 @@
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", function($scope, $modalInstance, contactData, data, contacts) {
-
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'buddyData', 'safeApply', function($scope, $modalInstance, contactData, data, contacts, buddyData, safeApply) {
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.search = {};
+		$scope.contact = null;
+		$scope.buddySyncable = false;
 
+		var setContactInfo = function(contact) {
+			contacts.update(contact.Userid, contact.Status);
+		};
 		var updateContacts = function() {
 			$scope.contacts = contactData.getAll();
+			safeApply($scope);
 		};
 		updateContacts();
 		contacts.e.on('contactadded', function() {
 			updateContacts();
 		});
-
-		$scope.removeContact = function(id) {
-			contacts.remove(id);
+		contacts.e.on('contactupdated', function() {
 			updateContacts();
+		});
+		contacts.e.on('contactremoved', function() {
+			updateContacts();
+		});
+
+		// Values to check include 0, so check for number to get around incorrect 'false' type conversion
+		if (angular.isNumber(data.contactIndex)) {
+			$scope.contact = $scope.contacts[data.contactIndex];
+			var scope = buddyData.lookup($scope.contact.Userid, false, false);
+			if(scope) {
+				var session = scope.session.get();
+				$scope.buddySyncable = session.Type ? true : false;
+			}
+		}
+		var tmp = {
+			displayName: $scope.contact ? $scope.contact.Status.displayName : null
 		};
 
+		$scope.removeContact = function() {
+			// async, see contactremoved callback
+			contacts.remove($scope.contact.Userid);
+			$modalInstance.close();
+		};
+
+		$scope.syncContactInfo = function() {
+			var scope = buddyData.lookup($scope.contact.Userid, false, false);
+			if(scope) {
+				var session = scope.session.get();
+				$scope.contact.Status.displayName = session.Status.displayName;
+			}
+		};
+
+		$scope.save = function() {
+			setContactInfo($scope.contact);
+			$modalInstance.close();
+		};
+
+		$scope.cancel = function(contact) {
+			$scope.contact.Status.displayName = tmp.displayName;
+			$modalInstance.dismiss();
+		};
+
+		$scope.edit = function(index) {
+			$scope.$broadcast('openEditContact', index);
+		};
 	}];
 
 });

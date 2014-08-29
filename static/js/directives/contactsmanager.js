@@ -18,23 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([], function() {
+define(['underscore', 'jquery'], function(_, $) {
 
-	return ["$rootScope", function($rootScope) {
-		return function($scope, fn) {
-			var phase = $scope.$root ? $scope.$root.$$phase : $scope.$$phase;
-			if (phase == '$apply' || phase == '$digest') {
-				if (fn) {
-					$scope.$eval(fn);
-				}
-			} else {
-				if (fn) {
-					$scope.$apply(fn);
-				} else {
-					$scope.$apply();
-				}
-			}
-		}
+	// contactsmanager
+	return [function() {
+
+		var controller = ['$scope', 'dialogs', 'translation', function($scope, dialogs, translation) {
+
+			var editContactDialog = function(index) {
+				return dialogs.create(
+					"/contactsmanager/edit.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Edit Contact"),
+						contactIndex: index,
+					}, {
+						wc: "contactsmanager"
+					}
+				);
+			};
+
+			$scope.$on('openEditContact', function(event, index) {
+				editContactDialog(index);
+			});
+		}];
+
+		return {
+			scope: true,
+			restrict: "A",
+			controller: controller,
+		};
+
 	}];
 
 });
