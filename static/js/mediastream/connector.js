@@ -30,6 +30,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.error = false;
 		this.connected = false;
 		this.disabled = false;
+		this.isopen = false;
 		this.connecting = null;
 		this.connecting_timeout = timeout;
 
@@ -99,7 +100,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	Connector.prototype.close = function() {
 
-		this.connected = false;
+		this.connected = this.isopen = false;
 		if (this.conn) {
 			var conn = this.conn;
 			this.conn = null;
@@ -136,10 +137,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.roomid = roomid;
 		roomid = this.roomid ? this.roomid : "";
 
-		if (cb) {
-			cb();
-		}
-
 		this.send({
 			Type: "Hello",
 			Hello: {
@@ -147,7 +144,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				Ua: this.userAgent,
 				Id: roomid
 			}
-		});
+		}, true);
+
+		if (cb) {
+			cb();
+		}
 
 		if (was_connected) {
 			this.e.triggerHandler("open", [{
@@ -161,11 +162,14 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		window.clearTimeout(this.connecting);
 		this.connecting_timeout = timeout;
+		this.isopen = true;
 
 		//console.log("onopen", event);
 		console.info("Connector on connection open.");
 		this.room(this.roomid, _.bind(function() {
 			this.connected = true;
+			//console.log("Connector sent hello to room:", this.roomid);
+			this.e.triggerHandler("helloed");
 		}, this));
 		this.e.triggerHandler("open", [null, event]);
 
