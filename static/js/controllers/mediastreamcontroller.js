@@ -162,20 +162,18 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		var connected = false;
 		var autoreconnect = true;
 
-		$scope.update = function(user, noRefresh) {
+		$scope.update = function(user) {
 			$scope.master = angular.copy(user);
 			if (connected) {
 				$scope.updateStatus();
 			}
-			if (!noRefresh) {
-				$scope.refreshWebrtcSettings();
-			}
-
+			$scope.refreshWebrtcSettings();
 		};
 
 		$scope.reset = function() {
 			$scope.user = angular.copy($scope.master);
 		};
+		$scope.reset(); // Call once for bootstrap.
 
 		$scope.setStatus = function(status) {
 			// This is the connection status to signaling server.
@@ -282,6 +280,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			//console.log("WebRTC settings", mediaStream.webrtc.settings);
 
 		};
+		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
 		var pickupTimeout = null;
 		var autoAcceptTimeout = null;
@@ -320,16 +319,13 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 		};
 
-		// Load user settings.
-		$scope.loadUserSettings = function(norefresh, clear) {
-			if (clear) {
-				$scope.master = angular.copy($scope.defaults);
-			}
+		$scope.loadUserSettings = function() {
+			$scope.master = angular.copy($scope.defaults);
 			var storedUser = userSettingsData.load();
 			if (storedUser) {
 				$scope.user = $.extend(true, {}, $scope.master, storedUser);
 				$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
-				$scope.update($scope.user, norefresh);
+				$scope.update($scope.user);
 				$scope.loadedUser = storedUser.displayName && true;
 				// Add room definition to root to be availale on initial connect.
 				$rootScope.roomid = $scope.user.settings.defaultRoom || "";
@@ -627,15 +623,17 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 		});
 
-		$scope.$watch("userid", function(userid) {
+		$scope.$watch("userid", function(userid, olduserid) {
 			var suserid;
 			if (userid) {
 				suserid = $scope.suserid;
 				console.info("Session is now authenticated:", userid, suserid);
 			}
-			appData.e.triggerHandler("authenticationChanged", [userid, suserid]);
-			// Load user settings after authentication changed.
-			$scope.loadUserSettings(false, true);
+			if (userid !== olduserid) {
+				appData.e.triggerHandler("authenticationChanged", [userid, suserid]);
+				// Load user settings after authentication changed.
+				$scope.loadUserSettings();
+			}
 		});
 
 		// Apply all layout stuff as classes to our element.
