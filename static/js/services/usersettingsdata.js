@@ -87,7 +87,18 @@ define(["sjcl"], function(sjcl) {
 			userSettingsData.setEncryption(userid, suserid);
 		});
 
-		return userSettingsData;
+		// public API.
+		return {
+			load: function() {
+				return userSettingsData.load()
+			},
+			save: function(data) {
+				return userSettingsData.save(data);
+			},
+			clear: function() {
+				return userSettingsData.clear()
+			}
+		};
 
 	}];
 
