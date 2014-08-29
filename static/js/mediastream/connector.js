@@ -167,7 +167,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.room(this.roomid, _.bind(function() {
 			this.connected = true;
 		}, this));
-		this.e.triggerHandler("open", [event]);
+		this.e.triggerHandler("open", [null, event]);
 
 		// Send out stuff which was previously queued.
 		var data;
@@ -187,7 +187,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		console.warn("Connector on connection error.");
 		this.error = true;
 		this.close();
-		this.e.triggerHandler("error", [event]);
+		this.e.triggerHandler("error", [null, event]);
 
 	};
 
@@ -200,9 +200,9 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		console.info("Connector on connection close.", event, this.error);
 		this.close();
 		if (!this.error) {
-			this.e.triggerHandler("close", [event]);
+			this.e.triggerHandler("close", [null, event]);
 		}
-		this.e.triggerHandler("closed", [event]);
+		this.e.triggerHandler("closed", [null, event]);
 
 	};
 
