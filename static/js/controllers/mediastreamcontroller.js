@@ -338,7 +338,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 			$scope.reset();
 		};
-		$scope.loadUserSettings(true);
 
 		$scope.toggleBuddylist = (function() {
 			var oldState = null;
@@ -372,8 +371,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			$timeout.cancel(ttlTimeout);
 			safeApply($scope, function(scope) {
 				scope.id = scope.myid = data.Id;
-				scope.userid = data.Userid;
-				scope.suserid = data.Suserid;
+				scope.userid = data.Userid ? data.Userid : null;
+				scope.suserid = data.Suserid ? data.Suserid : null;
 				scope.turn = data.Turn;
 				scope.stun = data.Stun;
 				scope.refreshWebrtcSettings();
