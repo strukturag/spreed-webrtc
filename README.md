@@ -80,7 +80,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
 
   - [NodeJS](http://nodejs.org/) >= 0.10.0
   - [JSHint](http://www.jshint.com/) >= 2.0.0
-  - [Sass](http://sass-lang.com/) >= 3.2.0
+  - [Sass](http://sass-lang.com/) >= 3.4.0
   - [Compass](http://compass-style.org/)
   - [autoprefixer](https://www.npmjs.org/package/autoprefixer) 1.1
   - [Babel](http://babel.pocoo.org/)
