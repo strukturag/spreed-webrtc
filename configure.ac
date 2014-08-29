@@ -71,9 +71,6 @@ if test x"${JSHINT}" != x"" ; then
 fi
 AC_SUBST(JSHINT)
 
-AC_PATH_PROGS([JS_BEAUTIFY],[js-beautify])
-AC_SUBST(JS_BEAUTIFY)
-
 AC_PATH_PROGS([PYTHON],[python2 python])
 if test x"${PYTHON}" != x"" ; then
     AC_MSG_CHECKING([for version of python2])
@@ -110,19 +107,6 @@ fi
 AC_SUBST(NODEJS)
 AC_SUBST(NODEJS_SUPPORT_STYLES)
 
-AC_PATH_PROGS([SASS],[sass])
-if test x"${SASS}" == x"" ; then
-    AC_MSG_WARN([Please install sass before trying to build styles.])
-else
-    AC_MSG_CHECKING([for version of sass])
-    SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
-    AC_MSG_RESULT([$SASS_VERSION])
-    AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
-        [AC_MSG_WARN([Please install sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
-        SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
-fi
-AC_SUBST(SASS)
-
 AC_PATH_PROGS([COMPASS],[compass])
 if test x"${COMPASS}" == x"" ; then
     AC_MSG_WARN([Please install compass before trying to build styles.])
@@ -132,6 +116,19 @@ else
     AC_MSG_RESULT([$COMPASS_VERSION])
 fi
 AC_SUBST(COMPASS)
+
+AC_PATH_PROGS([SASS],[sass])
+if test x"${SASS}" == x"" ; then
+    AC_MSG_WARN([Please install sass before trying to build styles.])
+else
+    AC_MSG_CHECKING([for version of sass])
+    SASS_VERSION=`$SASS --version | $SED 's/^Sass //' | $SED 's/ .*//'`
+    AC_MSG_RESULT([$SASS_VERSION])
+    AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
+        [AC_MSG_WARN([Please install compass with sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
+        SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
+fi
+AC_SUBST(SASS)
 
 if test x"${SASS}" != x"" ; then
     AC_MSG_CHECKING([for compass support in sass])
