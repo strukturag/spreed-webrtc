@@ -61,7 +61,7 @@ $pane-width: 260px !default;
 // font
 $font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif !default;
 $base-font-size: 13px; // compass vertical_rhythm mixin
-$base-line-height: 1.53846156; // compass vertical_rhythm mixin
+$base-line-height: 20px; // compass vertical_rhythm mixin
 $font-color: lighten(#000, 20%) !default;
 $font-color-accent: lighten($font-color, 50%) !default;
 
@@ -186,7 +186,7 @@ $body-bg: $background !default;
 $font-family-sans-serif: $font-sans-serif !default;
 $font-family-base: $font-family-sans-serif !default;
 $font-size-base: $base-font-size !default;
-$font-size-base: $base-font-size !default;
-$line-height-base: $base-line-height !default;
 $text-color: $font-color !default;
 $dialog-header-neutral: #eee !default;
+
+$line-height-base: $base-line-height / $font-size-base;
