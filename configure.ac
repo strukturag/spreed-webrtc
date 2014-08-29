@@ -135,7 +135,7 @@ AC_SUBST(COMPASS)
 
 if test x"${SASS}" != x"" ; then
     AC_MSG_CHECKING([for compass support in sass])
-    tempfile=`mktemp`
+    tempfile=`mktemp -t XXXXXXblah`
     cd src/styles
     $SASS --compass $tempfile > /dev/null 2> /dev/null
     sass_compass=$?
