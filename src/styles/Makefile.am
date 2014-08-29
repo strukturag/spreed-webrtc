@@ -19,7 +19,7 @@
 #
 
 AUTOMAKE_OPTIONS = -Wno-portability
-SASSFLAGS = --style=compressed --no-cache
+SASSFLAGS = --style=compressed --no-cache --sourcemap=none
 AUTOPREFIXER_BROWSER_SUPPORT := "> 1%, last 2 versions, Firefox ESR, Opera 12.1"
 STATIC = ../../static
 

@@ -36,7 +36,7 @@ AC_SUBST(I18N_BUG_ADDRESS)
 GO_VERSION_MIN=1.1
 NODEJS_VERSION_MIN=0.6.0
 NODEJS_VERSION_STYLES_MIN=0.10.0
-SASS_VERSION_MIN=3.2.0
+SASS_VERSION_MIN=3.3.0
 
 AC_CONFIG_SRCDIR([src/app/spreed-webrtc-server/main.go])
 AC_CONFIG_HEADERS([config.h])
@@ -136,9 +136,11 @@ AC_SUBST(COMPASS)
 if test x"${SASS}" != x"" ; then
     AC_MSG_CHECKING([for compass support in sass])
     tempfile=`mktemp`
+    cd src/styles
     $SASS --compass $tempfile > /dev/null 2> /dev/null
     sass_compass=$?
     rm $tempfile
+    cd ../../
     if test x"${sass_compass}" != x"0" ; then
         AC_MSG_RESULT([not available])
         AC_MSG_WARN([Please install compass so it can be used using "sass --compass ...".])

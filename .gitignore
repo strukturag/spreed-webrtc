@@ -10,6 +10,7 @@
 /src/styles/.sass-cache
 /static/fonts/*
 /static/js/main.min.js
+/static/css/*.css.map
 /tokens.txt
 /dist
 *~

@@ -17,6 +17,7 @@ before_install:
 
 install:
   - sudo apt-get -y install nodejs rubygems python-babel
+  - sudo gem install oj
   - sudo gem install compass
   - npm install -g po2json
   - npm install -g autoprefixer
