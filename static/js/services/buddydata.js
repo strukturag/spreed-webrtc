@@ -136,9 +136,9 @@ define(['underscore'], function(underscore) {
 								// Fetch with help of session attestation token.
 								fake = fakes[id] = {};
 								var token = attestations[id].a;
-								console.log("attestation request", id);
+								//console.log("attestation request", id);
 								mediaStream.api.sendSessions(token, "session", function(event, type, data) {
-									console.log("attestation session response", id, type, data);
+									//console.log("attestation session response", id, type, data);
 									if (data.Users && data.Users.length > 0) {
 										var s = data.Users[0];
 										fake.display = {
@@ -200,7 +200,7 @@ define(['underscore'], function(underscore) {
 					}
 				}
 				if (create) {
-					console.log("Created attestation entry", from);
+					//console.log("Created attestation entry", from);
 					attestations[from] = {
 						a: attestation,
 						t: (new Date().getTime())
