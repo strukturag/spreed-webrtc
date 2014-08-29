@@ -176,7 +176,7 @@ define(["underscore"], function(_) {
 				}
 				this.add(id, s);
 			}, this));
-			console.log("Merged sessions", this, otherSession);
+			//console.log("Merged sessions", this, otherSession);
 		};
 
 		return {
