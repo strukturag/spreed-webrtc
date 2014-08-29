@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
+define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootstrap-file-input'], function($, _, template, BootstrapFileInput) {
 
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
@@ -254,6 +254,8 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$element.find("#smaller").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
 			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+
+			$('#uploadFile').bootstrapFileInput();
 		};
 
 		return {

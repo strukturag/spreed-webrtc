@@ -20,7 +20,7 @@
  */
 
 .buddyPictureUpload {
-    position: relative;
+   position: relative;
   .previewUpload {
   }
   .showUploadPicture {
@@ -31,7 +31,16 @@
     overflow: hidden;
     text-align: center;
     width: 200px;
-    background-color: black;
+    background-color: $componentbg;
+    &.imgData {
+      background-color: black;
+      .chooseUploadPicture {
+        display: none;
+      }
+    }
+    .chooseUploadPicture {
+      color: $componentfg4;
+    }
   }
   .preview {
     position: relative;
@@ -54,7 +63,7 @@
       height: 50px;
     }
   }
-  .showUploadPicture:hover .imageUtilites {
+  .showUploadPicture.imgData:hover .imageUtilites {
     visibility:visible;
   }
   .moveHorizontal {
