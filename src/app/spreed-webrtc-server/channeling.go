@@ -67,13 +67,13 @@ type DataTurn struct {
 type DataSession struct {
 	Type    string
 	Id      string
-	Userid  string `json:",omitempty"`
-	Ua      string `json:",omitempty"`
-	Token   string `json:",omitempty"`
-	Version string `json:",omitempty"`
-	Rev     uint64 `json:",omitempty"`
-	Prio    int    `json:",omitempty"`
-	Status  interface{}
+	Userid  string      `json:",omitempty"`
+	Ua      string      `json:",omitempty"`
+	Token   string      `json:",omitempty"`
+	Version string      `json:",omitempty"`
+	Rev     uint64      `json:",omitempty"`
+	Prio    int         `json:",omitempty"`
+	Status  interface{} `json:",omitempty"`
 	stamp   int64
 }
 
