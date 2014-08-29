@@ -4,21 +4,19 @@
     <h3 class="modal-title" ng-bind-html="header"></h3>
   </div>
   <div  class="modal-body">
-    <div class="row">
-      <form class="form-horizontal">
+    <div class="row  form-horizontal">
         <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Name')}}</label>
+          <label for="contact-name" class="col-xs-4 control-label">{{_('Name')}}</label>
           <div class="col-xs-6">
-            <input placeholder="{{_('Unnamed')}}" type="text" class="form-control" ng-model="contact.Status.displayName">
+            <input id="contact-name" class="form-control" type="text" placeholder="{{_('Unnamed')}}" ng-model="contact.Status.displayName">
           </div>
         </div>
         <div class="form-group" ng-if="buddySyncable">
-          <label class="col-xs-4 control-label">{{_('Sync')}}</label>
+          <label for="contact-sync" class="col-xs-4 control-label">{{_('Sync')}}</label>
           <div class="col-xs-6">
-            <button class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
+            <button id="contact-sync" class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
           </div>
         </div>
-      </form>
     </div>
   </div>
   <div class="modal-footer">
