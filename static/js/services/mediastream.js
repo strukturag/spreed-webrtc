@@ -280,21 +280,11 @@ define([
 
 				// Room selector.
 				$rootScope.$on("$locationChangeSuccess", function(event) {
-					/*var defaultRoom, room;
-					room = defaultRoom = $rootScope.roomid || "";
-					if ($route.current) {
-						room = $route.current.params.room;
-					} else {
-						room = "";
-					}
-					if (!ready && room !== defaultRoom && !room) {
-						// First start.
-						$location.path("/" + defaultRoom).replace();
-						return;
-					}*/
+
 					var room;
 					if ($route.current) {
 						room = $route.current.params.room;
+						room = $window.decodeURIComponent(room);
 					} else {
 						room = "";
 					}
