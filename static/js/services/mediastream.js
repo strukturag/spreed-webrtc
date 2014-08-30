@@ -45,6 +45,7 @@ define([
 
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
+		var authorizing = false;
 
 		var mediaStream = {
 			version: version,
@@ -134,7 +135,12 @@ define([
 						});
 					}
 				},
+				authorizing: function(value) {
+					// Boolean flag to indicate that an authentication is currently in progress.
+					authorizing = !!value;
+				},
 				authorize: function(data, success_cb, error_cb) {
+					mediaStream.users.authorizing(true);
 					var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
 					var login = _.clone(data);
 					login.id = mediaStream.api.id;
@@ -151,12 +157,14 @@ define([
 						if (data.nonce !== "" && data.success) {
 							success_cb(data, status);
 						} else {
+							mediaStream.users.authorizing(false);
 							if (error_cb) {
 								error_cb(data, status);
 							}
 						}
 					}).
 					error(function(data, status) {
+						mediaStream.users.authorizing(false);
 						if (error_cb) {
 							error_cb(data, status)
 						}
@@ -225,6 +233,17 @@ define([
 				});
 				return id;
 			},
+			applyRoom: function() {
+				if (authorizing) {
+					// Do nothing while authorizing.
+					return;
+				}
+				var roomid = $rootScope.roomid;
+				if (roomid !== connector.roomid) {
+					console.log("Apply room", roomid);
+					connector.room(roomid);
+				}
+			},
 			initialize: function($rootScope, translation) {
 
 				var cont = false;
@@ -280,16 +299,17 @@ define([
 						room = "";
 					}
 					console.info("Selected room is:", [room], ready, cont);
+					$rootScope.roomid = room;
+
 					if (!ready || !cont) {
 						ready = true;
-						connector.roomid = room;
 						connect();
 					} else {
-						connector.room(room);
+						// Auto apply room when already connected.
+						mediaStream.applyRoom();
 					}
-					$rootScope.roomid = room;
-					$rootScope.roomlink = room ? mediaStream.url.room(room) : null;
 
+					$rootScope.roomlink = room ? mediaStream.url.room(room) : null;
 					if ($rootScope.roomlink) {
 						title.element.text(room + " - " + title.text);
 					} else {
@@ -303,6 +323,7 @@ define([
 				var roomCache = null;
 				var roomCache2 = null;
 				$rootScope.$on("roomStatus", function(event, status) {
+					// roomStatus is triggered by the buddylist when received.users.
 					roomStatusCache = status ? true : false;
 					roomCache = status ? $rootScope.roomid : null;
 					$timeout(function() {
@@ -310,6 +331,7 @@ define([
 							$rootScope.roomstatus = roomStatusCache;
 						}
 						if (roomCache !== roomCache2) {
+							// Let every one know about the new room.
 							$rootScope.$broadcast("room", roomCache);
 							roomCache2 = roomCache;
 						}

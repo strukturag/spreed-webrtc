@@ -431,7 +431,16 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				}, 0);
 			}
 
+			// Propagate authentication event.
 			appData.e.triggerHandler("selfReceived", [data]);
+
+			// Unmark authorization process.
+			if (data.Userid) {
+				mediaStream.users.authorizing(false);
+			}
+
+			// Always apply room after self received to avoid double stuff.
+			mediaStream.applyRoom();
 
 		});
 
