@@ -52,21 +52,29 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			});
 
 			$scope.saveSettings = function() {
-				var user = $scope.user;
-				$scope.update(user);
-				$scope.layout.settings = false;
-				if ($scope.rememberSettings) {
-					userSettingsData.save(user);
-					localStorage.setItem("mediastream-language", user.settings.language || "");
-				} else {
-					userSettingsData.clear();
-					localStorage.removeItem("mediastream-language");
-					localStorage.removeItem("mediastream-access-code");
+				var form = $scope.settingsform;
+				if (form.$valid && form.$dirty) {
+					var user = $scope.user;
+					$scope.update(user);
+					if ($scope.rememberSettings) {
+						userSettingsData.save(user);
+						localStorage.setItem("mediastream-language", user.settings.language || "");
+					} else {
+						userSettingsData.clear();
+						localStorage.removeItem("mediastream-language");
+						localStorage.removeItem("mediastream-access-code");
+					}
+					form.$setPristine();
 				}
+				$scope.layout.settings = false;
 			};
 
 			$scope.cancelSettings = function() {
+				var form = $scope.settingsform;
 				$scope.reset();
+				if (form.$dirty) {
+					form.$setPristine();
+				}
 				$scope.layout.settings = false;
 			};
 

@@ -1,6 +1,6 @@
 <div class="settings nicescroll">
   <div class="version">{{version}}</div>
-  <div class="form-horizontal" on-enter="saveSettings(user)" on-escape="reset()"
+  <div ng-form="settingsform" class="form-horizontal" on-enter="saveSettings(user)" on-escape="cancelSettings()"
     <fieldset>
 
       <settings-profile>
