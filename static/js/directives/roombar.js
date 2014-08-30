@@ -21,7 +21,7 @@
 define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 
 	// roomBar
-	return ["$window", "$rootScope", "$location", function($window, $rootScope, $location) {
+	return ["$window", "$rootScope", "mediaStream", function($window, $rootScope, mediaStream) {
 
 		var link = function($scope) {
 
@@ -30,7 +30,7 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 			$scope.hideRoomBar = true;
 
 			$scope.save = function() {
-				var roomid = $scope.changeRoomToId($scope.newroomid);
+				var roomid = mediaStream.changeRoom($scope.newroomid);
 				if (roomid !== $rootScope.roomid) {
 					$scope.roombarform.$setPristine();
 				}

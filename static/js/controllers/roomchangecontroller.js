@@ -21,7 +21,7 @@
 define([], function() {
 
 	// RoomchangeController
-	return ["$scope", "$element", "$window", "$location", "mediaStream", "$http", "$timeout", function($scope, $element, $window, $location, mediaStream, $http, $timeout) {
+	return ["$scope", "$element", "$window", "mediaStream", "$http", "$timeout", function($scope, $element, $window, mediaStream, $http, $timeout) {
 
 		//console.log("Room change controller", $element, $scope.roomdata);
 
@@ -49,9 +49,7 @@ define([], function() {
 		};
 
 		$scope.changeRoomToId = function(id) {
-			var roomid = $window.encodeURIComponent(id);
-			$location.path("/" + roomid);
-			return roomid;
+			return mediaStream.changeRoom(id);
 		};
 
 		$scope.refreshRoom = function() {

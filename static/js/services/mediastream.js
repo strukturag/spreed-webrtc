@@ -30,7 +30,7 @@ define([
 
 ], function($, _, uaparser, Modernizr, Connector, Api, WebRTC, tokens) {
 
-	return ["globalContext", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", function(context, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector) {
+	return ["globalContext", "$rootScope", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", function(context, $rootScope, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector) {
 
 		var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
 		var version = context.Cfg.Version || "unknown";
@@ -215,6 +215,16 @@ define([
 					}
 				});
 			},
+			changeRoom: function(id, replace) {
+				id = $window.encodeURIComponent(id);
+				safeApply($rootScope, function(scope) {
+					$location.path("/" + id);
+					if (replace) {
+						$location.replace();
+					}
+				});
+				return id;
+			},
 			initialize: function($rootScope, translation) {
 
 				var cont = false;
@@ -242,12 +252,6 @@ define([
 					}
 				};
 
-				$window.changeRoom = function(room) {
-					$rootScope.$apply(function(scope) {
-						$location.path("/" + room).replace();
-					});
-				};
-
 				var title = (function(e) {
 					return {
 						element: e,
@@ -257,8 +261,7 @@ define([
 
 				// Room selector.
 				$rootScope.$on("$locationChangeSuccess", function(event) {
-					//console.log("location change", $route, $rootScope.roomid);
-					var defaultRoom, room;
+					/*var defaultRoom, room;
 					room = defaultRoom = $rootScope.roomid || "";
 					if ($route.current) {
 						room = $route.current.params.room;
@@ -269,8 +272,14 @@ define([
 						// First start.
 						$location.path("/" + defaultRoom).replace();
 						return;
+					}*/
+					var room;
+					if ($route.current) {
+						room = $route.current.params.room;
+					} else {
+						room = "";
 					}
-					console.info("Selected room is:", [room]);
+					console.info("Selected room is:", [room], ready, cont);
 					if (!ready || !cont) {
 						ready = true;
 						connector.roomid = room;
@@ -377,6 +386,9 @@ define([
 
 			}
 		};
+
+		// For debugging.
+		$window.changeRoom = mediaStream.changeRoom;
 
 		return mediaStream;
 
