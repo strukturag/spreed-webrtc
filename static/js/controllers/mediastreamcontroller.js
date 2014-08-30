@@ -327,11 +327,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
 				$scope.update($scope.user);
 				$scope.loadedUser = storedUser.displayName && true;
-				// Add room definition to root to be availale on initial connect.
-				//$rootScope.roomid = $scope.user.settings.defaultRoom || "";
-				/*if (!$rootScope.roomid && $scope.user.settings.defaultRoom) {
-					$rootScope.roomid = $scope.user.settings.defaultRoom;
-				}*/
 			} else {
 				$scope.loadedUser = false;
 			}
@@ -433,6 +428,11 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 			// Propagate authentication event.
 			appData.e.triggerHandler("selfReceived", [data]);
+
+			if (!$rootScope.roomid && $scope.user.settings.defaultRoom) {
+				console.log("Selecting user based default room:", [$scope.user.settings.defaultRoom]);
+				mediaStream.changeRoom($scope.user.settings.defaultRoom, true);
+			}
 
 			// Unmark authorization process.
 			if (data.Userid) {
