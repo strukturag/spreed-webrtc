@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery'], function(_, $) {
+define(['underscore', 'jquery', 'text!partials/contactsmanageredit.html'], function(_, $, templateContactsManagerEdit) {
 
 	var ContactsManagerEditController = ["$scope", "$modalInstance", "data", "contacts", 'buddyData', function($scope, $modalInstance, data, contacts, buddyData) {
 		$scope.header = data.header;
@@ -63,10 +63,11 @@ define(['underscore', 'jquery'], function(_, $) {
 
 	}];
 
-	// contactsmanager
+	// contactsmanageredit
 	return [function() {
 
-		var controller = ['$scope', 'dialogs', 'translation', function($scope, dialogs, translation) {
+		var controller = ['$scope', 'dialogs', 'translation', '$templateCache', function($scope, dialogs, translation, $templateCache) {
+			$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
 
 			var editContactDialog = function(contact) {
 				return dialogs.create(
