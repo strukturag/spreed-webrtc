@@ -21,7 +21,13 @@
 
 .buddyPictureUpload {
    position: relative;
-  .previewUpload {
+  .loader {
+    position: absolute;
+    z-index: 1;
+    left: 90px;
+    .fa-spin {
+      color: $componentfg4;
+    }
   }
   .showUploadPicture {
     border: 1px solid #EEEEEE;
@@ -32,6 +38,7 @@
     text-align: center;
     width: 200px;
     background-color: $componentbg;
+    user-select: none;
     &.imgData {
       background-color: black;
       .chooseUploadPicture {
@@ -40,6 +47,9 @@
     }
     .chooseUploadPicture {
       color: $componentfg4;
+      position: absolute;
+      z-index: 1;
+      left: 50px;
     }
   }
   .preview {

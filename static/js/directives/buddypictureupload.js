@@ -255,7 +255,10 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			$('#uploadFile').bootstrapFileInput();
+			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
+			setTimeout(function() {
+				$('#uploadFile').bootstrapFileInput();
+			}, 0);
 		};
 
 		return {
