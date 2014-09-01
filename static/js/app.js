@@ -92,8 +92,8 @@ define([
 					"plural_forms": "nplurals=2; plural=(n != 1);"
 				}
 			}
-			_.extend(dst, src);
 		}
+		_.extend(dst, src);
 	};
 	TranslationData.prototype.load = function(domain, url) {
 		var that = this;
