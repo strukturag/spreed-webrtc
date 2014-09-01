@@ -43,7 +43,7 @@ define(["jquery"], function($) {
 	// - language (string): ISO language code of active language
 
 	// appData
-	return [function() {
+	return ["randomGen", function(randomGen) {
 
 		var data = {
 			data: null,
@@ -51,6 +51,7 @@ define(["jquery"], function($) {
 		}
 		var html = document.getElementsByTagName("html")[0];
 		var appData = {
+			id: randomGen.id(),
 			get: function() {
 				return data.data;
 			},
@@ -61,6 +62,7 @@ define(["jquery"], function($) {
 			e: data.e,
 			language: html.getAttribute("lang")
 		}
+		console.info("App runtime id: "+appData.id);
 		return appData;
 
 	}];
