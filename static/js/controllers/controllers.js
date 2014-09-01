@@ -26,7 +26,7 @@ define([
 	'controllers/chatroomcontroller',
 	'controllers/roomchangecontroller',
 	'controllers/usersettingscontroller',
-	'controllers/contactsmanagercontroller',], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController, UsersettingsController, ContactsmanagerController) {
+	'controllers/contactsmanagercontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController, UsersettingsController, ContactsmanagerController) {
 
 	var controllers = {
 		MediastreamController: MediastreamController,

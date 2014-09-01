@@ -26,7 +26,7 @@ define([], function() {
 		$scope.contacts = [];
 
 		var updateContacts = function(async) {
-			if(async) {
+			if (async) {
 				$scope.$apply(function(scope) {
 					$scope.contacts = contactData.getAll();
 				});

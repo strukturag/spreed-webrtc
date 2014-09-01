@@ -51,17 +51,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				}
 			});
 
-			$scope.openContactsManager = function() {
-				return dialogs.create(
-					"/contactsmanager/main.html",
-					"ContactsmanagerController",
-					{
-						header: translation._("Contacts Manager")
-					}, {
-						wc: "contactsmanager"
-					}
-				);
-			};
 			$scope.saveSettings = function() {
 				var user = $scope.user;
 				$scope.update(user);
@@ -85,6 +74,18 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$scope.desktopNotify.requestPermission(function() {
 					safeApply($scope);
 				});
+			};
+
+			$scope.openContactsManager = function() {
+				return dialogs.create(
+					"/contactsmanager/main.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Contacts Manager")
+					}, {
+						wc: "contactsmanager"
+					}
+				);
 			};
 
 			$scope.checkDefaultMediaSources = function() {

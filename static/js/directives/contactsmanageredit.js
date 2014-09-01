@@ -32,7 +32,7 @@ define(['underscore', 'jquery', 'text!partials/contactsmanageredit.html'], funct
 		if ($scope.contact) {
 			originalDisplayName = $scope.contact.Status.displayName;
 			var scope = buddyData.lookup($scope.contact.Userid, false, false);
-			if(scope) {
+			if (scope) {
 				var session = scope.session.get();
 				$scope.buddySyncable = session && session.Type ? true : false;
 			}
@@ -45,7 +45,7 @@ define(['underscore', 'jquery', 'text!partials/contactsmanageredit.html'], funct
 
 		$scope.syncContactInfo = function() {
 			var scope = buddyData.lookup($scope.contact.Userid, false, false);
-			if(scope) {
+			if (scope) {
 				var session = scope.session.get();
 				$scope.contact.Status.displayName = session.Status.displayName;
 			}
