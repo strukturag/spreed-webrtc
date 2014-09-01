@@ -1,4 +1,4 @@
-<div default-dialog>
+<div default-dialog contactsmanageredit>
   <div class="row head">
      <div class="col-xs-7" ng-if="contacts.length === 0">
       <p>{{_('You have no contacts.')}}</p>
@@ -14,10 +14,10 @@
                 <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>
               </td>
               <td class="name">
-                <span>{{contact.Status.displayName}}</span>
+                <span>{{contact.Userid|displayName}}</span>
               </td>
               <td class="action">
-                <button class="btn btn-danger" ng-click="removeContact(contact.Userid)">{{_('Remove')}}</button>
+                <button class="btn btn-primary" ng-click="edit(contact)">{{_('Edit')}}</button>
               </td>
             </tr>
           </tbody>

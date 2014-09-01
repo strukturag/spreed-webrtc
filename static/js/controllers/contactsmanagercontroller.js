@@ -22,24 +22,33 @@ define([], function() {
 
 	// ContactsmanagerController
 	return ["$scope", "$modalInstance", "contactData", "data", "contacts", function($scope, $modalInstance, contactData, data, contacts) {
-
 		$scope.header = data.header;
 		$scope.contacts = [];
-		$scope.search = {};
 
-		var updateContacts = function() {
-			$scope.contacts = contactData.getAll();
+		var updateContacts = function(async) {
+			if (async) {
+				$scope.$apply(function(scope) {
+					$scope.contacts = contactData.getAll();
+				});
+			} else {
+				$scope.contacts = contactData.getAll();
+			}
 		};
 		updateContacts();
 		contacts.e.on('contactadded', function() {
+			updateContacts(true);
+		});
+		contacts.e.on('contactupdated', function() {
+			updateContacts(true);
+		});
+		contacts.e.on('contactremoved', function() {
+			// Do not use $apply, $digest when modal window closes
 			updateContacts();
 		});
 
-		$scope.removeContact = function(id) {
-			contacts.remove(id);
-			updateContacts();
+		$scope.edit = function(contact) {
+			$scope.$broadcast('openEditContact', contact);
 		};
-
 	}];
 
 });

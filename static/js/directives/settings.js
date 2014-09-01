@@ -77,7 +77,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			};
 
 			$scope.openContactsManager = function() {
-				dialogs.create(
+				return dialogs.create(
 					"/contactsmanager/main.html",
 					"ContactsmanagerController",
 					{
@@ -85,7 +85,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					}, {
 						wc: "contactsmanager"
 					}
-				)
+				);
 			};
 
 			$scope.checkDefaultMediaSources = function() {
