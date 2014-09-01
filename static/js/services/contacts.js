@@ -267,23 +267,10 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			}
 		};
 
-		Contacts.prototype.update = function(userid, status) {
-			var updateContact = _.bind(function(contact) {
-				contact.Status = angular.extend(contact.Status, status);
-				this.e.triggerHandler("contactupdated", contact);
-				this.put(contact);
-				//console.log("contact update", contact);
-			}, this);
-			this.database.all("contacts", _.bind(function(data) {
-				var d = this.decrypt(data.contact);
-				if (d) {
-					var contact = contactData.addByData(d);
-					if (contact.Userid === userid) {
-						//console.log('found contact in database', contact);
-						updateContact(contact);
-					}
-				}
-			}, this));
+		Contacts.prototype.update = function(contact) {
+			this.put(contact);
+			//console.log("contact update", contact);
+			this.e.triggerHandler("contactupdated", contact);
 		};
 
 		return new Contacts();

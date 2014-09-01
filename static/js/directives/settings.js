@@ -51,17 +51,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				}
 			});
 
-			$scope.openContactsManager = function() {
-				return dialogs.create(
-					"/contactsmanager/main.html",
-					"ContactsmanagerController",
-					{
-						header: translation._("Contacts Manager")
-					}, {
-						wc: "contactsmanager"
-					}
-				);
-			};
 			$scope.saveSettings = function() {
 				var form = $scope.settingsform;
 				if (form.$valid && form.$dirty) {
@@ -96,49 +85,15 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			};
 
 			$scope.openContactsManager = function() {
-				var dlgMain = null;
-				var dlgEdit = null;
-
-				var main = function() {
-					return dialogs.create(
-						"/contactsmanager/main.html",
-						"ContactsmanagerController",
-						{
-							header: translation._("Contacts Manager")
-						}, {
-							wc: "contactsmanager"
-						}
-					);
-				};
-
-				var edit = function(contact) {
-					return dialogs.create(
-						"/contactsmanager/edit.html",
-						"ContactsmanagerController",
-						{
-							header: translation._("Edit Contact"),
-							contact: contact,
-						}, {
-							wc: "contactsmanager"
-						}
-					);
-				};
-
-				function setupContactsManager() {
-					dlgMain = main();
-					dlgMain.result.then(function(contact) {
-						if(contact && contact.Id) {
-							setupContactsManagerEdit(contact);
-						}
-					});
-				}
-				function setupContactsManagerEdit(contact) {
-					dlgEdit = edit(contact);
-					dlgEdit.result.finally(function(final) {
-						setupContactsManager();
-					});
-				}
-				setupContactsManager();
+				return dialogs.create(
+					"/contactsmanager/main.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Contacts Manager")
+					}, {
+						wc: "contactsmanager"
+					}
+				);
 			};
 
 			$scope.checkDefaultMediaSources = function() {
