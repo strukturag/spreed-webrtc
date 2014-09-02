@@ -42,10 +42,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			};
 
 			var completedUpload = function() {
-				$scope.upload.status = 99;
-				$timeout(function() {
-					$scope.upload.status = 100;
-				}, 500);
+				$scope.upload.status = 100;
 			};
 
 			var setUploadImageDimension = function(data) {
@@ -202,32 +199,43 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			var intervalNum = {
 				num: null
 			};
+			var pxDefaultMovementSpeed = 5;
 
-			var incrementPx = function(num) {
-				return ((Number(num.match(/[\-0-9]+/)) + 5) + 'px');
+			var incrementPx = function(num, pxToMove) {
+				if(pxToMove === undefined) {
+					pxToMove = pxDefaultMovementSpeed;
+				}
+				return ((Number(num.match(/[\-0-9]+/)) + pxToMove) + 'px');
 			};
-			var decrementPx = function(num) {
-				return ((Number(num.match(/[\-0-9]+/)) - 5) + 'px');
+			var decrementPx = function(num, pxToMove) {
+				if(pxToMove === undefined) {
+					pxToMove = pxDefaultMovementSpeed;
+				}
+				return ((Number(num.match(/[\-0-9]+/)) - pxToMove) + 'px');
 			};
-			var moveImageUp = function() {
-				$scope.prevImage.style.top = decrementPx($scope.prevImage.style.top);
+			var moveImageUp = function(pxMove) {
+				$scope.prevImage.style.top = decrementPx($scope.prevImage.style.top, pxMove);
 			};
-			var moveImageDown = function() {
-				$scope.prevImage.style.top = incrementPx($scope.prevImage.style.top);
+			var moveImageDown = function(pxMove) {
+				$scope.prevImage.style.top = incrementPx($scope.prevImage.style.top, pxMove);
 			};
-			var moveImageLeft = function() {
-				$scope.prevImage.style.left = decrementPx($scope.prevImage.style.left);
+			var moveImageLeft = function(pxMove) {
+				$scope.prevImage.style.left = decrementPx($scope.prevImage.style.left, pxMove);
 			};
-			var moveImageRight = function() {
-				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left);
+			var moveImageRight = function(pxMove) {
+				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left, pxMove);
 			};
 			var makeImageLarger = function() {
 				$scope.prevImage.style.height = incrementPx($scope.prevImage.style.height);
+				moveImageLeft(1);
 				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
+				moveImageUp(2);
 			};
 			var makeImageSmaller = function() {
 				$scope.prevImage.style.height = decrementPx($scope.prevImage.style.height);
+				moveImageRight(1);
 				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
+				moveImageDown(2);
 			};
 			var changeImage = function(evt) {
 				if (evt.data.intervalNum.num || !evt.data.action) {
@@ -255,7 +263,10 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			$('#uploadFile').bootstrapFileInput();
+			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
+			setTimeout(function() {
+				$('#uploadFile').bootstrapFileInput();
+			}, 0);
 		};
 
 		return {
