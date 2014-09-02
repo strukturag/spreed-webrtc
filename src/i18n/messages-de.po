@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-08-28 10:45+0200\n"
-"PO-Revision-Date: 2014-08-28 10:46+0100\n"
+"POT-Creation-Date: 2014-09-02 12:10+0200\n"
+"PO-Revision-Date: 2014-09-02 12:13+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -51,6 +51,9 @@ msgstr "Kiosk-Ansicht"
 msgid "Start chat"
 msgstr "Chat starten"
 
+msgid "Start video call"
+msgstr "Video-Anruf starten"
+
 msgid "Start audio conference"
 msgstr "Audio-Konferenz starten"
 
@@ -78,6 +81,22 @@ msgstr "Bild hochladen"
 msgid "Waiting for camera"
 msgstr "Warte auf die Kamera"
 
+msgid "Picture"
+msgstr "Bild"
+
+msgid "The file couldn't be read."
+msgstr "Die Datei konnte nicht geöffnet werden."
+
+msgid "The file is not an image."
+msgstr "Diese Datei ist kein Bild."
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr "Diese Datei ist zu groß. Max. %d MB."
+
+msgid "Select file"
+msgstr "Datei wählen"
+
 msgid "Chat sessions"
 msgstr "Chat-Sitzungen"
 
@@ -89,9 +108,6 @@ msgstr "Peer-to-peer"
 
 msgid "Close chat"
 msgstr "Chat schließen"
-
-msgid "Start video call"
-msgstr "Video-Anruf starten"
 
 msgid "Upload files"
 msgstr "Dateien hochladen"
@@ -406,6 +422,15 @@ msgstr "Hier klicken für weitere Infos (Google Chrome)."
 msgid "Please set your user details and settings."
 msgstr "Bitte vervollständigen Sie Ihre Daten und Einstellungen."
 
+msgid "Create a room and talk together"
+msgstr "Erstellen Sie Ihren Raum"
+
+msgid "Creating room ..."
+msgstr "Raum wird erstellt ..."
+
+msgid "Create"
+msgstr "Erstellen"
+
 msgid "Videos are shared with everyone in this call."
 msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."
 
@@ -430,15 +455,6 @@ msgstr "YouTube Steuerung"
 
 msgid "YouTube video to share"
 msgstr "YouTube Video teilen"
-
-msgid "Create a room and talk together"
-msgstr "Erstellen Sie Ihren Raum"
-
-msgid "Creating room ..."
-msgstr "Raum wird erstellt ..."
-
-msgid "Create"
-msgstr "Erstellen"
 
 msgid "Peer to peer chat active."
 msgstr "Peer-to-peer Chat ist aktiv."

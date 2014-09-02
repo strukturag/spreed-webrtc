@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-08-28 10:45+0200\n"
+"POT-Creation-Date: 2014-09-02 12:10+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -51,6 +51,9 @@ msgstr ""
 msgid "Start chat"
 msgstr "대화시작"
 
+msgid "Start video call"
+msgstr "화상회의 시작"
+
 msgid "Start audio conference"
 msgstr "음성회의 시작"
 
@@ -79,6 +82,23 @@ msgstr "사용자 사진"
 msgid "Waiting for camera"
 msgstr "카메라 대기중"
 
+#, fuzzy
+msgid "Picture"
+msgstr "사용자 사진"
+
+msgid "The file couldn't be read."
+msgstr ""
+
+msgid "The file is not an image."
+msgstr ""
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr ""
+
+msgid "Select file"
+msgstr ""
+
 msgid "Chat sessions"
 msgstr "대화 세션"
 
@@ -90,9 +110,6 @@ msgstr "일대일"
 
 msgid "Close chat"
 msgstr "대화 종료"
-
-msgid "Start video call"
-msgstr "화상회의 시작"
 
 #, fuzzy
 msgid "Upload files"
@@ -402,6 +419,16 @@ msgstr "도움말을 원하면 여기를 클릭 하세요 (구글 크롬)"
 msgid "Please set your user details and settings."
 msgstr "사용자의 세부상세와 설정을 지정하세요 "
 
+msgid "Create a room and talk together"
+msgstr ""
+
+#, fuzzy
+msgid "Creating room ..."
+msgstr "방 링크 만들기..."
+
+msgid "Create"
+msgstr ""
+
 msgid "Videos are shared with everyone in this call."
 msgstr ""
 
@@ -424,16 +451,6 @@ msgid "YouTube controls"
 msgstr ""
 
 msgid "YouTube video to share"
-msgstr ""
-
-msgid "Create a room and talk together"
-msgstr ""
-
-#, fuzzy
-msgid "Creating room ..."
-msgstr "방 링크 만들기..."
-
-msgid "Create"
 msgstr ""
 
 msgid "Peer to peer chat active."

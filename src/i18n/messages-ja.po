@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-08-28 10:45+0200\n"
+"POT-Creation-Date: 2014-09-02 12:10+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -51,6 +51,9 @@ msgstr ""
 msgid "Start chat"
 msgstr "チャットを始める"
 
+msgid "Start video call"
+msgstr "テレビ電話を始める"
+
 msgid "Start audio conference"
 msgstr "音声会議を始める"
 
@@ -79,6 +82,23 @@ msgstr "あなたの写真"
 msgid "Waiting for camera"
 msgstr "カメラ待ち"
 
+#, fuzzy
+msgid "Picture"
+msgstr "あなたの写真"
+
+msgid "The file couldn't be read."
+msgstr ""
+
+msgid "The file is not an image."
+msgstr ""
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr ""
+
+msgid "Select file"
+msgstr ""
+
 msgid "Chat sessions"
 msgstr "チャットのセッション"
 
@@ -90,9 +110,6 @@ msgstr "ピア・ツー・ピア"
 
 msgid "Close chat"
 msgstr "チャットを終える"
-
-msgid "Start video call"
-msgstr "テレビ電話を始める"
 
 #, fuzzy
 msgid "Upload files"
@@ -402,6 +419,16 @@ msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "あなたのプロフィールとアプリの動作を設定してください."
 
+msgid "Create a room and talk together"
+msgstr ""
+
+#, fuzzy
+msgid "Creating room ..."
+msgstr "ルームへのリンクを作る..."
+
+msgid "Create"
+msgstr ""
+
 msgid "Videos are shared with everyone in this call."
 msgstr ""
 
@@ -424,16 +451,6 @@ msgid "YouTube controls"
 msgstr ""
 
 msgid "YouTube video to share"
-msgstr ""
-
-msgid "Create a room and talk together"
-msgstr ""
-
-#, fuzzy
-msgid "Creating room ..."
-msgstr "ルームへのリンクを作る..."
-
-msgid "Create"
 msgstr ""
 
 msgid "Peer to peer chat active."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-08-28 10:45+0200\n"
+"POT-Creation-Date: 2014-09-02 12:10+0200\n"
 "PO-Revision-Date: 2014-05-21 09:55+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -51,6 +51,9 @@ msgstr ""
 msgid "Start chat"
 msgstr "開始聊天"
 
+msgid "Start video call"
+msgstr "開始視頻通話"
+
 msgid "Start audio conference"
 msgstr "開始語音會議"
 
@@ -79,6 +82,23 @@ msgstr "您的圖片"
 msgid "Waiting for camera"
 msgstr "等待啟動攝像頭"
 
+#, fuzzy
+msgid "Picture"
+msgstr "您的圖片"
+
+msgid "The file couldn't be read."
+msgstr ""
+
+msgid "The file is not an image."
+msgstr ""
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr ""
+
+msgid "Select file"
+msgstr ""
+
 msgid "Chat sessions"
 msgstr "會話"
 
@@ -90,9 +110,6 @@ msgstr "P2P"
 
 msgid "Close chat"
 msgstr "關閉聊天"
-
-msgid "Start video call"
-msgstr "開始視頻通話"
 
 #, fuzzy
 msgid "Upload files"
@@ -402,6 +419,16 @@ msgstr "點擊這裡獲取幫助 (Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "請設定您的用戶信息及設置"
 
+msgid "Create a room and talk together"
+msgstr ""
+
+#, fuzzy
+msgid "Creating room ..."
+msgstr "創建房間連接 ..."
+
+msgid "Create"
+msgstr ""
+
 msgid "Videos are shared with everyone in this call."
 msgstr ""
 
@@ -424,16 +451,6 @@ msgid "YouTube controls"
 msgstr ""
 
 msgid "YouTube video to share"
-msgstr ""
-
-msgid "Create a room and talk together"
-msgstr ""
-
-#, fuzzy
-msgid "Creating room ..."
-msgstr "創建房間連接 ..."
-
-msgid "Create"
 msgstr ""
 
 msgid "Peer to peer chat active."
