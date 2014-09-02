@@ -42,10 +42,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			};
 
 			var completedUpload = function() {
-				$scope.upload.status = 99;
-				$timeout(function() {
-					$scope.upload.status = 100;
-				}, 500);
+				$scope.upload.status = 100;
 			};
 
 			var setUploadImageDimension = function(data) {
