@@ -29,8 +29,14 @@
       color: $componentfg4;
     }
   }
+  >p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .showUploadPicture {
-    border: 1px solid #EEEEEE;
+    position: relative;
+    border: 1px solid $bordercolor;
     height: 200px;
     line-height: 200px;
     margin-bottom: 10px;
@@ -49,7 +55,9 @@
       color: $componentfg4;
       position: absolute;
       z-index: 1;
-      left: 50px;
+      left: 0px;
+      right: 0px;
+      margin: 0 auto;
     }
     .fa {
       color: $componentbg;

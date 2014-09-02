@@ -1,7 +1,7 @@
 <div class="buddyPictureUpload collapse" collapse="!showUploadPicture">
 	<div class="showUploadPicture" ng-class="{imgData: imgData}">
-		<p class="chooseUploadPicture">{{_('Choose a picture')}}</p>
-		<span class="loader" ng-if="upload.status != 100 && upload.status != 0">
+		<span class="chooseUploadPicture">{{_('Picture')}}</span>
+		<span class="loader" ng-if="upload.status !== 100 && upload.status !== 0">
 			<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>
 		</span>
 		<div class="imageUtilites">
@@ -22,10 +22,12 @@
 	</div>
 	<div class="alert alert-warning" ng-if="error.read">{{_('The file couldn\'t be read.')}}<button type="button" class="close" ng-click="error.read = null"><span>&times;</span></button></div>
 	<div class="alert alert-warning" ng-if="error.image">{{_('The file is not an image.')}}<button type="button" class="close" ng-click="error.image = null"><span>&times;</span></button></div>
-	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max upload size is %d Mb', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>
-	<p>{{_('Please choose a picture to upload.')}}</p>
-	<div><input id="uploadFile" class="btn btn-success" type="file" title="{{_('Browse for picture')}}" data-filename-placement="outside"></div>
-	<br>
-	<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
-	<a class="btn btn-small btn-primary" ng-click="usePicture()" ng-disabled="!imgData"> {{_('Set as Profile Picture')}}</a>
+	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max. %d MB.', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>
+	<p>
+		<input id="uploadFile" class="btn btn-success" type="file" title="{{_('Select file')}}" data-filename-placement="outside"/>
+	</p>
+	<p>
+		<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
+		<a class="btn btn-small btn-primary" ng-click="usePicture()" ng-disabled="!imgData"> {{_('Set as Profile Picture')}}</a>
+	</p>
 </div>
