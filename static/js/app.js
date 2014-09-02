@@ -188,9 +188,16 @@ define([
 
 		// Configure language.
 		var lang = (function() {
+
 			var lang = "en";
 			var wanted = [];
-			var html = document.getElementsByTagName("html")[0];
+			var addLanguage = function(l) {
+				wanted.push(l);
+				if (l.indexOf("-") != -1) {
+					wanted.push(l.split("-")[0]);
+				}
+			};
+
 			// Get from storage.
 			if (modernizr.localstorage) {
 				var lsl = localStorage.getItem("mediastream-language");
@@ -198,28 +205,32 @@ define([
 					wanted.push(lsl);
 				}
 			}
+
 			// Get from query.
 			var qsl = urlQuery.lang;
 			if (qsl) {
-				wanted.push(qsl);
+				addLanguage(qsl);
 			}
-			// Expand browser languages with combined fallback.
-			_.each(globalContext.Languages, function(l) {
-				wanted.push(l);
-				if (l.indexOf("-") != -1) {
-					wanted.push(l.split("-")[0]);
-				}
-			});
-			// Loop through browser languages and use first one we got.
+
+			// Get from server side configuration (As provided by browser).
+			_.each(globalContext.Languages, addLanguage);
+
+			// Loop through requested languages and use first one we have.
 			for (var i = 0; i < wanted.length; i++) {
 				if (languages.hasOwnProperty(wanted[i])) {
 					lang = wanted[i];
 					break;
 				}
 			}
+
+			// Storage at DOM.
+			var html = document.getElementsByTagName("html")[0];
 			html.setAttribute("lang", lang);
+
 			return lang;
+
 		}());
+		console.info("Selected language: "+lang);
 
 		// Set language and load default translations.
 		translationData.lang = lang;
