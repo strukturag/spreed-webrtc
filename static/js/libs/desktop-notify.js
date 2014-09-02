@@ -15,6 +15,7 @@
  *
  * Author: Tsvetan Tsvetkov (tsekach@gmail.com)
  */
+//https://raw.githubusercontent.com/ttsvetko/HTML5-Desktop-Notifications/b5bc3b27fc042630d16ed55bae378a73d94d02ab/desktop-notify.js
 (function (win) {
     /*
      Safari native methods required for Notifications do NOT run in strict mode.
@@ -39,7 +40,7 @@
              *
              * Also, we canNOT detect if msIsSiteMode method exists, as it is
              * a method of host object. In IE check for existing method of host
-             * object returns undefined. So, we try to run it - if it runs 
+             * object returns undefined. So, we try to run it - if it runs
              * successfully - then it is IE9+, if not - an exceptions is thrown.
              */
             try {
@@ -104,6 +105,9 @@
                     if (notification.close) {
                         //http://code.google.com/p/ff-html5notifications/issues/detail?id=58
                         notification.close();
+                    }
+                    else if (notification.cancel) {
+                        notification.cancel();
                     } else if (win.external && win.external.msIsSiteMode()) {
                         if (notification.ieVerification === ieVerification) {
                             win.external.msSiteModeClearIconOverlay();
@@ -119,7 +123,7 @@
         if (win.webkitNotifications && win.webkitNotifications.checkPermission) {
             /*
              * Chrome 23 supports win.Notification.requestPermission, but it
-             * breaks the browsers, so use the old-webkit-prefixed 
+             * breaks the browsers, so use the old-webkit-prefixed
              * win.webkitNotifications.checkPermission instead.
              *
              * Firefox with html5notifications plugin supports this method
@@ -139,12 +143,12 @@
         } else if (win.webkitNotifications && win.webkitNotifications.checkPermission) {
             //Chrome & Firefox with html5-notifications plugin installed
             permission = PERMISSION[win.webkitNotifications.checkPermission()];
-        } else if (navigator.mozNotification) {
-            //Firefox Mobile
-            permission = PERMISSION_GRANTED;
         } else if (win.Notification && win.Notification.permission) {
             // Firefox 23+
             permission = win.Notification.permission;
+        } else if (navigator.mozNotification) {
+            //Firefox Mobile
+            permission = PERMISSION_GRANTED;
         } else if (win.external && (win.external.msIsSiteMode() !== undefined)) { /* keep last */
             //IE9+
             permission = win.external.msIsSiteMode() ? PERMISSION_GRANTED : PERMISSION_DEFAULT;
@@ -152,7 +156,7 @@
         return permission;
     }
     /**
-     *  
+     *
      */
     function config(params) {
         if (params && isObject(params)) {
