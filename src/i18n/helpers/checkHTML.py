@@ -1,41 +1,57 @@
 #!/usr/bin/python
+#
+# Helper script to make Angular templates parse as jinja templates for translation.
+#
+# (c)2014 struktur AG
 
+import re
 import sys
-from jinja2 import Environment, FileSystemLoader
+import os
+import fnmatch
+from jinja2 import Environment, FileSystemLoader, exceptions
 
-def log(error):
-	print error
+def main(templates, output_folder=None):
 
-def main(templates):
+	files = []
+	for root, dirnames, filenames in os.walk(templates):
+		for filename in fnmatch.filter(filenames, '*.html'):
+			files.append(os.path.join(root, filename))
 
-	env = Environment(loader=FileSystemLoader(templates), extensions=['jinja2.ext.i18n'])
-	env.install_null_translations()
+	env = Environment(extensions=['jinja2.ext.i18n'])
 
-	print env.list_templates()
-	print dir(env)
+	for fn in files:
 
-	env.compile_templates("lala", log_function=log)
+		fp = file(fn, "rb")
+		html = fp.read()
+		fp.close()
 
-	#for t in env.list_templates():
-	#	template = env.get_template(t)
-	#	output = template.render()
+		html = unicode(html, "UTF-8")
+		html = re.sub(r"\|(\w|:)+", "", html)
 
-	#template = env.get_template('test.html')
-	#output_from_parsed_template = template.render(foo='Hello World!')
-	#print output_from_parsed_template
+		if output_folder:
+			tf = os.path.join(output_folder, os.path.split(fn)[1])
+			fp = file(tf, "wb")
+			fp.write(html.encode("UTF-8"))
+			fp.close()
 
-	# to save the results
-	#with open("my_new_file.html", "wb") as fh:
-	#    fh.write(output_from_parsed_template)
+		try:
+			t = env.from_string(html)
+		except exceptions.TemplateSyntaxError, exc:
+			print >>sys.stderr, "Failed to parse: %s at line %d" % (fn, exc.lineno)
+			raise
+
+	return 0
 
 if __name__ == "__main__":
 	args = sys.argv[1:]
 	if not args:
-		print "Usage: %s templates-folder" % sys.argv[0]
+		print "Usage: %s templates-folder [output-folder]" % sys.argv[0]
 		sys.exit(1)
 
-	status = 0
-	for folder in args:
-		main(folder)
+	try:
+		status = main(*args)
+	except Exception, exc:
+		print >> sys.stderr, exc
+		status = 6
 
 	sys.exit(status)

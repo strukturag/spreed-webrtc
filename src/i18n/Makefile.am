@@ -31,20 +31,22 @@ build: update
 	done
 	$(PYTHON) "$(CURDIR)/helpers/languages.py" > "$(ROOT)/static/translation/languages.js"
 
+extract: TEMPFOLDER := $(shell mktemp -t XXXXXXXXi18n -d)
 extract:
 	@if [ "$(PYBABEL)" = "" ]; then echo "Command 'pybabel' not found, required when extracting i18n"; exit 1; fi
+	$(PYTHON) "$(CURDIR)/helpers/checkHTML.py" "$(ROOT)/static/partials" "$(TEMPFOLDER)"
 	$(PYBABEL) extract -F "$(CURDIR)/babel.cfg" --no-default-keywords -k _n:1,2 -k _ \
 		--no-location --project="$(I18N_PROJECT)" --version="$(I18N_VERSION)" \
 		--copyright-holder="$(I18N_COPYRIGHT)" --msgid-bugs-address="$(I18N_BUG_ADDRESS)" \
 		-o "$(CURDIR)/messages.pot" \
 		"$(ROOT)/html" \
-		"$(ROOT)/static/partials" \
-		"$(ROOT)/static/partials/page" \
+		"$(TEMPFOLDER)" \
 		"$(ROOT)/static/js" \
 		"$(ROOT)/static/js/controllers" \
 		"$(ROOT)/static/js/directives" \
 		"$(ROOT)/static/js/services" \
 		"$(ROOT)/static/js/filters"
+	rm -rf $(TEMPFOLDER)
 
 update: LANGUAGES = $(shell $(FIND) ./ -iname '*.po' -printf '%f\n' | $(SED) 's/\.po$$//' | $(SED) 's/\messages-//')
 update:
