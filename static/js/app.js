@@ -247,6 +247,9 @@ define([
 			});
 		}
 
+		// Set momemt language.
+		moment.lang(lang);
+
 		return deferred.promise();
 
 	};
