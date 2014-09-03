@@ -13,11 +13,11 @@
  * Date: 2013-01-08
  * Version: 0.1
  */
-
+// https://raw.githubusercontent.com/kajic/jquery-injectCSS/c85cea05dc10a893daa676c1ecaded34a4c59280/jquery.injectCSS.js
 (function (jQuery) {
     'use strict';
 
-    function toCSS(jss) {
+    function toCSS(jss, options) {
         function jsonToCSS(scope, css) {
             if (scope && !result[scope]) {
                 result[scope] = {};
@@ -90,7 +90,7 @@
 
         function addProperty(scope, property, value) {
 
-            if (typeof(value) === "number") {
+            if (typeof(value) === "number" && !options.useRawValues) {
                 value = value + "px";
             }
 
@@ -141,7 +141,9 @@
 
     var defaults = {
         truncateFirst: false,
-        containerName: "injectCSSContainer"
+        container: null,
+        containerName: "injectCSSContainer",
+        useRawValues: false
     };
 
     jQuery.injectCSS = function (jss, options) {
@@ -149,7 +151,7 @@
 
         options.media = options.media || 'all';
 
-        var container = jQuery("#" + options.containerName);
+        var container = (options.container && jQuery(options.container)) || jQuery("#" + options.containerName);
         if (!container.length) {
             container = jQuery("<style></style>").appendTo('head').attr({
                 media: options.media,
@@ -162,7 +164,7 @@
         if (!options.truncateFirst) {
             css += container.text();
         }
-        css += toCSS(jss);
+        css += toCSS(jss, options);
 
         var containerDomElem = container[0];
         if (containerDomElem.styleSheet !== undefined && containerDomElem.styleSheet.cssText !== undefined) { // IE

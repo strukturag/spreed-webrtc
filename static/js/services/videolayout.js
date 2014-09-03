@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["jquery", "underscore", "modernizr"], function($, _, Modernizr) {
+define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modernizr) {
 
 	var dynamicCSSContainer = "audiovideo-dynamic";
 	var renderers = {};
@@ -149,7 +149,8 @@ define(["jquery", "underscore", "modernizr"], function($, _, Modernizr) {
 			}
 			$.injectCSS(extraCSS, {
 				truncateFirst: true,
-				containerName: dynamicCSSContainer
+				containerName: dynamicCSSContainer,
+				useRawValues: true
 			});
 
 		};
@@ -250,7 +251,8 @@ define(["jquery", "underscore", "modernizr"], function($, _, Modernizr) {
 
 			$.injectCSS(extraCSS, {
 				truncateFirst: true,
-				containerName: dynamicCSSContainer
+				containerName: dynamicCSSContainer,
+				useRawValues: true
 			});
 
 		};
