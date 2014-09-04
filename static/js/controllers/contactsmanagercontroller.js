@@ -37,24 +37,17 @@ define([], function() {
 			);
 		};
 
-		var updateContacts = function(async) {
-			if (async) {
-				$scope.$apply(function(scope) {
-					$scope.contacts = contactData.getAll();
-				});
-			} else {
-				$scope.contacts = contactData.getAll();
-			}
+		var updateContacts = function() {
+			$scope.contacts = contactData.getAll();
 		};
 		updateContacts();
 		contacts.e.on('contactadded', function() {
-			updateContacts(true);
+			updateContacts();
 		});
 		contacts.e.on('contactupdated', function() {
 			updateContacts();
 		});
 		contacts.e.on('contactremoved', function() {
-			// Don't call updateContacts with async true: $modalInstance.$close() is called right before, triggering a $digest.
 			updateContacts();
 		});
 
