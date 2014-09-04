@@ -119,7 +119,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			};
 
 			var clearPicture = function() {
-				$(".file-input-name").get(0).innerHTML = "";
+				$(".file-input-name").empty();
 				$scope.imgData = null;
 				$scope.prevImage.src = "";
 				$scope.prevImage.style.cssText = null;
