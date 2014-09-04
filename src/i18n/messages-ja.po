@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-04 14:36+0200\n"
+"POT-Creation-Date: 2014-09-04 14:47+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -133,6 +133,12 @@ msgstr "ここに入力してチャット開始します..."
 
 msgid "Send"
 msgstr "送信"
+
+msgid "Accept"
+msgstr ""
+
+msgid "Reject"
+msgstr "拒否"
 
 msgid "You have no contacts."
 msgstr ""
@@ -390,9 +396,6 @@ msgstr "から"
 
 msgid "Accept call"
 msgstr "通話"
-
-msgid "Reject"
-msgstr "拒否"
 
 msgid "Waiting for camera/microphone access"
 msgstr "カメラ・マイクの接続待ち."

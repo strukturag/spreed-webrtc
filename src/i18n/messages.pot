@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-04 14:36+0200\n"
+"POT-Creation-Date: 2014-09-04 14:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,6 +128,12 @@ msgid "Type here to chat..."
 msgstr ""
 
 msgid "Send"
+msgstr ""
+
+msgid "Accept"
+msgstr ""
+
+msgid "Reject"
 msgstr ""
 
 msgid "You have no contacts."
@@ -385,9 +391,6 @@ msgid "from"
 msgstr ""
 
 msgid "Accept call"
-msgstr ""
-
-msgid "Reject"
 msgstr ""
 
 msgid "Waiting for camera/microphone access"

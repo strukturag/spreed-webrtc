@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-04 14:36+0200\n"
-"PO-Revision-Date: 2014-09-04 14:46+0100\n"
+"POT-Creation-Date: 2014-09-04 14:47+0200\n"
+"PO-Revision-Date: 2014-09-04 14:48+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -129,6 +129,12 @@ msgstr "Nachricht hier eingeben..."
 
 msgid "Send"
 msgstr "Senden"
+
+msgid "Accept"
+msgstr "Akzeptieren"
+
+msgid "Reject"
+msgstr "Abweisen"
 
 msgid "You have no contacts."
 msgstr "Sie haben keine Kontakte."
@@ -394,9 +400,6 @@ msgstr "von"
 
 msgid "Accept call"
 msgstr "Anruf annehmen"
-
-msgid "Reject"
-msgstr "Abweisen"
 
 msgid "Waiting for camera/microphone access"
 msgstr "Warte auf Kamera/Mikrofon Freigabe"
