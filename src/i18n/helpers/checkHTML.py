@@ -26,7 +26,7 @@ def main(templates, output_folder=None):
 		fp.close()
 
 		html = unicode(html, "UTF-8")
-		html = re.sub(r"\|(\w|:)+", "", html)
+		html = re.sub(r"\|(\w|:|\"|\')+", "", html)
 
 		if output_folder:
 			tf = os.path.join(output_folder, os.path.split(fn)[1])
