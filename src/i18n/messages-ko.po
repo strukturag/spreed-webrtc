@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-02 12:10+0200\n"
+"POT-Creation-Date: 2014-09-04 14:36+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -214,28 +214,6 @@ msgstr "화면에 맟춤"
 msgid "Profile"
 msgstr ""
 
-msgid "Your picture"
-msgstr "사용자 사진"
-
-msgid "Your name"
-msgstr "사용자 이름"
-
-msgid "Name"
-msgstr "이름"
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-#, fuzzy
-msgid "Profile information is public."
-msgstr "더 많은 정보가 필요함"
-
-msgid "Account"
-msgstr ""
-
 msgid "Your ID"
 msgstr ""
 
@@ -257,6 +235,26 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
+msgstr ""
+
+msgid "Your picture"
+msgstr "사용자 사진"
+
+msgid "Your name"
+msgstr "사용자 이름"
+
+msgid "Name"
+msgstr "이름"
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
 msgstr ""
 
 msgid "Contacts"
@@ -285,6 +283,9 @@ msgstr "높음"
 
 msgid "HD"
 msgstr "고화질"
+
+msgid "General"
+msgstr ""
 
 msgid "Language"
 msgstr "언어"

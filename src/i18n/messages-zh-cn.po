@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-02 12:10+0200\n"
+"POT-Creation-Date: 2014-09-04 14:36+0200\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -214,28 +214,6 @@ msgstr "适合屏幕"
 msgid "Profile"
 msgstr ""
 
-msgid "Your picture"
-msgstr "您的图片"
-
-msgid "Your name"
-msgstr "您的名字"
-
-msgid "Name"
-msgstr "名字"
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-#, fuzzy
-msgid "Profile information is public."
-msgstr "需要更多信息"
-
-msgid "Account"
-msgstr ""
-
 msgid "Your ID"
 msgstr ""
 
@@ -257,6 +235,26 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
+msgstr ""
+
+msgid "Your picture"
+msgstr "您的图片"
+
+msgid "Your name"
+msgstr "您的名字"
+
+msgid "Name"
+msgstr "名字"
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
 msgstr ""
 
 msgid "Contacts"
@@ -285,6 +283,9 @@ msgstr "高"
 
 msgid "HD"
 msgstr "高清"
+
+msgid "General"
+msgstr ""
 
 msgid "Language"
 msgstr "语言"

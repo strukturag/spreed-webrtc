@@ -3,35 +3,9 @@
   <div ng-form="settingsform" class="form-horizontal" on-enter="saveSettings(user)" on-escape="cancelSettings()"
     <fieldset>
 
-      <settings-profile>
-        <legend>{{_('Profile')}}</legend>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
-            <div class="col-xs-8">
-                <buddy-picture-capture></buddy-picture-capture>
-            </div>
-        </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Your name')}}</label>
-          <div class="col-xs-8">
-            <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Status message')}}</label>
-          <div class="col-xs-8">
-            <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-8 col-xs-offset-4">
-            <p class="help-block">{{_('Profile information is public.')}}</p>
-          </div>
-        </div>
-      </settings-profile>
       <settings-account ng-controller="UsersettingsController as usersettings">
+        <legend>{{_('Profile')}}</legend>
         <div ng-if="(withUsers && withUsersRegistration) || userid">
-          <legend>{{_('Account')}}</legend>
           <div class="form-group">
             <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
             <div ng-switch="withUsersMode">
@@ -67,6 +41,31 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+            <div class="col-xs-8">
+                <buddy-picture-capture></buddy-picture-capture>
+            </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Your name')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Status message')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-8 col-xs-offset-4">
+            <p class="help-block">{{_('Your picture, name and status message identify yourself in calls, chats and rooms.')}}</p>
+          </div>
+        </div>
+        <div ng-if="(withUsers && withUsersRegistration) || userid">
           <div class="form-group" ng-if="userid">
             <label class="col-xs-4 control-label">{{_('Contacts')}}</label>
             <div class="col-xs-8">
@@ -103,7 +102,7 @@
         </div>
       </settings-media>
       <settings-settings>
-        <legend>{{_('Settings')}}</legend>
+        <legend>{{_('General')}}</legend>
         <div class="form-group">
           <label class="col-xs-4 control-label">{{_('Language')}}</label>
           <div class="col-xs-8">

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-02 12:10+0200\n"
+"POT-Creation-Date: 2014-09-04 14:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -210,27 +210,6 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-msgid "Your picture"
-msgstr ""
-
-msgid "Your name"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-msgid "Profile information is public."
-msgstr ""
-
-msgid "Account"
-msgstr ""
-
 msgid "Your ID"
 msgstr ""
 
@@ -252,6 +231,26 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
+msgstr ""
+
+msgid "Your picture"
+msgstr ""
+
+msgid "Your name"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
 msgstr ""
 
 msgid "Contacts"
@@ -279,6 +278,9 @@ msgid "High"
 msgstr ""
 
 msgid "HD"
+msgstr ""
+
+msgid "General"
 msgstr ""
 
 msgid "Language"
