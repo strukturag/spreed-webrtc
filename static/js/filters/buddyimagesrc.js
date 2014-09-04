@@ -72,7 +72,7 @@ define(["underscore"], function(_) {
 					// Check if we should handle it as blob.
 					url = display.buddyPicture;
 					if (url.indexOf("data:") === 0) {
-						var blob = buddyPicture.toBlob(null, url);
+						var blob = buddyPicture.toBlob(url);
 						url = display.buddyPictureLocalUrl = urls[id] = blobToObjectURL(blob);
 						return url;
 					}

@@ -216,7 +216,6 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 					var d = this.decrypt(data.contact);
 					if (d) {
 						var contact = contactData.addByData(d);
-						// TODO(longsleep): Convert buddyImage string to Blob.
 						this.e.triggerHandler("contactadded", d);
 					} else {
 						// Remove empty or invalid entries automatically.
