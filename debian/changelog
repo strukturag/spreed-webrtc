@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.22.1) precise; urgency=low
+
+  * Fixed load of local stored date when not logged in. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 05 Sep 2014 17:42:48 +0200
+
 spreed-webrtc-server (0.22.0) precise; urgency=low
 
   * WebODF was updated to 0.5.2.
