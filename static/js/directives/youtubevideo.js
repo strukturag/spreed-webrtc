@@ -292,7 +292,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 								"onStateChange": onPlayerStateChange
 							}
 						});
-						$scope.isPublisher = with_controls;
+						$("#youtubeplayer").show();
+						safeApply($scope, function(scope) {
+							// YT player events don't fire in Firefox if
+							// player is not visible, so show while loading
+							scope.playbackActive = true;
+							scope.isPublisher = with_controls;
+						});
 					}
 				});
 			};
