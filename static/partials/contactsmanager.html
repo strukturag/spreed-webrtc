@@ -6,11 +6,11 @@
   </div>
   <div class="row" ng-if="contacts.length > 0">
     <div class="col-xs-12">
-      <div class="editlist nicescroll">
+      <div class="editlist nicescroll row">
         <table class="table table-hover table-condensed">
           <tbody>
             <tr ng-repeat="contact in contacts">
-              <td class="picture buddy">
+              <td class="picture buddy" width="56">
                 <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>
               </td>
               <td class="name">

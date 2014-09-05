@@ -20,9 +20,6 @@
  */
 
 .contactsmanager {
-  .head {
-    margin-bottom: 10px;
-  }
   .desc {
     font-size: 20px;
     font-weight: normal;
@@ -58,6 +55,9 @@
       border-bottom: 0;
       cursor: auto;
       min-height: 46px;
+      .buddyPicture {
+        margin: 0 0 0 10px;
+      }
     }
     .name {
       width: 70%;
@@ -65,8 +65,9 @@
       vertical-align: middle;
     }
     .action {
-      text-align: center;
+      text-align: right;
       vertical-align: middle;
+      padding-right: 15px;
     }
   }
 }
