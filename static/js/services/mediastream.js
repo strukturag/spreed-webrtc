@@ -137,7 +137,10 @@ define([
 				},
 				authorizing: function(value) {
 					// Boolean flag to indicate that an authentication is currently in progress.
-					authorizing = !!value;
+					if (typeof(value) !== "undefined") {
+						authorizing = !!value;
+					}
+					return authorizing;
 				},
 				authorize: function(data, success_cb, error_cb) {
 					mediaStream.users.authorizing(true);

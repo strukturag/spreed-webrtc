@@ -459,6 +459,9 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			// Unmark authorization process.
 			if (data.Userid) {
 				mediaStream.users.authorizing(false);
+			} else if (!mediaStream.users.authorizing()) {
+				// Trigger user data load when not in authorizing phase.
+				$scope.loadUserSettings();
 			}
 
 			// Always apply room after self received to avoid double stuff.
