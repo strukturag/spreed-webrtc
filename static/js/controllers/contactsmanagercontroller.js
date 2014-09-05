@@ -21,11 +21,21 @@
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", function($scope, $modalInstance, contactData, data, contacts) {
-
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'dialogs', 'translation', function($scope, $modalInstance, contactData, data, contacts, dialogs, translation) {
 		$scope.header = data.header;
 		$scope.contacts = [];
-		$scope.search = {};
+		$scope.openContactsManagerEdit = function(contact) {
+			return dialogs.create(
+				"/contactsmanager/edit.html",
+				"ContactsmanagereditController",
+				{
+					header: translation._("Edit Contact"),
+					contact: contact,
+				}, {
+					wc: "contactsmanager"
+				}
+			);
+		};
 
 		var updateContacts = function() {
 			$scope.contacts = contactData.getAll();
@@ -34,11 +44,12 @@ define([], function() {
 		contacts.e.on('contactadded', function() {
 			updateContacts();
 		});
-
-		$scope.removeContact = function(id) {
-			contacts.remove(id);
+		contacts.e.on('contactupdated', function() {
 			updateContacts();
-		};
+		});
+		contacts.e.on('contactremoved', function() {
+			updateContacts();
+		});
 
 	}];
 

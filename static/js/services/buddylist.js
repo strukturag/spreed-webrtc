@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html'], function(_, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
+define(['angular', 'underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!partials/buddyactions.html', 'text!partials/buddyactionsforaudiomixer.html'], function(angular, _, Modernizr, AvlTree, templateBuddy, templateBuddyActions, templateBuddyActionsForAudioMixer) {
 
 	var BuddyTree = function() {
 
@@ -448,6 +448,15 @@ define(['underscore', 'modernizr', 'avltree', 'text!partials/buddy.html', 'text!
 			}
 			display.subline = s;
 
+		};
+
+		Buddylist.prototype.onContactUpdated = function(data) {
+			var scope = buddyData.get(data.Userid);
+			if (scope && scope.contact) {
+				scope.contact.Status = angular.extend(scope.contact.Status, data.Status);
+			}
+			this.updateDisplay(data.Id, scope, data, "status");
+			//console.log("onContactUpdated", 'data', data, 'scope', scope);
 		};
 
 		Buddylist.prototype.onStatus = function(data) {

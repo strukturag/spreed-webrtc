@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html'], function(underscore, $, Modernizr, sjcl, templateContactsManager) {
+define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(_, $, Modernizr, sjcl, templateContactsManager, templateContactsManagerEdit) {
 
 	var Database = function(name) {
 		this.version = 3;
@@ -36,6 +36,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			console.info("Created contacts database.")
 		};
 		request.onsuccess = _.bind(that.onsuccess, that);
+		request.onerror = _.bind(that.onerror, that);
 	};
 	Database.prototype.init = function(db) {
 		var createOrUpdateStore = function(name, obj) {
@@ -124,6 +125,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 
 		// Inject our templates.
 		$templateCache.put('/contactsmanager/main.html', templateContactsManager);
+		$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
 
 		var Contacts = function() {
 
@@ -154,6 +156,13 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			}, this));
 
 		};
+
+		Contacts.prototype.put = function(contact) {
+			this.database.put("contacts", {
+				id: this.id(contact.Userid),
+				contact: this.encrypt(contact)
+			});
+		}
 
 		Contacts.prototype.open = function(userid, suserid) {
 
@@ -241,10 +250,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			var contact = contactData.addByRequest(request, status);
 			this.e.triggerHandler("contactadded", contact);
 			if (this.database) {
-				this.database.put("contacts", {
-					id: this.id(contact.Userid),
-					contact: this.encrypt(contact)
-				})
+				this.put(contact);
 			}
 		};
 
@@ -258,6 +264,12 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 				}
 				this.e.triggerHandler("contactremoved", contact);
 			}
+		};
+
+		Contacts.prototype.update = function(contact) {
+			this.put(contact);
+			//console.log("contact update", contact);
+			this.e.triggerHandler("contactupdated", contact);
 		};
 
 		return new Contacts();
