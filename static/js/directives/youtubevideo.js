@@ -65,6 +65,8 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.currentVideoId = null;
 			$scope.youtubeurl = "";
 			$scope.youtubeAPIReady = false;
+			$scope.volumebarVisible = true;
+			$scope.volume = null;
 
 			isYouTubeIframeAPIReady.done(function() {
 				$scope.$apply(function(scope) {
@@ -74,6 +76,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 			var onPlayerReady = function(event) {
 				$scope.$apply(function(scope) {
+					scope.volume = player.getVolume();
 					playerReady.resolve();
 				});
 			};
@@ -541,6 +544,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.$watch("layout.main", function(newval, oldval) {
 				if (newval && newval !== "youtubevideo") {
 					$scope.hideYouTubeVideo();
+				}
+			});
+
+			$scope.$watch("volume", function(newval, oldval) {
+				// allow "viewers" to change the volume manually
+				if (oldval !== newval && player && !$scope.isPublisher && newval !== null) {
+					player.setVolume(newval);
 				}
 			});
 
