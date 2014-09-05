@@ -1,7 +1,10 @@
 <div default-dialog>
   <div class="row head">
-     <div class="col-xs-7" ng-if="contacts.length === 0">
-      <p>{{_('You have no contacts.')}}</p>
+    <div class="col-xs-12">
+      <p ng-if="contacts.length === 0">
+        {{_('You have no contacts.')}}
+      </p>
+      <p>{{_('To add new contacts, join a room and create a contact add request by clicking on the star icon next to a user entry.')}}</p>
     </div>
   </div>
   <div class="row" ng-if="contacts.length > 0">
