@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -342,6 +342,28 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				} else {
 					$scope.layout.buddylist = oldState;
 				}
+			}
+		}());
+
+		$scope.openContactsManager = (function() {
+			var oldDialog = null;
+			return function() {
+				if (oldDialog) {
+					oldDialog.dismiss("open");
+				}
+				oldDialog = dialogs.create(
+					"/contactsmanager/main.html",
+					"ContactsmanagerController",
+					{
+						header: translation._("Contacts Manager")
+					}, {
+						wc: "contactsmanager"
+					}
+				);
+				oldDialog.result.finally(function() {
+					oldDialog = null;
+				});
+				return oldDialog
 			}
 		}());
 
