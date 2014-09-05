@@ -118,6 +118,13 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 				//console.log('writeUploadToCanvas', dim);
 			};
 
+			var clearPicture = function() {
+				$(".file-input-name").empty();
+				$scope.imgData = null;
+				$scope.prevImage.src = "";
+				$scope.prevImage.style.cssText = null;
+			};
+
 			$scope.usePicture = function() {
 				writeUploadToCanvas($scope.canvasPic, $scope.prevImage);
 				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
@@ -128,6 +135,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			$scope.reset = function() {
 				$scope.showUploadPicture = false;
 				$scope.previewUpload = false;
+				clearPicture();
 			};
 
 			$scope.handleUpload = function(event) {
