@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-04 14:47+0200\n"
-"PO-Revision-Date: 2014-09-04 14:48+0100\n"
+"POT-Creation-Date: 2014-09-05 11:05+0200\n"
+"PO-Revision-Date: 2014-09-05 11:02+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -139,8 +139,23 @@ msgstr "Abweisen"
 msgid "You have no contacts."
 msgstr "Sie haben keine Kontakte."
 
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Sync"
+msgstr "Aktualisieren"
+
+msgid "Sync contact info"
+msgstr "Kontakt aktualisieren"
+
 msgid "Remove"
 msgstr "Entfernen"
+
+msgid "Save"
+msgstr "Speichern"
 
 msgid "Close"
 msgstr "Schließen"
@@ -248,9 +263,6 @@ msgstr "Ihr Bild"
 
 msgid "Your name"
 msgstr "Ihr Name"
-
-msgid "Name"
-msgstr "Name"
 
 msgid "Status message"
 msgstr "Status Nachricht"
@@ -504,6 +516,9 @@ msgstr "Kontaktanfrage erhalten."
 
 msgid "Your contact request was rejected."
 msgstr "Ihre Kontaktanfrage wurde abgelehnt."
+
+msgid "Edit Contact"
+msgstr "Kontakt bearbeiten"
 
 msgid "Close this window and disconnect?"
 msgstr "Fenster schließen und die Verbindung trennen?"
