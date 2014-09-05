@@ -71,6 +71,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 
 				var with_message = !! data.Message;
 				var room = rooms[roomid];
+
 				if (!room) {
 					if (!with_message) {
 						return;
@@ -86,6 +87,11 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 					room.newmessage = true;
 					room.peerIsTyping = "no";
 					room.p2p( !! p2p);
+					if (room.firstmessage) {
+						$scope.showRoom(room.id, null, {
+							restore: with_message
+						});
+					}
 				}
 
 				room.$broadcast("received", from, data);
