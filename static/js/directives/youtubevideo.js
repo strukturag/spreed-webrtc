@@ -22,7 +22,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", function($window, $document, mediaStream, alertify, translation, safeApply, appData) {
 
-		var YOUTUBE_IFRAME_API_URL = "https://www.youtube.com/iframe_api";
+		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
 		var isYouTubeIframeAPIReady = $.Deferred();
 		$window.onYouTubeIframeAPIReady = function() {
@@ -65,6 +65,8 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.currentVideoId = null;
 			$scope.youtubeurl = "";
 			$scope.youtubeAPIReady = false;
+			$scope.volumebarVisible = true;
+			$scope.volume = null;
 
 			isYouTubeIframeAPIReady.done(function() {
 				$scope.$apply(function(scope) {
@@ -74,6 +76,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 			var onPlayerReady = function(event) {
 				$scope.$apply(function(scope) {
+					scope.volume = player.getVolume();
 					playerReady.resolve();
 				});
 			};
@@ -289,7 +292,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 								"onStateChange": onPlayerStateChange
 							}
 						});
-						$scope.isPublisher = with_controls;
+						$("#youtubeplayer").show();
+						safeApply($scope, function(scope) {
+							// YT player events don't fire in Firefox if
+							// player is not visible, so show while loading
+							scope.playbackActive = true;
+							scope.isPublisher = with_controls;
+						});
 					}
 				});
 			};
@@ -541,6 +550,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.$watch("layout.main", function(newval, oldval) {
 				if (newval && newval !== "youtubevideo") {
 					$scope.hideYouTubeVideo();
+				}
+			});
+
+			$scope.$watch("volume", function(newval, oldval) {
+				// allow "viewers" to change the volume manually
+				if (oldval !== newval && player && !$scope.isPublisher && newval !== null) {
+					player.setVolume(newval);
 				}
 			});
 

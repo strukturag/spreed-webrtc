@@ -41,6 +41,12 @@
 						<div>{{_('Currently playing')}}<br><a href="{{ currentVideoUrl }}" rel="external" target="_blank">{{ currentVideoUrl }}</a></div>
 					</div>
 					<div class="click-container" ng-show="!isPublisher">
+						<div class="volumecontrol">
+							<button class="btn volume-button" ng-class="{'active': volumebarVisible}" ng-click="volumebarVisible=!volumebarVisible"><i class="fa fa-volume-up" ng-class="{'fa-volume-up': volume &gt;= 60, 'fa-volume-down': volume &lt; 60}"></i></button>
+							<div ng-show="volumebarVisible" class="volumebar">
+								<input type="range" min="0" max="100" step="1" ng-model="volume" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
