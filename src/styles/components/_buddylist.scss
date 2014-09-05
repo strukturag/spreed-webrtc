@@ -145,6 +145,9 @@
   &.contact .fa.contact:before {
     content: "\f005";
   }
+  &.isself .fa.contact:before {
+    content: "\f140";
+  }
   .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;

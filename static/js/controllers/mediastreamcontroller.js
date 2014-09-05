@@ -126,8 +126,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 		// Default scope data.
 		$scope.status = "initializing";
-		$scope.id = null;
-		$scope.userid = null;
+		$scope.id = $scope.myid = null;
+		$scope.userid = $scope.myuserid = null;
 		$scope.suserid = null;
 		$scope.peer = null;
 		$scope.dialing = null;
@@ -365,7 +365,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			$timeout.cancel(ttlTimeout);
 			safeApply($scope, function(scope) {
 				scope.id = scope.myid = data.Id;
-				scope.userid = data.Userid ? data.Userid : null;
+				scope.userid = scope.myuserid = data.Userid ? data.Userid : null;
 				scope.suserid = data.Suserid ? data.Suserid : null;
 				scope.turn = data.Turn;
 				scope.stun = data.Stun;
