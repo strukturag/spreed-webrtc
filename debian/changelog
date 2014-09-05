@@ -1,3 +1,38 @@
+spreed-webrtc-server (0.22.0) precise; urgency=low
+
+  * WebODF was updated to 0.5.2.
+  * Multiple bugfixes and improvements to YouTube player.
+  * Retrieving local user media now has a timeout.
+  * Top bar controls are now correctly aligned.
+  * Added support for promises during initialization code.
+  * Added support for plugin provided translations.
+  * Stream lined reconnects.
+  * Improved status update performance and avoid to do 
+    several during connect/authentication phase.
+  * Increased timeout to wait for remote video.
+  * Screen sharing extension waiter timeout fixed.
+  * Added support to upload pictures from file for own image.
+  * Auto focus create room button and added enter support.
+  * Angular was updated to 1.2.23.
+  * Simplified base controller injection.
+  * Local user data is now stored encrypted.
+  * Refactored settings service and form.
+  * Fixed compatibility with Sass 3.4 (now requires 3.4).
+  * Howler was updated to 1.1.25.
+  * Settings are now only stored when something was changed.
+  * The web app now generates a random id on startup.
+  * Desktop notify was updated to latest master.
+  * Validate HTML templates on translation.
+  * Language code can now be provided as query parameter.
+  * JQuery inject-css was updated to latest master.
+  * Show GPS accuracy as kilometers if required.
+  * Contacts can now be modified from the contacts manager.
+  * Added top bar button to open the contacts list.
+  * Fixed scaling of contact images.
+  * Fixed chat room resume when it was previously deleted.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 05 Sep 2014 16:50:52 +0200
+
 spreed-webrtc-server (0.21.0) precise; urgency=low
 
   * The language is now available in appData service.
