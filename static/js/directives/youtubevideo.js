@@ -22,7 +22,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", function($window, $document, mediaStream, alertify, translation, safeApply, appData) {
 
-		var YOUTUBE_IFRAME_API_URL = "https://www.youtube.com/iframe_api";
+		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
 		var isYouTubeIframeAPIReady = $.Deferred();
 		$window.onYouTubeIframeAPIReady = function() {
