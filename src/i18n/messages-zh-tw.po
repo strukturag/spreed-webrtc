@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-05 11:05+0200\n"
+"POT-Creation-Date: 2014-09-05 14:37+0200\n"
 "PO-Revision-Date: 2014-05-21 09:55+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -29,6 +29,9 @@ msgstr "共享您的屏幕"
 
 msgid "Chat"
 msgstr "聊天"
+
+msgid "Contacts"
+msgstr ""
 
 msgid "Mute microphone"
 msgstr "關閉麥克風"
@@ -149,13 +152,10 @@ msgstr ""
 msgid "Name"
 msgstr "名字"
 
-msgid "Sync"
-msgstr ""
-
-msgid "Sync contact info"
-msgstr ""
-
 msgid "Remove"
+msgstr ""
+
+msgid "Refresh"
 msgstr ""
 
 msgid "Save"
@@ -273,9 +273,6 @@ msgstr ""
 msgid ""
 "Your picture, name and status message identify yourself in calls, chats "
 "and rooms."
-msgstr ""
-
-msgid "Contacts"
 msgstr ""
 
 msgid "Manage contacts"
@@ -517,6 +514,9 @@ msgstr ""
 msgid "Close this window and disconnect?"
 msgstr ""
 
+msgid "Contacts Manager"
+msgstr ""
+
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr "適用更新需重啟，現在點擊Ok重新啟動。"
 
@@ -621,9 +621,6 @@ msgstr ""
 
 msgid "Use browser language"
 msgstr "使用瀏覽器語言"
-
-msgid "Contacts Manager"
-msgstr ""
 
 msgid "Meet with me here:"
 msgstr "我們這裡見："

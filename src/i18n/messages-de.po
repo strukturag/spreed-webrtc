@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-05 11:05+0200\n"
-"PO-Revision-Date: 2014-09-05 11:02+0100\n"
+"POT-Creation-Date: 2014-09-05 14:37+0200\n"
+"PO-Revision-Date: 2014-09-05 14:38+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -29,6 +29,9 @@ msgstr "Bildschirm freigeben"
 
 msgid "Chat"
 msgstr "Chat"
+
+msgid "Contacts"
+msgstr "Kontakte"
 
 msgid "Mute microphone"
 msgstr "Mikrofon abschalten"
@@ -145,14 +148,11 @@ msgstr "Bearbeiten"
 msgid "Name"
 msgstr "Name"
 
-msgid "Sync"
-msgstr "Aktualisieren"
-
-msgid "Sync contact info"
-msgstr "Kontakt aktualisieren"
-
 msgid "Remove"
 msgstr "Entfernen"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
 
 msgid "Save"
 msgstr "Speichern"
@@ -276,9 +276,6 @@ msgid ""
 msgstr ""
 "Ihr Bild, Name und Status Nachricht repräsentiert Sie in Anrufen, Chats "
 "und Räumen."
-
-msgid "Contacts"
-msgstr "Kontakte"
 
 msgid "Manage contacts"
 msgstr "Kontakte verwalten"
@@ -523,6 +520,9 @@ msgstr "Kontakt bearbeiten"
 msgid "Close this window and disconnect?"
 msgstr "Fenster schließen und die Verbindung trennen?"
 
+msgid "Contacts Manager"
+msgstr "Kontakte"
+
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""
 "Es stehen Updates zur Verfügung. Klicken Sie Ok um die Anwendung  neu zu "
@@ -638,9 +638,6 @@ msgstr "Die Berechtigung den Bildschirm freizugeben wurde verweigert."
 
 msgid "Use browser language"
 msgstr "Browsereinstellung"
-
-msgid "Contacts Manager"
-msgstr "Kontakte"
 
 msgid "Meet with me here:"
 msgstr "Meeting:"

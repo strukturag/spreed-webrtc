@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-05 11:05+0200\n"
+"POT-Creation-Date: 2014-09-05 14:37+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -29,6 +29,9 @@ msgstr "화면 공유하기"
 
 msgid "Chat"
 msgstr "대화"
+
+msgid "Contacts"
+msgstr ""
 
 msgid "Mute microphone"
 msgstr "음성제거"
@@ -149,13 +152,10 @@ msgstr ""
 msgid "Name"
 msgstr "이름"
 
-msgid "Sync"
-msgstr ""
-
-msgid "Sync contact info"
-msgstr ""
-
 msgid "Remove"
+msgstr ""
+
+msgid "Refresh"
 msgstr ""
 
 msgid "Save"
@@ -273,9 +273,6 @@ msgstr ""
 msgid ""
 "Your picture, name and status message identify yourself in calls, chats "
 "and rooms."
-msgstr ""
-
-msgid "Contacts"
 msgstr ""
 
 msgid "Manage contacts"
@@ -517,6 +514,9 @@ msgstr ""
 msgid "Close this window and disconnect?"
 msgstr ""
 
+msgid "Contacts Manager"
+msgstr ""
+
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr "업데이트를 적용하려면 재시작이 필요 합니다. 지금 재시작 하려면 ok를 클릭 하십시오"
 
@@ -622,9 +622,6 @@ msgstr ""
 
 msgid "Use browser language"
 msgstr "브라우저 언어 사용"
-
-msgid "Contacts Manager"
-msgstr ""
 
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"

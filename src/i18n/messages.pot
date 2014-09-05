@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-05 11:05+0200\n"
+"POT-Creation-Date: 2014-09-05 14:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,9 @@ msgid "Share your screen"
 msgstr ""
 
 msgid "Chat"
+msgstr ""
+
+msgid "Contacts"
 msgstr ""
 
 msgid "Mute microphone"
@@ -145,13 +148,10 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-msgid "Sync"
-msgstr ""
-
-msgid "Sync contact info"
-msgstr ""
-
 msgid "Remove"
+msgstr ""
+
+msgid "Refresh"
 msgstr ""
 
 msgid "Save"
@@ -269,9 +269,6 @@ msgstr ""
 msgid ""
 "Your picture, name and status message identify yourself in calls, chats "
 "and rooms."
-msgstr ""
-
-msgid "Contacts"
 msgstr ""
 
 msgid "Manage contacts"
@@ -511,6 +508,9 @@ msgstr ""
 msgid "Close this window and disconnect?"
 msgstr ""
 
+msgid "Contacts Manager"
+msgstr ""
+
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""
 
@@ -611,9 +611,6 @@ msgid "Permission to start screen sharing was denied."
 msgstr ""
 
 msgid "Use browser language"
-msgstr ""
-
-msgid "Contacts Manager"
 msgstr ""
 
 msgid "Meet with me here:"
