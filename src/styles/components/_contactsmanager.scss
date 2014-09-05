@@ -46,18 +46,18 @@
     max-height: 250px;
     overflow-y: auto;
   }
+  .picture {
+    border-bottom: 0;
+    cursor: auto;
+    min-height: 46px;
+    .buddyPicture {
+      margin: 0 0 0 10px;
+    }
+  }
   .table {
     margin-bottom: 0px;
     tr:first-child td {
       border-top: none;
-    }
-    .picture {
-      border-bottom: 0;
-      cursor: auto;
-      min-height: 46px;
-      .buddyPicture {
-        margin: 0 0 0 10px;
-      }
     }
     .name {
       width: 70%;
@@ -69,6 +69,12 @@
       vertical-align: middle;
       padding-right: 15px;
     }
+  }
+}
+
+.contactsmanageredit {
+  .buddy .buddyPicture {
+    margin: 0;
   }
 }
 

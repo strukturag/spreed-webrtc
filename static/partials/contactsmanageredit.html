@@ -4,32 +4,31 @@
     <h3 class="modal-title" ng-bind-html="header"></h3>
   </div>
   <div  class="modal-body">
-    <div class="row form-horizontal">
+    <div class="form-horizontal">
+        <div class="form-group">
+          <label for="contact-name" class="col-xs-4 control-label">{{_('Picture')}}</label>
+          <div class="col-xs-6">
+            <div class="picture buddy">
+              <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>    
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label for="contact-name" class="col-xs-4 control-label">{{_('Name')}}</label>
           <div class="col-xs-6">
             <input id="contact-name" class="form-control" type="text" ng-model="contact.Status.displayName">
           </div>
         </div>
-        <div class="form-group" ng-if="buddySyncable">
-          <label for="contact-sync" class="col-xs-4 control-label">{{_('Sync')}}</label>
-          <div class="col-xs-6">
-            <button id="contact-sync" class="btn btn-warning" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Sync contact info')}}</button>
-          </div>
-        </div>
     </div>
   </div>
   <div class="modal-footer">
-    <div class="row">
-      <div class="col-xs-2">
+    <div class="pull-left">
         <button class="btn btn-danger" ng-click="removeContact()">{{_('Remove')}}</button>
-      </div>
-      <div class="col-xs-offset-4 col-xs-6">
-        <div class="pull-right">
-          <button class="btn btn-default" ng-click="cancel()">{{_('Cancel')}}</button>
-          <button class="btn btn-primary" ng-click="save()">{{_('Save')}}</button>
-        </div>
-      </div>
+        <button id="contact-sync" class="btn btn-success" ng-if="buddySyncable" ng-click="syncContactInfo()"><span class="fa fa-rotate-right"></span> {{_('Refresh')}}</button>
+    </div>
+    <div class="pull-right">
+      <button class="btn btn-default" ng-click="cancel()">{{_('Cancel')}}</button>
+      <button class="btn btn-primary" ng-click="save()">{{_('Save')}}</button>
     </div>
   </div>
 </div>

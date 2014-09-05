@@ -32,7 +32,7 @@ define([], function() {
 					header: translation._("Edit Contact"),
 					contact: contact,
 				}, {
-					wc: "contactsmanager"
+					wc: "contactsmanager contactsmanageredit"
 				}
 			);
 		};
