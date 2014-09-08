@@ -100,6 +100,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 	Connector.prototype.close = function() {
 
 		this.connected = false;
+		this.roomid = null;
 		if (this.conn) {
 			var conn = this.conn;
 			this.conn = null;
