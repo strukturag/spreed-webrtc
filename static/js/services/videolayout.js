@@ -44,7 +44,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 	var objectFitSupport = Modernizr["object-fit"] && true;
 
 	// videoLayout
-	return ["$window", function($window) {
+	return ["$window", "mediaStream", function($window, mediaStream) {
 
 		// Video layout with all videos rendered the same size.
 		var OnePeople = function(container, scope, controller) {};
@@ -166,10 +166,26 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		var Smally = function(container, scope, controller) {
 			// Call super.
 			OnePeople.call(this, container, scope, controller);
+			this.prevCameraMuted = scope.cameraMute;
+			if (!scope.cameraMute) {
+				// don't update video pictures in smally mode to save
+				// bandwidth for large main content (e.g. screensharing,
+				// presentations or YouTube videos)
+				mediaStream.webrtc.setVideoMute(true);
+			}
 		}
 		Smally.prototype = Object.create(OnePeople.prototype);
 		Smally.prototype.constructor = Smally;
 		Smally.prototype.name = "smally";
+
+		Smally.prototype.close = function(container, scope, controller) {
+			if (!this.prevCameraMuted) {
+				// smally mode disabled the camera, unmute again
+				mediaStream.webrtc.setVideoMute(false);
+				this.prevCameraMuted = true;
+			}
+			OnePeople.prototype.close.call(this, container, scope, controller);
+		};
 
 		// A view with one selectable large video. The others are small.
 		var ConferenceKiosk = function(container, scope, controller) {
