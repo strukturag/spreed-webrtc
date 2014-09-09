@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.22.2) precise; urgency=low
+
+  * Fixed room join after reconnect.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 09 Sep 2014 11:00:08 +0200
+
 spreed-webrtc-server (0.22.1) precise; urgency=low
 
   * Fixed load of local stored date when not logged in. 
