@@ -39,6 +39,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		this.datachannels = {};
 		this.streams = {};
 
+		this.negotiationNeeded = false;
 		this.initiate = false;
 		this.closed = false;
 
@@ -67,14 +68,14 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 		var constraints = utils.mergeConstraints(this.offerConstraints, this.sdpConstraints);
 		console.log('Creating offer with constraints: \n' +
-			'  \'' + JSON.stringify(constraints, null, '\t') + '\'.')
+			'  \'' + JSON.stringify(constraints, null, '\t') + '\'.', this.negotiationNeeded);
 		this.peerconnection.createOffer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this), constraints);
 
 	};
 
 	PeerCall.prototype.createAnswer = function(cb) {
 
-		console.log("Creating answer.");
+		console.log("Creating answer.", this.negotiationNeeded);
 		this.peerconnection.createAnswer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this), this.peerconnection.sdpConstraints);
 
 	};
@@ -104,6 +105,11 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			this.close();
 			this.e.triggerHandler("error", "failed_peerconnection_setup");
 		}, this));
+
+		if (this.negotiationNeeded)  {
+			this.negotiationNeeded = false;
+			console.log("Negotiation complete.", this);
+		}
 
 	};
 
@@ -191,23 +197,9 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	PeerCall.prototype.onNegotiationNeeded = function(peerconnection) {
 
-		var remoteDescription = peerconnection.pc.remoteDescription;
-		console.log("Negotiation needed.", remoteDescription);
-		if (remoteDescription && remoteDescription.type === "offer") {
-			// Need to answer.
-			// XXX(longsleep): In cases where we are in answer state but need to
-			// negotiate again, createAnswer will do nothing. We might need to call
-			// createOffer and send it out as answer? Is that valid / makes sense?
-			this.createAnswer(_.bind(function(sessionDescription) {
-				console.log("Sending new negotiation answer with sessionDescription", sessionDescription, this.id);
-				this.webrtc.api.sendAnswer(this.to, sessionDescription);
-			}, this));
-		} else {
-			// Send offer.
-			this.createOffer(_.bind(function(sessionDescription) {
-				console.log("Sending new negotiation offer with sessionDescription", sessionDescription, this.id);
-				this.webrtc.api.sendOffer(this.to, sessionDescription);
-			}, this));
+		if (!this.negotiationNeeded) {
+			this.negotiationNeeded = true;
+			console.log("Negotiation needed.", this);
 		}
 
 	};

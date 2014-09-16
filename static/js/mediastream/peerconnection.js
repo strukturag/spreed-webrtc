@@ -227,9 +227,9 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		// XXX(longsleep): Renegotiation seems to break video streams on Chrome 31.
 		// XXX(longsleep): Renegotiation can happen from both sides, meaning this
 		// could switch offer/answer side - oh crap.
-		if (false) {
-			var peerconnection = event.target;
-			console.log("Negotiation needed.", peerconnection.remoteDescription, peerconnection.iceConnectionState, peerconnection.signalingState, this);
+		var peerconnection = event.target;
+		if (peerconnection === this.pc) {
+			//console.log("Negotiation needed.", peerconnection.remoteDescription, peerconnection.iceConnectionState, peerconnection.signalingState, this);
 			this.currentcall.onNegotiationNeeded(this);
 		}
 
