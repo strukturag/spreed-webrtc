@@ -47,9 +47,12 @@
     overflow-y: auto;
   }
   .picture {
+    display: table-cell;
     border-bottom: 0;
     cursor: auto;
     min-height: 46px;
+    position: static;
+    width: auto;
     .buddyPicture {
       margin: 0 0 0 10px;
     }
@@ -60,7 +63,7 @@
       border-top: none;
     }
     .name {
-      width: 70%;
+      width: 40%;
       text-align: left;
       vertical-align: middle;
     }
