@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-05 16:08+0200\n"
+"POT-Creation-Date: 2014-09-16 10:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -298,6 +298,9 @@ msgid "High"
 msgstr ""
 
 msgid "HD"
+msgstr ""
+
+msgid "Full HD"
 msgstr ""
 
 msgid "General"
