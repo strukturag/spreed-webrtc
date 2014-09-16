@@ -1,7 +1,7 @@
 /*!
- * visibly - v0.6 Aug 2011 - Page Visibility API Polyfill
+ * visibly - v0.7 Page Visibility API Polyfill
  * http://github.com/addyosmani
- * Copyright (c) 2011 Addy Osmani
+ * Copyright (c) 2011-2014 Addy Osmani
  * Dual licensed under the MIT and GPL licenses.
  *
  * Methods supported:
@@ -11,7 +11,7 @@
  * visibly.visibilityState()
  * visibly.visibilitychange(callback(state));
  */
-
+// https://raw.githubusercontent.com/addyosmani/visibly.js/5b271d2cf71dd21805b7dc0ded7ef97ac764307e/visibly.js
 ;(function () {
 
     window.visibly = {
@@ -27,14 +27,14 @@
         cachedPrefix:"",
         fn:null,
 
-        onVisible: function (fn) {
-            if(typeof fn == 'function' ){
-                this.visibleCallbacks.push(fn);
+        onVisible: function (_callback) {
+            if(typeof _callback == 'function' ){
+                this.visibleCallbacks.push(_callback);
             }
         },
-        onHidden: function (fn) {
-            if(typeof fn == 'function' ){
-                this.hiddenCallbacks.push(fn);
+        onHidden: function (_callback) {
+            if(typeof _callback == 'function' ){
+                this.hiddenCallbacks.push(_callback);
             }
         },
         getPrefix:function(){
@@ -74,10 +74,13 @@
 
         },
         isSupported: function (index) {
-            return ((this.cachedPrefix + this.props[2]) in this.q);
+            return ((this._getPropName(2)) in this.q);
+        },
+        _getPropName:function(index) {
+            return (this.cachedPrefix == "" ? this.props[index].substring(0, 1).toLowerCase() + this.props[index].substring(1) : this.cachedPrefix + this.props[index]);
         },
         _getProp:function(index){
-            return this.q[this.cachedPrefix + this.props[index]]; 
+            return this.q[this._getPropName(index)]; 
         },
         _execute: function (index) {
             if (index) {
@@ -112,7 +115,7 @@
                         }
                     }
                 } else { /*switch support based on prefix detected earlier*/
-                    this.q.addEventListener(this.cachedPrefix + this.props[1], function () {
+                    this.q.addEventListener(this._getPropName(1), function () {
                         window.visibly._nativeSwitch.apply(window.visibly, arguments);
                     }, 1);
                 }
