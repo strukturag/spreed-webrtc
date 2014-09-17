@@ -160,6 +160,19 @@
       color: white;
     }
   }
+  .btn-mutemicrophone i:before {
+    content: "\f130";
+  }
+  .btn-mutemicrophone.active i:before {
+    content: "\f131";
+  }
+  .btn-mutecamera i:before {
+    content: "\f06e";
+  }
+  .btn-mutecamera.active i:before {
+    content: "\f070";
+  }
+
 }
 
 @keyframes shakeityeah {
