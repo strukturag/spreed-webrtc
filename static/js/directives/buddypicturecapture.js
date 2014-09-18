@@ -85,7 +85,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				}
 				canvas.getContext("2d").drawImage($scope.video, x, y, width, height);
 
-			}
+			};
 
 			var writePreviewPic = function() {
 				writeVideoToCanvas($scope.canvasPrev);
@@ -168,15 +168,13 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 
 			$scope.setAsProfilePicture = function() {
 				writeVideoToCanvas($scope.canvasPic);
-				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
-				//console.info("Image size", $scope.user.buddyPicture.length);
+				$scope.save();
 				$scope.cancelPicture();
-				safeApply($scope);
 			};
 
 		}];
 
-		var link = function($scope, $element) {
+		var link = function($scope, $element, $attrs, modelController) {
 
 			$scope.video = $element.find("video").get(0);
 			$scope.flash = $element.find(".videoFlash");
@@ -184,11 +182,16 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 			$scope.canvasPrev = $element.find("canvas.videoPrev").get(0);
 			$($scope.canvasPic).attr($scope.captureSize);
 
+			$scope.save = function() {
+				modelController.$setViewValue($scope.canvasPic.toDataURL("image/jpeg"));
+			};
+
 		};
 
 		return {
 			scope: true,
 			restrict: 'E',
+			require: 'ngModel',
 			replace: true,
 			template: template,
 			controller: controller,
