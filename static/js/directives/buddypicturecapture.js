@@ -142,17 +142,23 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				return videoAllowed.promise;
 			};
 
-			$scope.initPicture = function() {
+			$scope.startPictureCapture = function() {
 				videoStart(localStream);
 			};
 
-			$scope.cancelPicture = function() {
+			$scope.cancelPictureCapture = function() {
 				$scope.showTakePicture = false;
 				$scope.previewPicture = false;
 				videoStop(localStream, $scope.video);
 			};
 
-			$scope.retakePicture = function() {
+			$scope.usePictureCapture = function() {
+				writeVideoToCanvas($scope.canvasPic);
+				$scope.save();
+				$scope.cancelPictureCapture();
+			};
+
+			$scope.retakePictureCapture = function() {
 				var permission = videoStart(localStream);
 				permission.then(function(isPermitted) {
 					if(isPermitted) {
@@ -162,14 +168,8 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				});
 			};
 
-			$scope.takePicture = function() {
+			$scope.takePictureCapture = function() {
 				makePicture(localStream, countDownFrom, delayToTakePicture);
-			};
-
-			$scope.setAsProfilePicture = function() {
-				writeVideoToCanvas($scope.canvasPic);
-				$scope.save();
-				$scope.cancelPicture();
 			};
 
 		}];

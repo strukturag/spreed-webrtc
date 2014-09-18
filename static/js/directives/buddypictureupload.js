@@ -126,19 +126,19 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.style.cssText = null;
 			};
 
-			$scope.cancelPicture = function() {
+			$scope.cancelPictureUpload = function() {
 				$scope.showUploadPicture = false;
 				$scope.previewUpload = false;
 				clearPicture();
 			};
 
-			$scope.usePicture = function() {
+			$scope.usePictureUpload = function() {
 				writePictureToCanvas($scope.canvasPic);
 				$scope.save();
-				$scope.cancelPicture();
+				$scope.cancelPictureUpload();
 			};
 
-			$scope.handleUpload = function(event) {
+			$scope.handlePictureUpload = function(event) {
 				var file = event.target.files[0];
 				if (!file) {
 					return;
@@ -205,7 +205,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$scope.prevImage = $element.find("img.preview").get(0);
 
 			// Bind change event of file upload form.
-			$element.find("input[type=file]").on("change", $scope.handleUpload);
+			$element.find("input[type=file]").on("change", $scope.handlePictureUpload);
 
 			var intervalNum = {
 				num: null
@@ -277,6 +277,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 		};
 
 		return {
+			scope: false,
 			restrict: 'E',
 			require: '^buddyPictureCapture',
 			replace: true,

@@ -9,17 +9,17 @@
 				<canvas class="videoPic hidden"></canvas>
 				<canvas class="videoPrev hidden"></canvas>
 				<img class="preview" ng-class="{previewPicture: previewPicture}" ng-show="previewPicture" ng-src="{{preview}}" alt="" />
-				<a class="btn btn-xs btn-success btn-takePicture" ng-disabled="countingDown || waitingForPermission" ng-show="!previewPicture && !countingDown" ng-click="takePicture()"> {{_('Take')}}</a>
-				<a class="btn btn-xs btn-success btn-retakePicture" ng-disabled="waitingForPermission" ng-show="previewPicture" ng-click="retakePicture()"> {{_('Retake')}}</a>
+				<a class="btn btn-xs btn-success btn-takePicture" ng-disabled="countingDown || waitingForPermission" ng-show="!previewPicture && !countingDown" ng-click="takePictureCapture()"> {{_('Take')}}</a>
+				<a class="btn btn-xs btn-success btn-retakePicture" ng-disabled="waitingForPermission" ng-show="previewPicture" ng-click="retakePictureCapture()"> {{_('Retake')}}</a>
 			</div>
 		</div>
 		<div>
-			<a class="btn btn-small btn-default" ng-click="cancelPicture()"> {{_('Cancel')}}</a>
-			<a class="btn btn-small btn-primary" ng-disabled="!previewPicture || waitingForPermission" ng-click="setAsProfilePicture()"> {{_('Set as Profile Picture')}}</a>
+			<a class="btn btn-small btn-default" ng-click="cancelPictureCapture()"> {{_('Cancel')}}</a>
+			<a class="btn btn-small btn-primary" ng-disabled="!previewPicture || waitingForPermission" ng-click="usePictureCapture()"> {{_('Set as Profile Picture')}}</a>
 		</div>
 	</div>
 	<buddy-picture-upload></buddy-picture-upload>
-	<a class="btn btn-small btn-primary" ng-show="!showTakePicture && !showUploadPicture" ng-disabled="waitingForPermission" ng-click="initPicture()"> {{_('Take picture')}}</a>
+	<a class="btn btn-small btn-primary" ng-show="!showTakePicture && !showUploadPicture" ng-disabled="waitingForPermission" ng-click="startPictureCapture()"> {{_('Take picture')}}</a>
 	<a class="btn btn-small btn-default" ng-show="!showTakePicture && !showUploadPicture" ng-model="showUploadPicture" btn-checkbox>{{_('Upload picture')}}</a>
 	<span ng-show="waitingForPermission">
 		<i class="fa fa-circle-o-notch fa-spin"></i> {{_('Waiting for camera')}}
