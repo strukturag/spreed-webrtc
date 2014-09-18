@@ -625,7 +625,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 					}
 					break;
 				case "failed":
-					mediaStream.webrtc.doHangup();
+					mediaStream.webrtc.doHangup("failed", currentcall.id);
 					alertify.dialog.alert(translation._("Peer connection failed. Check your settings."));
 					break;
 			}
