@@ -4,22 +4,9 @@
 		<span class="loader" ng-if="upload.status !== 100 && upload.status !== 0">
 			<i class="fa fa-circle-o-notch fa-spin fa-2x"></i>
 		</span>
-		<div class="imageUtilites">
-			<div class="moveHorizontal">
-				<i class="fa fa-long-arrow-left"></i>
-				<i class="fa fa-long-arrow-right"></i>
-			</div>
-			<div class="moveVertical">
-				<i class="fa fa-long-arrow-up"></i>
-				<i class="fa fa-long-arrow-down"></i>
-			</div>
-			<div class="resize">
-				<i class="fa fa-plus"></i>
-				<i class="fa fa-minus"></i>
-			</div>
-		</div>
 		<img class="preview" ng-class="{previewUpload: previewUpload}" />
 	</div>
+	<img class="previewDrag" ng-class="{dragging: dragging}" />
 	<div class="alert alert-warning" ng-if="error.read">{{_('The file couldn\'t be read.')}}<button type="button" class="close" ng-click="error.read = null"><span>&times;</span></button></div>
 	<div class="alert alert-warning" ng-if="error.image">{{_('The file is not an image.')}}<button type="button" class="close" ng-click="error.image = null"><span>&times;</span></button></div>
 	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max. %d MB.', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>

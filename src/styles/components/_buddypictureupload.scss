@@ -45,6 +45,7 @@
     width: 200px;
     background-color: $componentbg;
     user-select: none;
+    z-index: 3;
     &.imgData {
       background-color: black;
       .chooseUploadPicture {
@@ -69,6 +70,22 @@
     position: relative;
     top: 0px;
     left: 0px;
+    display: none;
+    &.previewUpload {
+      display: block;
+    }
+  }
+  .previewDrag {
+    position: absolute;
+    z-index: 2;
+    left: 0px;
+    top: 2px;
+    opacity: 0.2;
+    display: none;
+    border: 1px solid $bordercolor;
+    &.dragging {
+      display: block;
+    }
   }
   .imageUtilites {
     line-height: 30px;
