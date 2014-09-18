@@ -123,6 +123,7 @@
     transform: scale(-1, 1);
     transition-property: opacity;
     transition-duration: .5s;
+    z-index: 25;
     &.visible {
       opacity: 1;
     }
@@ -232,7 +233,7 @@
 .audiovideo .overlayActions {
   background: $video-overlayactions;
   bottom: 0;
-  height: 70px;
+  height: 105px;
   left: 0;
   margin:auto 0;
   opacity: 0;
@@ -355,5 +356,25 @@
       width: 100%;
       height: 100%;
     }
+  }
+}
+
+.renderer-selfportrait {
+  .miniContainer {
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    .miniVideo {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .remoteVideos {
+    opacity: 0 !important;
+    display: none;
   }
 }
