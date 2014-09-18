@@ -259,20 +259,20 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 
-			$element.find("#arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
-			$element.find("#arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
-			$element.find("#arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find("#arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-long-arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
+			$element.find(".fa-long-arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
+			$element.find(".fa-long-arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-long-arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			$element.find("#arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, changeImage);
-			$element.find("#arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, changeImage);
-			$element.find("#arrow-left").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find("#arrow-right").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-long-arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, changeImage);
+			$element.find(".fa-long-arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, changeImage);
+			$element.find(".fa-long-arrow-left").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-long-arrow-right").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			$element.find("#larger").on('mousedown', null, {intervalNum: intervalNum, action: makeImageLarger}, changeImage);
-			$element.find("#smaller").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
-			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-plus").on('mousedown', null, {intervalNum: intervalNum, action: makeImageLarger}, changeImage);
+			$element.find(".fa-minus").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
+			$element.find(".fa-plus").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			$element.find(".fa-minus").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
 		};
 
