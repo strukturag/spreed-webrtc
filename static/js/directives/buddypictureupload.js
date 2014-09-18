@@ -255,33 +255,18 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left, pxMove);
 				$scope.dragImage.style.left = incrementPx($scope.dragImage.style.left, pxMove);
 			};
-			var makeImageLarger = function() {
-				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
+			var makeImageLarger = function(pxMove) {
+				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width, pxMove);
 				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
-				moveImageLeft(1);
-				moveImageUp(2);
+				$scope.dragImage.style.width = incrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var makeImageSmaller = function() {
-				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
+			var makeImageSmaller = function(pxMove) {
+				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width, pxMove);
 				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
-				moveImageRight(1);
-				moveImageDown(2);
+				$scope.dragImage.style.width = decrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var changeImage = function(evt) {
-				if (evt.data.intervalNum.num || !evt.data.action) {
-					clearInterval(evt.data.intervalNum.num);
-					evt.data.intervalNum.num = null;
-				} else {
-					evt.data.intervalNum.num = setInterval(function() {
-						evt.data.action();
-					}, 50);
-				}
-			};
-
-			$element.find("#larger").on('mousedown', null, {intervalNum: intervalNum, action: makeImageLarger}, changeImage);
-			$element.find("#smaller").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
-			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
 			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
 			setTimeout(function() {
@@ -290,14 +275,58 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var startX = null;
 			var startY = null;
+			var movementX = null;
+			var movementY = null;
+			var prevParent = $('.showUploadPicture').get(0);
+			var prevParentRect = null;
+			var zoomFactor = null;
+			var getCursorCenterInfo = function(event) {
+				prevParentRect = prevParent.getBoundingClientRect();
+				var width = prevParentRect.width;
+				var height = prevParentRect.height;
+				var x = event.originalEvent.clientX - prevParentRect.left;
+				var y = event.originalEvent.clientY - prevParentRect.top;
+				var centerOffsetX = x - width/2;
+				var centerOffsetY = y - height/2;
+				console.log('centerImage', 'centerOffsetX', centerOffsetX, 'centerOffsetY', centerOffsetY);
+				return {'x': centerOffsetX, 'y': centerOffsetY};
+			};
+			var zoomImage = function(event) {
+				// zoom in
+				var deltaY = event.originalEvent.deltaY;
+				var center = getCursorCenterInfo(event);
+				if (deltaY < 0) {
+					makeImageLarger(Math.abs(deltaY));
+					if(center.x < 0 && center.y > 0) {
+						//move down and right
+					} else if (center.x > 0 && center.y > 0) {
+						//move down and left 
+						moveImageDown(Math.abs(deltaY) % 10 * 0.5);
+						moveImageLeft(Math.abs(deltaY) % 10 * 0.5);
+					} else if (center.x > 0 && center.y < 0) {
+						//move up and left 
+						moveImageUp(Math.abs(deltaY) % 10 * 0.5);
+						moveImageLeft(Math.abs(deltaY) % 10 * 0.5);
+					} else {
+						//move up and right
+						moveImageUp(Math.abs(deltaY) % 10 * 0.5);
+						moveImageRight(Math.abs(deltaY) % 10 * 0.5);
+					}
+				// zoom out
+				} else {
+					makeImageSmaller(deltaY);
+					moveImageRight(deltaY % 10 * 0.5);
+					moveImageDown(deltaY % 10 * 0.5);
+				}
+			};
 			var moveImage = function(event) {
-				var movementX = startX - event.originalEvent.clientX;
+				movementX = startX - event.originalEvent.clientX;
+				movementY = startY - event.originalEvent.clientY;
 				if (movementX < 0) {
 					moveImageRight(Math.abs(movementX));
 				} else {
 					moveImageLeft(movementX);
 				}
-				var movementY = startY - event.originalEvent.clientY;
 				if (movementY > 0) {
 					moveImageUp(movementY);
 				} else {
@@ -309,6 +338,12 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 			$($scope.prevImage).on('drag dragstart dragover dragenter dragend drop', function(event) {
 				event.preventDefault();
+			});
+			$($scope.prevImage).on('wheel', function(event) {
+				console.log('wheel', 'deltaX', event.originalEvent.deltaX, 'deltaY', event.originalEvent.deltaY, 'deltaZ', event.originalEvent.deltaZ);
+				event.stopPropagation();
+				event.preventDefault();
+				zoomImage(event);
 			});
 			$($scope.prevImage).on('mousedown', function(event) {
 				event.stopPropagation();
