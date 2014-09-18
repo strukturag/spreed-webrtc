@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootstrap-file-input'], function($, _, template, BootstrapFileInput) {
+define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
@@ -110,7 +110,8 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 				return {width: width, height: height, x: x, y: y};
 			};
 
-			var writeUploadToCanvas = function(canvas, img) {
+			var writePictureToCanvas = function(canvas) {
+				var img = $scope.prevImage;
 				var dim = getScaledDimensions(img, canvas);
 				var context = canvas.getContext("2d");
 				context.clearRect(0, 0, canvas.width, canvas.height);
@@ -125,17 +126,16 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 				$scope.prevImage.style.cssText = null;
 			};
 
-			$scope.usePicture = function() {
-				writeUploadToCanvas($scope.canvasPic, $scope.prevImage);
-				$scope.user.buddyPicture = $scope.canvasPic.toDataURL("image/jpeg");
-				$scope.reset();
-				safeApply($scope);
-			};
-
-			$scope.reset = function() {
+			$scope.cancelPicture = function() {
 				$scope.showUploadPicture = false;
 				$scope.previewUpload = false;
 				clearPicture();
+			};
+
+			$scope.usePicture = function() {
+				writePictureToCanvas($scope.canvasPic);
+				$scope.save();
+				$scope.cancelPicture();
 			};
 
 			$scope.handleUpload = function(event) {
@@ -201,8 +201,11 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 		}];
 
 		var link = function($scope, $element) {
-			$scope.prevImage = $(".showUploadPicture .preview").get(0);
-			$element.find("#uploadFile").on('change', $scope.handleUpload);
+
+			$scope.prevImage = $element.find("img.preview").get(0);
+
+			// Bind change event of file upload form.
+			$element.find("input[type=file]").on("change", $scope.handleUpload);
 
 			var intervalNum = {
 				num: null
@@ -271,14 +274,11 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 			$element.find("#larger").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 			$element.find("#smaller").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
-			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
-			setTimeout(function() {
-				$('#uploadFile').bootstrapFileInput();
-			}, 0);
 		};
 
 		return {
 			restrict: 'E',
+			require: '^buddyPictureCapture',
 			replace: true,
 			template: template,
 			controller: controller,

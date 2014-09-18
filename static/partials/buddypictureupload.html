@@ -24,10 +24,10 @@
 	<div class="alert alert-warning" ng-if="error.image">{{_('The file is not an image.')}}<button type="button" class="close" ng-click="error.image = null"><span>&times;</span></button></div>
 	<div class="alert alert-warning" ng-if="error.size">{{_('The file is too large. Max. %d MB.', maxUploadMb)}}<button type="button" class="close" ng-click="error.size = null"><span>&times;</span></button></div>
 	<p>
-		<input id="uploadFile" class="btn btn-success" type="file" title="{{_('Select file')}}" data-filename-placement="outside"/>
+		<input class="btn btn-success" bfi type="file" title="{{_('Select file')}}" data-filename-placement="outside"/>
 	</p>
 	<p>
-		<a class="btn btn-small btn-default" ng-click="reset()"> {{_('Cancel')}}</a>
+		<a class="btn btn-small btn-default" ng-click="cancelPicture()"> {{_('Cancel')}}</a>
 		<a class="btn btn-small btn-primary" ng-click="usePicture()" ng-disabled="!imgData"> {{_('Set as Profile Picture')}}</a>
 	</p>
 </div>

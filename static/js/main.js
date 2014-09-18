@@ -131,7 +131,7 @@ require.config({
 		},
 		'bootstrap-file-input': {
 			deps: ['jquery'],
-			exports: 'BootstrapFileInput'
+			exports: '$'
 		},
 	}
 });
