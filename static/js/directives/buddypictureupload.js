@@ -22,6 +22,10 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
+	var getNumFromPx = function(px) {
+		return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
+	};
+
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
 
@@ -215,7 +219,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var link = function($scope, $element) {
 
-			$scope.prevImage = $element.find("img.preview")[0];
 			$scope.clearInput = function() {
 				$element.find("input[type=file]")[0].value = "";
 			};
@@ -264,33 +267,18 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left, pxMove);
 				$scope.dragImage.style.left = incrementPx($scope.dragImage.style.left, pxMove);
 			};
-			var makeImageLarger = function() {
-				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
+			var makeImageLarger = function(pxMove) {
+				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width, pxMove);
 				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
-				moveImageLeft(1);
-				moveImageUp(2);
+				$scope.dragImage.style.width = incrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var makeImageSmaller = function() {
-				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
+			var makeImageSmaller = function(pxMove) {
+				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width, pxMove);
 				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
-				moveImageRight(1);
-				moveImageDown(2);
+				$scope.dragImage.style.width = decrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var changeImage = function(evt) {
-				if (evt.data.intervalNum.num || !evt.data.action) {
-					clearInterval(evt.data.intervalNum.num);
-					evt.data.intervalNum.num = null;
-				} else {
-					evt.data.intervalNum.num = setInterval(function() {
-						evt.data.action();
-					}, 50);
-				}
-			};
-
-			$element.find(".fa-long-arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
-			$element.find(".fa-long-arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
-			$element.find(".fa-long-arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find(".fa-long-arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 
 			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
 			setTimeout(function() {
@@ -299,14 +287,30 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var startX = null;
 			var startY = null;
+			var movementX = null;
+			var movementY = null;
+			var zoomImage = function(event) {
+				var deltaY = event.originalEvent.deltaY;
+				// zoom in
+				if (deltaY < 0) {
+					makeImageLarger(Math.abs(deltaY));
+					moveImageLeft(Math.abs(deltaY/2));
+					moveImageUp(Math.abs(deltaY/2));
+				// zoom out
+				} else {
+					makeImageSmaller(deltaY);
+					moveImageRight(deltaY/2);
+					moveImageDown(deltaY/2);
+				}
+			};
 			var moveImage = function(event) {
-				var movementX = startX - event.originalEvent.clientX;
+				movementX = startX - event.originalEvent.clientX;
+				movementY = startY - event.originalEvent.clientY;
 				if (movementX < 0) {
 					moveImageRight(Math.abs(movementX));
 				} else {
 					moveImageLeft(movementX);
 				}
-				var movementY = startY - event.originalEvent.clientY;
 				if (movementY > 0) {
 					moveImageUp(movementY);
 				} else {
@@ -319,6 +323,12 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$($scope.prevImage).on('drag dragstart dragover dragenter dragend drop', function(event) {
 				event.preventDefault();
 			});
+			$($scope.prevImage).on('wheel', function(event) {
+				//console.log('wheel', 'deltaX', event.originalEvent.deltaX, 'deltaY', event.originalEvent.deltaY, 'deltaZ', event.originalEvent.deltaZ);
+				event.stopPropagation();
+				event.preventDefault();
+				zoomImage(event);
+			});
 			$($scope.prevImage).on('mousedown', function(event) {
 				event.stopPropagation();
 				startX = event.originalEvent.clientX;
@@ -328,7 +338,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				});
 			});
 			$('#settings').on('click mouseup', function(event) {
-				console.log('settings click', event);
 				event.stopPropagation();
 				$scope.$apply(function() {
 					$scope.dragging = false;
@@ -337,7 +346,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$('#settings').on('mousemove', function(event) {
 				event.stopPropagation();
 				if ($scope.dragging) {
-					console.log('move mouse with mouse down', event);
 					moveImage(event);
 				}
 			});
