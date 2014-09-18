@@ -330,7 +330,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 								Type: "Message",
 								Status: {
 									State: "sent",
-									"Mid": mid
+									Mid: mid
 								}
 							});
 						});
