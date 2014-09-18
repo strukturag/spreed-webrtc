@@ -30,6 +30,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		this.localStream = null;
 		this.started = false;
+		this.delay = 0;
 
 		// Audio level.
 		this.audioLevel = 0;
@@ -126,7 +127,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		// Get notified of end events.
 		stream.onended = _.bind(function(event) {
 			console.log("User media stream ended.");
-			this.stop();
+			if (this.started) {
+				this.stop();
+			}
 		}, this);
 
 		if (this.audioProcessor && context.createMediaStreamSource) {
@@ -139,7 +142,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		this.localStream = stream;
 
 		// Let webrtc handle the rest.
-		this.e.triggerHandler("mediasuccess", [this]);
+		setTimeout(_.bind(function() {
+			this.e.triggerHandler("mediasuccess", [this]);
+		}, this), this.delay);
 
 	};
 
@@ -157,6 +162,8 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.stop = function() {
 
+		this.started = false;
+
 		if (this.audioSource) {
 			this.audioSource.disconnect();
 			this.audioSource = null;
@@ -169,9 +176,13 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			this.audioProcessor.disconnect()
 		}
 		this.audioLevel = 0;
-		this.started = false;
 		console.log("Stopped user media.");
 		this.e.triggerHandler("stopped", [this]);
+
+		this.delay = 1500;
+		setTimeout(_.bind(function() {
+			this.delay = 0;
+		}, this), 2000);
 
 	};
 
