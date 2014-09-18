@@ -279,7 +279,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html', 'bootst
 
 		return {
 			restrict: 'E',
-			replace: false,
+			replace: true,
 			template: template,
 			controller: controller,
 			link: link
