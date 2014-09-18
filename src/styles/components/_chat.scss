@@ -272,10 +272,11 @@
   border-radius: 6px;
   clear: both;
   display: block;
-  margin: 0 4px 2px 20px;
+  margin: 0 4px 2px 18px;
   padding: 8px;
   position: relative;
   word-wrap: break-word;
+  box-shadow: 0px 0px 2px 0px $chat-msg-shadow;
   ul {
     list-style-type: none;
     margin: 0;
@@ -396,38 +397,38 @@
   &.is_remote {
     background: $chat-msg-remote-background;
     &:before {  // arrow border
-      border-width: 10px 17px 10px 0;
-      border-color: transparent $chat-msg-remote-background;
+      border-width: 7px 11px 7px 0;
+      border-color: transparent $chat-arrow-border;
       bottom: auto;
-      left: -16px;
+      left: -12px;
       top: 4px;
     }
     &:after { // arrow background
-      border-width: 9px 15px 9px 0;
+      border-width: 6px 10px 6px 0;
       border-color: transparent $chat-msg-remote-background;
       bottom:auto;
-      left: -15px;
+      left: -11px;
       top: 5px;
     }
   }
   &.is_self {
     background: $chat-msg-self-background;
-    margin-right:20px;
+    margin-right:18px;
     margin-left: 4px;
     padding-right: 0;
     &:before { // arrow border
-      border-width: 10px 0 10px 17px;
-      border-color: transparent $chat-msg-self-background;
+      border-width: 7px 0 7px 11px;
+      border-color: transparent $chat-arrow-border;
       bottom: auto;
-      right: -16px;
-      top: 4px;
+      right: -12px;
+      bottom: 4px;
     }
     &:after { // arrow background
-      border-width: 9px 0 9px 15px;
+      border-width: 6px 0 6px 10px;
       border-color: transparent $chat-msg-self-background;
       bottom: auto;
-      right: -15px;
-      top: 5px;
+      right: -11px;
+      bottom: 5px;
     }
   }
   &.with_name {
