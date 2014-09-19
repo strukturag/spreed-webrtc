@@ -25,14 +25,10 @@ EXENAME := spreed-webrtc-server
 
 CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
-VENDOR_GOPATH ?= $(CURDIR)/vendor
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
 DESTDIR ?= /
 
-export GOPATH = $(VENDOR_GOPATH):$(CURDIR)
-
-SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
 
@@ -53,7 +49,14 @@ build: binary assets
 gopath:
 	@echo GOPATH=$(GOPATH)
 
+if READONLY_VENDOR_GOPATH
+export GOPATH = $(DIST):$(CURDIR)
+get: $(DIST)
+	ln -sf $(VENDOR_GOPATH)/src -t $(DIST)
+else
+export GOPATH = $(VENDOR_GOPATH):$(CURDIR)
 get:
+endif
 	$(GO) get app/...
 
 getupdate: vendorclean get
@@ -76,7 +79,7 @@ test: get
 assets: javascript fonts
 
 releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
-releaseassets: dist_gopath assets
+releaseassets: assets
 
 fonts:
 	$(MKDIR_P) $(CURDIR)/static/fonts
@@ -111,13 +114,9 @@ extract-i18n:
 update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
-release: GOPATH = $(DIST):$(VENDOR_GOPATH):$(CURDIR)
 release: LDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
-release: dist_gopath $(DIST_BIN) binary releaseassets
-
-releasetest: GOPATH = $(DIST):$(VENDOR_GOPATH):$(CURDIR)
-releasetest: dist_gopath test
+release: $(DIST_BIN) binary releaseassets
 
 install:
 	echo $(BIN)
@@ -159,15 +158,11 @@ vendorclean:
 pristine: distclean vendorclean
 	rm -f server.conf
 
-$(DIST_SRC):
+$(DIST):
 	$(MKDIR_P) $@
 
 $(DIST_BIN):
 	$(MKDIR_P) $@
-
-dist_gopath: $(DIST_SRC)
-	$(FIND) $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
-			-exec ln -sf {} $(DIST_SRC) \;
 
 tarball: TARPATH = $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 tarball: BIN = $(TARPATH)/loader

@@ -89,6 +89,13 @@ AX_COMPARE_VERSION([$GO_VERSION], [lt], [$GO_VERSION_MIN],
     [AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])])
 AC_SUBST(GO)
 
+AC_ARG_VAR(VENDOR_GOPATH, [Path used to locate third-party Go code, defaults to $PWD/vendor])
+AC_MSG_CHECKING([third-party Go source code path])
+AM_CONDITIONAL([DEFAULT_VENDOR_GOPATH], [test x"${VENDOR_GOPATH}" == x""])
+AM_CONDITIONAL([READONLY_VENDOR_GOPATH], [test -n "${VENDOR_GOPATH}" -a ! -w "${VENDOR_GOPATH}"])
+AM_COND_IF(DEFAULT_VENDOR_GOPATH, [AC_SUBST(VENDOR_GOPATH, $PWD/vendor)])
+AC_MSG_RESULT([$VENDOR_GOPATH])
+
 AC_PATH_PROGS([NODEJS],[nodejs node])
 if test x"${NODEJS}" == x"" ; then
     AC_MSG_ERROR([Please install node.js before trying to build spreed-webrtc.])
