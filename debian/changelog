@@ -1,3 +1,19 @@
+spreed-webrtc-server (0.22.3) precise; urgency=low
+
+  * Enable 1080p capturing for Chrome 38+.
+  * Added option to use 8 FPS video capturing.
+  * Visibly.js was updated.
+  * Use cam/mic icon without slash when not disabled.
+  * Fixed Chrome 38 max-height issue.
+  * Fixed chat room buddy image border.
+  * Fixed store of captured buddy picture when nothing else was changed.
+  * Fixed fast reenable of local video (added timeout).
+  * Fixed issue where a failed peer connection did hangup the whole conference.
+  * Added video layout self portrait.
+  * Fixed call state resurrection when there was a heartbeat timeout. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 19 Sep 2014 11:04:42 +0200
+
 spreed-webrtc-server (0.22.2) precise; urgency=low
 
   * Fixed room join after reconnect.
