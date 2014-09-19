@@ -63,13 +63,12 @@ AC_SUBST(AWK)
 AC_PATH_PROGS([FIND],[find])
 AC_SUBST(FIND)
 
-AC_PATH_PROGS([JSHINT],[jshint])
+AC_PATH_PROG([JSHINT],jshint, [], [$PWD/node_modules/.bin$PATH_SEPARATOR$PATH])
 if test x"${JSHINT}" != x"" ; then
     AC_MSG_CHECKING([for version of jshint])
     JSHINT_VERSION=`$JSHINT --version 2>&1 | $SED 's/^jshint v//'`
     AC_MSG_RESULT([$JSHINT_VERSION])
 fi
-AC_SUBST(JSHINT)
 
 AC_PATH_PROGS([PYTHON],[python2 python])
 if test x"${PYTHON}" != x"" ; then
@@ -148,7 +147,7 @@ if test x"${SASS}" != x"" ; then
 fi
 AC_SUBST(SASS_SUPPORT_STYLES)
 
-AC_PATH_PROGS([AUTOPREFIXER],[autoprefixer])
+AC_PATH_PROG([AUTOPREFIXER],autoprefixer, [], [$PWD/node_modules/.bin$PATH_SEPARATOR$PATH])
 if test x"${AUTOPREFIXER}" == x"" ; then
     AC_MSG_WARN([Please install autoprefixer before trying to build styles.])
 else
@@ -156,7 +155,6 @@ else
     AUTOPREFIXER_VERSION=`$AUTOPREFIXER --version | $SED 's/^autoprefixer //'`
     AC_MSG_RESULT([$AUTOPREFIXER_VERSION])
 fi
-AC_SUBST(AUTOPREFIXER)
 
 AC_PATH_PROGS([PYBABEL],[pybabel])
 if test x"${PYBABEL}" == x"" ; then
@@ -175,14 +173,14 @@ if test x"${NPM}" != x"" ; then
     NPM_VERSION=`$NPM --version`
     AC_MSG_RESULT([$NPM_VERSION])
     AC_MSG_CHECKING([for po2json support in node.js])
-    found_po2json=`$NPM list --global 2> /dev/null | $GREP po2json`
+    found_po2json=`{ $NPM list --global & $NPM list; } 2>/dev/null | $GREP -v 'UNMET DEPENDENCY' | $GREP po2json`
     if test x"${found_po2json}" == x"" ; then
         AC_MSG_RESULT([not available])
         AC_MSG_WARN([Please install the node.js module po2json to build i18n.])
     else
         AC_MSG_RESULT([ok])
         AC_MSG_CHECKING([for version of po2json])
-        PO2JSON_VERSION=`$NPM list --global 2>&1 | $GREP po2json | $SED 's/^.*po2json@//'`
+        PO2JSON_VERSION=`{ $NPM list --global & $NPM list; } 2>&1 | $GREP po2json | $SED 's/^.*po2json@//'`
         AC_MSG_RESULT([$PO2JSON_VERSION])
         NODEJS_SUPPORT_PO2JSON=yes
     fi

@@ -79,11 +79,16 @@ The latest version of Spreed WebRTC can be found on GitHub:
   these are only required if you want to make changes.
 
   - [NodeJS](http://nodejs.org/) >= 0.10.0
-  - [JSHint](http://www.jshint.com/) >= 2.0.0
   - [Compass](http://compass-style.org/) >= 1.0.0
   - [Sass](http://sass-lang.com/) >= 3.3.0
-  - [autoprefixer](https://www.npmjs.org/package/autoprefixer) 1.1
   - [Babel](http://babel.pocoo.org/)
+
+  The following Node.js modules are required, these may be installed
+  locally by running `npm install` from the project root. Consult the
+  `package.json` file for more details.
+
+  - [JSHint](http://www.jshint.com/) >= 2.0.0
+  - [autoprefixer](https://www.npmjs.org/package/autoprefixer) >= 1.1
   - [po2json](https://github.com/mikeedwards/po2json)
 
   Styles can be found in src/styles. Translations are found in src/i18n.
