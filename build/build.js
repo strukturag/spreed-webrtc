@@ -20,6 +20,7 @@
  */
 /*jshint -W030 */
 ({
+    logLevel: 2,
 	baseUrl: '../static/js',
 	mainConfigFile: '../static/js/main.js',
 	optimize: 'uglify2',
@@ -33,7 +34,7 @@
 				DEBUG: false
 			}
 		},
-		warnings: true,
+		warnings: false,
 		mangle: true
 	},
 	wrap: false,
