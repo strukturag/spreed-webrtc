@@ -24,11 +24,11 @@ ACLOCAL_AMFLAGS = -I m4
 EXENAME := spreed-webrtc-server
 CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
+VENDOR_GOPATH ?= $(CURDIR)/vendor
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
 
-VENDOR = "$(CURDIR)/vendor"
-GOPATH = "$(VENDOR):$(CURDIR)"
+export GOPATH = $(VENDOR_GOPATH):$(CURDIR)
 
 SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
@@ -47,20 +47,18 @@ DIST_BIN := $(DIST)/bin
 
 all: build
 
-build: get binary assets
+build: binary assets
 
 gopath:
 	@echo GOPATH=$(GOPATH)
 
 get:
-	GOPATH=$(GOPATH) $(GO) get app/...
+	$(GO) get app/...
 
-getupdate:
-	rm -rf vendor/*
-	GOPATH=$(GOPATH) $(GO) get app/...
+getupdate: vendorclean get
 
-binary:
-	GOPATH=$(GOPATH) $(GO) build $(GOBUILDFLAGS) -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
+binary: get
+	$(GO) build $(GOBUILDFLAGS) -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
 
 binaryrace: GOBUILDFLAGS := $(GOBUILDFLAGS) -race
 binaryrace: binary
@@ -69,10 +67,10 @@ binaryall: GOBUILDFLAGS := $(GOBUILDFLAGS) -a
 binaryall: binary
 
 fmt:
-	GOPATH=$(GOPATH) $(GO) fmt app/...
+	$(GO) fmt app/...
 
 test: get
-	GOPATH=$(GOPATH) $(GO) test $(GOTESTFLAGS) app/...
+	$(GO) test $(GOTESTFLAGS) app/...
 
 assets: javascript fonts
 
@@ -112,12 +110,12 @@ extract-i18n:
 update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
-release: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
+release: GOPATH = $(DIST):$(VENDOR_GOPATH):$(CURDIR)
 release: LDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release: OUTPUT = $(DIST_BIN)
 release: dist_gopath $(DIST_BIN) binary releaseassets
 
-releasetest: GOPATH = "$(DIST):$(VENDOR):$(CURDIR)"
+releasetest: GOPATH = $(DIST):$(VENDOR_GOPATH):$(CURDIR)
 releasetest: dist_gopath test
 
 install:
@@ -146,7 +144,7 @@ install:
 	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
 
 clean:
-	GOPATH=$(GOPATH) $(GO) clean -i app/...
+	$(GO) clean -i app/...
 	rm -rf $(CURDIR)/pkg
 	rm -rf $(CURDIR)/static/fonts
 	rm -rf $(CURDIR)/build/out
@@ -154,9 +152,11 @@ clean:
 distclean: clean
 	rm -rf $(DIST)
 
-pristine: distclean
-	rm -f server.conf
+vendorclean:
 	rm -rf vendor/*
+
+pristine: distclean vendorclean
+	rm -f server.conf
 
 $(DIST_SRC):
 	$(MKDIR_P) $@
@@ -177,4 +177,4 @@ tarball: distclean release install
 		echo -n $(PACKAGE_VERSION) > $(TARPATH)/version.txt
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-.PHONY: clean distclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
