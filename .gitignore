@@ -36,3 +36,4 @@ configure
 install-sh
 missing
 stamp-h1
+/node_modules
