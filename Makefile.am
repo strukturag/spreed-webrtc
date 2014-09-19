@@ -21,10 +21,11 @@
 AUTOMAKE_OPTIONS = -Wno-portability
 ACLOCAL_AMFLAGS = -I m4
 
-PKG := app/spreed-webrtc-server
 EXENAME := spreed-webrtc-server
 CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
+GOBUILDFLAGS ?=
+GOTESTFLAGS ?=
 
 VENDOR = "$(CURDIR)/vendor"
 GOPATH = "$(VENDOR):$(CURDIR)"
@@ -52,28 +53,26 @@ gopath:
 	@echo GOPATH=$(GOPATH)
 
 get:
-	GOPATH=$(GOPATH) $(GO) get $(PKG)
+	GOPATH=$(GOPATH) $(GO) get app/...
 
 getupdate:
 	rm -rf vendor/*
-	GOPATH=$(GOPATH) $(GO) get $(PKG)
+	GOPATH=$(GOPATH) $(GO) get app/...
 
 binary:
-	GOPATH=$(GOPATH) $(GO) build -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
+	GOPATH=$(GOPATH) $(GO) build $(GOBUILDFLAGS) -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
 
-binaryrace:
-	GOPATH=$(GOPATH) $(GO) build -race -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
+binaryrace: GOBUILDFLAGS := $(GOBUILDFLAGS) -race
+binaryrace: binary
 
-binaryall:
-	GOPATH=$(GOPATH) $(GO) build -a -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' $(PKG)
+binaryall: GOBUILDFLAGS := $(GOBUILDFLAGS) -a
+binaryall: binary
 
 fmt:
 	GOPATH=$(GOPATH) $(GO) fmt app/...
 
-test: TESTDEPS = $(shell GOPATH=$(GOPATH) $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}' $(PKG) | $(GREP) $(PKG))
 test: get
-	GOPATH=$(GOPATH) $(GO) test -i $(TESTDEPS)
-	GOPATH=$(GOPATH) $(GO) test -v $(TESTDEPS)
+	GOPATH=$(GOPATH) $(GO) test $(GOTESTFLAGS) app/...
 
 assets: javascript fonts
 
@@ -147,7 +146,7 @@ install:
 	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
 
 clean:
-	GOPATH=$(GOPATH) $(GO) clean -i $(PKG)
+	GOPATH=$(GOPATH) $(GO) clean -i app/...
 	rm -rf $(CURDIR)/pkg
 	rm -rf $(CURDIR)/static/fonts
 	rm -rf $(CURDIR)/build/out
