@@ -53,14 +53,7 @@ AC_PROG_GREP
 AC_PROG_SED
 AC_PROG_AWK
 
-AC_SUBST(MKDIR_P)
-AC_SUBST(INSTALL)
-AC_SUBST(GREP)
-AC_SUBST(SED)
-AC_SUBST(AWK)
-
 AC_PATH_PROGS([FIND],[find])
-AC_SUBST(FIND)
 
 AC_PATH_PROG([JSHINT],jshint, [], [$PWD/node_modules/.bin$PATH_SEPARATOR$PATH])
 if test x"${JSHINT}" != x"" ; then
@@ -75,7 +68,6 @@ if test x"${PYTHON}" != x"" ; then
     PYTHON_VERSION=`$PYTHON --version 2>&1 | $SED 's/^Python //'`
     AC_MSG_RESULT([$PYTHON_VERSION])
 fi
-AC_SUBST(PYTHON)
 
 AC_PATH_PROGS([GO],[go])
 if test x"${GO}" == x"" ; then
@@ -87,7 +79,6 @@ GO_VERSION=`$GO version | $SED 's/^go version go//' | $SED 's/ .*//'`
 AC_MSG_RESULT([$GO_VERSION])
 AX_COMPARE_VERSION([$GO_VERSION], [lt], [$GO_VERSION_MIN],
     [AC_MSG_ERROR([Please install Go $GO_VERSION_MIN or newer before trying to build spreed-webrtc (found Go $GO_VERSION).])])
-AC_SUBST(GO)
 
 AC_ARG_VAR(VENDOR_GOPATH, [Path used to locate third-party Go code, defaults to $PWD/vendor])
 AC_MSG_CHECKING([third-party Go source code path])
@@ -109,7 +100,6 @@ else
         [AC_MSG_WARN([Please install node.js $NODEJS_VERSION_STYLES_MIN or newer before trying to build styles (found node.js $NODEJS_VERSION).])
         NODEJS_SUPPORT_STYLES=no],[NODEJS_SUPPORT_STYLES=yes])
 fi
-AC_SUBST(NODEJS)
 AC_SUBST(NODEJS_SUPPORT_STYLES)
 
 AC_PATH_PROGS([COMPASS],[compass])
@@ -120,7 +110,6 @@ else
     COMPASS_VERSION=`$COMPASS --version | $AWK 'NR==1' | $SED 's/^Compass //' | $SED 's/ .*//'`
     AC_MSG_RESULT([$COMPASS_VERSION])
 fi
-AC_SUBST(COMPASS)
 
 AC_PATH_PROGS([SASS],[sass])
 if test x"${SASS}" == x"" ; then
@@ -133,7 +122,6 @@ else
         [AC_MSG_WARN([Please install compass with sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
         SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
 fi
-AC_SUBST(SASS)
 
 if test x"${SASS}" != x"" ; then
     AC_MSG_CHECKING([for compass support in sass])
@@ -170,7 +158,6 @@ else
     PYBABEL_VERSION=`$PYBABEL --version | $SED 's/^pybabel //'`
     AC_MSG_RESULT([$PYBABEL_VERSION])
 fi
-AC_SUBST(PYBABEL)
 
 AC_PATH_PROGS([NPM],[npm])
 NODEJS_SUPPORT_PO2JSON=no
