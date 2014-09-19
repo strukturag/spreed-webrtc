@@ -1,0 +1,6 @@
+<span class="buddycondensed buddy">
+    <span ng-repeat="buddy in list() | limitTo:maxBuddiesToShow">
+        <span class="buddyPicture"><i class="fa fa-user"/><img ng-show="buddy.Status.buddyPicture" alt="{{buddy.Status.displayName}}" ng-src="{{buddy.Userid | buddyImageSrc}}"/></span>
+    </span>
+    <span class="more" ng-if="list().length > maxBuddiesToShow">+ {{list().length - maxBuddiesToShow}} {{_("more")}}</span>
+</span>
