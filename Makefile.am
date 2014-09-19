@@ -144,8 +144,7 @@ install:
 	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
 
 clean:
-	$(GO) clean -i app/...
-	rm -rf $(CURDIR)/pkg
+	$(GO) clean -i -r app/... 2>/dev/null || true
 	rm -rf $(CURDIR)/static/fonts
 	rm -rf $(CURDIR)/build/out
 
