@@ -44,7 +44,8 @@ define([
 	'directives/presentation',
 	'directives/youtubevideo',
 	'directives/bfi',
-	'directives/title'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi, title) {
+	'directives/title',
+	'directives/buddycondensed'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi, title, buddycondensed) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -70,7 +71,11 @@ define([
 		presentation: presentation,
 		youtubevideo: youtubevideo,
 		bfi: bfi,
+<<<<<<< HEAD
 		title: title
+=======
+		buddycondensed: buddycondensed
+>>>>>>> 4177988... Add buddycondensed directive and css.
 	};
 
 	var initialize = function(angModule) {
