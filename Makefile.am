@@ -22,11 +22,13 @@ AUTOMAKE_OPTIONS = -Wno-portability
 ACLOCAL_AMFLAGS = -I m4
 
 EXENAME := spreed-webrtc-server
+
 CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 VENDOR_GOPATH ?= $(CURDIR)/vendor
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
+DESTDIR ?= /
 
 export GOPATH = $(VENDOR_GOPATH):$(CURDIR)
 
@@ -34,7 +36,6 @@ SYSTEM_GOPATH := /usr/share/gocode/src/
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
 
-DESTDIR ?= /
 BIN := $(DESTDIR)/usr/sbin
 CONFIG_DIR := $(DESTDIR)/$(CONFIG_PATH)
 SHARE := $(DESTDIR)/usr/share/spreed-webrtc-server
