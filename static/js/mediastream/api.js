@@ -49,7 +49,7 @@ define(['jquery', 'underscore'], function($, _) {
 							console.log("Reconnecting because alive timeout was reached.");
 							this.last_receive_overdue = false;
 							this.last_receive = null;
-							this.connector.reconnect();
+							this.connector.disconnect(true);
 						}
 					} else {
 						if (now > last_receive + alive_check_timeout) {

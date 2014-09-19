@@ -80,6 +80,16 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
+	Connector.prototype.disconnect = function(error) {
+
+		if (error) {
+			this.onerror(null)
+		} else {
+			this.conn.close();
+		}
+
+	};
+
 	Connector.prototype.reconnect = function() {
 
 		if (!this.url) {
