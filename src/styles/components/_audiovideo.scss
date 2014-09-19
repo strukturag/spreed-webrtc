@@ -233,7 +233,7 @@
 .audiovideo .overlayActions {
   background: $video-overlayactions;
   bottom: 0;
-  height: 105px;
+  height: 140px;
   left: 0;
   margin:auto 0;
   opacity: 0;
@@ -376,5 +376,65 @@
   .remoteVideos {
     opacity: 0 !important;
     display: none;
+  }
+}
+
+.renderer-classroom {
+  .remoteContainer {
+    border-left: 40px solid black;
+  }
+  .remoteVideos {
+    top: 180px;
+    width: 320px;
+    pointer-events: auto;
+    background: $video-background;
+    .overlayLogo {
+      display: none;
+    }
+    video {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      margin-top: -9px;
+    }
+    > div {
+      cursor: pointer;
+      width: 80px;
+      height: 60px;
+      display: inline-block;
+    }
+    .overlayLogo {
+      display: none;
+    }
+    .peerLabel {
+      font-size: 0.6em;
+      background: $video-overlayactions;
+      max-width: 100%;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      padding: 0 4px;
+      line-height: 9px;
+    }
+    .peerActions {
+      display: none;
+    }
+    .miniContainer {
+      right: auto;
+      max-height: auto;
+    }
+  }
+  .bigVideo {
+    width: 320px;
+    height: 180px;
+    video {
+      height: 100%;
+      width: 100%;
+    }
+    .peerLabel {
+      font-size: 1vw;
+      max-width: 40%;
+      bottom: 8%;
+    }
   }
 }

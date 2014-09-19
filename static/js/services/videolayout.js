@@ -281,11 +281,38 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		};
 
 
+		// Classroom inherits from ConferenceKiosk
+		var Classroom = function(container, scope, controller) {
+			// Call super.
+			ConferenceKiosk.call(this, container, scope, controller);
+		}
+		Classroom.prototype = Object.create(ConferenceKiosk.prototype);
+		Classroom.prototype.constructor = Classroom;
+		Classroom.prototype.name = "classroom";
+		Classroom.prototype.render = function(container, size, scope, videos, peers) {
+			var big = this.big;
+			if (big) {
+				var currentbigpeerid = this.big.data("peerid");
+				if (!peers[currentbigpeerid]) {
+					console.log("Current big peer is no longer there", currentbigpeerid);
+					this.big = big = null;
+				}
+			}
+			if (!big) {
+				if (videos.length) {
+					this.makeBig(peers[videos[0]].element);
+					this.bigVideo.style.opacity = 1;
+				}
+
+			}
+		};
+
 		// Register renderers.
 		renderers[OnePeople.prototype.name] = OnePeople;
 		renderers[Smally.prototype.name] = Smally;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
 		renderers[SelfPortrait.prototype.name] = SelfPortrait;
+		renderers[Classroom.prototype.name] = Classroom;
 
 		// Public api.
 		var current = null;
