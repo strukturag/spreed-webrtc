@@ -39,7 +39,6 @@ NODEJS_VERSION_STYLES_MIN=0.10.0
 SASS_VERSION_MIN=3.3.0
 
 AC_CONFIG_SRCDIR([src/app/spreed-webrtc-server/main.go])
-AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 dnl required version of automake
