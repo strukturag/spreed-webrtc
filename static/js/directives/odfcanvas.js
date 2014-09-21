@@ -47,7 +47,10 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			var fp = path.file || path;
 			if (typeof URL !== "undefined" && URL.createObjectURL) {
 				var url = URL.createObjectURL(fp);
-				webodf.runtime.orig_readFile.call(webodf.runtime, url, encoding, callback);
+				webodf.runtime.orig_readFile.call(webodf.runtime, url, encoding, function() {
+					URL.revokeObjectURL(url);
+					callback.apply(callback, arguments);
+				});
 				return;
 			}
 
@@ -63,7 +66,10 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			var fp = path.file || path;
 			if (typeof URL !== "undefined" && URL.createObjectURL) {
 				var url = URL.createObjectURL(fp);
-				webodf.runtime.orig_loadXML.call(webodf.runtime, url, callback);
+				webodf.runtime.orig_loadXML.call(webodf.runtime, url, function() {
+					URL.revokeObjectURL(url);
+					callback.apply(callback, arguments);
+				});
 				return;
 			}
 
