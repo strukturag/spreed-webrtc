@@ -269,9 +269,20 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						return scope.rendererName;
 					}
 				};
+				var forceRendererName = function(name) {
+					// Allow change between some renderes when forced.
+					if (name === "classroom") {
+						rendererName = "classroom";
+					} else {
+						rendererName = "smally";
+					}
+				};
 
 				scope.setRenderer = function(name) {
 					scope.rendererName = name;
+					if (rendererName && rendererName !== name) {
+						forceRendererName(name);
+					}
 				};
 
 				var needsRedraw = false;
@@ -295,8 +306,8 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				$($window).on("resize", scope.redraw);
 				scope.$on("mainresize", function(event, main) {
 					if (main) {
-						// Force smally renderer when we have a main view.
-						rendererName = "smally"
+						// Force smally renderer or pin classroom when we have a main view.
+						forceRendererName(scope.rendererName);
 					} else if (rendererName) {
 						rendererName = null;
 					}

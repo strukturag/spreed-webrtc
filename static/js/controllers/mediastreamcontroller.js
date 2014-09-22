@@ -141,7 +141,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		$scope.microphoneMute = false;
 		$scope.cameraMute = false;
 		$scope.layout = {
-			main: null
+			main: null,
 		};
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
@@ -680,7 +680,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		// Apply all layout stuff as classes to our element.
 		$scope.$watch("layout", (function() {
 			var makeName = function(prefix, n) {
-				return prefix + n.substr(0, 1).toUpperCase() + n.substr(1);
+				return prefix + n.charAt(0).toUpperCase() + n.slice(1);
 			};
 			return function(layout, old) {
 				_.each(layout, function(v, k) {

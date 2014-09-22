@@ -22,13 +22,21 @@
 .mainview {
   bottom: 0;
   display: none;
-  left: 150px;
+  left: 0px;
   position: absolute;
   right: 0;
   top: $minbarheight;
   @include breakpt($breakpoint-medium) {
     left: 0px;
   }
+}
+
+.videolayoutSmally .mainview {
+  left: 150px;
+}
+
+.videolayoutClassroom .mainview {
+  left: 360px;
 }
 
 .withChat,
