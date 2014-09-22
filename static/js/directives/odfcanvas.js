@@ -38,36 +38,42 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			return ns[prefix] || console.log('prefix [' + prefix + '] unknown.');
 		}
 
-		var ODFCanvas_read = function(path, offset, length, callback) {
+		var ODFCanvas_readFile = function(path, encoding, callback) {
 			if (typeof path === "string") {
-				webodf.runtime.orig_read.call(webodf.runtime, path, offset, length, callback);
+				webodf.runtime.orig_readFile.call(webodf.runtime, path, encoding, callback);
 				return;
 			}
 
 			var fp = path.file || path;
 			if (typeof URL !== "undefined" && URL.createObjectURL) {
 				var url = URL.createObjectURL(fp);
-				webodf.runtime.orig_read.call(webodf.runtime, url, offset, length, callback);
+				webodf.runtime.orig_readFile.call(webodf.runtime, url, encoding, function() {
+					URL.revokeObjectURL(url);
+					callback.apply(callback, arguments);
+				});
 				return;
 			}
 
-			console.error("TODO(fancycode): implement read for", path);
+			console.error("TODO(fancycode): implement readFile for", path);
 		};
 
-		var ODFCanvas_getFileSize = function(path, callback) {
+		var ODFCanvas_loadXML = function(path, callback) {
 			if (typeof path === "string") {
-				webodf.runtime.orig_getFileSize.call(webodf.runtime, path, callback);
+				webodf.runtime.orig_loadXML.call(webodf.runtime, path, callback);
 				return;
 			}
 
-			var size = path.size || path.info.size;
-			if (typeof size !== "undefined") {
-				callback(size);
+			var fp = path.file || path;
+			if (typeof URL !== "undefined" && URL.createObjectURL) {
+				var url = URL.createObjectURL(fp);
+				webodf.runtime.orig_loadXML.call(webodf.runtime, url, function() {
+					URL.revokeObjectURL(url);
+					callback.apply(callback, arguments);
+				});
 				return;
 			}
 
-			console.error("TODO(fancycode): implement getFileSize for", path);
-			callback(-1);
+			console.error("TODO(fancycode): implement loadXML for", path);
 		};
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
@@ -160,10 +166,10 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 						webodf = webodf_;
 
 						// monkey-patch IO functions
-						webodf.runtime.orig_read = webodf.runtime.read;
-						webodf.runtime.read = ODFCanvas_read;
-						webodf.runtime.orig_getFileSize = webodf.runtime.getFileSize;
-						webodf.runtime.getFileSize = ODFCanvas_getFileSize;
+						webodf.runtime.orig_readFile = webodf.runtime.readFile;
+						webodf.runtime.readFile = ODFCanvas_readFile;
+						webodf.runtime.orig_loadXML = webodf.runtime.loadXML;
+						webodf.runtime.loadXML = ODFCanvas_loadXML;
 
 						this.scope.$apply(_.bind(function(scope) {
 							this._doOpenFile(source);
