@@ -455,17 +455,17 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			// Propagate authentication event.
 			appData.e.triggerHandler("selfReceived", [data]);
 
-			if (!$rootScope.roomid && $scope.user.settings.defaultRoom) {
-				console.log("Selecting user based default room:", [$scope.user.settings.defaultRoom]);
-				mediaStream.changeRoom($scope.user.settings.defaultRoom, true);
-			}
-
 			// Unmark authorization process.
 			if (data.Userid) {
 				mediaStream.users.authorizing(false);
 			} else if (!mediaStream.users.authorizing()) {
 				// Trigger user data load when not in authorizing phase.
 				$scope.loadUserSettings();
+			}
+
+			if (!$rootScope.roomid && $scope.master.settings.defaultRoom) {
+				console.log("Selecting default room from settings:", [$scope.master.settings.defaultRoom]);
+				mediaStream.changeRoom($scope.master.settings.defaultRoom, true);
 			}
 
 			// Always apply room after self received to avoid double stuff.
