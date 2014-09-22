@@ -286,8 +286,9 @@
 
 .renderer-smally {
   width: 150px;
-  background: $componentbg;
-  border-right: 1px solid $bordercolor;
+  background: black;
+  border-right: none;
+  border-top: none;
   .remoteVideos {
     padding-bottom: 85px;
   }
