@@ -20,7 +20,6 @@
  */
 
 #audiovideo {
-  border-top: 1px solid $bordercolor;
   bottom: 0;
   left: 0;
   position: absolute;
@@ -269,7 +268,7 @@
     opacity: .5;
     pointer-events: none;
     position: absolute;
-    right: 4%;
+    right: 2.5%;
     top: 4%;
     width: 20%;
     z-index: 2;
