@@ -5,12 +5,14 @@
 			<div class="chatheader"><div class="chatstatusicon" ng-click="activateRoom(currentRoom.id, true)"><i class="fa fa-angle-right"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span>{{_("Chat sessions")}}</span></div> <div class="ctrl"><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i></div></div>
 			<div class="chatbody">
 				<div class="list-group nicescroll">
-					<a ng-if="roomstatus" ng-click="activateRoom('', true)" class="list-group-item" ng-class="{newmessage: getGroupRoom().pending}">
-						<span class="badge" ng-show="getGroupRoom().pending">{{getGroupRoom().pending}}</span>
-						<i class="fa fa-users fa-lg"></i> {{_("Room chat")}} {{roomid}}
-					</a>
 					<a ng-repeat="room in getVisibleRooms()" ng-click="activateRoom(room.id, true)" class="list-group-item" ng-class="{newmessage: room.pending, disabled: !room.enabled}">
-						<span class="badge" ng-show="room.pending">{{room.pending}}</span><i class="fa fa-user fa-lg"></i> {{room.id|displayName}} <button class="btn btn-sm btn-default" ng-click="hideRoom(room.id)"><i class="fa fa-trash-o"></i></button>
+						<span class="badge" ng-show="room.pending">{{room.pending}}</span>
+						<i class="fa fa-lg" ng-class="{'fa-user': room.id !== '', 'fa-users': room.id === ''}"></i>
+                        <span ng-if="room.id !== ''">{{room.id|displayName}}</span>
+                        <span ng-if="room.id === ''">{{_("Room chat")}} {{currentRoomName}}</span>
+						<button ng-if="room.id !== ''" class="btn btn-sm btn-default" ng-click="hideRoom(room.id)">
+							<i class="fa fa-trash-o"></i>
+						</button>
 					</a>
 				</div>
 			</div>

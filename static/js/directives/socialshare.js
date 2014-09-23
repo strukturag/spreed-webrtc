@@ -29,7 +29,7 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 	};
 
 	// socialShare
-	return ["$window", "translation", function($window, translation) {
+	return ["$window", "translation", "rooms", function($window, translation, rooms) {
 
 		var title = $window.encodeURIComponent($window.document.title);
 		var makeUrl = function(nw, target) {
@@ -46,6 +46,14 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 			template: template,
 			replace: true,
 			link: function($scope, $element, $attr) {
+				$scope.$on("room.joined", function(ev, room) {
+					$scope.roomlink = rooms.link(room);
+				});
+
+				$scope.$on("room.left", function(ev, name) {
+					$scope.roomlink = null;
+				});
+
 				$element.on("click", "a", function(event) {
 					var nw = $(event.currentTarget).data("nw");
 					var url = makeUrl(nw, $scope.roomlink);

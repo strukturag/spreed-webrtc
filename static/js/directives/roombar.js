@@ -21,17 +21,16 @@
 define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 
 	// roomBar
-	return ["$window", "$rootScope", "mediaStream", function($window, $rootScope, mediaStream) {
+	return ["$window", "rooms", function($window, rooms) {
 
 		var link = function($scope) {
 
 			//console.log("roomBar directive link", arguments);
-			$scope.newroomid = $rootScope.roomid;
 			$scope.layout.roombar = false;
 
 			$scope.save = function() {
-				var roomid = mediaStream.changeRoom($scope.newroomid);
-				if (roomid !== $rootScope.roomid) {
+				var roomName = rooms.joinByName($scope.newRoomName);
+				if (roomName !== $scope.currentRoomName) {
 					$scope.roombarform.$setPristine();
 				}
 				$scope.layout.roombar = false;
@@ -44,19 +43,20 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 			};
 
 			$scope.exit = function() {
-				$scope.newroomid = "";
+				$scope.newRoomName = "";
 				$scope.save();
 			};
 
-			$rootScope.$watch("roomid", function(newroomid, roomid) {
-				if (!newroomid) {
-					newroomid = "";
-				}
-				$scope.newroomid = newroomid;
+			$scope.$on("room.joined", function(ev, room) {
+				$scope.currentRoomName = $scope.newRoomName = room.name;
 			});
 
-			$scope.$watch("newroomid", function(newroomid) {
-				if (newroomid === $rootScope.roomid) {
+			$scope.$on("room.left", function(ev) {
+				$scope.currentRoomName = $scope.newRoomName = "";
+			});
+
+			$scope.$watch("newRoomName", function(name) {
+				if (name === $scope.currentRoomName) {
 					$scope.roombarform.$setPristine();
 				}
 			});

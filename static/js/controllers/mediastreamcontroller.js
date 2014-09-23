@@ -20,7 +20,7 @@
  */
 define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -544,20 +544,16 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 			// Unmark authorization process.
 			if (data.Userid) {
-				mediaStream.users.authorizing(false);
-			} else if (!mediaStream.users.authorizing()) {
+				$rootScope.authorizing(false);
+			} else if (!$rootScope.authorizing()) {
 				// Trigger user data load when not in authorizing phase.
 				$scope.loadUserSettings();
 			}
 
-			if (!$rootScope.roomid && $scope.master.settings.defaultRoom) {
+			if (rooms.inDefaultRoom() && $scope.master.settings.defaultRoom) {
 				console.log("Selecting default room from settings:", [$scope.master.settings.defaultRoom]);
-				mediaStream.changeRoom($scope.master.settings.defaultRoom, true);
+				rooms.joinByName($scope.master.settings.defaultRoom, true);
 			}
-
-			// Always apply room after self received to avoid double stuff.
-			mediaStream.applyRoom();
-
 		});
 
 		mediaStream.webrtc.e.on("peercall", function(event, peercall) {
@@ -660,36 +656,36 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 		};
 
-		mediaStream.connector.e.on("open error close", function(event, options) {
-			var t = event.type;
-			var opts = $.extend({}, options);
+		$scope.$on("room.joined", function(ev) {
+			// TODO(lcooper): Is it really needful to do this stuff?
 			$timeout.cancel(ttlTimeout);
-			if (!opts.soft) {
-				// Reset login information for anything not soft.
-				$scope.userid = $scope.suserid = null;
-			}
-			switch (t) {
+			connected = true;
+			reconnecting = false;
+			$scope.updateStatus(true);
+		});
+
+		mediaStream.connector.e.on("open error close", function(event) {
+			$timeout.cancel(ttlTimeout);
+			$scope.userid = $scope.suserid = null;
+			switch (event.type) {
 				case "open":
-					t = "waiting";
 					connected = true;
 					reconnecting = false;
 					$scope.updateStatus(true);
-					if (opts.soft) {
-						return;
-					}
+					$scope.setStatus("waiting");
 					break;
 				case "error":
 					if (reconnecting || connected) {
 						reconnecting = false;
 						reconnect();
-						return;
+					} else {
+						$scope.setStatus(event.type);
 					}
 					break;
 				case "close":
 					reconnect();
-					return;
+					break;
 			}
-			$scope.setStatus(t);
 		});
 
 		mediaStream.webrtc.e.on("waitforusermedia connecting", function(event, currentcall) {
@@ -796,23 +792,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		mediaStream.webrtc.e.on("done", function() {
 			if (mediaStream.connector.connected) {
 				$scope.setStatus("waiting");
-			}
-			if ($scope.roomstatus) {
-				$scope.layout.buddylist = true;
-				$scope.layout.buddylistAutoHide = false;
-			} else {
-				$scope.layout.buddylist = false;
-				$scope.layout.buddylistAutoHide = true;
-			}
-		});
-
-		$scope.$watch("roomstatus", function(roomstatus) {
-			if (roomstatus && !$scope.peer) {
-				$scope.layout.buddylist = true;
-				$scope.layout.buddylistAutoHide = false;
-			} else if (!$scope.layout.buddylistAutoHide) {
-				$scope.layout.buddylist = false;
-				$scope.layout.buddylistAutoHide = true;
 			}
 		});
 
