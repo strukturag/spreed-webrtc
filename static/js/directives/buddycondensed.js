@@ -21,9 +21,9 @@
 define(['angular', 'text!partials/buddycondensed.html'], function(angular, template) {
 
 	// buddycondensed
-	return ["mediaStream", function(mediaStream) {
+	return [function() {
 
-		var controller = ['$scope', '$element', 'mediaStream', 'buddyList', 'buddyPicture', 'contacts', function($scope, $element, mediaStream, buddyList, buddyPicture, contacts) {
+		var controller = ['$scope', 'mediaStream', 'contacts', function($scope, mediaStream, contacts) {
 			var buddycondensed = [];
 			var joined = function(buddy) {
 				buddycondensed.push(buddy);
@@ -37,9 +37,9 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 				}
 				$scope.$apply();
 			};
+			// replace session data with contact data
 			var contactadded = function(data) {
-				// replace session data with contact data
-				console.log('contactadded', data);
+				//console.log('contactadded', data);
 				var hasSession = false;
 				for (var i in buddycondensed) {
 					if(buddycondensed[i].Userid === data.Userid) {
@@ -53,15 +53,26 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 				}
 				$scope.$apply();
 			};
-			$scope.list = function() {
-				return buddycondensed;
+			$scope.listDefault = function() {
+				if(buddycondensed.length >= $scope.maxBuddiesToShow) {
+					return buddycondensed.slice(0, $scope.maxBuddiesToShow);
+				} else {
+					return buddycondensed;
+				}
+			};
+			$scope.listOverDefault = function() {
+				if(buddycondensed.length >= $scope.maxBuddiesToShow) {
+					return buddycondensed.slice($scope.maxBuddiesToShow);
+				} else {
+					return [];
+				}
 			};
 			$scope.maxBuddiesToShow = 5;
 			contacts.e.on("contactadded", function(event, data) {
 				contactadded(data);
 			});
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
-				console.log("received.userleftorjoined", data.Id);
+				//console.log("received.userleftorjoined", data.Id);
 				if (dataType === "Left") {
 					left(data.Id);
 				} else {
@@ -69,7 +80,7 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 				}
 			});
 			mediaStream.api.e.on("received.users", function(event, data) {
-				console.log("received.users", data);
+				//console.log("received.users", data);
 				var selfId = $scope.id;
 				data.forEach(function(x) {
 					if (x.Id !== selfId) {

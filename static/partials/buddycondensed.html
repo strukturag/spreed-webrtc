@@ -1,6 +1,15 @@
-<span class="buddycondensed buddy">
-    <span ng-repeat="buddy in list() | limitTo:maxBuddiesToShow">
-        <span class="buddyPicture"><i class="fa fa-user"/><img ng-show="buddy.Status.buddyPicture" alt="{{buddy.Status.displayName}}" ng-src="{{buddy.Userid | buddyImageSrc}}"/></span>
-    </span>
-    <span class="more" ng-if="list().length > maxBuddiesToShow">+ {{list().length - maxBuddiesToShow}} {{_("more")}}</span>
-</span>
+<div id="buddycondensed">
+    <div class="buddycondensed buddy">
+        <span class="desc" ng-if="listOverDefault().length > maxBuddiesToShow">+ {{listOverDefault().length - maxBuddiesToShow}} {{_("more")}}</span>
+        <div class="defaultDisplayNum pull-left">
+            <span ng-repeat="buddy in listDefault()">
+                <span class="buddyPicture"><i class="fa fa-user"/><img ng-show="buddy.Status.buddyPicture" alt ng-src="{{buddy.Userid | buddyImageSrc}}"/></span>
+            </span>
+        </div>
+        <div class="overDefaultDisplayNum">
+            <span ng-repeat="buddy in listOverDefault()">
+                <span class="buddyPicture"><i class="fa fa-user"/><img ng-show="buddy.Status.buddyPicture" alt ng-src="{{buddy.Userid | buddyImageSrc}}"/></span>
+            </span>
+        </div>
+    </div>
+</div>

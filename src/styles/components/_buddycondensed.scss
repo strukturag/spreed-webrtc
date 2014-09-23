@@ -18,23 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#buddycondensed {
+  display: table;
+  float: left;
+  height: 50px;
+  overflow: hidden;
+  padding-left: 20px;
+  vertical-align: bottom;
+  min-width: 355px;
+}
 .buddycondensed {
-  display: table-cell;
-  width: 380px;
   &.buddy {
     background: none;
     border-bottom: none;
+    cursor: auto;
     min-height: 50px;
-    padding-left: 20px;
     vertical-align: bottom;
     .buddyPicture {
       margin: 2px;
     }
   }
-  .more {
-    padding-left: 10px;
+  .defaultDisplayNum {
+  }
+  .overDefaultDisplayNum {
+    background: #f8f8f8;
+    display: none;
+    position: fixed;
+    &:hover {
+      display: block;
+    }
+  }
+  .desc {
+    display: inline-block;
     font-weight: bold;
+    padding-left: 10px;
+    &:hover ~ .overDefaultDisplayNum {
+      display: block;
+    }
+  }
+  .buddyPicture {
+    cursor: pointer;
   }
 }
-
