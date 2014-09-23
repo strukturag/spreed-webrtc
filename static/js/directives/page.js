@@ -20,55 +20,37 @@
  */
 define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(template, welcome) {
 
-	return ["$templateCache", "mediaStream", function($templateCache, mediaStream) {
-
+	return ["$templateCache", "$timeout", "rooms", function($templateCache, $timeout, rooms) {
 		$templateCache.put('page/welcome.html', welcome);
 
-		var link = function(scope, element, attrs) {
+		var link = function($scope, $element, attrs) {
+			$scope.randomRoom = rooms.randomRoom;
 
-			scope.room = false;
-			scope.page = null;
+			$scope.$on("room.joined", function(event, name) {
+				$scope.page = null;
+			});
 
-			if (mediaStream.config.DefaultRoomEnabled !== true) {
-
-				scope.$on("welcome", function() {
-					if (!scope.initialized) {
-						scope.initialized = true;
-						scope.refresh();
-					}
+			$scope.$on("room.random", function(ev, roomdata) {
+				$scope.page = "page/welcome.html";
+				$scope.roomdata = roomdata;
+				$timeout(function() {
+					$element.find(".btn-roomcreate:visible:enabled:first").focus();
 				});
+			});
 
-				scope.$on("room", function(event, room) {
-					scope.initialized = true;
-					scope.room = room !== null ? true : false;
-					scope.refresh();
-				});
-
-				scope.$watch("status", function(event) {
-					if (scope.initialized) {
-						scope.refresh();
-					}
-				});
-
-				scope.refresh = function() {
-					if (scope.roomid || scope.room || scope.status !== "waiting") {
-						scope.page = null;
-					} else {
-						scope.page = "page/welcome.html";
-					}
-				};
-
-			}
-
+			$scope.roomdata = {};
+			$scope.$watch("roomdata.name", function(name) {
+				$scope.roomdata.link = rooms.link($scope.roomdata);
+			});
 		};
 
 		return {
 			restrict: 'E',
 			replace: true,
 			template: template,
+			controller: "RoomchangeController",
 			link: link
-		}
-
+		};
 	}];
 
 });

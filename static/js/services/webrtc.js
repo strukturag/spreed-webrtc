@@ -18,8 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([], function() {
-	return ["$scope", "rooms", function($scope, rooms) {
-		$scope.joinRoomByName = rooms.joinByName;
+define([
+	'mediastream/webrtc'
+], function(WebRTC) {
+	return ["api", function(api) {
+		return new WebRTC(api);
 	}];
 });

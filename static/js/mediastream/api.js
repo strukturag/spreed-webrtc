@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function($, _) {
+define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	var alive_check_timeout = 5000;
 	var alive_check_timeout_2 = 10000;
 
-	var Api = function(connector) {
-
+	var Api = function(version, connector) {
+		this.version = version;
 		this.id = null;
 		this.sid = null;
 		this.session = {};
@@ -32,6 +32,15 @@ define(['jquery', 'underscore'], function($, _) {
 		this.iids= 0;
 
 		this.e = $({});
+
+		var ua = uaparser();
+		if (ua.os.name && /Spreed Desktop Caller/i.test(ua.ua)) {
+			this.userAgent = ua.ua.match(/Spreed Desktop Caller\/([\d.]+)/i)[1] + " (" + ua.os.name + ")";
+		} else if (ua.browser.name) {
+			this.userAgent = ua.browser.name + " " + ua.browser.major;
+		} else {
+			this.userAgent = ua.ua;
+		}
 
 		connector.e.on("received", _.bind(function(event, data) {
 			this.received(data);
@@ -215,6 +224,15 @@ define(['jquery', 'underscore'], function($, _) {
 
 		return this.send("Self", data, true);
 
+	};
+
+	Api.prototype.sendHello = function(name) {
+		var data = {
+			Version: this.version,
+			Ua: this.userAgent,
+			Id: name
+		};
+		this.send("Hello", data, true);
 	};
 
 	Api.prototype.sendOffer = function(to, payload) {

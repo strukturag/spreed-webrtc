@@ -18,8 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define([], function() {
-	return ["$scope", "rooms", function($scope, rooms) {
-		$scope.joinRoomByName = rooms.joinByName;
+define([
+], function() {
+
+	return ["globalContext", "$window", function(context, $window) {
+		return {
+			room: function(id) {
+				id = $window.encodeURIComponent(id);
+				return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + id;
+			},
+			buddy: function(id) {
+				return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + "static/img/buddy/s46/" + id;
+			},
+			api: function(path) {
+				return (context.Cfg.B || "/") + "api/v1/" + path;
+			}
+		};
 	}];
 });

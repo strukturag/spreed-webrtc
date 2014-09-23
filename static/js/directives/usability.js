@@ -22,14 +22,12 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
 	var MEDIA_CHECK = "1" // First version of media check flag.
 
-	return ["mediaStream", function(mediaStream) {
+	return [function() {
 
-		var controller = ['$scope', "mediaStream", "safeApply", "$timeout", "localStorage", "continueConnector", function($scope, mediaStream, safeApply, $timeout, localStorage, continueConnector) {
+		var controller = ['$scope', "webrtc", "safeApply", "$timeout", "localStorage", "continueConnector", function($scope, webrtc, safeApply, $timeout, localStorage, continueConnector) {
 
 			var pending = true;
 			var complete = false;
-
-			var initializer = null;
 
 			var ctrl = this;
 			ctrl.setInfo = function(info) {
@@ -46,16 +44,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 						localStorage.setItem("mediastream-mediacheck", MEDIA_CHECK)
 						console.log("Continue with connect after media check ...");
 						continueDeferred.resolve();
-						if (mediaStream.config.DefaultRoomEnabled !== true) {
-							ctrl.setInfo("initializing");
-							initializer = $timeout(function() {
-								ctrl.setInfo("ok");
-								$scope.layout.settings = false;
-								$scope.$emit("welcome");
-							}, 1000);
-						} else {
-							ctrl.setInfo("ok");
-						}
+						ctrl.setInfo("ok");
 						complete = true;
 					} else {
 						ctrl.setInfo("denied");
@@ -70,7 +59,7 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 					// NOTE(longsleep): Checkin for media access makes only sense on
 					// Chrome for now, as its the only one which remembers this
 					// decision permanently for https.
-					mediaStream.webrtc.testMediaAccess($scope.continueConnect);
+					webrtc.testMediaAccess($scope.continueConnect);
 				} else {
 					$scope.continueConnect(true);
 				}
@@ -97,19 +86,16 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 				}
 			});
 
-			$scope.$on("room", function(event, room) {
-				//console.log("roomStatus", room !== null ? true : false);
+			$scope.$on("room.joined", function(event) {
 				if (complete) {
-					if (initializer !== null) {
-						$timeout.cancel(initializer);
-						initializer = null;
-					}
-					// Check if we should show settings per default when in a room.
-					if(room && !$scope.loadedUser) {
-						$scope.layout.settings = true;
-					} else {
-						$scope.layout.settings = false;
-					}
+					$scope.layout.settings = !$scope.loadedUser;
+					ctrl.setInfo("ok");
+				}
+			});
+
+			$scope.$on("room.left", function(event) {
+				if (complete) {
+					$scope.layout.settings = false;
 					ctrl.setInfo("ok");
 				}
 			});
