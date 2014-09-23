@@ -25,6 +25,29 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 
 		var controller = ['$scope', 'mediaStream', 'contacts', function($scope, mediaStream, contacts) {
 			var buddycondensed = [];
+			var empty = function(x) {
+				return x === null || x === undefined || isNaN(x) || x === "";
+			};
+			var sortCondensed = function() {
+				var unnamed = buddycondensed.length;
+				buddycondensed.sort(function(current, next) {
+					if(!current.Status || current.Status && empty(current.Status.displayName)) {
+						return 1;
+					} else {
+						if(next.Status && !empty(next.Status.displayName)) {
+							if (current.Status.displayName < next.Status.displayName) {
+								return -1;
+							} else if (current.Status.displayName > next.Status.displayName) {
+								return 1;
+							} else {
+								return 0;
+							}
+						} else {
+							return 0;
+						}
+					}
+				});
+			};
 			var joined = function(buddy) {
 				buddycondensed.push(buddy);
 			};
@@ -37,13 +60,14 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 				}
 				$scope.$apply();
 			};
-			// replace session data with contact data
 			var contactadded = function(data) {
 				//console.log('contactadded', data);
 				var hasSession = false;
 				for (var i in buddycondensed) {
+					// replace session data with contact data
 					if(buddycondensed[i].Userid === data.Userid) {
-						buddycondensed[i] = angular.extend(buddycondensed[i], data);
+						buddycondensed[i] = data;
+						//console.log('contactadded replaced', 'data', data.Status && data.Status.displayName, 'buddycondensed[i]', buddycondensed[i].Status && buddycondensed[i].Status.displayName);
 						hasSession = true;
 						break;
 					}
@@ -70,6 +94,7 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 			$scope.maxBuddiesToShow = 5;
 			contacts.e.on("contactadded", function(event, data) {
 				contactadded(data);
+				sortCondensed();
 			});
 			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				//console.log("received.userleftorjoined", data.Id);
@@ -78,6 +103,7 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 				} else {
 					joined(data);
 				}
+				sortCondensed();
 			});
 			mediaStream.api.e.on("received.users", function(event, data) {
 				//console.log("received.users", data);
@@ -87,6 +113,7 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 						joined(x);
 					}
 				});
+				sortCondensed();
 				$scope.$apply();
 			});
 		}];

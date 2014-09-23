@@ -19,13 +19,9 @@
  *
  */
 #buddycondensed {
-  display: table;
-  float: left;
-  height: 50px;
-  overflow: hidden;
+  display: inline-block;
+  position: fixed;
   padding-left: 20px;
-  vertical-align: bottom;
-  min-width: 355px;
 }
 .buddycondensed {
   &.buddy {
@@ -34,6 +30,7 @@
     cursor: auto;
     min-height: 50px;
     vertical-align: bottom;
+    overflow: visible;
     .buddyPicture {
       margin: 2px;
     }
@@ -44,6 +41,7 @@
     background: #f8f8f8;
     display: none;
     position: fixed;
+    top: 49px;
     &:hover {
       display: block;
     }
@@ -52,11 +50,45 @@
     display: inline-block;
     font-weight: bold;
     padding-left: 10px;
+    cursor: default;
     &:hover ~ .overDefaultDisplayNum {
       display: block;
     }
   }
+  .actions {
+    background: #FFF;
+    border: 1px solid rgba(128, 128, 128, 0.16);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    display: none;
+    cursor: default;
+    height: 51px;
+    padding: 0 15px;
+    bottom: 10px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 10;
+    .btn-group {
+      margin-bottom: 5px;
+      width: 55px;
+    }
+    .btn-primary {
+      padding: 2px 4px;
+    }
+    .fa {
+      font-size: 20px;
+      color: #FFF;
+      line-height: 24px;
+    }
+    .displayName {
+      margin-right: 10px;
+    }
+  }
   .buddyPicture {
     cursor: pointer;
+    overflow: visible;
+    &:hover .actions {
+      display: inline-block;
+    }
   }
 }
