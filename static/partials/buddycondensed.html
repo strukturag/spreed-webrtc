@@ -1,6 +1,6 @@
 <div id="buddycondensed">
     <div class="buddycondensed buddy">
-        <span class="desc" ng-if="listOverDefault().length > maxBuddiesToShow">+ {{listOverDefault().length - maxBuddiesToShow}} {{_("more")}}</span>
+        <span class="desc" ng-class="{overNum:listOverDefault().length > 0}">+ {{listOverDefault().length}} {{_("more")}}</span>
         <div class="defaultDisplayNum pull-left">
             <span ng-repeat="buddy in listDefault()">
                 <span class="buddyPicture">
@@ -9,8 +9,8 @@
                     <span class="actions">
                         <span class="displayName">{{buddy.Userid|displayName}}</span>
                         <div class="btn-group">
-                            <a class="btn btn-primary" data-action="call" title="Start video call"><i class="fa fa-phone"></i></a>
-                            <a class="btn btn-primary" data-action="chat" title="Start chat"><i class="fa fa-comments-o"></i></a>
+                            <a class="btn btn-primary" ng-click="call(buddy.Userid)" title="Start video call"><i class="fa fa-phone"></i></a>
+                            <a class="btn btn-primary" ng-click="chat(buddy.Userid)" title="Start chat"><i class="fa fa-comments-o"></i></a>
                         </div>
                     </span>
                 </span>
@@ -24,8 +24,8 @@
                     <span class="actions">
                         <span class="displayName">{{buddy.Userid|displayName}}</span>
                         <div class="btn-group">
-                            <a class="btn btn-primary" data-action="call" title="Start video call"><i class="fa fa-phone"></i></a>
-                            <a class="btn btn-primary" data-action="chat" title="Start chat"><i class="fa fa-comments-o"></i></a>
+                            <a class="btn btn-primary" ng-click="call(buddy.Userid)" title="Start video call"><i class="fa fa-phone"></i></a>
+                            <a class="btn btn-primary" ng-click="chat(buddy.Userid)" title="Start chat"><i class="fa fa-comments-o"></i></a>
                         </div>
                     </span>
                 </span>

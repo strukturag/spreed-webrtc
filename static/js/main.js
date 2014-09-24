@@ -43,6 +43,7 @@ require.config({
 		'avltree': 'libs/avltree',
 		'injectCSS': 'libs/jquery/jquery.injectCSS',
 		'mobile-events': 'libs/jquery/jquery.mobile-events',
+		'hoverIntent': 'libs/jquery/jquery.hoverIntent',
 		'jed': 'libs/jed',
 		'audiocontext': 'libs/audiocontext',
 		'rAF': 'libs/rAF',
@@ -109,6 +110,10 @@ require.config({
 			exports: '$'
 		},
 		'mobile-events': {
+			deps: ['jquery'],
+			exports: '$'
+		},
+		'hoverIntent': {
 			deps: ['jquery'],
 			exports: '$'
 		},

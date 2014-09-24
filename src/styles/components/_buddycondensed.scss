@@ -42,17 +42,14 @@
     display: none;
     position: fixed;
     top: 49px;
-    &:hover {
-      display: block;
-    }
   }
   .desc {
-    display: inline-block;
+    display: none;
     font-weight: bold;
     padding-left: 10px;
     cursor: default;
-    &:hover ~ .overDefaultDisplayNum {
-      display: block;
+    &.overNum {
+      display: inline-block;
     }
   }
   .actions {
@@ -87,8 +84,5 @@
   .buddyPicture {
     cursor: pointer;
     overflow: visible;
-    &:hover .actions {
-      display: inline-block;
-    }
   }
 }
