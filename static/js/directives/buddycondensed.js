@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['angular', 'text!partials/buddycondensed.html'], function(angular, template) {
+define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent'], function(angular, $, template) {
 
 	// buddycondensed
 	return [function() {
@@ -58,6 +58,7 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 			};
 			var joined = function(buddy) {
 				buddycondensed.push(buddy);
+				buddycondensed.push(angular.extend({}, buddy));
 			};
 			var left = function(id) {
 				for (var i in buddycondensed) {
@@ -135,7 +136,38 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 			});
 		}];
 
-		var link = function($scope, elem, attrs, ctrl) {};
+		var link = function($scope, elem, attrs, ctrl) {
+			var overDefaultDisplayNum = elem.find(".overDefaultDisplayNum");
+			var desc = elem.find(".desc");
+			var aboveElem1 = false;
+			var aboveElem2 = false;
+			var out = function(event) {
+				console.log('out', event.currentTarget.className);
+				if (event.currentTarget === desc.get(0)) {
+					aboveElem1 = false;
+				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
+					aboveElem2 = false;
+				}
+				if(!aboveElem1 && !aboveElem2) {
+					overDefaultDisplayNum.hide();
+				}
+			};
+			var over = function(event) {
+				console.log('out', event.currentTarget.className);
+				if (event.currentTarget === desc.get(0)) {
+					aboveElem1 = true;
+				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
+					aboveElem2 = true;
+				}
+				overDefaultDisplayNum.show();
+			};
+			elem.hoverIntent({
+				over: over,
+				out: out,
+				timeout: 1000,
+				selector: '.desc, .overDefaultDisplayNum'
+			});
+		};
 
 		return {
 			restrict: 'E',

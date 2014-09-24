@@ -1,6 +1,6 @@
 <div id="buddycondensed">
     <div class="buddycondensed buddy">
-        <span class="desc" ng-if="listOverDefault().length > maxBuddiesToShow">+ {{listOverDefault().length - maxBuddiesToShow}} {{_("more")}}</span>
+        <span class="desc" ng-class="{overNum:listOverDefault().length > 0}">+ {{listOverDefault().length}} {{_("more")}}</span>
         <div class="defaultDisplayNum pull-left">
             <span ng-repeat="buddy in listDefault()">
                 <span class="buddyPicture">
