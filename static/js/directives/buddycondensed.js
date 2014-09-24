@@ -23,8 +23,16 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 	// buddycondensed
 	return [function() {
 
-		var controller = ['$scope', 'mediaStream', 'contacts', function($scope, mediaStream, contacts) {
+		var controller = ['$scope', 'mediaStream', 'contacts', 'buddyData', function($scope, mediaStream, contacts, buddyData) {
 			var buddycondensed = [];
+			var getContactSessionId = function(userid) {
+				var session = null;
+				var scope = buddyData.lookup(userid, false, false);
+				if (scope) {
+					session = scope.session.get();
+				}
+				return session && session.Id ? session.Id : null;
+			};
 			var empty = function(x) {
 				return x === null || x === undefined || isNaN(x) || x === "";
 			};
@@ -76,6 +84,15 @@ define(['angular', 'text!partials/buddycondensed.html'], function(angular, templ
 					joined(data);
 				}
 				$scope.$apply();
+			};
+			$scope.call = function(userid) {
+				mediaStream.webrtc.doCall(getContactSessionId(userid));
+			};
+			$scope.chat = function(userid) {
+				$scope.$emit("startchat", getContactSessionId(userid), {
+					autofocus: true,
+					restore: true
+				});
 			};
 			$scope.listDefault = function() {
 				if(buddycondensed.length >= $scope.maxBuddiesToShow) {
