@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent'], function(angular, $, template) {
+define(['jquery', 'text!partials/buddycondensed.html'], function($, template) {
 
 	// buddycondensed
 	return [function() {
@@ -34,15 +34,14 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 				return session && session.Id ? session.Id : null;
 			};
 			var empty = function(x) {
-				return x === null || x === undefined || isNaN(x) || x === "";
+				return x === null || x === undefined || x === "";
 			};
 			var sortCondensed = function() {
-				var unnamed = buddycondensed.length;
 				buddycondensed.sort(function(current, next) {
-					if(!current.Status || current.Status && empty(current.Status.displayName)) {
+					if (!current.Status || current.Status && empty(current.Status.displayName)) {
 						return 1;
 					} else {
-						if(next.Status && !empty(next.Status.displayName)) {
+						if (next.Status && !empty(next.Status.displayName)) {
 							if (current.Status.displayName < next.Status.displayName) {
 								return -1;
 							} else if (current.Status.displayName > next.Status.displayName) {
@@ -58,11 +57,10 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 			};
 			var joined = function(buddy) {
 				buddycondensed.push(buddy);
-				buddycondensed.push(angular.extend({}, buddy));
 			};
 			var left = function(id) {
 				for (var i in buddycondensed) {
-					if(buddycondensed[i].Id === id) {
+					if (buddycondensed[i].Id === id) {
 						buddycondensed.splice(i,1);
 						break;
 					}
@@ -74,36 +72,35 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 				var hasSession = false;
 				for (var i in buddycondensed) {
 					// replace session data with contact data
-					if(buddycondensed[i].Userid === data.Userid) {
+					if (buddycondensed[i].Userid === data.Userid) {
 						buddycondensed[i] = data;
-						//console.log('contactadded replaced', 'data', data.Status && data.Status.displayName, 'buddycondensed[i]', buddycondensed[i].Status && buddycondensed[i].Status.displayName);
 						hasSession = true;
 						break;
 					}
 				}
-				if(!hasSession) {
+				if (!hasSession) {
 					joined(data);
 				}
 				$scope.$apply();
 			};
-			$scope.call = function(userid) {
-				mediaStream.webrtc.doCall(getContactSessionId(userid));
+			$scope.doCall = function(buddy) {
+				mediaStream.webrtc.doCall(getContactSessionId(buddy.Userid));
 			};
-			$scope.chat = function(userid) {
-				$scope.$emit("startchat", getContactSessionId(userid), {
+			$scope.doChat = function(buddy) {
+				$scope.$emit("startchat", getContactSessionId(buddy.Userid), {
 					autofocus: true,
 					restore: true
 				});
 			};
 			$scope.listDefault = function() {
-				if(buddycondensed.length >= $scope.maxBuddiesToShow) {
+				if (buddycondensed.length > $scope.maxBuddiesToShow) {
 					return buddycondensed.slice(0, $scope.maxBuddiesToShow);
 				} else {
 					return buddycondensed;
 				}
 			};
 			$scope.listOverDefault = function() {
-				if(buddycondensed.length >= $scope.maxBuddiesToShow) {
+				if (buddycondensed.length > $scope.maxBuddiesToShow) {
 					return buddycondensed.slice($scope.maxBuddiesToShow);
 				} else {
 					return [];
@@ -136,52 +133,7 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 			});
 		}];
 
-		var link = function($scope, elem, attrs, ctrl) {
-			var overDefaultDisplayNum = elem.find(".overDefaultDisplayNum");
-			var desc = elem.find(".desc");
-			var aboveElem1 = false;
-			var aboveElem2 = false;
-			var outMoreBuddy = function(event) {
-				//console.log('out', event.currentTarget.className);
-				if (event.currentTarget === desc.get(0)) {
-					aboveElem1 = false;
-				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
-					aboveElem2 = false;
-				}
-				if(!aboveElem1 && !aboveElem2) {
-					overDefaultDisplayNum.hide();
-				}
-			};
-			var overMoreBuddy = function(event) {
-				//console.log('out', event.currentTarget.className);
-				if (event.currentTarget === desc.get(0)) {
-					aboveElem1 = true;
-				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
-					aboveElem2 = true;
-				}
-				overDefaultDisplayNum.show();
-			};
-			elem.hoverIntent({
-				over: overMoreBuddy,
-				out: outMoreBuddy,
-				timeout: 1000,
-				selector: '.desc, .overDefaultDisplayNum'
-			});
-			var overBuddyPicture = function(event) {
-				//console.log('overBuddyPicture', event.currentTarget.className);
-				$(event.currentTarget).find(".actions").css("display", "inline-block");
-			};
-			var outBuddyPicture = function(event) {
-				//console.log('outBuddyPicture', event.currentTarget.className);
-				$(event.currentTarget).find(".actions").css("display", "none");
-			};
-			elem.hoverIntent({
-				over: overBuddyPicture,
-				out: outBuddyPicture,
-				timeout: 100,
-				selector: '.buddyPicture'
-			});
-		};
+		var link = function($scope, elem, attrs, ctrl) {};
 
 		return {
 			restrict: 'E',

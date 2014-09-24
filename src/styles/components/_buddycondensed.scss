@@ -22,6 +22,9 @@
   display: inline-block;
   position: fixed;
   padding-left: 20px;
+  @media (max-width: 1125px) {
+    display: none;
+  }
 }
 .buddycondensed {
   &.buddy {
@@ -34,12 +37,27 @@
     .buddyPicture {
       margin: 2px;
     }
+    &:hover .desc {
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    &:hover .overDefaultDisplayNum {
+      height: 51px;
+      opacity: 1;
+      overflow: visible;
+    }
   }
-  .defaultDisplayNum {
+  .overNum ~ .overDefaultDisplayNum {
+    width: 250px;
   }
   .overDefaultDisplayNum {
     background: #f8f8f8;
-    display: none;
+    display: inline-block;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    max-width: 80%;
     position: fixed;
     top: 49px;
   }
@@ -52,17 +70,27 @@
       display: inline-block;
     }
   }
+  .buddyPicture:hover  .actions {
+    height: 51px;
+    opacity: 1;
+  }
   .actions {
     background: #FFF;
-    border: 1px solid rgba(128, 128, 128, 0.16);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(128,128,128,0.16);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     border-radius: 2px;
-    display: none;
     cursor: default;
-    height: 51px;
-    padding: 0 15px;
-    bottom: 10px;
-    position: relative;
+    display: inline-block;
+    height: 0;
+    left: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 10px;
+    bottom: 12px;
+    position: absolute;
+    top: 48px;
+    -webkit-transition: opacity .1s .1s linear, height .4s .1s ease-out;
+    transition: opacity .1s .1s linear, height .4s .1s ease-out;
     white-space: nowrap;
     z-index: 10;
     .btn-group {
@@ -82,7 +110,7 @@
     }
   }
   .buddyPicture {
-    cursor: pointer;
+    cursor: default;
     overflow: visible;
   }
 }

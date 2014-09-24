@@ -71,11 +71,8 @@ define([
 		presentation: presentation,
 		youtubevideo: youtubevideo,
 		bfi: bfi,
-<<<<<<< HEAD
-		title: title
-=======
+		title: title,
 		buddycondensed: buddycondensed
->>>>>>> 4177988... Add buddycondensed directive and css.
 	};
 
 	var initialize = function(angModule) {
