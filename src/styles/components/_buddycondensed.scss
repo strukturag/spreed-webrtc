@@ -22,6 +22,15 @@
   display: inline-block;
   position: fixed;
   padding-left: 20px;
+  @media (max-width: 1125px) {
+    display: none;
+  }
+  @media (max-width: 480px) {
+    display: none;
+    padding-left: 0;
+    position: relative;
+    width: 80%;
+  }
 }
 .buddycondensed {
   &.buddy {
@@ -36,20 +45,36 @@
     }
   }
   .defaultDisplayNum {
+    @media (max-width: 480px) {
+      padding: 10px 0px;
+    }
   }
   .overDefaultDisplayNum {
     background: #f8f8f8;
     display: none;
+    max-width: 80%;
     position: fixed;
     top: 49px;
+    @media (max-width: 480px) {
+      overflow-y: auto;
+      max-height: 400px;
+      top: 109px;
+    }
   }
   .desc {
     display: none;
     font-weight: bold;
     padding-left: 10px;
     cursor: default;
+    @media (max-width: 480px) {
+      position: absolute;
+      top: 50px;
+    }
     &.overNum {
       display: inline-block;
+      @media (max-width: 480px) {
+        display: block;
+      }
     }
   }
   .actions {
@@ -61,13 +86,21 @@
     cursor: default;
     height: 51px;
     padding: 0 15px;
-    bottom: 10px;
+    bottom: 12px;
     position: relative;
     white-space: nowrap;
     z-index: 10;
+    @media (max-width: 480px) {
+      height: 60px;
+      padding: 0 5px;
+      bottom: 22px;
+    }
     .btn-group {
       margin-bottom: 5px;
       width: 55px;
+      @media (max-width: 480px) {
+        display: block;
+      }
     }
     .btn-primary {
       padding: 2px 4px;
@@ -79,10 +112,14 @@
     }
     .displayName {
       margin-right: 10px;
+      @media (max-width: 480px) {
+        line-height: 22px;
+        display: block;
+      }
     }
   }
   .buddyPicture {
-    cursor: pointer;
+    cursor: default;
     overflow: visible;
   }
 }
