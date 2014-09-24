@@ -84,8 +84,5 @@
   .buddyPicture {
     cursor: pointer;
     overflow: visible;
-    &:hover .actions {
-      display: inline-block;
-    }
   }
 }

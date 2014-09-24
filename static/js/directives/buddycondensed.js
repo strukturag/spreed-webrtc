@@ -141,8 +141,8 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 			var desc = elem.find(".desc");
 			var aboveElem1 = false;
 			var aboveElem2 = false;
-			var out = function(event) {
-				console.log('out', event.currentTarget.className);
+			var outMoreBuddy = function(event) {
+				//console.log('out', event.currentTarget.className);
 				if (event.currentTarget === desc.get(0)) {
 					aboveElem1 = false;
 				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
@@ -152,8 +152,8 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 					overDefaultDisplayNum.hide();
 				}
 			};
-			var over = function(event) {
-				console.log('out', event.currentTarget.className);
+			var overMoreBuddy = function(event) {
+				//console.log('out', event.currentTarget.className);
 				if (event.currentTarget === desc.get(0)) {
 					aboveElem1 = true;
 				} else if (event.currentTarget === overDefaultDisplayNum.get(0)) {
@@ -162,10 +162,24 @@ define(['angular', 'jquery', 'text!partials/buddycondensed.html', 'hoverIntent']
 				overDefaultDisplayNum.show();
 			};
 			elem.hoverIntent({
-				over: over,
-				out: out,
+				over: overMoreBuddy,
+				out: outMoreBuddy,
 				timeout: 1000,
 				selector: '.desc, .overDefaultDisplayNum'
+			});
+			var overBuddyPicture = function(event) {
+				//console.log('overBuddyPicture', event.currentTarget.className);
+				$(event.currentTarget).find(".actions").css("display", "inline-block");
+			};
+			var outBuddyPicture = function(event) {
+				//console.log('outBuddyPicture', event.currentTarget.className);
+				$(event.currentTarget).find(".actions").css("display", "none");
+			};
+			elem.hoverIntent({
+				over: overBuddyPicture,
+				out: outBuddyPicture,
+				timeout: 100,
+				selector: '.buddyPicture'
 			});
 		};
 
