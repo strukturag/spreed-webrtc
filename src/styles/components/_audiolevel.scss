@@ -26,7 +26,7 @@
   right: 0;
   top: $audiolevel-top;
   width: 400px;
-  z-index: 6;
+  z-index: 60;
   .audio-level {
     background: $audiovideolevel; /* Old browsers */
     background: gradient(linear, left top, left bottom, color-stop(0%,$audiovideolevel), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
