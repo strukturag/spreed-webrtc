@@ -331,6 +331,10 @@
     right: auto;
   }
 
+  .active .miniContainer {
+    opacity: 1;
+  }
+
 }
 
 .renderer-conferencekiosk {
