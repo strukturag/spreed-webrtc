@@ -228,6 +228,10 @@ define([
 			},
 			changeRoom: function(id, replace) {
 				id = $window.encodeURIComponent(id);
+				// Allow room ids to start with @,$ and + without quoting.
+				id = id.replace(/^%40/, "@");
+				id = id.replace(/^%24/, "$");
+				id = id.replace(/^%2B/, "+");
 				safeApply($rootScope, function(scope) {
 					$location.path("/" + id);
 					if (replace) {
