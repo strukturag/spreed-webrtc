@@ -214,7 +214,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					}
 					$scope.localVideo.src = '';
 					$scope.miniVideo.src = '';
-					$($scope.remoteVideos).empty();
+					$($scope.remoteVideos).children(".remoteVideo").remove();
 				}, 1500);
 				$($scope.mini).removeClass("visible");
 				$scope.localVideo.style.opacity = 0;
