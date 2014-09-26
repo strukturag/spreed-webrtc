@@ -1,3 +1,18 @@
+spreed-webrtc-server (0.22.4) precise; urgency=low
+
+  * Optimized Makefile and cleaned up building.
+  * WebODF was updated to 0.5.4.
+  * Video layout 'classroom' has been added.
+  * Video layout 'smally' is now using black background.
+  * Several smaller layout improvements.
+  * Room names can now start with @,$ and + without beeing quoted.
+  * The online indicator can now be customized with a directive.
+  * Video layout 'democrazy' has been implemented and is used per default.
+  * Video layout 'onepeople' is now selectable als "Large view".
+  * The own audio level indicator is now visible again.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 26 Sep 2014 16:06:23 +0200
+
 spreed-webrtc-server (0.22.3) precise; urgency=low
 
   * Enable 1080p capturing for Chrome 38+.
