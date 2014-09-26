@@ -172,16 +172,6 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		Smally.prototype.name = "smally";
 
 
-		// SelfPortrait inherits from OnePeople
-		var SelfPortrait = function(container, scope, controller) {
-			// Call super.
-			OnePeople.call(this, container, scope, controller);
-		}
-		SelfPortrait.prototype = Object.create(OnePeople.prototype);
-		SelfPortrait.prototype.constructor = SelfPortrait;
-		SelfPortrait.prototype.name = "selfportrait";
-
-
 		// A view with one selectable large video. The others are small.
 		var ConferenceKiosk = function(container, scope, controller) {
 
@@ -311,7 +301,6 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		renderers[OnePeople.prototype.name] = OnePeople;
 		renderers[Smally.prototype.name] = Smally;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
-		renderers[SelfPortrait.prototype.name] = SelfPortrait;
 		renderers[Classroom.prototype.name] = Classroom;
 
 		// Public api.
