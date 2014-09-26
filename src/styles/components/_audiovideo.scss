@@ -123,6 +123,7 @@
     transition-property: opacity;
     transition-duration: .5s;
     z-index: 25;
+    background: black;
     &.visible {
       opacity: 1;
     }
@@ -276,11 +277,16 @@
 }
 
 .miniContainer {
-  &.talking video {
-    border: 1px solid $audiovideolevel;
+  &.talking:after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    box-shadow: 0px 0px 20px $audiovideolevel inset;
   }
   video {
-    border: 1px solid transparent;
   }
 }
 
@@ -311,6 +317,20 @@
 }
 
 .renderer-onepeople {
+}
+
+.renderer-democrazy {
+
+  .remoteVideos .miniContainer {
+    position: relative;
+    max-height: 100%;
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: bottom;
+    bottom: auto;
+    right: auto;
+  }
+
 }
 
 .renderer-conferencekiosk {

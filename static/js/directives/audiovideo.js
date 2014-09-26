@@ -40,7 +40,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.hasUsermedia = false;
 			$scope.isActive = false;
 
-			$scope.rendererName = $scope.defaultRendererName = "onepeople";
+			$scope.rendererName = $scope.defaultRendererName = "democrazy";
 
 			//console.log("audiovideo", localVideo, miniVideo);
 

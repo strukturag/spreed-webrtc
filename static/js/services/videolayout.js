@@ -87,6 +87,10 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 				videoHeight = 360;
 			}
 
+			if (this.countSelfAsRemote) {
+				videos.unshift(null);
+			}
+
 			var aspectRatio = videoWidth / videoHeight;
 			var innerHeight = size.height;
 			var innerWidth = size.width;
@@ -99,10 +103,9 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 				// Make mini video fit into available space on browsers with no object-fit support.
 				// http://caniuse.com/object-fit
 				var aspectRatioLocal = scope.localVideo.videoWidth / scope.localVideo.videoHeight;
-				extraCSS = {
-					".renderer-onepeople .miniVideo": {
-						width: ($(scope.mini).height() * aspectRatioLocal) + "px"
-					}
+				extraCSS = {};
+				extraCSS[".renderer-"+this.name+" .miniVideo"] = {
+					width: ($(scope.mini).height() * aspectRatioLocal) + "px"
 				};
 			}
 
@@ -138,14 +141,14 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
                 */
 				container.style.width = newContainerWidth + "px";
 				container.style.left = ((innerWidth - newContainerWidth) / 2) + 'px';
-				extraCSS = $.extend(extraCSS, {
-					".renderer-onepeople .remoteVideos": {
-						">div": {
-							width: singleVideoWidth + "px",
-							height: singleVideoHeight + "px"
-						}
+				var extraCSS2 = {};
+				extraCSS2[".renderer-"+this.name+" .remoteVideos"] = {
+					">div": {
+						width: singleVideoWidth + "px",
+						height: singleVideoHeight + "px"
 					}
-				});
+				};
+				extraCSS = $.extend(extraCSS, extraCSS2);
 			}
 			$.injectCSS(extraCSS, {
 				truncateFirst: true,
@@ -170,6 +173,29 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		Smally.prototype = Object.create(OnePeople.prototype);
 		Smally.prototype.constructor = Smally;
 		Smally.prototype.name = "smally";
+
+
+		// Democrazy inherits from OnePeople
+		var Democrazy = function(container, scope, controller) {
+			// Call super.
+			OnePeople.call(this, container, scope, controller);
+			// Move mini video into remoteVideos.
+			var $mini = $(scope.mini);
+			this.miniParent = $mini.parent();
+			$mini.prependTo(scope.remoteVideos);
+			$mini.find("video").get(0).play();
+			this.countSelfAsRemote = true;
+		}
+		Democrazy.prototype = Object.create(OnePeople.prototype);
+		Democrazy.prototype.constructor = Democrazy;
+		Democrazy.prototype.name = "democrazy";
+		Democrazy.prototype.close = function(container, scope, controller) {
+			OnePeople.prototype.close.call(this, container, scope, controller);
+			var $mini = $(scope.mini);
+			$mini.appendTo(this.miniParent);
+			$mini.find("video").get(0).play();
+			this.miniParent = null;
+		};
 
 
 		// A view with one selectable large video. The others are small.
@@ -241,12 +267,11 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 
 			// Make space for own video on the right if width goes low.
 			if (((size.width - (videos.length - 1) * 192) / 2) < 192) {
-				extraCSS = {
-					".renderer-conferencekiosk .remoteVideos": {
-						"margin-right": "192px",
-						"overflow-x": "auto",
-						"overflow-y": "hidden"
-					}
+				extraCSS = {};
+				extraCSS[".renderer-"+this.name+" .remoteVideos"] = {
+					"margin-right": "192px",
+					"overflow-x": "auto",
+					"overflow-y": "hidden"
 				};
 			}
 
@@ -300,6 +325,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		// Register renderers.
 		renderers[OnePeople.prototype.name] = OnePeople;
 		renderers[Smally.prototype.name] = Smally;
+		renderers[Democrazy.prototype.name] = Democrazy;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
 		renderers[Classroom.prototype.name] = Classroom;
 
