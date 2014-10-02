@@ -240,9 +240,18 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.addToPeerConnection = function(pc) {
 
-		console.log("Add stream to peer connection", pc, this.localStream);
+		console.log("Add usermedia stream to peer connection", pc, this.localStream);
 		if (this.localStream) {
 			pc.addStream(this.localStream);
+		}
+
+	};
+
+	UserMedia.prototype.removeFromPeerConnection = function(pc) {
+
+		console.log("Remove usermedia stream from peer connection", pc, this.localStream);
+		if (this.localStream) {
+			pc.removeStream(this.localStream);
 		}
 
 	};

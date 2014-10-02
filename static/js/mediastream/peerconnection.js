@@ -275,6 +275,12 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	};
 
+	PeerConnection.prototype.removeStream = function() {
+
+		return this.pc.removeStream.apply(this.pc, arguments);
+
+	};
+
 	PeerConnection.prototype.createAnswer = function() {
 
 		return this.pc.createAnswer.apply(this.pc, arguments);
