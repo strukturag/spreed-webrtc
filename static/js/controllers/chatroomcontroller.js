@@ -21,7 +21,7 @@
 define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function(_, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
 
 	// ChatroomController
-	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation) {
+	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", "mediaStream", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation, mediaStream) {
 
 		$scope.outputElement = $(".output", $element);
 		$scope.inputElement = $(".input", $element);
@@ -48,6 +48,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 		var fileInfo = $compile(templateFileInfo);
 		var contactRequest = $compile(templateContactRequest);
 		var geoLocation = $compile(templateGeolocation);
+		var pictureHover = $compile('<div class="buddyInfoActions"><div class="btn-group"><a class="btn btn-primary" ng-click="doCall()" title="Start video call"><i class="fa fa-phone"></i></a><a class="btn btn-primary" ng-click="startChat()" title="Start chat"><i class="fa fa-comments-o"></i></a></div></div>');
 
 		var knowMessage = {
 			r: {},
@@ -304,6 +305,27 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 			var title = null;
 			var picture = null;
 
+			var addPictureHover = function() {
+				if (picture && !is_self) {
+					subscope = $scope.$new();
+					subscope.startChat = function() {
+						$scope.$emit("startchat", from, {
+							autofocus: true,
+							restore: true
+						});
+					};
+					subscope.doCall = function() {
+						mediaStream.webrtc.doCall(from);
+					};
+					pictureHover(subscope, function(clonedElement, scope) {
+						picture.append(clonedElement);
+					});
+				} else {
+					return;
+				}
+				extra_css += "with_hoverimage ";
+			};
+
 			var showTitleAndPicture = function() {
 				if ($scope.isgroupchat) {
 					title = $("<strong>");
@@ -314,6 +336,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 					if (imgSrc) {
 						picture.find("img").attr("src", imgSrc);
 					}
+					addPictureHover();
 				}
 			};
 
