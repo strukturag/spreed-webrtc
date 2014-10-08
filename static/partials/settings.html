@@ -270,6 +270,15 @@
           <a ng-click="showAdvancedSettings = !showAdvancedSettings"><span ng-show="showAdvancedSettings">{{_('Show advanced settings')}}</span><span ng-hide="showAdvancedSettings">{{_('Hide advanced settings')}}</span></a>
         </div>
       </div>
+      <settings-help>
+        <legend>{{_('Help')}}</legend>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Tour features')}}</label>
+          <div class="col-xs-8">
+            <button class="btn btn-success" ng-click="takeTour()">{{_('Take tour')}}</button>
+          </div>
+        </div>
+      </settings-help>
 
       <hr/>
 
