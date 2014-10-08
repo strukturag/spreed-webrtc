@@ -24,8 +24,9 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 	//helptour
 	return [function() {
 
-		var controller = ['$scope', '$rootScope', '$timeout', 'mediaStream', '$modal', function($scope, $rootScope, $timeout, mediaStream, $modal) {
+		var controller = ['$scope', '$timeout', '$modal', 'userSettingsData', function($scope, $timeout, $modal, userSettingsData) {
 			var displayTime = 500;
+			var shown = localStorage.getItem('mediastream-helptour');
 			var doStep = function(i, elem) {
 				$timeout(function() {
 					$(elem).addClass('in');
@@ -41,8 +42,8 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			};
 			var introTour = function() {
 				$scope.layout.settings = false;
-				var controller = ['$scope', '$modalInstance', function($scope, $modalInstance) {
-					$scope.goTour = function() {
+				var controller = ['$scope', '$modalInstance', function(scope, $modalInstance) {
+					scope.goTour = function() {
 						$modalInstance.dismiss();
 						startTour();
 					};
@@ -50,11 +51,13 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 				$modal.open({
 					template: templatehelptour,
 					controller: controller,
-					resolve: {},
 					size: 'sm'
 				});
 			};
-			introTour();
+			if (!shown) {
+				introTour();
+				localStorage.setItem('mediastream-helptour', true);
+			}
 			$scope.$on('showHelpTour', function(current, last) {
 				if(current) {
 					introTour();
