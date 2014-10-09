@@ -29,40 +29,66 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			var shown = localStorage.getItem('mediastream-helptour');
 			var timeoutAutoStepsIn = [];
 			var timeoutAutoStepsOut = [];
+			var menus = {};
+			menus.toggleRoom = function() {
+				var scope = angular.element('#roombar .roombar').scope();
+				if (scope) {
+					scope.hideRoomBar = !scope.hideRoomBar;
+				}
+			};
+			menus.toggleChat = function() {
+				$scope.layout.chat = !$scope.layout.chat;
+			};
+			menus.toggleSettings = function() {
+				$scope.layout.settings = !$scope.layout.settings;
+			};
 			var reset = function() {
 				outStep();
 				$scope.tourPaused = false;
 				$scope.currentIndex = null;
 			};
+			var toggleTargetMenu = function() {
+				var menu = $($scope.steps[$scope.currentIndex]).data('menu');
+				if (menu) {
+					menus[menu]();
+				}
+			};
 			var outStep = function() {
+				toggleTargetMenu();
 				$($scope.steps[$scope.currentIndex]).removeClass('in');
 			};
-			var inStep = function(i, elem) {
+			var inStep = function(i) {
 				$scope.currentIndex = i;
-				$($scope.steps[i]).addClass('in');
+				toggleTargetMenu();
+				$($scope.steps[$scope.currentIndex]).addClass('in');
 			};
-			var autoStep = function(i, elem) {
+			var autoStep = function(i, elem, startIndex) {
+				var inTime = startIndex ? displayTime * (i - startIndex) : displayTime * i;
+				var outTime = startIndex ? displayTime * ((i + 1) - startIndex) : displayTime * (i + 1);
 				timeoutAutoStepsIn[i] = $timeout(function() {
 					inStep(i);
-				}, displayTime * i, true);
+				}, inTime, true);
 				timeoutAutoStepsOut[i] = $timeout(function() {
-					outStep();
 					if ($scope.steps.length === i + 1) {
 						$scope.togglePause();
+					} else {
+						outStep();
 					}
-				}, displayTime * (i + 1), true);
+				}, outTime, true);
 			};
 			var autoTour = function(startIndex) {
-				if (!startIndex) {
+				if (!angular.isNumber(startIndex)) {
 					startIndex = 0;
 				// start again from the beginning and ensure window is hidden
-				} else if (startIndex === $scope.steps.length - 1) {
+				} else if ($scope.currentIndex > $scope.steps.length - 2) {
 					outStep();
 					startIndex = 0;
+				} else {
+					outStep();
 				}
 				$scope.steps.each(function(i, x) {
 					if (i >= startIndex) {
-						autoStep(i, x);
+						autoStep(i, x, startIndex);
 					}
 				});
 			};
@@ -127,7 +153,7 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 				if ($scope.tourPaused) {
 					manualTour();
 				} else {
-					autoTour($scope.currentIndex);
+					autoTour($scope.currentIndex + 1);
 				}
 			};
 			$scope.exitTour = function() {
