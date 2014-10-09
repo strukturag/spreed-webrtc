@@ -46,15 +46,18 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 					inStep(i);
 				}, displayTime * i, true);
 				timeoutAutoStepsOut[i] = $timeout(function() {
-					outStep(i);
+					outStep();
 					if ($scope.steps.length === i + 1) {
 						$scope.togglePause();
 					}
 				}, displayTime * (i + 1), true);
 			};
 			var autoTour = function(startIndex) {
-				// start again from the beginning
-				if (startIndex === undefined || startIndex === $scope.steps.length - 1) {
+				if (!startIndex) {
+					startIndex = 0;
+				// start again from the beginning and ensure window is hidden
+				} else if (startIndex === $scope.steps.length - 1) {
+					outStep();
 					startIndex = 0;
 				}
 				$scope.steps.each(function(i, x) {

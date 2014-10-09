@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="popover in tourControl" ng-if="currentIndex !== null">
-        <div class="arrow"></div><h3 class="popover-title ng-binding">Tour Control - {{currentIndex + 1}} of {{steps.length}}</h3>
+        <div class="arrow"></div><h3 class="popover-title ng-binding">{{_('Tour Control')}} / {{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
         <div class="popover-content ng-binding">
             <div class="btn-group">
                 <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
