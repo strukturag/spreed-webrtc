@@ -35,16 +35,32 @@
   .popover {
     opacity: 0.95;
   }
-  .meetingRoom {
-    top: 84px;
+  .roomPane {
+    top: 97px;
     left: 10px;
     .arrow {
       left: 10%;
     }
   }
-  .buddyList {
+  .buddyListPane {
     left: initial;
     right: 280px;
+    top: 70px;
+    .arrow {
+      top: 20%;
+    }
+  }
+  .chatPane {
+    left: initial;
+    right: 540px;
+    top: 70px;
+    .arrow {
+      top: 20%;
+    }
+  }
+  .settingsPane {
+    left: initial;
+    right: 540px;
     top: 70px;
     .arrow {
       top: 20%;
