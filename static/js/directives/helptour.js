@@ -30,29 +30,35 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			var timeoutAutoStepsIn = [];
 			var timeoutAutoStepsOut = [];
 			var reset = function() {
-				$scope.toAutourPaused = false;
-				$($scope.steps[$scope.currentIndex]).removeClass('in');
+				outStep();
+				$scope.tourPaused = false;
 				$scope.currentIndex = null;
 			};
-			var outStep = function(i, elem) {
-				$(elem).removeClass('in');
+			var outStep = function() {
+				$($scope.steps[$scope.currentIndex]).removeClass('in');
 			};
 			var inStep = function(i, elem) {
-				$(elem).addClass('in');
 				$scope.currentIndex = i;
+				$($scope.steps[i]).addClass('in');
 			};
 			var autoStep = function(i, elem) {
 				timeoutAutoStepsIn[i] = $timeout(function() {
-					inStep(i, elem);
+					inStep(i);
 				}, displayTime * i, true);
 				timeoutAutoStepsOut[i] = $timeout(function() {
-					outStep(i, elem);
+					outStep(i);
+					if ($scope.steps.length === i + 1) {
+						$scope.togglePause();
+					}
 				}, displayTime * (i + 1), true);
 			};
-			var autoTour = function(start) {
-				start = start ? start - 1 : 0;
+			var autoTour = function(startIndex) {
+				// start again from the beginning
+				if (startIndex === undefined || startIndex === $scope.steps.length - 1) {
+					startIndex = 0;
+				}
 				$scope.steps.each(function(i, x) {
-					if(i >= start) {
+					if (i >= startIndex) {
 						autoStep(i, x);
 					}
 				});
@@ -86,20 +92,32 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			$scope.tourPaused = false;
 			$scope.currentIndex = null;
 			$scope.stepBeginning = function() {
-				outStep($scope.currentIndex, $scope.steps[$scope.currentIndex]);
-				inStep(0, $scope.steps[0]);
+				if (!$scope.tourPaused) {
+					$scope.togglePause();
+				}
+				outStep();
+				inStep(0);
 			};
 			$scope.stepBackward = function() {
-				outStep($scope.currentIndex, $scope.steps[$scope.currentIndex]);
-				inStep($scope.currentIndex - 1, $scope.steps[$scope.currentIndex - 1]);
+				if (!$scope.tourPaused) {
+					$scope.togglePause();
+				}
+				outStep();
+				inStep($scope.currentIndex - 1);
 			};
 			$scope.stepForward = function() {
-				outStep($scope.currentIndex, $scope.steps[$scope.currentIndex]);
-				inStep($scope.currentIndex + 1, $scope.steps[$scope.currentIndex + 1]);
+				if (!$scope.tourPaused) {
+					$scope.togglePause();
+				}
+				outStep();
+				inStep($scope.currentIndex + 1);
 			};
 			$scope.stepEnd = function() {
-				outStep($scope.currentIndex, $scope.steps[$scope.currentIndex]);
-				inStep($scope.steps.length - 1, $scope.steps[$scope.steps.length - 1]);
+				if (!$scope.tourPaused) {
+					$scope.togglePause();
+				}
+				outStep();
+				inStep($scope.steps.length - 1);
 			};
 			$scope.togglePause = function() {
 				$scope.tourPaused = !$scope.tourPaused;
@@ -110,7 +128,9 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 				}
 			};
 			$scope.exitTour = function() {
-				manualTour();
+				if (!$scope.tourPaused) {
+					manualTour();
+				}
 				reset();
 			};
 			$scope.$on('showHelpTour', function() {
