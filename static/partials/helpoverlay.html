@@ -1,10 +1,27 @@
 <div class="helptour">
-    <div class="popover bottom meetingRoom">
-        <div class="arrow"></div><h3 class="popover-title">{{_('Meeting Room')}}</h3>
-        <div class="popover-content">{{_('Change the current meeting room here. Not all rooms names are available and certain characters are automatically removed.')}}</div>
+    <div class="tourSteps">
+        <div class="popover bottom meetingRoom">
+            <div class="arrow"></div><h3 class="popover-title">{{_('Meeting Room')}}</h3>
+            <div class="popover-content">{{_('Change the current meeting room here. Not all rooms names are available and certain characters are automatically removed.')}}</div>
+        </div>
+        <div class="popover left buddyList">
+            <div class="arrow"></div><h3 class="popover-title">{{_('Buddy List')}}</h3>
+            <div class="popover-content">{{_('Every person in a room is listed here.')}}</div>
+        </div>
     </div>
-    <div class="popover left buddyList">
-        <div class="arrow"></div><h3 class="popover-title">{{_('Buddy List')}}</h3>
-        <div class="popover-content">{{_('Every person in a room is listed here.')}}</div>
+    <div class="popover in tourControl" ng-if="currentIndex !== null">
+        <div class="arrow"></div><h3 class="popover-title ng-binding">Tour Control - {{currentIndex + 1}} of {{steps.length}}</h3>
+        <div class="popover-content ng-binding">
+            <div class="btn-group">
+                <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+            </div>
+        </div>
     </div>
 </div>

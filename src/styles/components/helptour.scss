@@ -23,11 +23,17 @@
 }
 
 .helptour {
+  .tourControl {
+    top: initial;
+    bottom: 10px;
+    left: 10px;
+    max-width: none;
+  }
   .in {
     display: block;
   }
   .popover {
-    opacity: 0.85;
+    opacity: 0.95;
   }
   .meetingRoom {
     top: 84px;
