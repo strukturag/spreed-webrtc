@@ -66,4 +66,41 @@
       top: 20%;
     }
   }
+  .mediaAccessPane {
+    top: 10px;
+    left: initial;
+    right: 10px;
+  }
+}
+
+.arrow+.secondArrow {
+  border-width: 11px;
+  &:after {
+    border-width: 10px;
+    content: "";
+  }
+}
+.arrow+.secondArrow,
+.arrow+.secondArrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+}
+.secondArrow.right {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-left-width: 0;
+  border-right-color: #999;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  &:after {
+    content: " ";
+    left: 1px;
+    bottom: -10px;
+    border-left-width: 0;
+    border-right-color: #FFF;
+  }
 }

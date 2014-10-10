@@ -24,7 +24,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 	//helptour
 	return [function() {
 
-		var controller = ['$scope', '$timeout', '$modal', '$rootScope', function($scope, $timeout, $modal, $rootScope) {
+		var controller = ['$scope', '$timeout', '$modal', '$rootScope', 'mediaStream', function($scope, $timeout, $modal, $rootScope, mediaStream) {
 			var displayTime = 2000;
 			var shown = localStorage.getItem('mediastream-helptour');
 			var timeoutAutoStepsIn = [];
@@ -41,6 +41,12 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				screenshare: false,
 				settings: false
 			};
+			var trigger = false;
+			menus.triggerMediaAccess = function() {
+				if (trigger) {
+					mediaStream.webrtc.testMediaAccess(function() {});
+				}
+			};
 			menus.toggleRoom = function() {
 				var scope = angular.element('#roombar .roombar').scope();
 				if (scope) {
@@ -56,6 +62,9 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			var toggleTargetMenu = function() {
 				var menu = $($scope.steps[$scope.currentIndex]).data('menu');
 				if (menu) {
+					if (menu.search('trigger') > -1) {
+						trigger = !trigger;
+					}
 					menus[menu]();
 				}
 			};

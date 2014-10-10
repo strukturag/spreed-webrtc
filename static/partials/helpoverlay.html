@@ -1,24 +1,35 @@
 <div class="helptour">
     <div class="tourSteps">
         <div class="popover bottom roomPane" data-menu="toggleRoom">
-            <div class="arrow"></div><h3 class="popover-title">{{_('A room')}}</h3>
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('A room')}}</h3>
             <div class="popover-content">{{_('Place to meet people(buddy). Change rooms here and easily send friends a room link with the social media links provided. Not all room names are available and certain characters are automatically removed.')}}</div>
         </div>
         <div class="popover left buddyListPane">
-            <div class="arrow"></div><h3 class="popover-title">{{_('Buddy List')}}</h3>
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('Buddy List')}}</h3>
             <div class="popover-content">{{_('List of all buddys in the same room and saved contacts.')}}</div>
         </div>
         <div class="popover left buddyListPane">
-            <div class="arrow"></div><h3 class="popover-title">{{_('A buddy')}}</h3>
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('A buddy')}}</h3>
             <div class="popover-content">{{_('An individual in the same room. If someone is in the same room, a buddy card will be shown. Simply hover over the card to callout chat/call actions. If a star appears next to a buddy comment, the buddy is logged in. When the star is filled the buddy is a contact. Click the star to add a buddy as a contact or remove a contact.')}}</div>
         </div>
         <div class="popover left chatPane" data-menu="toggleChat">
-            <div class="arrow"></div><h3 class="popover-title">{{_('Chat sessions')}}</h3>
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('Chat sessions')}}</h3>
             <div class="popover-content">{{_('Group and individual chat sessions. Chat with everyone in a room or chat individually. In group chats you are able to share files and your current location. In individual chats you are also able to start a video call.')}}</div>
         </div>
         <div class="popover left settingsPane" data-menu="toggleSettings">
-            <div class="arrow"></div><h3 class="popover-title">{{_('Settings')}}</h3>
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('Settings')}}</h3>
             <div class="popover-content">{{_('Choose a name, upload a picture, signin, and customize you experience.')}}</div>
+        </div>
+        <div class="popover bottom mediaAccessPane" data-menu="triggerMediaAccess">
+            <div class="arrow"></div>
+            <div class="secondArrow right"></div>
+            <h3 class="popover-title">{{_('Media permission')}}</h3>
+            <div class="popover-content">{{_('Everytime a call is made or recieved a permission window from the browser will show up like this. To make a call you must accept, otherwise the browser cannot use your wecam and video to make a call. This is a security and privacy precaution.')}}</div>
         </div>
     </div>
     <div class="popover in tourControl" ng-if="currentIndex !== null">
