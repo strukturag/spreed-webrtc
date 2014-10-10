@@ -19,17 +19,28 @@
  *
  */
 
-define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html'], function($, template, templatehelptour) {
+define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/helptour.html'], function($, angular, template, templatehelptour) {
 
 	//helptour
 	return [function() {
 
-		var controller = ['$scope', '$timeout', '$modal', 'userSettingsData', '$q', function($scope, $timeout, $modal, userSettingsData, $q) {
+		var controller = ['$scope', '$timeout', '$modal', '$rootScope', function($scope, $timeout, $modal, $rootScope) {
 			var displayTime = 2000;
 			var shown = localStorage.getItem('mediastream-helptour');
 			var timeoutAutoStepsIn = [];
 			var timeoutAutoStepsOut = [];
 			var menus = {};
+			var backupLayout = null;
+			var tourLayout = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				screenshare: false,
+				settings: false
+			};
 			menus.toggleRoom = function() {
 				var scope = angular.element('#roombar .roombar').scope();
 				if (scope) {
@@ -41,11 +52,6 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			};
 			menus.toggleSettings = function() {
 				$scope.layout.settings = !$scope.layout.settings;
-			};
-			var reset = function() {
-				outStep();
-				$scope.tourPaused = false;
-				$scope.currentIndex = null;
 			};
 			var toggleTargetMenu = function() {
 				var menu = $($scope.steps[$scope.currentIndex]).data('menu');
@@ -100,12 +106,22 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 					$timeout.cancel(promise);
 				});
 			};
+			var initTour = function() {
+				backupLayout = angular.extend({}, $scope.layout);
+				$scope.layout = angular.extend($scope.layout, tourLayout);
+				autoTour();
+			};
+			var reset = function() {
+				outStep();
+				$scope.tourPaused = false;
+				$scope.currentIndex = null;
+				$scope.layout = angular.extend($scope.layout, backupLayout);
+			};
 			var introTour = function() {
-				$scope.layout.settings = false;
 				var controller = ['$scope', '$modalInstance', function(scope, $modalInstance) {
 					scope.goTour = function() {
 						$modalInstance.dismiss();
-						autoTour();
+						initTour();
 					};
 				}];
 				$modal.open({
@@ -114,10 +130,6 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 					size: 'sm'
 				});
 			};
-			if (!shown) {
-				introTour();
-				localStorage.setItem('mediastream-helptour', true);
-			}
 			$scope.tourPaused = false;
 			$scope.currentIndex = null;
 			$scope.stepBeginning = function() {
@@ -164,6 +176,12 @@ define(['jquery', 'text!partials/helpoverlay.html', 'text!partials/helptour.html
 			};
 			$scope.$on('showHelpTour', function() {
 				introTour();
+			});
+			$rootScope.$on("room", function(event, room) {
+				if (!shown) {
+					introTour();
+					localStorage.setItem('mediastream-helptour', true);
+				}
 			});
 		}];
 
