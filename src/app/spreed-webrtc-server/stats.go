@@ -33,11 +33,11 @@ type Stat struct {
 	Hub     *HubStat     `json:"hub"`
 }
 
-func NewStat(details bool, h *Hub) *Stat {
+func NewStat(details bool, statsGenerator StatsGenerator) *Stat {
 	stat := &Stat{
 		details: details,
 		Runtime: &RuntimeStat{},
-		Hub:     h.Stat(details),
+		Hub:     statsGenerator.Stat(details),
 	}
 	stat.Runtime.Read()
 	return stat
@@ -69,12 +69,12 @@ func (stat *RuntimeStat) Read() {
 }
 
 type Stats struct {
-	hub *Hub
+	StatsGenerator
 }
 
 func (stats *Stats) Get(request *http.Request) (int, interface{}, http.Header) {
 
 	details := request.Form.Get("details") == "1"
-	return 200, NewStat(details, stats.hub), http.Header{"Content-Type": {"application/json; charset=utf-8"}, "Access-Control-Allow-Origin": {"*"}}
+	return 200, NewStat(details, stats), http.Header{"Content-Type": {"application/json; charset=utf-8"}, "Access-Control-Allow-Origin": {"*"}}
 
 }
