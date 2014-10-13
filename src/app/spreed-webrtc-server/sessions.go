@@ -23,6 +23,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -42,7 +43,8 @@ type SessionNonceRequest struct {
 }
 
 type Sessions struct {
-	hub   *Hub
+	SessionValidator
+	SessionStore
 	users *Users
 }
 
@@ -78,7 +80,7 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	}
 
 	// Make sure Sid matches session and is valid.
-	if !sessions.hub.ValidateSession(snr.Id, snr.Sid) {
+	if !sessions.ValidateSession(snr.Id, snr.Sid) {
 		log.Println("Session patch failed - validation failed.")
 		error = true
 	}
@@ -104,7 +106,12 @@ func (sessions *Sessions) Patch(request *http.Request) (int, interface{}, http.H
 	var nonce string
 	if !error {
 		// FIXME(longsleep): Not running this might reveal error state with a timing attack.
-		nonce, err = sessions.hub.sessiontokenHandler(&SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
+		if session, ok := sessions.GetSession(snr.Id); ok {
+			nonce, err = session.Authorize(sessions.Realm(), &SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
+		} else {
+			err = errors.New("no such session")
+		}
+
 		if err != nil {
 			log.Println("Session patch failed - handle failed.", err)
 			error = true
