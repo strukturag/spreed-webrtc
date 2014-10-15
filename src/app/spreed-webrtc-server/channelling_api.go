@@ -85,13 +85,21 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 			api.Broadcast(session, session.DataSessionLeft("soft"))
 		}
 
+		// NOTE(lcooper): Iid filtered for compatibility's sake.
+		// Evaluate sending unconditionally when supported by all clients.
 		if api.CanJoinRoom(msg.Hello.Id) {
 			session.Hello = true
 			session.Roomid = msg.Hello.Id
 			api.JoinRoom(session, c)
+			if msg.Iid != "" {
+				c.Reply(msg.Iid, &DataWelcome{Type: "Welcome", Users: api.RoomUsers(session)})
+			}
 			api.Broadcast(session, session.DataSessionJoined())
 		} else {
 			session.Hello = false
+			if msg.Iid != "" {
+				c.Reply(msg.Iid, &DataError{Type: "Error", Code: "default_room_disabled", Message: "The default room is not enabled"})
+			}
 		}
 	case "Offer":
 		// TODO(longsleep): Validate offer

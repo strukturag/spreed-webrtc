@@ -87,6 +87,16 @@ Sending vs receiving document data encapsulation
     A    : Session attestation token. Only available for incoming data
            created by other sessions (optional).
 
+Error returns
+
+  Calls providing an Iid which fail will receive an Error document with the
+  following format:
+
+    {
+        "Type": "Error",
+        "Code": "value_identifying_error",
+        "Message": "A description of the error condition"
+    }
 
 Special purpose documents for channling
 
@@ -151,14 +161,38 @@ Special purpose documents for channling
         }
     }
 
-    Hello document is to be send by the client after connection was
-    established.
+    Hello document is to be send by the client after connection was established.
+    If an Iid is provided, a Welcome document will be returned if joining the
+    room with the given Id succeeds. Otherwise an Error document with one of the
+    error codes listed below will be returned.
 
     Keys under Hello:
 
       Version : Channel protocol version (string).
       Ua      : User agent description (string).
       Id      : Room id. The default Room has the empty string Id ("") (string).
+
+    Error codes:
+
+      default_room_disabled : Joining the room "" is not allowed by this server.
+
+  Welcome
+
+    {
+        Type: "Welcome",
+        Welcome: {
+            Users: [
+            ],
+        }
+    }
+
+    Welcome is sent in reply to a successful Hello, and contains all data
+    needed to set up the initial room connection.
+
+    Keys under Welcome:
+
+      Users: Contains the user list for the room, see the description of
+             the Users document for more details.
 
 Peer connection documents
 

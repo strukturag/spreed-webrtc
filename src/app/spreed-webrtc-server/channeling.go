@@ -21,10 +21,21 @@
 
 package main
 
+type DataError struct {
+	Type    string
+	Code    string
+	Message string
+}
+
 type DataHello struct {
 	Version string
 	Ua      string
 	Id      string
+}
+
+type DataWelcome struct {
+	Type  string
+	Users []*DataSession
 }
 
 type DataOffer struct {
