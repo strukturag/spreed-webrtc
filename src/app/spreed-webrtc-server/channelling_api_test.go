@@ -30,12 +30,18 @@ const (
 )
 
 type fakeClient struct {
+	replies map[string]interface{}
 }
 
 func (fake *fakeClient) Send(_ Buffer) {
 }
 
-func (fake *fakeClient) Reply(_ string, _ interface{}) {
+func (fake *fakeClient) Reply(iid string, msg interface{}) {
+	if fake.replies == nil {
+		fake.replies = make(map[string]interface{})
+	}
+
+	fake.replies[iid] = msg
 }
 
 type fakeRoomManager struct {
@@ -130,5 +136,53 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_DoesNotJoinIfNotPermitted(t *te
 
 	if broadcastCount := len(roomManager.broadcasts); broadcastCount != 0 {
 		t.Fatalf("Expected no broadcasts, but got %d", broadcastCount)
+	}
+}
+
+func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t *testing.T) {
+	iid := "foo"
+	api, client, session, roomManager := NewTestChannellingAPI()
+	roomManager.roomUsers = []*DataSession{&DataSession{}}
+
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
+
+	msg, ok := client.replies[iid]
+	if !ok {
+		t.Fatalf("No response received for Iid %v", iid)
+	}
+
+	welcome, ok := msg.(*DataWelcome)
+	if !ok {
+		t.Fatalf("Expected response message %#v to be a Welcome", msg)
+	}
+
+	if welcome.Type != "Welcome" {
+		t.Error("Message did not have the correct type")
+	}
+
+	if len(welcome.Users) != len(roomManager.roomUsers) {
+		t.Errorf("Expected to get users %#v, but was %#v", roomManager.roomUsers, welcome.Users)
+	}
+}
+
+func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfTheRoomCannotBeJoined(t *testing.T) {
+	iid := "foo"
+	api, client, session, roomManager := NewTestChannellingAPI()
+	roomManager.disallowJoin = true
+
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
+
+	msg, ok := client.replies[iid]
+	if !ok {
+		t.Fatalf("No response received for Iid %v", iid)
+	}
+
+	err, ok := msg.(*DataError)
+	if !ok {
+		t.Fatalf("Expected response message %#v to be an Error", msg)
+	}
+
+	if err.Type != "Error" {
+		t.Error("Message did not have the correct type")
 	}
 }
