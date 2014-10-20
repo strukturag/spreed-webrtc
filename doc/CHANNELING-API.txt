@@ -179,10 +179,10 @@ Special purpose documents for channling
   Welcome
 
     {
-        Type: "Welcome",
-        Welcome: {
-            Users: [
-            ],
+        "Type": "Welcome",
+        "Welcome": {
+            "Room": {...},
+            "Users": []
         }
     }
 
@@ -191,8 +191,20 @@ Special purpose documents for channling
 
     Keys under Welcome:
 
+      Room:  Contains the current state of the room, see the description of
+             the Room document for more details.
       Users: Contains the user list for the room, see the description of
              the Users document for more details.
+
+  Room
+
+    {
+        "Type": "Room",
+        "Name": "room-name-here"
+    }
+
+    The Room document is sent in responses to initial joins or when room properties
+    have been updated.
 
 Peer connection documents
 

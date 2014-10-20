@@ -140,11 +140,11 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_DoesNotJoinIfNotPermitted(t *te
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t *testing.T) {
-	iid := "foo"
+	iid, roomID := "foo", "a-room"
 	api, client, session, roomManager := NewTestChannellingAPI()
 	roomManager.roomUsers = []*DataSession{&DataSession{}}
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{Id: roomID}})
 
 	msg, ok := client.replies[iid]
 	if !ok {
@@ -158,6 +158,10 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t
 
 	if welcome.Type != "Welcome" {
 		t.Error("Message did not have the correct type")
+	}
+
+	if welcome.Room == nil || welcome.Room.Name != roomID {
+		t.Errorf("Expected room with name %v, but got %#v", roomID, welcome.Room)
 	}
 
 	if len(welcome.Users) != len(roomManager.roomUsers) {
