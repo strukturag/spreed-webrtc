@@ -101,7 +101,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		return this.apply(name, obj);
 	};
 
-	Api.prototype.request = function(type, data, cb) {
+	Api.prototype.request = function(type, data, cb, noqueue) {
 
 		var payload = {
 			Type: type
@@ -112,7 +112,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			payload.Iid = iid;
 			this.e.one(iid+".request", cb);
 		}
-		this.connector.send(payload);
+		this.connector.send(payload, noqueue);
 
 	}
 
@@ -226,13 +226,28 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.sendHello = function(name) {
+	Api.prototype.sendHello = function(name, success, fault) {
 		var data = {
 			Version: this.version,
 			Ua: this.userAgent,
 			Id: name
 		};
-		this.send("Hello", data, true);
+
+		var that = this;
+		var onResponse = function(event, type, data) {
+			if (type === "Welcome") {
+				if (success) {
+					success({name: name});
+				}
+				that.e.triggerHandler("received.users", [data.Users]);
+			} else {
+				if (fault) {
+					fault(data);
+				}
+			}
+		};
+
+		this.request("Hello", data, onResponse, true);
 	};
 
 	Api.prototype.sendOffer = function(to, payload) {
