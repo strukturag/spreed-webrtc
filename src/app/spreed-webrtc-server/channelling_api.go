@@ -92,7 +92,11 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 			session.Roomid = msg.Hello.Id
 			api.JoinRoom(session, c)
 			if msg.Iid != "" {
-				c.Reply(msg.Iid, &DataWelcome{Type: "Welcome", Users: api.RoomUsers(session)})
+				c.Reply(msg.Iid, &DataWelcome{
+					Type:  "Welcome",
+					Room:  &DataRoom{Name: msg.Hello.Id},
+					Users: api.RoomUsers(session),
+				})
 			}
 			api.Broadcast(session, session.DataSessionJoined())
 		} else {

@@ -35,7 +35,13 @@ type DataHello struct {
 
 type DataWelcome struct {
 	Type  string
+	Room  *DataRoom
 	Users []*DataSession
+}
+
+type DataRoom struct {
+	Type string
+	Name string
 }
 
 type DataOffer struct {
