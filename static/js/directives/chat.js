@@ -551,8 +551,8 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 						noenable: true,
 						noactivate: true
 					});
-					scope.currentRoomName = room.name;
-					var msg = $("<span>").text(translation._("You are now in room %s ...", room.name));
+					scope.currentRoomName = room.Name;
+					var msg = $("<span>").text(translation._("You are now in room %s ...", room.Name));
 					subscope.$broadcast("display", null, $("<i>").append(msg));
 				});
 

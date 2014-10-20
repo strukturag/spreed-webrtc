@@ -26,7 +26,7 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 		var link = function($scope, $element, attrs) {
 			$scope.randomRoom = rooms.randomRoom;
 
-			$scope.$on("room.joined", function(event, name) {
+			$scope.$on("room.joined", function(event) {
 				$scope.page = null;
 			});
 

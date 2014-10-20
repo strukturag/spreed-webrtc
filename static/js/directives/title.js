@@ -31,7 +31,7 @@ define([], function() {
 			};
 
 			$scope.$on("room.joined", function(ev, room) {
-				updateTitle(room.name);
+				updateTitle(room.Name);
 			});
 
 			$scope.$on("room.left", function(ev) {
