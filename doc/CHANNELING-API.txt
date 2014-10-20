@@ -164,7 +164,8 @@ Special purpose documents for channling
     Hello document is to be send by the client after connection was established.
     If an Iid is provided, a Welcome document will be returned if joining the
     room with the given Id succeeds. Otherwise an Error document with one of the
-    error codes listed below will be returned.
+    error codes listed below will be returned. Note that any previous room will
+    have been left regardless of whether the response is successful.
 
     Keys under Hello:
 

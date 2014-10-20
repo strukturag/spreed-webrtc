@@ -189,4 +189,8 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfT
 	if err.Type != "Error" {
 		t.Error("Message did not have the correct type")
 	}
+
+	if code := "default_room_disabled"; err.Code != code {
+		t.Errorf("Expected error code to be %v, but was %v", code, err.Code)
+	}
 }

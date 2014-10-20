@@ -45,7 +45,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				updateBuddyListVisibility();
 			});
 
-			$scope.$on("room.joined", function(ev, room) {
+			$scope.$on("room.joined", function(ev) {
 				inRoom = true;
 				updateBuddyListVisibility();
 			});

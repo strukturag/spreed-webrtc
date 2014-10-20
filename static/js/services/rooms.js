@@ -29,6 +29,7 @@ define([
 
 		var joinFailed = function(error) {
 			console.log("error", error, "while joining room");
+			setCurrentRoom(null);
 			rooms.randomRoom();
 		};
 
@@ -38,7 +39,7 @@ define([
 				return;
 			}
 
-			if (!connector.connected || requestedRoomName !== currentRoom) {
+			if (!connector.connected || !currentRoom || requestedRoomName !== currentRoom.Name) {
 				if (requestedRoomName !== "" || globalContext.Cfg.DefaultRoomEnabled) {
 					console.log("Joining room", requestedRoomName);
 					requestedRoomName = requestedRoomName ? requestedRoomName : "";
@@ -51,25 +52,20 @@ define([
 			}
 		};
 
-		// Cache events, to avoid ui flicker during quick room changes.
-		var nextRoom = null;
 		var setCurrentRoom = function(room) {
-			nextRoom = room;
-
-			$timeout(function() {
-				if (nextRoom !== currentRoom) {
-					var priorRoom = currentRoom;
-					currentRoom = nextRoom;
-					if (priorRoom) {
-						console.log("Left room", priorRoom.name);
-						$rootScope.$broadcast("room.left", priorRoom);
-					}
-					if (currentRoom) {
-						console.log("Joined room", currentRoom.name);
-						$rootScope.$broadcast("room.joined", currentRoom);
-					}
-				}
-			}, 100);
+			if (room === currentRoom) {
+				return;
+			}
+			var priorRoom = currentRoom;
+			currentRoom = room;
+			if (priorRoom) {
+				console.log("Left room", priorRoom.Name);
+				$rootScope.$broadcast("room.left", priorRoom);
+			}
+			if (currentRoom) {
+				console.log("Joined room", currentRoom.Name);
+				$rootScope.$broadcast("room.joined", currentRoom);
+			}
 		};
 
 		connector.e.on("close error", function() {
@@ -99,7 +95,7 @@ define([
 
 		var rooms = {
 			inDefaultRoom: function() {
-				return (currentRoom !== null ? currentRoom.name : requestedRoomName) === "";
+				return (currentRoom !== null ? currentRoom.Name : requestedRoomName) === "";
 			},
 			randomRoom: function() {
 				$http({
@@ -110,17 +106,17 @@ define([
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
 				}).
-				success(function(data, status) {
-					console.info("Retrieved random room data", data);
-					if (!data.name) {
-						data.name = "";
-					}
-					$rootScope.$broadcast('room.random', {name: data.name});
-				}).
-				error(function() {
-					console.error("Failed to retrieve random room data.");
-					$rootScope.$broadcast('room.random', {});
-				});
+					success(function(data, status) {
+						console.info("Retrieved random room data", data);
+						if (!data.name) {
+							data.name = "";
+						}
+						$rootScope.$broadcast('room.random', {name: data.name});
+					}).
+					error(function() {
+						console.error("Failed to retrieve random room data.");
+						$rootScope.$broadcast('room.random', {});
+					});
 			},
 			joinByName: function(name, replace) {
 				name = $window.encodeURIComponent(name);
@@ -137,7 +133,7 @@ define([
 				return name;
 			},
 			link: function(room) {
-				var name = room ? room.name : null;
+				var name = room ? room.Name : null;
 				if (!name) {
 					name = "";
 				}

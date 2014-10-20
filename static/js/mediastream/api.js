@@ -235,9 +235,10 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		var that = this;
 		var onResponse = function(event, type, data) {
+			console.log("Got response to Hello", data);
 			if (type === "Welcome") {
 				if (success) {
-					success({name: name});
+					success(data.Room);
 				}
 				that.e.triggerHandler("received.users", [data.Users]);
 			} else {

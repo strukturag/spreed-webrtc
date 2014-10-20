@@ -48,7 +48,7 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 			};
 
 			$scope.$on("room.joined", function(ev, room) {
-				$scope.currentRoomName = $scope.newRoomName = room.name;
+				$scope.currentRoomName = $scope.newRoomName = room.Name;
 			});
 
 			$scope.$on("room.left", function(ev) {
