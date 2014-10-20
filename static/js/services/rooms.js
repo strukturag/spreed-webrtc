@@ -27,6 +27,11 @@ define([
 		var requestedRoomName = "";
 		var currentRoom = null;
 
+		var joinFailed = function(error) {
+			console.log("error", error, "while joining room");
+			rooms.randomRoom();
+		};
+
 		var joinRequestedRoom = function() {
 			if ($rootScope.authorizing()) {
 				// Do nothing while authorizing.
@@ -37,8 +42,7 @@ define([
 				if (requestedRoomName !== "" || globalContext.Cfg.DefaultRoomEnabled) {
 					console.log("Joining room", requestedRoomName);
 					requestedRoomName = requestedRoomName ? requestedRoomName : "";
-					api.sendHello(requestedRoomName);
-					api.requestUsers();
+					api.sendHello(requestedRoomName, setCurrentRoom, joinFailed);
 				} else {
 					console.log("Default room disabled, requesting a random room.");
 					setCurrentRoom(null);
@@ -74,12 +78,6 @@ define([
 
 		api.e.on("received.self", function(event, data) {
 			joinRequestedRoom();
-		});
-
-		api.e.on("received.users", function() {
-			setCurrentRoom({
-				name: requestedRoomName
-			});
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
