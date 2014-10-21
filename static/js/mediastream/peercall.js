@@ -138,7 +138,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// after the remote SDP was set successfully.
 			_.defer(_.bind(function() {
 				_.each(peerconnection.getRemoteStreams(), _.bind(function(stream) {
-					if (!this.streams.hasOwnProperty(stream)) {
+					if (!this.streams.hasOwnProperty(stream) && (stream.getAudioTracks().length > 0 || stream.getVideoTracks().length > 0)) {
+						// NOTE(longsleep): Add stream here when it has at least one audio or video track, to avoid FF >= 33 to add it multiple times.
 						console.log("Adding stream after remote SDP success.", stream);
 						this.onRemoteStreamAdded(stream);
 					}
