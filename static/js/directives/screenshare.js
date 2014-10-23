@@ -197,6 +197,10 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						return;
 					}
 					peers[peercall.id] = true;
+					peercall.e.one("closed", function(event, currentcall) {
+						delete peers[currentcall.id];
+						console.log("Removed closed call from screen sharing.", currentcall.id);
+					});
 					mediaStream.api.apply("sendScreenshare", {
 						send: function(type, data) {
 							//console.log("sent screenshare", data, peercall);
