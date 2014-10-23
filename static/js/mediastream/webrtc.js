@@ -86,8 +86,21 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			offerConstraints: {
 				mandatory: {},
 				optional: []
+			},
+			screensharing: {
+				mediaConstraints: {
+					audio: false,
+					video: {
+						optional: [],
+						mandatory: {}
+					}
+				}
 			}
 		}
+
+		this.screensharingSettings = {
+
+		};
 
 		this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
 
@@ -483,7 +496,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		var usermedia = new UserMedia({
 			noaudio: true
 		});
-		var ok = usermedia.doGetUserMedia(null, PeerScreenshare.getMediaContraints(options));
+		var ok = usermedia.doGetUserMedia(null, PeerScreenshare.getCaptureMediaConstraints(this, options));
 		if (ok) {
 			this.e.one("done", function() {
 				usermedia.stop();

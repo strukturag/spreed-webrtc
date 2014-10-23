@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-26 15:55+0200\n"
+"POT-Creation-Date: 2014-10-23 11:22+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -346,11 +346,38 @@ msgstr "고급 설정"
 msgid "Stereo audio"
 msgstr "스테레오 음성"
 
+msgid "Play audio on same device as selected microphone"
+msgstr ""
+
+msgid "Mirror audio channels"
+msgstr ""
+
+msgid "Experimental AEC"
+msgstr ""
+
+msgid "Experimental AGC"
+msgstr ""
+
+msgid "Experimental noise suppression"
+msgstr ""
+
 msgid "Max video frame rate"
 msgstr "비디오프레임 비율 최대화"
 
 msgid "auto"
 msgstr "자동"
+
+msgid "Optimize for high resolution video"
+msgstr ""
+
+msgid "Reduce video noise"
+msgstr ""
+
+msgid "Detect CPU over use"
+msgstr ""
+
+msgid "Enable experiments"
+msgstr ""
 
 msgid "Show advanced settings"
 msgstr "고급 설정 보기"

@@ -42,17 +42,15 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		// Set stuff.
 		this.token = token;
 		this.messageHandler = null;
+
 		// We only receive, and never send.
 		this.mediaConstraints = {
 			audio: false,
 			video: false
-		};
-		this.sdpConstraints = {
-			mandatory: {
-				OfferToReceiveAudio: false,
-				OfferToReceiveVideo: true
-			}
-		};
+		}
+		this.sdpConstraints.mandatory.OfferToReceiveAudio = false;
+		this.sdpConstraints.mandatory.OfferToReceiveVideo = true;
+
 		// SCTP is supported from Chrome M31.
 		// No need to pass DTLS constraint as it is on by default in Chrome M31.
 		// For SCTP, reliable and ordered is true by default.
@@ -66,24 +64,23 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 
 	};
 
-	PeerScreenshare.getMediaContraints = function(options) {
+	// Static function.
+	PeerScreenshare.getCaptureMediaConstraints = function(webrtc, options) {
 
 		var screenWidth = window.screen.width;
 		var screenHeight = window.screen.height;
 
 		// Constraints which define what actually gets shared need to
 		// be provided in options.
-		var mandatoryVideoConstraints = $.extend({
+		var mandatoryVideoConstraints = $.extend(true, {}, {
 			maxWidth: screenWidth,
 			maxHeight: screenHeight
-		}, options);
-		var mediaConstraints = {
-			audio: false,
-			video: {
-				mandatory: mandatoryVideoConstraints
-			}
-		}
-		console.log("Setting screen sharing media constraints", mandatoryVideoConstraints);
+		}, webrtc.settings.screensharing.mediaConstraints.video.mandatory, options);
+		var mediaConstraints = $.extend(true, {}, webrtc.settings.screensharing.mediaConstraints, {
+			audio: false
+		});
+		mediaConstraints.video.mandatory = mandatoryVideoConstraints;
+		console.log("Setting screen sharing media constraints", mediaConstraints);
 		return mediaConstraints;
 
 	};

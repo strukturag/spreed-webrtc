@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-09-26 15:55+0200\n"
-"PO-Revision-Date: 2014-09-26 15:56+0100\n"
+"POT-Creation-Date: 2014-10-23 11:22+0200\n"
+"PO-Revision-Date: 2014-10-23 11:28+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -350,11 +350,38 @@ msgstr "Erweiterte Einstellungen"
 msgid "Stereo audio"
 msgstr "Stereo-Audio"
 
+msgid "Play audio on same device as selected microphone"
+msgstr "Audioausgabe auf dem zum Mikrofon gehörenden Gerät"
+
+msgid "Mirror audio channels"
+msgstr "Audiokanäle spiegeln"
+
+msgid "Experimental AEC"
+msgstr "Experimentelle AEC"
+
+msgid "Experimental AGC"
+msgstr "Experimentelle AGC"
+
+msgid "Experimental noise suppression"
+msgstr "Experimentelle Geräuschunterdrückung"
+
 msgid "Max video frame rate"
 msgstr "Max. Bildwiederholrate"
 
 msgid "auto"
 msgstr "auto"
+
+msgid "Optimize for high resolution video"
+msgstr "Für hohe Auflösung optimieren"
+
+msgid "Reduce video noise"
+msgstr "Rauschen reduzieren"
+
+msgid "Detect CPU over use"
+msgstr "CPU-Überlast erkennen"
+
+msgid "Enable experiments"
+msgstr "Experimente aktivieren"
 
 msgid "Show advanced settings"
 msgstr "Erweiterte Einstellungen anzeigen"

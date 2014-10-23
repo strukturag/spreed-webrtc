@@ -125,7 +125,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 		// Add support status.
 		$scope.supported = {
-			screensharing: screensharing.supported
+			screensharing: screensharing.supported,
+			renderToAssociatedSink: $window.navigator.platform.indexOf("Win") === 0
 		}
 
 		// Default scope data.
@@ -155,7 +156,19 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				stereo: true,
 				maxFrameRate: 20,
 				defaultRoom: "",
-				language: ""
+				language: "",
+				audioRenderToAssociatedSkin: true,
+				audioMirroring: false,
+				experimental: {
+					enabled: false,
+					audioEchoCancellation2: true,
+					audioAutoGainControl2: true,
+					audioNoiseSuppression2: true,
+					audioTypingNoiseDetection: true,
+					videoLeakyBucket: true,
+					videoNoiseReduction: false,
+					videoCpuOveruseDetection: true
+				}
 			}
 		};
 		$scope.master = angular.copy($scope.defaults);
@@ -228,23 +241,102 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			var audioConstraints = [];
 			var videoConstraints = [];
 			var videoConstraintsMandatory = {};
+			var screensharingConstraints = [];
+
+			var pushmulti = function(arrays, data) {
+				_.each(arrays, function(a) {
+					a.push(data);
+				});
+			};
 
 			// Chrome only constraints.
 			if ($scope.isChrome) {
-				// Video.
-				videoConstraintsMandatory = $.extend(videoConstraintsMandatory, videoQualityMap[settings.videoQuality]);
-				// Not supported as of Firefox 27.
+				// Audio settings.
+				// For defaults in Chromium see https://code.google.com/p/webrtc/source/browse/trunk/talk/media/webrtc/webrtcvoiceengine.cc#225
+
+				// Experimental audio settings.
+				if (settings.experimental.enabled) {
+
+					audioConstraints.push({
+						googEchoCancellation: true // defaults to true
+					});
+					audioConstraints.push({
+						googEchoCancellation2: settings.experimental.audioEchoCancellation2 && true // defaults to false in Chrome
+					});
+					audioConstraints.push({
+						googAutoGainControl: true // defaults to true
+					});
+					audioConstraints.push({
+						googAutoGainControl2: settings.experimental.audioAutoGainControl2 && true // defaults to false in Chrome
+					});
+					audioConstraints.push({
+						googNoiseSuppression: true // defaults to true
+					});
+					audioConstraints.push({
+						googgNoiseSuppression2: settings.experimental.audioNoiseSuppression2 && true // defaults to false in Chrome
+					});
+					audioConstraints.push({
+						googHighpassFilter: true // defaults to true
+					});
+					audioConstraints.push({
+						googTypingNoiseDetection: settings.experimental.audioTypingNoiseDetection && true // defaults to true in Chrome
+					});
+
+				}
+
+				audioConstraints.push({
+					// Swaps the left and right channels for audio.
+					googAudioMirroring: settings.audioMirroring && true // defaults to false in Chrome
+				});
+
+				if ($scope.supported.renderToAssociatedSink) {
+					audioConstraints.push({
+						// When true uses the default communications device on Windows.
+						// https://codereview.chromium.org/155863003
+						googDucking: true // defaults to true on Windows.
+					});
+					audioConstraints.push({
+						// Chrome will start rendering mediastream output to an output device that's associated with
+						// the input stream that was opened via getUserMedia.
+						// https://chromiumcodereview.appspot.com/23558010
+						chromeRenderToAssociatedSink: settings.audioRenderToAssociatedSkin && true // defaults to false in Chrome
+					});
+				}
+
+				// Select microphone device by id.
 				if (settings.microphoneId) {
 					audioConstraints.push({
 						sourceId: settings.microphoneId
 					});
 				}
-				// Not supported as of Firefox 27.
+				// Select camera by device id.
 				if (settings.cameraId) {
 					videoConstraints.push({
 						sourceId: settings.cameraId
 					});
 				}
+
+				// Video settings.
+				if (settings.experimental.enabled) {
+
+					// Experimental video settings.
+					pushmulti([videoConstraints, screensharingConstraints], {
+						// Changes the way the video encoding adapts to the available bandwidth.
+						// https://code.google.com/p/webrtc/issues/detail?id=3351
+						googLeakyBucket: settings.experimental.videoLeakyBucket && true // defaults to false in Chrome
+					});
+					pushmulti([videoConstraints, screensharingConstraints], {
+						// Removes the noise in the captured video stream at the expense of CPU.
+						googNoiseReduction: settings.experimental.videoNoiseReduction && true // defaults to false in Chrome
+					});
+					pushmulti([videoConstraints, screensharingConstraints], {
+						googCpuOveruseDetection: settings.experimental.videoCpuOveruseDetection && true // defaults to true in Chrome
+					});
+
+				}
+
+				// Video.
+				videoConstraintsMandatory = $.extend(videoConstraintsMandatory, videoQualityMap[settings.videoQuality]);
 				// Not supported as of Firefox 27.
 				if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
 					videoConstraintsMandatory.maxFrameRate = parseInt(settings.maxFrameRate, 10);
@@ -259,6 +351,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				optional: audioConstraints
 			};
 			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
+			mediaStream.webrtc.settings.screensharing.mediaConstraints.video.optional = screensharingConstraints;
 
 			// Inject optional stuff.
 			var optionalPcConstraints = mediaStream.webrtc.settings.pcConstraints.optional = [];
