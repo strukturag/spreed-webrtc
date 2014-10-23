@@ -30,7 +30,7 @@ define([], function() {
 				}
 			};
 
-			$scope.$on("room.joined", function(ev, room) {
+			$scope.$on("room.updated", function(ev, room) {
 				updateTitle(room.Name);
 			});
 

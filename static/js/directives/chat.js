@@ -545,15 +545,17 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 					scope.layout.chatMaximized = false;
 				});
 
-				scope.$on("room.joined", function(event, room) {
+				scope.$on("room.updated", function(event, room) {
 					var subscope = scope.showGroupRoom(null, {
 						restore: true,
 						noenable: true,
 						noactivate: true
 					});
-					scope.currentRoomName = room.Name;
-					var msg = $("<span>").text(translation._("You are now in room %s ...", room.Name));
-					subscope.$broadcast("display", null, $("<i>").append(msg));
+					if (scope.currentRoomName != room.Name) {
+						var msg = $("<span>").text(translation._("You are now in room %s ...", room.Name));
+						subscope.$broadcast("display", null, $("<i>").append(msg));
+						scope.currentRoomName = room.Name;
+					}
 				});
 
 				scope.$on("room.left", function(event) {

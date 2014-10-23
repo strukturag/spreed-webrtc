@@ -22,7 +22,7 @@ define([
 	'jquery'
 ], function($) {
 
-	return ["$window", "$location", "$timeout", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", function($window, $location, $timeout, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL) {
+	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL) {
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var currentRoom = null;
@@ -60,11 +60,11 @@ define([
 			currentRoom = room;
 			if (priorRoom) {
 				console.log("Left room", priorRoom.Name);
-				$rootScope.$broadcast("room.left", priorRoom);
+				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
 			if (currentRoom) {
 				console.log("Joined room", currentRoom.Name);
-				$rootScope.$broadcast("room.joined", currentRoom);
+				$rootScope.$broadcast("room.joined", currentRoom.Name);
 			}
 		};
 
@@ -74,6 +74,11 @@ define([
 
 		api.e.on("received.self", function(event, data) {
 			joinRequestedRoom();
+		});
+
+		api.e.on("received.room", function(event, room) {
+			currentRoom = room;
+			$rootScope.$broadcast("room.updated", currentRoom);
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
@@ -138,6 +143,11 @@ define([
 					name = "";
 				}
 				return restURL.room(name);
+			},
+			update: function(room) {
+				var response = $q.defer();
+				api.requestRoomUpdate(room, response.resolve, response.reject);
+				return response.promise;
 			}
 		};
 
