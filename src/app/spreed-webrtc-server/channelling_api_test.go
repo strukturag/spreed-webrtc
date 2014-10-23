@@ -52,6 +52,8 @@ type fakeRoomManager struct {
 	joinedID     string
 	leftID       string
 	broadcasts   []interface{}
+	updatedRoom  *DataRoom
+	updateError  error
 }
 
 func (fake *fakeRoomManager) CanJoinRoom(roomID string) bool {
@@ -72,6 +74,33 @@ func (fake *fakeRoomManager) LeaveRoom(session *Session) {
 
 func (fake *fakeRoomManager) Broadcast(_ *Session, msg interface{}) {
 	fake.broadcasts = append(fake.broadcasts, msg)
+}
+
+func (fake *fakeRoomManager) UpdateRoom(_ *Session, _ *DataRoom) (*DataRoom, error) {
+	return fake.updatedRoom, fake.updateError
+}
+
+func assertReply(t *testing.T, client *fakeClient, iid string) interface{} {
+	msg, ok := client.replies[iid]
+	if !ok {
+		t.Fatalf("No response received for Iid %v", iid)
+	}
+	return msg
+}
+
+func assertErrorReply(t *testing.T, client *fakeClient, iid, code string) {
+	err, ok := assertReply(t, client, iid).(*DataError)
+	if !ok {
+		t.Fatalf("Expected response message to be an Error")
+	}
+
+	if err.Type != "Error" {
+		t.Error("Message did not have the correct type")
+	}
+
+	if err.Code != code {
+		t.Errorf("Expected error code to be %v, but was %v", code, err.Code)
+	}
 }
 
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
@@ -176,21 +205,42 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfT
 
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
 
-	msg, ok := client.replies[iid]
+	assertErrorReply(t, client, iid, "default_room_disabled")
+}
+
+func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpdatedRoom(t *testing.T) {
+	iid, roomName := "123", "foo"
+	api, client, session, roomManager := NewTestChannellingAPI()
+	roomManager.updatedRoom = &DataRoom{Name: "FOO"}
+
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: "0", Hello: &DataHello{Id: roomName}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Room", Iid: iid, Room: &DataRoom{Name: roomName}})
+
+	room, ok := assertReply(t, client, iid).(*DataRoom)
 	if !ok {
-		t.Fatalf("No response received for Iid %v", iid)
+		t.Fatalf("Expected response message to be a Room")
 	}
 
-	err, ok := msg.(*DataError)
-	if !ok {
-		t.Fatalf("Expected response message %#v to be an Error", msg)
+	if room.Name != roomManager.updatedRoom.Name {
+		t.Errorf("Expected updated room with name %v, but got %#v", roomManager.updatedRoom, room)
 	}
 
-	if err.Type != "Error" {
-		t.Error("Message did not have the correct type")
+	if broadcastCount := len(roomManager.broadcasts); broadcastCount != 2 {
+		t.Fatalf("Expected 1 broadcasts, but got %d", broadcastCount)
 	}
 
-	if code := "default_room_disabled"; err.Code != code {
-		t.Errorf("Expected error code to be %v, but was %v", code, err.Code)
+	if _, ok := roomManager.broadcasts[1].(*DataRoom); !ok {
+		t.Fatal("Expected a room data broadcast")
 	}
+}
+
+func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAnErrorIfUpdatingTheRoomFails(t *testing.T) {
+	iid, roomName := "123", "foo"
+	api, client, session, roomManager := NewTestChannellingAPI()
+	roomManager.updateError = &DataError{Type: "Error", Code: "a_room_error", Message: ""}
+
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: "0", Hello: &DataHello{Id: roomName}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Room", Iid: iid, Room: &DataRoom{Name: roomName}})
+
+	assertErrorReply(t, client, iid, "a_room_error")
 }

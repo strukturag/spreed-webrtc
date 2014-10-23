@@ -27,6 +27,10 @@ type DataError struct {
 	Message string
 }
 
+func (err *DataError) Error() string {
+	return err.Message
+}
+
 type DataHello struct {
 	Version string
 	Ua      string
@@ -176,6 +180,7 @@ type DataIncoming struct {
 	Alive          *DataAlive
 	Authentication *DataAuthentication
 	Sessions       *DataSessions
+	Room           *DataRoom
 	Iid            string `json:",omitempty"`
 }
 
