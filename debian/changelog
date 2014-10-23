@@ -1,3 +1,13 @@
+spreed-webrtc-server (0.22.6) precise; urgency=low
+
+  * Added missing gear to remove streams from peer connections.
+  * FireFox no longer shows remove videos multiple times.
+  * Added information about session id to REST documentation.
+  * Added a bunch of experimental audio and video settings (disabled by default).
+  * Added an option to automatically use same device for output as is used for input (Windows only and enabled by default).
+
+ -- Simon Eisenmann <simon@struktur.de>  Thu, 23 Oct 2014 14:17:54 +0200
+
 spreed-webrtc-server (0.22.5) precise; urgency=low
 
   * Fixed an issue where the own video was not showing in democrazy layout.
