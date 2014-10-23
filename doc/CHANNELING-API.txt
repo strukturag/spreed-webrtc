@@ -204,8 +204,21 @@ Special purpose documents for channling
         "Name": "room-name-here"
     }
 
-    The Room document is sent in responses to initial joins or when room properties
-    have been updated.
+    Clients may send a Room document in order to update all room properties
+    to the values given in the document. The room name must be given and match
+    the currently joined room. Successful updates will receive an updated Room
+    document as a reply, or an Error document if the update fails.
+
+    Addtionally, the Room document is included in responses to initial joins
+    and broadcast when room properties are updated.
+
+    Keys under Room:
+
+      Name: The human readable ID of the room, currently must be globally unique.
+
+    Error codes:
+
+      not_in_room : Clients may only update rooms which they have joined.
 
 Peer connection documents
 

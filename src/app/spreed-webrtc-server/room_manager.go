@@ -31,6 +31,7 @@ type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
 	JoinRoom(*Session, Sender)
 	LeaveRoom(*Session)
+	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 }
 
 type Broadcaster interface {
@@ -70,15 +71,27 @@ func (rooms *roomManager) CanJoinRoom(id string) bool {
 }
 
 func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
-	return <-rooms.getRoomWorker(session.Roomid).GetUsers()
+	return <-rooms.GetOrCreate(session).GetUsers()
 }
 
 func (rooms *roomManager) JoinRoom(session *Session, sender Sender) {
-	rooms.getRoomWorker(session.Roomid).Join(session, sender)
+	rooms.GetOrCreate(session).Join(session, sender)
 }
 
 func (rooms *roomManager) LeaveRoom(session *Session) {
-	rooms.getRoomWorker(session.Roomid).Leave(session)
+	if room, ok := rooms.Get(session); ok {
+		room.Leave(session)
+	}
+}
+
+func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoom, error) {
+	if !session.Hello || session.Roomid != room.Name {
+		return nil, &DataError{Type: "Error", Code: "not_in_room", Message: "Cannot update other rooms"}
+	}
+	// XXX(lcooper): We'll process and send documents without this field
+	// correctly, however clients cannot not handle it currently.
+	room.Type = "Room"
+	return room, nil
 }
 
 func (rooms *roomManager) Broadcast(session *Session, m interface{}) {
@@ -101,8 +114,7 @@ func (rooms *roomManager) Broadcast(session *Session, m interface{}) {
 		}
 		rooms.RUnlock()
 	} else {
-		room := rooms.getRoomWorker(id)
-		room.Broadcast(session, message)
+		rooms.GetOrCreate(session).Broadcast(session, message)
 	}
 	message.Decref()
 }
@@ -121,12 +133,17 @@ func (rooms *roomManager) RoomInfo(includeSessions bool) (count int, sessionInfo
 	return
 }
 
-func (rooms *roomManager) getRoomWorker(id string) RoomWorker {
-
+func (rooms *roomManager) Get(session *Session) (room RoomWorker, ok bool) {
 	rooms.RLock()
-	room, ok := rooms.roomTable[id]
+	room, ok = rooms.roomTable[session.Roomid]
+	rooms.RUnlock()
+	return
+}
+
+func (rooms *roomManager) GetOrCreate(session *Session) RoomWorker {
+	room, ok := rooms.Get(session)
 	if !ok {
-		rooms.RUnlock()
+		id := session.Roomid
 		rooms.Lock()
 		// Need to re-check, another thread might have created the room
 		// while we waited for the lock.
@@ -147,12 +164,9 @@ func (rooms *roomManager) getRoomWorker(id string) RoomWorker {
 		} else {
 			rooms.Unlock()
 		}
-	} else {
-		rooms.RUnlock()
 	}
 
 	return room
-
 }
 
 func (rooms *roomManager) GlobalUsers() []*roomUser {

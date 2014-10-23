@@ -212,6 +212,13 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		if users != nil {
 			c.Reply(msg.Iid, &DataSessions{Type: "Sessions", Users: users, Sessions: msg.Sessions.Sessions})
 		}
+	case "Room":
+		if room, err := api.UpdateRoom(session, msg.Room); err == nil {
+			api.Broadcast(session, room)
+			c.Reply(msg.Iid, room)
+		} else {
+			c.Reply(msg.Iid, err)
+		}
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
