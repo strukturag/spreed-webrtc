@@ -208,6 +208,9 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				// Do nothing.
 				//console.log("Alive response received.");
 				break;
+			case "Room":
+				this.e.triggerHandler("received.room", [data]);
+				break;
 			default:
 				console.log("Unhandled type received:", dataType, data);
 				break;
@@ -235,11 +238,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		var that = this;
 		var onResponse = function(event, type, data) {
-			console.log("Got response to Hello", data);
 			if (type === "Welcome") {
 				if (success) {
 					success(data.Room);
 				}
+				that.e.triggerHandler("received.room", [data.Room]);
 				that.e.triggerHandler("received.users", [data.Users]);
 			} else {
 				if (fault) {
@@ -286,6 +289,21 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		return this.send("Answer", data);
 
 	}
+
+	Api.prototype.requestRoomUpdate = function(room, success, fault) {
+		var onResponse = function(event, type, data) {
+			if (type === "Room") {
+				if (success) {
+					success(data);
+				}
+			} else {
+				if (fault) {
+					fault(data);
+				}
+			}
+		};
+		this.request("Room", room, onResponse, true);
+	};
 
 	Api.prototype.requestUsers = function() {
 

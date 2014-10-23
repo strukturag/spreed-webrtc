@@ -46,11 +46,11 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 			template: template,
 			replace: true,
 			link: function($scope, $element, $attr) {
-				$scope.$on("room.joined", function(ev, room) {
+				$scope.$on("room.updated", function(ev, room) {
 					$scope.roomlink = rooms.link(room);
 				});
 
-				$scope.$on("room.left", function(ev, name) {
+				$scope.$on("room.left", function(ev) {
 					$scope.roomlink = null;
 				});
 
