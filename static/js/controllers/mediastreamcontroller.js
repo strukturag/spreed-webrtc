@@ -158,7 +158,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				defaultRoom: "",
 				language: "",
 				audioRenderToAssociatedSkin: true,
-				audioMirroring: false,
 				experimental: {
 					enabled: false,
 					audioEchoCancellation2: true,
@@ -283,11 +282,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 					});
 
 				}
-
-				audioConstraints.push({
-					// Swaps the left and right channels for audio.
-					googAudioMirroring: settings.audioMirroring && true // defaults to false in Chrome
-				});
 
 				if ($scope.supported.renderToAssociatedSink) {
 					audioConstraints.push({
