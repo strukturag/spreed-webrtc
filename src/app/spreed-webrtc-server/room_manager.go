@@ -27,9 +27,8 @@ import (
 )
 
 type RoomStatusManager interface {
-	CanJoinRoom(id string) bool
 	RoomUsers(*Session) []*DataSession
-	JoinRoom(*Session, Sender)
+	JoinRoom(string, *DataRoomCredentials, *Session, Sender) (*DataRoom, error)
 	LeaveRoom(*Session)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 }
@@ -66,20 +65,24 @@ func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 	}
 }
 
-func (rooms *roomManager) CanJoinRoom(id string) bool {
-	return id != "" || rooms.defaultRoomEnabled
-}
-
 func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
-	return <-rooms.GetOrCreate(session).GetUsers()
+	if room, ok := rooms.Get(session.Roomid); ok {
+		return room.GetUsers()
+	}
+	// TODO(lcooper): This should return an error.
+	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(session *Session, sender Sender) {
-	rooms.GetOrCreate(session).Join(session, sender)
+func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
+	if id == "" && !rooms.defaultRoomEnabled {
+		return nil, &DataError{Type: "Error", Code: "default_room_disabled", Message: "The default room is not enabled"}
+	}
+
+	return rooms.GetOrCreate(id, credentials).Join(credentials, session, sender)
 }
 
 func (rooms *roomManager) LeaveRoom(session *Session) {
-	if room, ok := rooms.Get(session); ok {
+	if room, ok := rooms.Get(session.Roomid); ok {
 		room.Leave(session)
 	}
 }
@@ -91,6 +94,10 @@ func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoo
 	// XXX(lcooper): We'll process and send documents without this field
 	// correctly, however clients cannot not handle it currently.
 	room.Type = "Room"
+	if roomWorker, ok := rooms.Get(session.Roomid); ok {
+		return room, roomWorker.Update(room)
+	}
+	// TODO(lcooper): We should almost certainly return an error in this case.
 	return room, nil
 }
 
@@ -113,8 +120,10 @@ func (rooms *roomManager) Broadcast(session *Session, m interface{}) {
 			room.Broadcast(session, message)
 		}
 		rooms.RUnlock()
+	} else if room, ok := rooms.Get(id); ok {
+		room.Broadcast(session, message)
 	} else {
-		rooms.GetOrCreate(session).Broadcast(session, message)
+		log.Printf("No room named %s found for broadcast message %#v", id, m)
 	}
 	message.Decref()
 }
@@ -133,23 +142,22 @@ func (rooms *roomManager) RoomInfo(includeSessions bool) (count int, sessionInfo
 	return
 }
 
-func (rooms *roomManager) Get(session *Session) (room RoomWorker, ok bool) {
+func (rooms *roomManager) Get(id string) (room RoomWorker, ok bool) {
 	rooms.RLock()
-	room, ok = rooms.roomTable[session.Roomid]
+	room, ok = rooms.roomTable[id]
 	rooms.RUnlock()
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(session *Session) RoomWorker {
-	room, ok := rooms.Get(session)
+func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredentials) RoomWorker {
+	room, ok := rooms.Get(id)
 	if !ok {
-		id := session.Roomid
 		rooms.Lock()
 		// Need to re-check, another thread might have created the room
 		// while we waited for the lock.
 		room, ok = rooms.roomTable[id]
 		if !ok {
-			room = NewRoomWorker(rooms, id)
+			room = NewRoomWorker(rooms, id, credentials)
 			rooms.roomTable[id] = room
 			rooms.Unlock()
 			go func() {

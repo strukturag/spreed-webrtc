@@ -29,18 +29,6 @@ func NewTestRoomManager() RoomManager {
 	return NewRoomManager(&Config{}, nil)
 }
 
-func assertDataError(t *testing.T, err error, code string) {
-	dataError, ok := err.(*DataError)
-	if !ok {
-		t.Errorf("Expected error %#v to be a *DataError", err)
-		return
-	}
-
-	if code != dataError.Code {
-		t.Errorf("Expected error code to be %v, but was %v", code, dataError.Code)
-	}
-}
-
 func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfNoRoomHasBeenJoined(t *testing.T) {
 	roomManager := NewTestRoomManager()
 	_, err := roomManager.UpdateRoom(&Session{}, nil)
