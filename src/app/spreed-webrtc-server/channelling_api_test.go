@@ -22,6 +22,7 @@
 package main
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -45,27 +46,24 @@ func (fake *fakeClient) Reply(iid string, msg interface{}) {
 }
 
 type fakeRoomManager struct {
-	disallowJoin bool
 	joinedRoomID string
 	leftRoomID   string
 	roomUsers    []*DataSession
 	joinedID     string
+	joinError    error
 	leftID       string
 	broadcasts   []interface{}
 	updatedRoom  *DataRoom
 	updateError  error
 }
 
-func (fake *fakeRoomManager) CanJoinRoom(roomID string) bool {
-	return !fake.disallowJoin
-}
-
 func (fake *fakeRoomManager) RoomUsers(session *Session) []*DataSession {
 	return fake.roomUsers
 }
 
-func (fake *fakeRoomManager) JoinRoom(session *Session, _ Sender) {
-	fake.joinedID = session.Roomid
+func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, _ Sender) (*DataRoom, error) {
+	fake.joinedID = id
+	return &DataRoom{Name: id}, fake.joinError
 }
 
 func (fake *fakeRoomManager) LeaveRoom(session *Session) {
@@ -159,7 +157,7 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_LeavesAnyPreviouslyJoinedRooms(
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_DoesNotJoinIfNotPermitted(t *testing.T) {
 	api, client, session, roomManager := NewTestChannellingAPI()
-	roomManager.disallowJoin = true
+	roomManager.joinError = errors.New("Can't enter this room")
 
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{}})
 
@@ -201,11 +199,11 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t
 func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfTheRoomCannotBeJoined(t *testing.T) {
 	iid := "foo"
 	api, client, session, roomManager := NewTestChannellingAPI()
-	roomManager.disallowJoin = true
+	roomManager.joinError = &DataError{Type: "Error", Code: "bad_join"}
 
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
 
-	assertErrorReply(t, client, iid, "default_room_disabled")
+	assertErrorReply(t, client, iid, "bad_join")
 }
 
 func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpdatedRoom(t *testing.T) {

@@ -22,6 +22,7 @@
 package main
 
 import (
+	"crypto/subtle"
 	"log"
 	"sync"
 	"time"
@@ -36,9 +37,10 @@ type RoomWorker interface {
 	Start()
 	SessionIDs() []string
 	Users() []*roomUser
-	GetUsers() <-chan []*DataSession
+	Update(*DataRoom) error
+	GetUsers() []*DataSession
 	Broadcast(*Session, Buffer)
-	Join(*Session, Sender)
+	Join(*DataRoomCredentials, *Session, Sender) (*DataRoom, error)
 	Leave(*Session)
 }
 
@@ -54,7 +56,8 @@ type roomWorker struct {
 	mutex   sync.RWMutex
 
 	// Metadata.
-	Id string
+	Id          string
+	credentials *DataRoomCredentials
 }
 
 type roomUser struct {
@@ -62,7 +65,7 @@ type roomUser struct {
 	Sender
 }
 
-func NewRoomWorker(manager *roomManager, id string) RoomWorker {
+func NewRoomWorker(manager *roomManager, id string, credentials *DataRoomCredentials) RoomWorker {
 
 	log.Printf("Creating worker for room '%s'\n", id)
 
@@ -72,6 +75,10 @@ func NewRoomWorker(manager *roomManager, id string) RoomWorker {
 		workers: make(chan func(), roomMaxWorkers),
 		expired: make(chan bool),
 		users:   make(map[string]*roomUser),
+	}
+
+	if credentials != nil && len(credentials.PIN) > 0 {
+		r.credentials = credentials
 	}
 
 	// Create expire timer.
@@ -148,7 +155,25 @@ func (r *roomWorker) Run(f func()) bool {
 
 }
 
-func (r *roomWorker) GetUsers() <-chan []*DataSession {
+func (r *roomWorker) Update(room *DataRoom) error {
+	fault := make(chan error, 1)
+	worker := func() {
+		r.mutex.Lock()
+		if room.Credentials != nil {
+			if len(room.Credentials.PIN) > 0 {
+				r.credentials = room.Credentials
+			} else {
+				r.credentials = nil
+			}
+		}
+		r.mutex.Unlock()
+		fault <- nil
+	}
+	r.Run(worker)
+	return <-fault
+}
+
+func (r *roomWorker) GetUsers() []*DataSession {
 	out := make(chan []*DataSession, 1)
 	worker := func() {
 		var sl []*DataSession
@@ -185,7 +210,7 @@ func (r *roomWorker) GetUsers() <-chan []*DataSession {
 	}
 
 	r.Run(worker)
-	return out
+	return <-out
 }
 
 func (r *roomWorker) Broadcast(session *Session, message Buffer) {
@@ -209,13 +234,43 @@ func (r *roomWorker) Broadcast(session *Session, message Buffer) {
 
 }
 
-func (r *roomWorker) Join(session *Session, sender Sender) {
+type joinResult struct {
+	*DataRoom
+	error
+}
+
+func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
+	results := make(chan joinResult, 1)
 	worker := func() {
 		r.mutex.Lock()
-		defer r.mutex.Unlock()
+		if r.credentials == nil && credentials != nil {
+			results <- joinResult{nil, &DataError{"Error", "authorization_not_required", "No credentials may be provided for this room"}}
+			r.mutex.Unlock()
+			return
+		} else if r.credentials != nil {
+			if credentials == nil {
+				results <- joinResult{nil, &DataError{"Error", "authorization_required", "Valid credentials are required to join this room"}}
+				r.mutex.Unlock()
+				return
+			}
+
+			if len(r.credentials.PIN) != len(credentials.PIN) || subtle.ConstantTimeCompare([]byte(r.credentials.PIN), []byte(credentials.PIN)) != 1 {
+				results <- joinResult{nil, &DataError{"Error", "invalid_credentials", "The provided credentials are incorrect"}}
+				r.mutex.Unlock()
+				return
+			}
+		}
+
 		r.users[session.Id] = &roomUser{session, sender}
+		// NOTE(lcooper): Needs to be a copy, else we risk races with
+		// a subsequent modification of room properties.
+		result := joinResult{&DataRoom{Name: r.Id}, nil}
+		r.mutex.Unlock()
+		results <- result
 	}
 	r.Run(worker)
+	result := <-results
+	return result.DataRoom, result.error
 }
 
 func (r *roomWorker) Leave(session *Session) {

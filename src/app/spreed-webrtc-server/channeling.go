@@ -31,10 +31,15 @@ func (err *DataError) Error() string {
 	return err.Message
 }
 
+type DataRoomCredentials struct {
+	PIN string
+}
+
 type DataHello struct {
-	Version string
-	Ua      string
-	Id      string
+	Version     string
+	Ua          string
+	Id          string
+	Credentials *DataRoomCredentials
 }
 
 type DataWelcome struct {
@@ -44,8 +49,9 @@ type DataWelcome struct {
 }
 
 type DataRoom struct {
-	Type string
-	Name string
+	Type        string
+	Name        string
+	Credentials *DataRoomCredentials
 }
 
 type DataOffer struct {

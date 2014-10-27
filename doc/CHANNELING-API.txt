@@ -157,7 +157,8 @@ Special purpose documents for channling
         Hello: {
             Version: "1.0.0",
             Ua: "Test client 1.0",
-            Id: ""
+            Id: "",
+            "Credentials": {...}
         }
     }
 
@@ -169,13 +170,29 @@ Special purpose documents for channling
 
     Keys under Hello:
 
-      Version : Channel protocol version (string).
-      Ua      : User agent description (string).
-      Id      : Room id. The default Room has the empty string Id ("") (string).
+      Version     : Channel protocol version (string).
+      Ua          : User agent description (string).
+      Id          : Room id. The default Room has the empty string Id ("") (string).
+      Credentials : An optional RoomCredentials document containing room
+                    authentication information. See the Room document for
+                    information on how such credentials should be handled after
+                    a Welcome is received for the requested room. Note that
+                    providing credentials while joining an existing room which
+                    does not require them is an error, such requests should be
+                    retried without credentials. In contrast, joining a
+                    non-existent room with credentials will create the room
+                    using the given credentials. Note that an error with a code
+                    of authorization_not_required or invalid_credentials shall
+                    cause the client to discard any cached room credentials.
 
     Error codes:
 
-      default_room_disabled : Joining the room "" is not allowed by this server.
+      default_room_disabled      : Joining the room "" is not allowed by this
+                                   server.
+      authorization_required     : Joining the given room requires credentials.
+      authorization_not_required : No credentials should be provided for this
+                                   room.
+      invalid_credentials        : The provided credentials are incorrect.
 
   Welcome
 
@@ -197,11 +214,27 @@ Special purpose documents for channling
       Users: Contains the user list for the room, see the description of
              the Users document for more details.
 
+  RoomCredentials
+
+    {
+        "PIN": "my-super-sekrit-code"
+    }
+
+    RoomCredentials contains room authentication information, and is used as a
+    child document when joining or updating a room.
+
+    Keys under RoomCredentials:
+
+      PIN : A password string which may be used by clients to authenticate
+            themselves. Note that acceptable characters for this field may be
+            constrained by the server based upon its configuration.
+
   Room
 
     {
         "Type": "Room",
         "Name": "room-name-here"
+        "Credentials": {...}
     }
 
     Clients may send a Room document in order to update all room properties
@@ -214,7 +247,19 @@ Special purpose documents for channling
 
     Keys under Room:
 
-      Name: The human readable ID of the room, currently must be globally unique.
+      Name :        The human readable ID of the room, currently must be globally
+                    unique.
+      Credentials : Optional authentication information for the room, see the
+                    documentation of the RoomCredentials document for more
+                    details. This field shall only be present when sending or
+                    receiving an update which alters room authentication data.
+                    It should only be inferred that authentication is not
+                    required if joining a room succeeds without credentials and
+                    no updates containing credentials has been received.
+                    Authentication may be disabled by sending a Room document
+                    containing a RoomCredentials document with only empty
+                    fields. Clients shall discard any cached authentication
+                    information upon receiving such an update.
 
     Error codes:
 

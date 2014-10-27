@@ -87,14 +87,13 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 
 		// NOTE(lcooper): Iid filtered for compatibility's sake.
 		// Evaluate sending unconditionally when supported by all clients.
-		if api.CanJoinRoom(msg.Hello.Id) {
+		if room, err := api.JoinRoom(msg.Hello.Id, msg.Hello.Credentials, session, c); err == nil {
 			session.Hello = true
 			session.Roomid = msg.Hello.Id
-			api.JoinRoom(session, c)
 			if msg.Iid != "" {
 				c.Reply(msg.Iid, &DataWelcome{
 					Type:  "Welcome",
-					Room:  &DataRoom{Name: msg.Hello.Id},
+					Room:  room,
 					Users: api.RoomUsers(session),
 				})
 			}
@@ -102,7 +101,7 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		} else {
 			session.Hello = false
 			if msg.Iid != "" {
-				c.Reply(msg.Iid, &DataError{Type: "Error", Code: "default_room_disabled", Message: "The default room is not enabled"})
+				c.Reply(msg.Iid, err)
 			}
 		}
 	case "Offer":
