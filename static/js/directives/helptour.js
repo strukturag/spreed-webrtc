@@ -48,10 +48,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				}
 			};
 			menus.toggleRoom = function() {
-				var scope = angular.element('#roombar .roombar').scope();
-				if (scope) {
-					scope.hideRoomBar = !scope.hideRoomBar;
-				}
+				$scope.layout.roombar = !$scope.layout.roombar;
 			};
 			menus.toggleChat = function() {
 				$scope.layout.chat = !$scope.layout.chat;
