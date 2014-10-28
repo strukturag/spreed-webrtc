@@ -229,12 +229,18 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.sendHello = function(name, success, fault) {
+	Api.prototype.sendHello = function(name, pin, success, fault) {
 		var data = {
 			Version: this.version,
 			Ua: this.userAgent,
 			Id: name
 		};
+
+		if (pin) {
+			data.Credentials = {
+				PIN: pin
+			};
+		}
 
 		var that = this;
 		var onResponse = function(event, type, data) {

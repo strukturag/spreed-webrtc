@@ -19,18 +19,39 @@
  *
  */
 define([
+	'angular',
 	'jquery'
-], function($) {
+], function(angular, $) {
 
-	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL) {
+	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin) {
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var currentRoom = null;
 
 		var joinFailed = function(error) {
-			console.log("error", error, "while joining room");
 			setCurrentRoom(null);
-			rooms.randomRoom();
+
+			switch(error.Code) {
+			case "default_room_disabled":
+				rooms.randomRoom();
+				break;
+			case "invalid_credentials":
+				roompin.clear(requestedRoomName);
+				/* falls through */
+			case "authorization_required":
+				roompin.requestInteractively(requestedRoomName).then(joinRequestedRoom,
+				function() {
+					console.log("Authentication cancelled, try a different room");
+				});
+				break;
+			case "authorization_not_required":
+				roompin.clear(requestedRoomName);
+				joinRequestedRoom();
+				break;
+			default:
+				console.log("Unknown error", error, "while joining room ", requestedRoomName);
+				break;
+			}
 		};
 
 		var joinRequestedRoom = function() {
@@ -43,7 +64,7 @@ define([
 				if (requestedRoomName !== "" || globalContext.Cfg.DefaultRoomEnabled) {
 					console.log("Joining room", requestedRoomName);
 					requestedRoomName = requestedRoomName ? requestedRoomName : "";
-					api.sendHello(requestedRoomName, setCurrentRoom, joinFailed);
+					api.sendHello(requestedRoomName, roompin.get(requestedRoomName), setCurrentRoom, joinFailed);
 				} else {
 					console.log("Default room disabled, requesting a random room.");
 					setCurrentRoom(null);
@@ -68,6 +89,22 @@ define([
 			}
 		};
 
+		var updateRoom = function(room) {
+			var response = $q.defer();
+			api.requestRoomUpdate(room, response.resolve, response.reject);
+			return response.promise.then(applyRoomUpdate);
+		};
+
+		var applyRoomUpdate = function(room) {
+			if (room.Credentials) {
+				roompin.update(currentRoom.Name, room.Credentials.PIN);
+				delete room.Credentials;
+			}
+			currentRoom = room;
+			$rootScope.$broadcast("room.updated", currentRoom);
+			return room;
+		};
+
 		connector.e.on("close error", function() {
 			setCurrentRoom(null);
 		});
@@ -77,8 +114,12 @@ define([
 		});
 
 		api.e.on("received.room", function(event, room) {
-			currentRoom = room;
-			$rootScope.$broadcast("room.updated", currentRoom);
+			applyRoomUpdate(room);
+		});
+
+		$rootScope.$on("authorization.succeeded", function() {
+			// NOTE(lcooper): This will have been skipped earlier, so try again.
+			joinRequestedRoom();
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
@@ -144,12 +185,19 @@ define([
 				}
 				return restURL.room(name);
 			},
-			update: function(room) {
-				var response = $q.defer();
-				api.requestRoomUpdate(room, response.resolve, response.reject);
-				return response.promise;
+			setPIN: function(pin) {
+				pin = "" + pin;
+				var newRoom = angular.copy(currentRoom);
+				newRoom.Credentials = {PIN: pin};
+				return updateRoom(newRoom).then(null, function(error) {
+					console.log("Failed to set room PIN", error);
+					return $q.reject(error);
+				});
 			}
 		};
+
+		// NOTE(lcooper): For debugging only, do not use this on production.
+		$window.setRoomPIN = rooms.setPIN;
 
 		return rooms;
     }];

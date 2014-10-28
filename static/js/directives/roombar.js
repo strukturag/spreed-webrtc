@@ -24,6 +24,9 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 	return ["$window", "rooms", function($window, rooms) {
 
 		var link = function($scope) {
+			var clearRoomName = function(ev) {
+				$scope.currentRoomName = $scope.newRoomName = "";
+			};
 
 			//console.log("roomBar directive link", arguments);
 			$scope.layout.roombar = false;
@@ -51,9 +54,7 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 				$scope.currentRoomName = $scope.newRoomName = room.Name;
 			});
 
-			$scope.$on("room.left", function(ev) {
-				$scope.currentRoomName = $scope.newRoomName = "";
-			});
+			$scope.$on("room.left", clearRoomName);
 
 			$scope.$watch("newRoomName", function(name) {
 				if (name === $scope.currentRoomName) {
@@ -61,6 +62,7 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 				}
 			});
 
+			clearRoomName();
 		};
 
 		return {
