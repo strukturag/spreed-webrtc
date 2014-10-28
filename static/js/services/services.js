@@ -61,7 +61,8 @@ define([
 	'services/usersettingsdata',
 	'services/localstatus',
 	'services/rooms',
-	'services/resturl'], function(_,
+	'services/resturl',
+	'services/roompin'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -102,7 +103,8 @@ chromeExtension,
 userSettingsData,
 localStatus,
 rooms,
-restURL) {
+restURL,
+roompin) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -145,7 +147,8 @@ restURL) {
 		userSettingsData: userSettingsData,
 		localStatus: localStatus,
 		rooms: rooms,
-		restURL: restURL
+		restURL: restURL,
+		roompin: roompin
 	};
 
 	var initialize = function(angModule) {

@@ -545,6 +545,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			// Unmark authorization process.
 			if (data.Userid) {
 				$rootScope.authorizing(false);
+				$rootScope.$broadcast("authorization.succeeded");
 			} else if (!$rootScope.authorizing()) {
 				// Trigger user data load when not in authorizing phase.
 				$scope.loadUserSettings();

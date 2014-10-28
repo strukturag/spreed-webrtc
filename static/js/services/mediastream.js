@@ -40,7 +40,7 @@ define([
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
 
-		var authorizing = false;
+		var authorizing = context.Cfg.UsersEnabled;
         $rootScope.authorizing = function(value) {
 			// Boolean flag to indicate that an authentication is currently in progress.
 			if (typeof(value) !== "undefined") {
