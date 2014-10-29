@@ -8,7 +8,7 @@ The latest version of Spreed WebRTC can be found on GitHub:
 
 ## Build prerequisites
 
-  - [Go](http://golang.org) >= 1.1.0
+  - [Go](http://golang.org) >= 1.3.0
   - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
