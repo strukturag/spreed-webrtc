@@ -23,6 +23,9 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 	var count = 0;
 	var dataChannelDefaultLabel = "default";
 
+	// update connection statistics once per second
+	var STATS_INTERVAL = 1000;
+
 	var PeerConnection = function(webrtc, currentcall) {
 
 		this.webrtc = webrtc;
@@ -31,6 +34,11 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		this.pc = null;
 		this.datachannel = null;
 		this.datachannelReady = false;
+		this.statsActive = false;
+		this.localCertificate = null;
+		this.remoteCertificate = null;
+		this.dtlsCipher = null;
+		this.srtpCipher = null;
 
 		if (currentcall) {
 			this.createPeerConnection(currentcall);
@@ -198,10 +206,166 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	};
 
+	PeerConnection.prototype.getStatistics = function(callback) {
+		if (!this.pc) {
+			callback([]);
+			return;
+		}
+
+		if (!!navigator.mozGetUserMedia) {
+			this.getStats(
+				null,
+				function (res) {
+					var items = [];
+					res.forEach(function(result) {
+						items.push(result);
+					});
+					callback(items);
+				},
+				callback
+			);
+		} else {
+			this.getStats(function(res) {
+				var items = [];
+				res.result().forEach(function(result) {
+					var item = {};
+					result.names().forEach(function(name) {
+						item[name] = result.stat(name);
+					});
+					item.id = result.id;
+					item.type = result.type;
+					item.timestamp = result.timestamp;
+					items.push(item);
+				});
+				callback(items);
+			});
+		}
+	};
+
+	PeerConnection.prototype.updateStatistics = function(callback) {
+		this.getStatistics(_.bind(function(stats) {
+			if (!this.localCertificate || !this.remoteCertificate || !this.dtlsCipher || !this.srtpCipher) {
+				var certificates = {};
+				var dtlsCiphers = {};
+				var srtpCiphers = {};
+				var i;
+				var item;
+				if (!this.localCertificate || !this.remoteCertificate) {
+					// build lookup tables
+					for (i=0; i<stats.length; i++) {
+						item = stats[i];
+						switch (item.type) {
+						case "googCertificate":
+							certificates[item.id] = {
+								"fingerprint": item.googFingerprint,
+								"fingerprintAlgorithm": item.googFingerprintAlgorithm,
+								"certificateDerBase64": item.googDerBase64
+							};
+							break;
+
+						default:
+							break;
+						}
+					}
+				}
+
+				for (i=0; i<stats.length; i++) {
+					var certId;
+					item = stats[i];
+					switch (item.type) {
+					case "googComponent":
+						certId = item.googLocalCertificateId;
+						if (!this.localCertificate && certId && certificates.hasOwnProperty(certId)) {
+							this.localCertificate = certificates[certId];
+						}
+						certId = item.googRemoteCertificateId;
+						if (!this.remoteCertificate && certId && certificates.hasOwnProperty(certId)) {
+							this.remoteCertificate = certificates[certId];
+						}
+						break;
+
+					case "googCandidatePair":
+						if (item.spreedDtlsCipher) {
+							dtlsCiphers[item.spreedDtlsCipher] = true;
+						}
+						if (item.spreedSrtpCipher) {
+							srtpCiphers[item.spreedSrtpCipher] = true;
+						}
+						break;
+
+					default:
+						break;
+					}
+				}
+
+				if (!this.dtlsCipher && !_.isEmpty(dtlsCiphers)) {
+					dtlsCiphers = _.keys(dtlsCiphers);
+					if (dtlsCiphers.length > 1) {
+						console.warn("Using multiple DTLS ciphers", dtlsCiphers);
+					}
+					this.dtlsCipher = _.reduce(dtlsCiphers, function(a, b) { return a + ", " + b; });
+				}
+				if (!this.srtpCipher && !_.isEmpty(srtpCiphers)) {
+					srtpCiphers = _.keys(srtpCiphers);
+					if (srtpCiphers.length > 1) {
+						console.warn("Using multiple SRTP ciphers", srtpCiphers);
+					}
+					this.srtpCipher = _.reduce(srtpCiphers, function(a, b) { return a + ", " + b; });
+				}
+
+				if (this.currentcall) {
+					if (this.localCertificate && this.remoteCertificate) {
+						this.currentcall.onCertificatesReceived({'local': this.localCertificate, 'remote': this.remoteCertificate});
+					}
+					if (this.dtlsCipher && this.srtpCipher) {
+						this.currentcall.onCiphersNegotiated({'dtls': this.dtlsCipher, 'srtp': this.srtpCipher});
+					}
+				}
+			}
+
+			if (this.currentcall) {
+				this.currentcall.onPeerStatisticsChanged(stats);
+			}
+			if (callback) {
+				callback(stats);
+			}
+		}, this));
+	};
+
+	PeerConnection.prototype.startStatistics = function() {
+		if (this.statsActive) {
+			return;
+		}
+
+		var updateFunc = _.bind(function() {
+			if (!this.statsActive || !this.pc) {
+				return;
+			}
+			this.updateStatistics(function() {
+				_.delay(updateFunc, STATS_INTERVAL);
+			});
+		}, this);
+
+		this.statsActive = true;
+		updateFunc();
+	};
+
+	PeerConnection.prototype.stopStatistics = function() {
+		this.statsActive = false;
+	};
+
 	PeerConnection.prototype.onIceConnectionStateChange = function(event) {
 
 		var iceConnectionState = event.target.iceConnectionState;
 		console.info("ICE connection state change", iceConnectionState, event, this.currentcall);
+		switch (iceConnectionState) {
+		case "connected":
+			this.startStatistics();
+			break;
+		case "closed":
+			this.stopStatistics();
+			break;
+		}
 		this.currentcall.onIceConnectionStateChange(iceConnectionState);
 
 	};
@@ -237,6 +401,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	PeerConnection.prototype.close = function() {
 
+		this.stopStatistics();
 		if (this.datachannel) {
 			this.datachannel.close()
 		}
@@ -308,6 +473,12 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 	PeerConnection.prototype.getStreamById = function() {
 
 		return this.pc.getStreamById.apply(this.pc, arguments);
+
+	};
+
+	PeerConnection.prototype.getStats = function() {
+
+		return this.pc.getStats.apply(this.pc, arguments);
 
 	};
 
