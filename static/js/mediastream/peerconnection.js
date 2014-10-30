@@ -39,6 +39,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		this.remoteCertificate = null;
 		this.dtlsCipher = null;
 		this.srtpCipher = null;
+		this.notifiedCertificates = false;
 
 		if (currentcall) {
 			this.createPeerConnection(currentcall);
@@ -282,9 +283,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 						if (!this.remoteCertificate && certId && certificates.hasOwnProperty(certId)) {
 							this.remoteCertificate = certificates[certId];
 						}
-						break;
-
-					case "googCandidatePair":
 						if (item.spreedDtlsCipher) {
 							dtlsCiphers[item.spreedDtlsCipher] = true;
 						}
@@ -314,7 +312,8 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 				}
 
 				if (this.currentcall) {
-					if (this.localCertificate && this.remoteCertificate) {
+					if (!this.notifiedCertificates && this.localCertificate && this.remoteCertificate) {
+						this.notifiedCertificates = true;
 						this.currentcall.onCertificatesReceived({'local': this.localCertificate, 'remote': this.remoteCertificate});
 					}
 					if (this.dtlsCipher && this.srtpCipher) {
