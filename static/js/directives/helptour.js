@@ -186,7 +186,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			$rootScope.$on("room", function(event, room) {
 				if (!shown) {
 					introTour();
-					localStorage.setItem('mediastream-helptour', true);
+					localStorage.setItem('mediastream-helptour', 1);
 				}
 			});
 		}];
