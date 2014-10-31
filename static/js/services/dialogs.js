@@ -30,8 +30,8 @@ define(["angular"], function(angular) {
 				return $modal.open({
 					templateUrl: url,
 					controller: controller,
-					keyboard : opts.kb,
-					backdrop : opts.bd,
+					keyboard : opts.kb === undefined ? true : opts.kb,
+					backdrop : opts.bd === undefined ? true : opts.bd,
 					windowClass: opts.wc,
 					size: opts.ws,
 					resolve: {
