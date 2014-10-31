@@ -27,14 +27,14 @@ define(['underscore', 'text!partials/roombar.html'], function(_, template) {
 
 			//console.log("roomBar directive link", arguments);
 			$scope.newroomid = $rootScope.roomid;
-			$scope.hideRoomBar = true;
+			$scope.layout.roombar = false;
 
 			$scope.save = function() {
 				var roomid = mediaStream.changeRoom($scope.newroomid);
 				if (roomid !== $rootScope.roomid) {
 					$scope.roombarform.$setPristine();
 				}
-				$scope.hideRoomBar = true;
+				$scope.layout.roombar = false;
 			};
 
 			$scope.hitEnter = function(evt) {
