@@ -45,6 +45,8 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			menus.triggerMediaAccess = function() {
 				if (trigger) {
 					mediaStream.webrtc.testMediaAccess(function() {});
+				} else {
+					mediaStream.webrtc.stop();
 				}
 			};
 			menus.toggleRoom = function(css) {
