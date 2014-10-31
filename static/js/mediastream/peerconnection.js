@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
+define(['jquery', 'underscore', 'webrtc.adapter', 'webrtc.getstats'], function($, _) {
 
 	var count = 0;
 	var dataChannelDefaultLabel = "default";
@@ -207,44 +207,8 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	};
 
-	PeerConnection.prototype.getStatistics = function(callback) {
-		if (!this.pc) {
-			callback([]);
-			return;
-		}
-
-		if (!!navigator.mozGetUserMedia) {
-			this.getStats(
-				null,
-				function (res) {
-					var items = [];
-					res.forEach(function(result) {
-						items.push(result);
-					});
-					callback(items);
-				},
-				callback
-			);
-		} else {
-			this.getStats(function(res) {
-				var items = [];
-				res.result().forEach(function(result) {
-					var item = {};
-					result.names().forEach(function(name) {
-						item[name] = result.stat(name);
-					});
-					item.id = result.id;
-					item.type = result.type;
-					item.timestamp = result.timestamp;
-					items.push(item);
-				});
-				callback(items);
-			});
-		}
-	};
-
 	PeerConnection.prototype.updateStatistics = function(callback) {
-		this.getStatistics(_.bind(function(stats) {
+		getRTCStats(this.pc, _.bind(function(stats) {
 			if (!this.localCertificate || !this.remoteCertificate || !this.dtlsCipher || !this.srtpCipher) {
 				var certificates = {};
 				var dtlsCiphers = {};

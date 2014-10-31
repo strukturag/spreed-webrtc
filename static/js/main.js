@@ -27,6 +27,7 @@ require.config({
 		"underscore": 'libs/lodash.min', // alternative to underscore
 		"modernizr": 'libs/modernizr',
 		'webrtc.adapter': 'libs/webrtc.adapter',
+		'webrtc.getstats': 'libs/webrtc.getstats',
 		'angular': 'libs/angular/angular.min',
 		'ui-bootstrap': 'libs/angular/ui-bootstrap-tpls.min',
 		'ua-parser': 'libs/ua-parser',
@@ -133,6 +134,9 @@ require.config({
 			deps: ['jquery'],
 			exports: '$'
 		},
+		'webrtc.getstats': {
+			deps: ['webrtc.adapter']
+		}
 	}
 });
 
