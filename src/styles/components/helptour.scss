@@ -71,6 +71,14 @@
     left: initial;
     right: 10px;
   }
+  .welcomePane {
+    position: relative;
+    margin: 0 auto;
+    top: 150px;
+    .btn {
+      margin-top: 10px;
+    }
+  }
 }
 
 .arrow+.secondArrow {
