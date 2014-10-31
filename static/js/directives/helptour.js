@@ -25,7 +25,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 	return [function() {
 
 		var controller = ['$scope', '$timeout', '$modal', '$rootScope', 'mediaStream', function($scope, $timeout, $modal, $rootScope, mediaStream) {
-			var displayTime = 2000;
+			var displayTime = 12000;
 			var shown = localStorage.getItem('mediastream-helptour');
 			var timeoutAutoStepsIn = [];
 			var timeoutAutoStepsOut = [];
@@ -47,7 +47,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 					mediaStream.webrtc.testMediaAccess(function() {});
 				}
 			};
-			menus.toggleRoom = function() {
+			menus.toggleRoom = function(css) {
 				$scope.layout.roombar = !$scope.layout.roombar;
 			};
 			menus.toggleChat = function() {
@@ -56,13 +56,20 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			menus.toggleSettings = function() {
 				$scope.layout.settings = !$scope.layout.settings;
 			};
+			menus.toggleCSS = function(css) {
+				$('body').toggleClass(css);
+			};
 			var toggleTargetMenu = function() {
 				var menu = $($scope.steps[$scope.currentIndex]).data('menu');
+				var css = $($scope.steps[$scope.currentIndex]).data('css');
 				if (menu) {
 					if (menu.search('trigger') > -1) {
 						trigger = !trigger;
 					}
-					menus[menu]();
+					menus[menu](css);
+				}
+				if (css) {
+					menus.toggleCSS(css);
 				}
 			};
 			var outStep = function() {
