@@ -104,3 +104,36 @@
     border-right-color: #FFF;
   }
 }
+.helptourShowRoomPane {
+  #bar,
+  #buddylist {
+    opacity: .4;
+  }
+  .overlaybar {
+    background: $componentfg2;
+  }
+}
+.helptourShowSettingsPane {
+  #roombar {
+    opacity: .4;
+  }
+}
+.helptourShowChatPane {
+  #roombar,
+  #buddylist {
+    opacity: .4;
+  }
+}
+.helptourShowBuddyListPane {
+  #bar,
+  #roombar {
+    opacity: .4;
+  }
+}
+.helptourShowMediaAccessPane {
+  #bar,
+  #roombar,
+  #buddylist {
+    opacity: .4;
+  }
+}
