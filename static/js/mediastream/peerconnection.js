@@ -323,6 +323,7 @@ define(['jquery', 'underscore', 'webrtc.adapter', 'webrtc.getstats'], function($
 		console.info("ICE connection state change", iceConnectionState, event, this.currentcall);
 		switch (iceConnectionState) {
 		case "connected":
+		case "completed":
 			this.startStatistics();
 			break;
 		case "closed":
