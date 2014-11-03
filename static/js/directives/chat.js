@@ -238,7 +238,7 @@ define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'],
 						subscope.sendChat = function(to, message, status, mid, noloop) {
 							//console.log("send chat", to, scope.peer);
 							var peercall = mediaStream.webrtc.findTargetCall(to);
-							if (peercall && peercall.peerconnection.datachannelReady) {
+							if (peercall && peercall.peerconnection && peercall.peerconnection.datachannelReady) {
 								subscope.p2p(true);
 								// Send out stuff through data channel.
 								return subscope.sendChatPeer2Peer(peercall, to, message, status, mid, noloop);
