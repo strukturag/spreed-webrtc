@@ -307,7 +307,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	PeerConnection.prototype.getStreamById = function() {
 
-		return this.pc.getStreamById.appy(this.pc, arguments);
+		return this.pc.getStreamById.apply(this.pc, arguments);
 
 	};
 
