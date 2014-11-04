@@ -230,7 +230,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		var peerconnection = event.target;
 		if (peerconnection === this.pc) {
 			//console.log("Negotiation needed.", peerconnection.remoteDescription, peerconnection.iceConnectionState, peerconnection.signalingState, this);
-			this.currentcall.onNegotiationNeeded(this);
+			this.currentcall.onNegotiationNeeded();
 		}
 
 	};

@@ -280,7 +280,10 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}
 				// TODO(longsleep): In case of negotiation this could switch offer and answer
 				// and result in a offer sdp sent as answer data. We need to handle this.
-				targetcall.setRemoteDescription(new RTCSessionDescription(data));
+				targetcall.setRemoteDescription(new RTCSessionDescription(data), function() {
+					// Received remote description as answer.
+					console.log("Received answer after we sent offer", data);
+				});
 				break;
 			case "Bye":
 				targetcall = this.findTargetCall(from);
@@ -482,12 +485,17 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		xfer.setInitiate(true);
-		xfer.createPeerConnection();
+		xfer.createPeerConnection(_.bind(function() {
+			xfer.e.on("negotiationNeeded", _.bind(function(event, currentxfer) {
+				this.sendOfferWhenNegotiationNeeded(currentxfer, id);
+			}, this));
+		}, this));
+		/*
 		xfer.createOffer(_.bind(function(sessionDescription, currentxfer) {
 			console.log("Sending xfer offer with sessionDescription", sessionDescription, currentxfer.id);
 			// TODO(longsleep): Support sending this through data channel too if we have one.
 			this.api.sendOffer(id, sessionDescription);
-		}, this));
+		}, this));*/
 
 	};
 
@@ -553,12 +561,17 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		peerscreenshare.setInitiate(true); //XXX(longsleep): This creates a data channel which is not needed.
-		peerscreenshare.createPeerConnection();
+		peerscreenshare.createPeerConnection(_.bind(function() {
+			peerscreenshare.e.on("negotiationNeeded", _.bind(function(event, currentscreenshare) {
+				this.sendOfferWhenNegotiationNeeded(currentscreenshare, id);
+			}, this));
+		}, this));
+		/*
 		peerscreenshare.createOffer(_.bind(function(sessionDescription, currentscreenshare) {
 			console.log("Sending screen share offer with sessionDescription", sessionDescription, currentscreenshare.id);
 			// TODO(longsleep): Support sending this through data channel too if we have one.
 			this.api.sendOffer(id, sessionDescription);
-		}, this));
+		}, this));*/
 
 	};
 
@@ -637,13 +650,16 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}
 				this.started = true;
 				if (this.initiator) {
-					currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
+					/*currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
 						console.log("Sending offer with sessionDescription", sessionDescription, currentcall.id);
 						this.api.sendOffer(currentcall.id, sessionDescription);
-					}, this));
+					}, this));*/
 				} else {
 					this.calleeStart();
 				}
+				currentcall.e.on("negotiationNeeded", _.bind(function(event, currentcall) {
+					this.sendOfferWhenNegotiationNeeded(currentcall);
+				}, this));
 			}, this), _.bind(function() {
 				// Error call.
 				this.e.triggerHandler("error", ["Failed to create peer connection. See log for details."]);
@@ -660,6 +676,21 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		while (this.msgQueue.length > 0) {
 			args = this.msgQueue.shift();
 			this.processReceivedMessage.apply(this, args);
+		}
+
+	};
+
+	WebRTC.prototype.sendOfferWhenNegotiationNeeded = function(currentcall, to) {
+
+		if (currentcall.peerconnection.pc.signalingState === "stable") {
+			if (!to) {
+				to = currentcall.id;
+			}
+			currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
+				console.log("Sending offer with sessionDescription", sessionDescription, to, currentcall);
+				// TODO(longsleep): Support sending this through data channel too if we have one.
+				this.api.sendOffer(to, sessionDescription);
+			}, this));
 		}
 
 	};

@@ -196,11 +196,12 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	};
 
-	PeerCall.prototype.onNegotiationNeeded = function(peerconnection) {
+	PeerCall.prototype.onNegotiationNeeded = function() {
 
 		if (!this.negotiationNeeded) {
 			this.negotiationNeeded = true;
 			console.log("Negotiation needed.", this);
+			this.e.triggerHandler("negotiationNeeded", [this]);
 		}
 
 	};
