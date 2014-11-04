@@ -70,7 +70,16 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			// for example https://bugzilla.mozilla.org/show_bug.cgi?id=998546.
 			pc.onaddstream = _.bind(this.onRemoteStreamAdded, this);
 			pc.onremovestream = _.bind(this.onRemoteStreamRemoved, this);
-			pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
+			// NOTE(longsleep): onnegotiationneeded is not supported by Firefox
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=840728
+			if (webrtcDetectedBrowser === "firefox") {
+				window.setTimeout(_.bind(function() {
+					// Trigger onNegotiationNeeded once for Firefox.
+					this.onNegotiationNeeded({target: pc});
+				}, this), 0);
+			} else {
+				pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
+			}
 			pc.ondatachannel = _.bind(this.onDatachannel, this);
 			pc.onsignalingstatechange = function(event) {
 				// XXX(longsleep): Remove this or handle it in a real function.
