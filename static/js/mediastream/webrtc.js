@@ -682,6 +682,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	WebRTC.prototype.sendOfferWhenNegotiationNeeded = function(currentcall, to) {
 
+		// TODO(longsleep): Check if the check for stable is really required.
 		if (currentcall.peerconnection.pc.signalingState === "stable") {
 			if (!to) {
 				to = currentcall.id;
