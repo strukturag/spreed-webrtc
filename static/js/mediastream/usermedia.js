@@ -63,7 +63,8 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		console.log("Requesting testGetUserMedia");
 		(function(complete) {
-			var success_helper = function() {
+			var success_helper = function(stream) {
+				stream.stop();
 				if (complete.done) {
 					return;
 				}
