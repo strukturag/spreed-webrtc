@@ -63,7 +63,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				subscope.destroyed = false;
 				subscope.$on("active", function() {
 					console.log("Stream scope is now active", stream.id, peerid);
-					//events.triggerHandler("active." + peerid, [subscope, currentcall, stream]);
 				});
 				subscope.$on("$destroy", function() {
 					console.log("Destroyed scope for stream", stream.id, peerid);
