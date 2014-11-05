@@ -36,7 +36,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			this.createPeerConnection(currentcall);
 		}
 
-	}
+	};
 
 	PeerConnection.prototype.createPeerConnection = function(currentcall) {
 
