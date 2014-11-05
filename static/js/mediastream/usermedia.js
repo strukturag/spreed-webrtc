@@ -32,9 +32,14 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		this.started = false;
 		this.delay = 0;
 
+		this.audioMute = false;
+		this.videoMute = false;
+		this.mediaConstraints = null;
+
 		// Audio level.
 		this.audioLevel = 0;
 		if (!this.options.noaudio && context && context.createScriptProcessor) {
+
 			this.audioSource = null;
 			this.audioProcessor = context.createScriptProcessor(2048, 1, 1);
 			this.audioProcessor.onaudioprocess = _.bind(function(event) {
@@ -54,6 +59,21 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				this.audioLevel = rms;
 				//console.log("this.audioLevel", this.audioLevel);
 			}, this);
+
+			// Connect stream to audio processor if supported.
+			if (context.createMediaStreamSource) {
+				this.e.bind("localstream", _.bind(function(event, stream) {
+					if (this.audioSource) {
+						this.audioSource.disconnect();
+					}
+					// Connect to audioProcessor.
+					this.audioSource = context.createMediaStreamSource(stream);
+					//console.log("got source", this.audioSource);
+					this.audioSource.connect(this.audioProcessor);
+					this.audioProcessor.connect(context.destination);
+				}, this));
+			}
+
 		}
 
 	};
@@ -112,11 +132,30 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		if (!mediaConstraints) {
 			mediaConstraints = currentcall.mediaConstraints;
 		}
+		this.mediaConstraints = mediaConstraints;
+
+		return this.doGetUserMediaWithConstraints(mediaConstraints);
+
+	};
+
+	UserMedia.prototype.doGetUserMediaWithConstraints = function(mediaConstraints) {
+
+		if (!mediaConstraints) {
+			mediaConstraints = this.mediaConstraints;
+		}
+
+		var constraints = $.extend(true, {}, mediaConstraints);
+		if (this.audioMute) {
+			constraints.audio = false;
+		}
+		if (this.videoMute) {
+			constraints.video = false;
+		}
 
 		try {
 			console.log('Requesting access to local media with mediaConstraints:\n' +
-				'  \'' + JSON.stringify(mediaConstraints) + '\'', mediaConstraints);
-			getUserMedia(mediaConstraints, _.bind(this.onUserMediaSuccess, this), _.bind(this.onUserMediaError, this));
+				'  \'' + JSON.stringify(constraints) + '\'', constraints);
+			getUserMedia(constraints, _.bind(this.onUserMediaSuccess, this), _.bind(this.onUserMediaError, this));
 			this.started = true;
 			return true;
 		} catch (e) {
@@ -134,27 +173,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			return;
 		}
 
-		// Get notified of end events.
-		stream.onended = _.bind(function(event) {
-			console.log("User media stream ended.");
-			if (this.started) {
-				this.stop();
-			}
-		}, this);
-
-		if (this.audioProcessor && context.createMediaStreamSource) {
-			// Connect to audioProcessor.
-			this.audioSource = context.createMediaStreamSource(stream);
-			//console.log("got source", this.audioSource);
-			this.audioSource.connect(this.audioProcessor);
-			this.audioProcessor.connect(context.destination);
-		}
-		this.localStream = stream;
-
-		// Let webrtc handle the rest.
-		setTimeout(_.bind(function() {
-			this.e.triggerHandler("mediasuccess", [this]);
-		}, this), this.delay);
+		this.onLocalStream(stream);
 
 	};
 
@@ -167,6 +186,36 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		// Let webrtc handle the rest.
 		this.e.triggerHandler("mediaerror", [this, error]);
+
+	};
+
+	UserMedia.prototype.onLocalStream = function(stream) {
+
+		var oldStream = this.localStream;
+		if (oldStream) {
+			oldStream.onended = function() {};
+			oldStream.stop();
+			setTimeout(_.bind(function() {
+				this.e.triggerHandler("mediachanged", [this]);
+			}, this), 0);
+		} else {
+			// Let webrtc handle the rest.
+			setTimeout(_.bind(function() {
+				this.e.triggerHandler("mediasuccess", [this]);
+			}, this), this.delay);
+		}
+
+		// Get notified of end events.
+		stream.onended = _.bind(function(event) {
+			console.log("User media stream ended.");
+			if (this.started) {
+				this.stop();
+			}
+		}, this);
+
+		// Set new stream.
+		this.localStream = stream;
+		this.e.triggerHandler("localstream", [stream, oldStream, this]);
 
 	};
 
@@ -186,6 +235,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			this.audioProcessor.disconnect()
 		}
 		this.audioLevel = 0;
+		this.audioMute = false;
+		this.videoMute = false;
+		this.mediaConstraints = null;
 		console.log("Stopped user media.");
 		this.e.triggerHandler("stopped", [this]);
 
@@ -197,6 +249,8 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 	};
 
 	UserMedia.prototype.applyAudioMute = function(mute) {
+
+		this.audioMute = !!mute;
 
 		if (this.localStream) {
 
@@ -224,9 +278,11 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.applyVideoMute = function(mute) {
 
+		var m = !!mute;
+
 		if (this.localStream) {
 
-			var videoTracks = this.localStream.getVideoTracks();
+			/*var videoTracks = this.localStream.getVideoTracks();
 			if (videoTracks.length === 0) {
 				//console.log('No local video available.');
 				return;
@@ -240,8 +296,15 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				console.log("Local video muted.")
 			} else {
 				console.log("Local video unmuted.")
+			}*/
+
+			if (this.videoMute !== m) {
+				this.videoMute = m;
+				this.doGetUserMediaWithConstraints();
 			}
 
+		} else {
+			this.videoMute = m;
 		}
 
 		return mute;
@@ -253,6 +316,14 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		console.log("Add usermedia stream to peer connection", pc, this.localStream);
 		if (this.localStream) {
 			pc.addStream(this.localStream);
+			this.e.on("localstream", _.bind(function(event, stream, oldstream) {
+				// Update stream support.
+				if (oldstream) {
+					pc.removeStream(oldstream);
+					pc.addStream(stream);
+					console.log("Updated usermedia stream at peer connection", pc, stream);
+				}
+			}, this))
 		}
 
 	};
@@ -268,7 +339,6 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.attachMediaStream = function(video) {
 
-		//console.log("attach", video, this.localStream);
 		attachMediaStream(video, this.localStream);
 
 	};

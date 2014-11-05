@@ -182,7 +182,11 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	PeerCall.prototype.onRemoteStreamAdded = function(stream) {
 
-		this.streams[stream] = true;
+		var id = stream.id;
+		if (this.streams.hasOwnProperty(id)) {
+			return;
+		}
+		this.streams[id] = stream;
 		this.e.triggerHandler("remoteStreamAdded", [stream, this]);
 
 	};
@@ -191,7 +195,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 		this.e.triggerHandler("remoteStreamRemoved", [stream, this]);
 		if (stream) {
-			delete this.streams[stream];
+			delete this.streams[stream.id];
 		}
 
 	};
@@ -299,12 +303,17 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			datachannel.close();
 		});
 		this.datachannels = {};
-		this.streams = {};
 
 		if (this.peerconnection) {
 			this.peerconnection.close();
 			this.peerconnection = null;
 		}
+
+		// Trigger event for all previously added streams.
+		_.each(this.streams, _.bind(function(stream, id) {
+			this.e.triggerHandler("remoteStreamRemoved", [stream, this]);
+		}, this));
+		this.streams = {};
 
 		console.log("Peercall close", this);
 		this.e.triggerHandler("closed", [this]);

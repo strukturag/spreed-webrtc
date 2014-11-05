@@ -26,8 +26,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var peers = {};
-			var events = $({});
+			var streams = {};
 
 			$scope.container = $element.get(0);
 			$scope.layoutparent = $element.parent();
@@ -39,6 +38,9 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.hasUsermedia = false;
 			$scope.isActive = false;
+			$scope.haveStreams = false;
+
+			$scope.peersTalking = {};
 
 			$scope.rendererName = $scope.defaultRendererName = "democrazy";
 
@@ -46,31 +48,30 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.addRemoteStream = function(stream, currentcall) {
 
-				//console.log("Add remote stream to scope", pc.id, stream);
+				if (streams.hasOwnProperty(stream.id)) {
+					console.warn("Cowardly refusing to add stream id twice", stream.id, currentcall);
+					return;
+				}
+
+				//console.log("Add remote stream to scope", stream.id, stream, currentcall);
 				// Create scope.
-				var subscope = $scope.$new(true);
+				var subscope = $scope.$new();
 				var peerid = subscope.peerid = currentcall.id;
 				buddyData.push(peerid);
 				subscope.withvideo = false;
 				subscope.onlyaudio = false;
-				subscope.talking = false;
 				subscope.destroyed = false;
-				subscope.applyTalking = function(talking) {
-					subscope.talking = !! talking;
-					safeApply(subscope);
-				};
 				subscope.$on("active", function() {
-					console.log("Stream scope is now active", peerid);
-					events.triggerHandler("active." + peerid, [subscope, currentcall, stream]);
+					console.log("Stream scope is now active", stream.id, peerid);
 				});
 				subscope.$on("$destroy", function() {
-					console.log("Destroyed scope for audiovideo", subscope);
+					console.log("Destroyed scope for stream", stream.id, peerid);
 					subscope.destroyed = true;
 				});
-				console.log("Created stream scope", peerid);
+				console.log("Created stream scope", stream.id, peerid);
 
 				// Add created scope.
-				peers[peerid] = subscope;
+				streams[stream.id] = subscope;
 
 				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {
@@ -118,10 +119,11 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.removeRemoteStream = function(stream, currentcall) {
 
-				var subscope = peers[currentcall.id];
+				//console.log("remove stream", stream, stream.id, currentcall);
+				var subscope = streams[stream.id];
 				if (subscope) {
 					buddyData.pop(currentcall.id);
-					delete peers[currentcall.id];
+					delete streams[stream.id];
 					//console.log("remove scope", subscope);
 					if (subscope.element) {
 						subscope.element.remove();
@@ -134,17 +136,9 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			// Talking updates receiver.
 			mediaStream.api.e.on("received.talking", function(event, id, from, talking) {
-				var scope = peers[from];
-				//console.log("received.talking", talking, scope);
-				if (scope) {
-					scope.applyTalking(talking);
-				} else {
-					console.log("Received talking state without scope -> adding event.", from, talking);
-					events.one("active." + from, function(event, scope) {
-						console.log("Applying previously received talking state", from, talking);
-						scope.applyTalking(talking);
-					});
-				}
+				$scope.$apply(function(scope) {
+					scope.peersTalking[from] = !!talking;
+				});
 			});
 
 			$scope.$on("active", function(currentcall) {
@@ -177,27 +171,36 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
 
-				//console.log("XXXXXXXXXXXXXXXXXXXXXXXXX usermedia event", usermedia);
-				$scope.hasUsermedia = true;
-				usermedia.attachMediaStream($scope.localVideo);
-				var count = 0;
-				var waitForLocalVideo = function() {
-					if (!$scope.hasUsermedia) {
-						return;
-					}
-					if ($scope.localVideo.videoWidth > 0) {
-						$scope.localVideo.style.opacity = 1;
-						$scope.redraw();
-					} else {
-						count++;
-						if (count < 100) {
-							setTimeout(waitForLocalVideo, 100);
-						} else {
-							console.warn("Timeout while waiting for local video.")
+				//console.log("XXXX XXXXXXXXXXXXXXXXXXXXX usermedia event", usermedia);
+				if ($scope.haveStreams) {
+
+					usermedia.attachMediaStream($scope.miniVideo);
+					$scope.redraw();
+
+				} else {
+
+					$scope.hasUsermedia = true;
+					usermedia.attachMediaStream($scope.localVideo);
+					var count = 0;
+					var waitForLocalVideo = function() {
+						if (!$scope.hasUsermedia) {
+							return;
 						}
-					}
-				};
-				waitForLocalVideo();
+						if ($scope.localVideo.videoWidth > 0) {
+							$scope.localVideo.style.opacity = 1;
+							$scope.redraw();
+						} else {
+							count++;
+							if (count < 100) {
+								setTimeout(waitForLocalVideo, 100);
+							} else {
+								console.warn("Timeout while waiting for local video.")
+							}
+						}
+					};
+					waitForLocalVideo();
+
+				}
 
 			});
 
@@ -205,6 +208,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 				$scope.hasUsermedia = false;
 				$scope.isActive = false;
+				$scope.peersTalking = {};
 				if (BigScreen.enabled) {
 					BigScreen.exit();
 				}
@@ -220,20 +224,22 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				$scope.localVideo.style.opacity = 0;
 				$scope.remoteVideos.style.opacity = 0;
 				$element.removeClass('active');
-				_.each(peers, function(scope, k) {
+				_.each(streams, function(scope, k) {
 					scope.$destroy();
-					delete peers[k];
+					delete streams[k];
 				});
 				$scope.rendererName = $scope.defaultRendererName;
+				$scope.haveStreams = false;
 
 			});
 
 			mediaStream.webrtc.e.on("streamadded", function(event, stream, currentcall) {
 
 				console.log("Remote stream added.", stream, currentcall);
-				if (_.isEmpty(peers)) {
+				if (!$scope.haveStreams) {
 					//console.log("First stream");
 					$window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
+					$scope.haveStreams = true;
 				}
 				$scope.addRemoteStream(stream, currentcall);
 
@@ -247,7 +253,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			});
 
 			return {
-				peers: peers
+				streams: streams
 			};
 
 		}];
