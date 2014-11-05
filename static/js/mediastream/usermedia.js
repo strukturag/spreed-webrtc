@@ -281,7 +281,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 					return;
 				}
 
-				for (i = 0; i < audioTracks.length; i++) {
+				for (var i = 0; i < audioTracks.length; i++) {
 					audioTracks[i].enabled = !mute;
 				}
 
@@ -329,7 +329,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 					return;
 				}
 
-				for (i = 0; i < videoTracks.length; i++) {
+				for (var i = 0; i < videoTracks.length; i++) {
 					videoTracks[i].enabled = !mute;
 				}
 
