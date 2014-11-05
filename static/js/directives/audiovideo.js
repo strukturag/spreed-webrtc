@@ -27,6 +27,11 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			var streams = {};
+			var getStreamId = function(stream, currentcall) {
+				var id = currentcall.id + "-" + stream.id;
+				console.log("Created stream ID", id);
+				return id;
+			};
 
 			$scope.container = $element.get(0);
 			$scope.layoutparent = $element.parent();
@@ -48,8 +53,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.addRemoteStream = function(stream, currentcall) {
 
-				if (streams.hasOwnProperty(stream.id)) {
-					console.warn("Cowardly refusing to add stream id twice", stream.id, currentcall);
+				var id = getStreamId(stream, currentcall);
+
+				if (streams.hasOwnProperty(id)) {
+					console.warn("Cowardly refusing to add stream id twice", id, currentcall);
 					return;
 				}
 
@@ -62,16 +69,16 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				subscope.onlyaudio = false;
 				subscope.destroyed = false;
 				subscope.$on("active", function() {
-					console.log("Stream scope is now active", stream.id, peerid);
+					console.log("Stream scope is now active", id, peerid);
 				});
 				subscope.$on("$destroy", function() {
-					console.log("Destroyed scope for stream", stream.id, peerid);
+					console.log("Destroyed scope for stream", id, peerid);
 					subscope.destroyed = true;
 				});
-				console.log("Created stream scope", stream.id, peerid);
+				console.log("Created stream scope", id, peerid);
 
 				// Add created scope.
-				streams[stream.id] = subscope;
+				streams[id] = subscope;
 
 				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {
@@ -120,10 +127,12 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.removeRemoteStream = function(stream, currentcall) {
 
 				//console.log("remove stream", stream, stream.id, currentcall);
-				var subscope = streams[stream.id];
+				var id = getStreamId(stream, currentcall);
+
+				var subscope = streams[id];
 				if (subscope) {
 					buddyData.pop(currentcall.id);
-					delete streams[stream.id];
+					delete streams[id];
 					//console.log("remove scope", subscope);
 					if (subscope.element) {
 						subscope.element.remove();
