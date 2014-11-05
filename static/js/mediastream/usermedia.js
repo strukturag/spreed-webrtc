@@ -22,6 +22,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	// Create AudioContext singleton, if supported.
 	var context = AudioContext ? new AudioContext() : null;
+	var peerconnections = {};
 
 	var UserMedia = function(options) {
 
@@ -62,7 +63,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 			// Connect stream to audio processor if supported.
 			if (context.createMediaStreamSource) {
-				this.e.bind("localstream", _.bind(function(event, stream) {
+				this.e.on("localstream", _.bind(function(event, stream) {
 					if (this.audioSource) {
 						this.audioSource.disconnect();
 					}
@@ -75,6 +76,17 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			}
 
 		}
+
+		this.e.on("localstream", _.bind(function(event, stream, oldstream) {
+			// Update stream support.
+			if (oldstream) {
+				_.each(peerconnections, function(pc) {
+					pc.removeStream(oldstream);
+					pc.addStream(stream);
+					console.log("Updated usermedia stream at peer connection", pc, stream);
+				});
+			}
+		}, this));
 
 	};
 
@@ -316,14 +328,13 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		console.log("Add usermedia stream to peer connection", pc, this.localStream);
 		if (this.localStream) {
 			pc.addStream(this.localStream);
-			this.e.on("localstream", _.bind(function(event, stream, oldstream) {
-				// Update stream support.
-				if (oldstream) {
-					pc.removeStream(oldstream);
-					pc.addStream(stream);
-					console.log("Updated usermedia stream at peer connection", pc, stream);
-				}
-			}, this))
+			var id = pc.id;
+			if (!peerconnections.hasOwnProperty(id)) {
+				peerconnections[id] = pc;
+				pc.currentcall.e.one("closed", function() {
+					delete peerconnections[id];
+				});
+			}
 		}
 
 	};
@@ -333,6 +344,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		console.log("Remove usermedia stream from peer connection", pc, this.localStream);
 		if (this.localStream) {
 			pc.removeStream(this.localStream);
+			if (peerconnections.hasOwnProperty(pc.id)) {
+				delete peerconnections[pc.id];
+			}
 		}
 
 	};
