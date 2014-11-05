@@ -24,6 +24,10 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 	var context = AudioContext ? new AudioContext() : null;
 	var peerconnections = {};
 
+	// Disabled for now until browser support matures. If enabled this totally breaks
+	// Firefox and Chrome with Firefox interop.
+	var enableRenegotiationSupport = false;
+
 	var UserMedia = function(options) {
 
 		this.options = $.extend({}, options);
@@ -262,29 +266,50 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.applyAudioMute = function(mute) {
 
-		this.audioMute = !!mute;
+		var m = !!mute;
 
-		if (this.localStream) {
+		if (!enableRenegotiationSupport) {
 
-			var audioTracks = this.localStream.getAudioTracks();
-			if (audioTracks.length === 0) {
-				//console.log('No local audio available.');
-				return;
+			// Disable streams only - does not require renegotiation but keeps mic
+			// active and the stream will transmit silence.
+
+			if (this.localStream) {
+
+				var audioTracks = this.localStream.getAudioTracks();
+				if (audioTracks.length === 0) {
+					//console.log('No local audio available.');
+					return;
+				}
+
+				for (i = 0; i < audioTracks.length; i++) {
+					audioTracks[i].enabled = !mute;
+				}
+
+				if (mute) {
+					console.log("Local audio muted by disabling audio tracks.");
+				} else {
+					console.log("Local audio unmuted by enabling audio tracks.");
+				}
+
 			}
 
-			for (i = 0; i < audioTracks.length; i++) {
-				audioTracks[i].enabled = !mute;
-			}
+		} else {
 
-			if (mute) {
-				console.log("Local audio muted.")
+			// Remove audio stream, by creating a new stream and doing renegotiation. This
+			// is the way to go to disable the mic when audio is muted.
+
+			if (this.localStream) {
+				if (this.audioMute !== m) {
+					this.audioMute = m;
+					this.doGetUserMediaWithConstraints();
+				}
 			} else {
-				console.log("Local audio unmuted.")
+				this.audioMute = m;
 			}
 
 		}
 
-		return mute;
+		return m;
 
 	};
 
@@ -292,34 +317,46 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		var m = !!mute;
 
-		if (this.localStream) {
+		if (!enableRenegotiationSupport) {
 
-			/*var videoTracks = this.localStream.getVideoTracks();
-			if (videoTracks.length === 0) {
-				//console.log('No local video available.');
-				return;
+			// Disable streams only - does not require renegotiation but keeps camera
+			// active and the stream will transmit black.
+
+			if (this.localStream) {
+				var videoTracks = this.localStream.getVideoTracks();
+				if (videoTracks.length === 0) {
+					//console.log('No local video available.');
+					return;
+				}
+
+				for (i = 0; i < videoTracks.length; i++) {
+					videoTracks[i].enabled = !mute;
+				}
+
+				if (mute) {
+					console.log("Local video muted by disabling video tracks.");
+				} else {
+					console.log("Local video unmuted by enabling video tracks.");
+				}
+
 			}
-
-			for (i = 0; i < videoTracks.length; i++) {
-				videoTracks[i].enabled = !mute;
-			}
-
-			if (mute) {
-				console.log("Local video muted.")
-			} else {
-				console.log("Local video unmuted.")
-			}*/
-
-			if (this.videoMute !== m) {
-				this.videoMute = m;
-				this.doGetUserMediaWithConstraints();
-			}
-
 		} else {
-			this.videoMute = m;
+
+			// Removevideo stream, by creating a new stream and doing renegotiation. This
+			// is the way to go to disable the camera when video is muted.
+
+			if (this.localStream) {
+				if (this.videoMute !== m) {
+					this.videoMute = m;
+					this.doGetUserMediaWithConstraints();
+				}
+			} else {
+				this.videoMute = m;
+			}
+
 		}
 
-		return mute;
+		return m;
 
 	};
 
