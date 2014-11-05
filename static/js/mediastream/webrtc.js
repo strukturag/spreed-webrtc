@@ -117,6 +117,10 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			// Start always, no matter what.
 			this.maybeStart();
 		}, this));
+		this.usermedia.e.on("mediachanged", _.bind(function() {
+			// Propagate media change events.
+			this.e.triggerHandler("usermedia", [this.usermedia]);
+		}, this));
 
 	};
 
@@ -226,32 +230,36 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		switch (type) {
 			case "Offer":
-				var busy = false;
-				var conference = null;
-				if (this.currentcall.from !== from) {
-					if (this.currentconference && this.currentconference.id === data._conference) {
-						console.log("Received conference Offer -> auto.", from, data._conference);
-						conference = data._conference;
-						// clean own internal data before feeding into browser.
-						delete data._conference;
-					} else {
-						console.log("Received Offer from unknown id -> busy.", from, this.currentconference);
-						busy = true;
-					}
-				}
-				if (busy) {
-					this.api.sendBye(from, "busy");
-					this.e.triggerHandler("busy", [from, to2, to]);
-					return;
-				}
 				console.log("Offer process.");
 				if (this.settings.stereo) {
 					data.sdp = utils.addStereo(data.sdp);
 				}
-				if (conference) {
-					this.currentconference.autoAnswer(from, new RTCSessionDescription(data));
+				targetcall = this.findTargetCall(from);
+				if (targetcall) {
+					// Hey we know this call.
+					targetcall.setRemoteDescription(new RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
+						if (currentcall === this.currentcall) {
+							// Main call.
+							this.e.triggerHandler("peercall", [this.currentcall]);
+						}
+						currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
+							console.log("Sending answer", sessionDescription, currentcall.id);
+							this.api.sendAnswer(currentcall.id, sessionDescription);
+						}, this));
+					}, this));
 				} else {
-					this.currentcall.setRemoteDescription(new RTCSessionDescription(data), _.bind(this.doAnswer, this));
+					// No target call. Check conference auto answer support.
+					if (this.currentconference && this.currentconference.id === data._conference) {
+						console.log("Received conference Offer -> auto.", from, data._conference);
+						// Clean own internal data before feeding into browser.
+						delete data._conference;
+						this.currentconference.autoAnswer(from, new RTCSessionDescription(data));
+						break;
+					}
+					// Cannot do anything with this offer, reply with busy.
+					console.log("Received Offer from unknown id -> busy.", from);
+					this.api.sendBye(from, "busy");
+					this.e.triggerHandler("busy", [from, to2, to]);
 				}
 				break;
 			case "Candidate":
@@ -425,16 +433,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			this.e.triggerHandler("error", ["Failed to access camera/microphone.", "failed_getusermedia"]);
 			return this.doHangup();
 		}
-
-	};
-
-	WebRTC.prototype.doAnswer = function() {
-
-		this.e.triggerHandler("peercall", [this.currentcall]);
-		this.currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
-			console.log("Sending answer", sessionDescription, currentcall.id);
-			this.api.sendAnswer(currentcall.id, sessionDescription);
-		}, this));
 
 	};
 

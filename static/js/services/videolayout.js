@@ -23,14 +23,14 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 	var dynamicCSSContainer = "audiovideo-dynamic";
 	var renderers = {};
 
-	var getRemoteVideoSize = function(videos, peers) {
+	var getRemoteVideoSize = function(videos, streams) {
 		var size = {
 			width: 1920,
 			height: 1080
 		}
 		if (videos.length) {
 			if (videos.length === 1) {
-				var remoteVideo = peers[videos[0]].element.find("video").get(0);
+				var remoteVideo = streams[videos[0]].element.find("video").get(0);
 				if (remoteVideo) {
 					size.width = remoteVideo.videoWidth;
 					size.height = remoteVideo.videoHeight;
@@ -51,7 +51,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 
 		OnePeople.prototype.name = "onepeople";
 
-		OnePeople.prototype.render = function(container, size, scope, videos, peers) {
+		OnePeople.prototype.render = function(container, size, scope, videos, streams) {
 
 			if (this.closed) {
 				return;
@@ -61,7 +61,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			var videoHeight;
 
 			if (videos.length) {
-				var remoteSize = getRemoteVideoSize(videos, peers);
+				var remoteSize = getRemoteVideoSize(videos, streams);
 				videoWidth = remoteSize.width;
 				videoHeight = remoteSize.height;
 			}
@@ -235,25 +235,25 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 
 		};
 
-		ConferenceKiosk.prototype.render = function(container, size, scope, videos, peers) {
+		ConferenceKiosk.prototype.render = function(container, size, scope, videos, streams) {
 
 			var big = this.big;
 			if (big) {
 				var currentbigpeerid = this.big.data("peerid");
-				if (!peers[currentbigpeerid]) {
+				if (!streams[currentbigpeerid]) {
 					console.log("Current big peer is no longer there", currentbigpeerid);
 					this.big = big = null;
 				}
 			}
 			if (!big) {
 				if (videos.length) {
-					this.makeBig(peers[videos[0]].element);
+					this.makeBig(streams[videos[0]].element);
 					this.bigVideo.style.opacity = 1;
 				}
 
 			}
 
-			var remoteSize = getRemoteVideoSize(videos, peers);
+			var remoteSize = getRemoteVideoSize(videos, streams);
 			var aspectRatio = remoteSize.width / remoteSize.height;
 			var innerHeight = size.height - 110;
 			var innerWidth = size.width;
@@ -304,18 +304,18 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		Classroom.prototype = Object.create(ConferenceKiosk.prototype);
 		Classroom.prototype.constructor = Classroom;
 		Classroom.prototype.name = "classroom";
-		Classroom.prototype.render = function(container, size, scope, videos, peers) {
+		Classroom.prototype.render = function(container, size, scope, videos, streams) {
 			var big = this.big;
 			if (big) {
 				var currentbigpeerid = this.big.data("peerid");
-				if (!peers[currentbigpeerid]) {
+				if (!streams[currentbigpeerid]) {
 					console.log("Current big peer is no longer there", currentbigpeerid);
 					this.big = big = null;
 				}
 			}
 			if (!big) {
 				if (videos.length) {
-					this.makeBig(peers[videos[0]].element);
+					this.makeBig(streams[videos[0]].element);
 					this.bigVideo.style.opacity = 1;
 				}
 
@@ -345,8 +345,8 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 					return r;
 				};
 
-				var videos = _.keys(controller.peers);
-				var peers = controller.peers;
+				var videos = _.keys(controller.streams);
+				var streams = controller.streams;
 				var container = scope.container;
 				var layoutparent = scope.layoutparent;
 
@@ -370,7 +370,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 					}
 				}
 
-				return current.render(container, size, scope, videos, peers);
+				return current.render(container, size, scope, videos, streams);
 
 			},
 			register: function(name, impl) {
