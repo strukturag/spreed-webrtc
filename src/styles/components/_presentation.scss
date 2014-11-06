@@ -55,8 +55,12 @@
   text-shadow: 1px 1px 1px white;
 }
 
-.mainPresentation #presentation {
-  display: block;
+.mainPresentation {
+  position: fixed;
+  width: 100%;
+  #presentation {
+    display: block;
+  }
 }
 
 .presentationpane {
