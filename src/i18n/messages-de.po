@@ -698,7 +698,7 @@ msgid "More information required"
 msgstr "Weitere Informationen nötig"
 
 msgid "Ok"
-msgstr "Ok"
+msgstr "OK"
 
 msgid ""
 "Screen sharing requires a browser extension. Please add the Spreed WebRTC"
