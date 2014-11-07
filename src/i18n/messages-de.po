@@ -624,8 +624,8 @@ msgstr "Mit Ihrem Browser können keine Dateien übertragen werden."
 
 msgid "Could not load PDF: Please make sure to select a PDF document."
 msgstr ""
-"PDF konnte nicht geladen werden - Bitte stellen Sie sicher das Sie ein "
-"PDF ausgewählt haben."
+"PDF konnte nicht geladen werden - Bitte stellen Sie sicher, dass Sie ein "
+"gültiges PDF-Dokument ausgewählt haben."
 
 msgid "Could not load PDF: Missing PDF file."
 msgstr "Das PDF konnte nicht geladen werden: Datei fehlt."
