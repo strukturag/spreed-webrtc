@@ -121,11 +121,11 @@
         <div class="form-group" ng-show="desktopNotify.supported">
           <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
           <div class="col-xs-8">
-            <p class="form-control-static" ng-switch="desktopNotify.level">
+            <span ng-switch="desktopNotify.level">
               <a ng-switch-when="default" class="btn btn-small btn-success" ng-click="requestDesktopNotifyPermission()">{{_('Enable')}}</a>
-              <span class="text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</span>
-              <span class="text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</span>
-            </p>
+              <p class="form-control-static text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</p>
+              <p class="form-control-static text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</p>
+            </span>
           </div>
         </div>
       </settings-settings>
