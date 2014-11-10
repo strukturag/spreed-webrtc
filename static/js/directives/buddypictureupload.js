@@ -124,6 +124,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.imgData = null;
 				$scope.prevImage.src = "";
 				$scope.prevImage.style.cssText = null;
+				$scope.clearInput();
 			};
 
 			$scope.cancelPictureUpload = function() {
@@ -203,6 +204,9 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 		var link = function($scope, $element) {
 
 			$scope.prevImage = $element.find("img.preview").get(0);
+			$scope.clearInput = function() {
+				$element.find("input[type=file]")[0].value = "";
+			};
 
 			// Bind change event of file upload form.
 			$element.find("input[type=file]").on("change", $scope.handlePictureUpload);
