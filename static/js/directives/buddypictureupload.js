@@ -23,6 +23,16 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
 
+		var getNumFromPx = function(px) {
+			var num = px.match(/[\-0-9]+/);
+			if (num) {
+				num = Number(num[0]);
+			} else {
+				num = 0;
+			}
+			return num;
+		};
+
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
 			var previewWidth = 205;
@@ -40,6 +50,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$scope.upload = {
 				status: 0
 			};
+			$scope.aspectRatio = 1;
 
 			var completedUpload = function() {
 				$scope.upload.status = 100;
@@ -48,21 +59,19 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var setUploadImageDimension = function(data) {
 				$scope.prevImage.onload = function() {
 					// clear old dimensions
-					this.style.cssText = null;
+					this.style.cssText = $scope.dragImage.style.cssText = null;
+					$scope.aspectRatio = this.width/this.height;
 					// get new dimensions
 					var dim = getAutoFitDimensions(this, {width: previewWidth, height: previewHeight});
-					this.style.width = dim.width + 'px';
-					this.style.height = dim.height + 'px';
-					this.style.top = '0px';
-					this.style.left = '0px';
+					this.style.width = $scope.dragImage.style.width = dim.width + 'px';
+					this.style.height = $scope.dragImage.style.height = dim.height + 'px';
+					this.style.top = $scope.dragImage.style.top = '0px';
+					this.style.left = $scope.dragImage.style.left = '0px';
+					this.style.cursor = "move";
 					completedUpload();
 					safeApply($scope);
 				};
-				$scope.prevImage.src = data;
-			};
-
-			var getNumFromPx = function(px) {
-				return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
+				$scope.prevImage.src = $scope.dragImage.src = data;
 			};
 
 			// Auto fit by smallest dimension
@@ -122,8 +131,9 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var clearPicture = function() {
 				$(".file-input-name").empty();
 				$scope.imgData = null;
-				$scope.prevImage.src = "";
-				$scope.prevImage.style.cssText = null;
+				$scope.prevImage.src = $scope.dragImage.src = "";
+				$scope.prevImage.style.cssText = $scope.dragImage.style.cssText = null;
+				$scope.prevImage.style.cursor = "auto";
 			};
 
 			$scope.cancelPictureUpload = function() {
@@ -148,7 +158,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					//console.log('file progress', event);
 					var percentComplete = event.loaded/event.total * 100;
 					// show complete only when src is loaded in image element
-					if(percentComplete != 100) {
+					if (percentComplete !== 100) {
 						$scope.$apply(function(scope) {
 							$scope.upload.status = percentComplete;
 						});
@@ -201,78 +211,162 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 		}];
 
 		var link = function($scope, $element) {
-
-			$scope.prevImage = $element.find("img.preview").get(0);
-
 			// Bind change event of file upload form.
 			$element.find("input[type=file]").on("change", $scope.handlePictureUpload);
+			$scope.prevImage = $(".showUploadPicture .preview").get(0);
+			$scope.dragImage = $(".buddyPictureUpload .previewDrag").get(0);
+			$element.find("#uploadFile").on('change', $scope.handleUpload);
+			$scope.dragging = false;
 
 			var intervalNum = {
 				num: null
 			};
 			var pxDefaultMovementSpeed = 5;
 
+			// Return the correct image height based on changes to the image width.
+			var calcHeight = function(width) {
+				return (getNumFromPx(width) / $scope.aspectRatio) + 'px';
+			};
 			var incrementPx = function(num, pxToMove) {
-				if(pxToMove === undefined) {
+				if (pxToMove === undefined) {
 					pxToMove = pxDefaultMovementSpeed;
 				}
-				return ((Number(num.match(/[\-0-9]+/)) + pxToMove) + 'px');
+				return (getNumFromPx(num) + pxToMove) + 'px';
 			};
 			var decrementPx = function(num, pxToMove) {
-				if(pxToMove === undefined) {
+				if (pxToMove === undefined) {
 					pxToMove = pxDefaultMovementSpeed;
 				}
-				return ((Number(num.match(/[\-0-9]+/)) - pxToMove) + 'px');
+				return (getNumFromPx(num) - pxToMove) + 'px';
 			};
 			var moveImageUp = function(pxMove) {
 				$scope.prevImage.style.top = decrementPx($scope.prevImage.style.top, pxMove);
+				$scope.dragImage.style.top = decrementPx($scope.dragImage.style.top, pxMove);
 			};
 			var moveImageDown = function(pxMove) {
 				$scope.prevImage.style.top = incrementPx($scope.prevImage.style.top, pxMove);
+				$scope.dragImage.style.top = incrementPx($scope.dragImage.style.top, pxMove);
 			};
 			var moveImageLeft = function(pxMove) {
 				$scope.prevImage.style.left = decrementPx($scope.prevImage.style.left, pxMove);
+				$scope.dragImage.style.left = decrementPx($scope.dragImage.style.left, pxMove);
 			};
 			var moveImageRight = function(pxMove) {
 				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left, pxMove);
+				$scope.dragImage.style.left = incrementPx($scope.dragImage.style.left, pxMove);
 			};
-			var makeImageLarger = function() {
-				$scope.prevImage.style.height = incrementPx($scope.prevImage.style.height);
-				moveImageLeft(1);
-				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
-				moveImageUp(2);
+			var makeImageLarger = function(pxMove) {
+				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width, pxMove);
+				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
+				$scope.dragImage.style.width = incrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var makeImageSmaller = function() {
-				$scope.prevImage.style.height = decrementPx($scope.prevImage.style.height);
-				moveImageRight(1);
-				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
-				moveImageDown(2);
+			var makeImageSmaller = function(pxMove) {
+				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width, pxMove);
+				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
+				$scope.dragImage.style.width = decrementPx($scope.dragImage.style.width, pxMove);
+				$scope.dragImage.style.height = calcHeight($scope.dragImage.style.width);
 			};
-			var changeImage = function(evt) {
-				if (evt.data.intervalNum.num || !evt.data.action) {
-					clearInterval(evt.data.intervalNum.num);
-					evt.data.intervalNum.num = null;
+
+			// Give translation time to transform title text of [input=file] instances before bootstrap.file-input parses dom.
+			setTimeout(function() {
+				$('#uploadFile').bootstrapFileInput();
+			}, 0);
+
+			var startX = null;
+			var startY = null;
+			var movementX = null;
+			var movementY = null;
+			// Check for out of bounds values so image stays inside preview block.
+			var imageMoveabled = function(deltaY) {
+				var move = true;
+				var img = {width: getNumFromPx($scope.prevImage.style.width), height: getNumFromPx($scope.prevImage.style.height), left: getNumFromPx($scope.prevImage.style.left), top: getNumFromPx($scope.prevImage.style.top)};
+				if (deltaY > 0) {
+					if (img.width < 50 || img.height < 50) {
+						move = false;
+					} else if (img.height - Math.abs(img.top) < 50) {
+						move = false;
+					} else if (img.width - Math.abs(img.left) < 50) {
+						move = false;
+					}
+				}
+				if (img.top < 0 && img.height - Math.abs(img.top) < 50 && movementY > 0) {
+					move = false;
+				} else if (img.left > 150 && movementX < 0) {
+					move = false;
+				} else if (img.top > 150 && movementY < 0) {
+					move = false;
+				} else if (img.left < 0 && img.width - Math.abs(img.left) < 50 && movementX > 0) {
+					move = false;
+				}
+				return move;
+			};
+			var zoomImage = function(event) {
+				var deltaY = event.originalEvent.deltaY;
+				if (!imageMoveabled(deltaY)) {
+					return;
+				}
+				// zoom in
+				if (deltaY < 0) {
+					makeImageLarger(Math.abs(deltaY));
+					moveImageLeft(Math.abs(deltaY/2));
+					moveImageUp(Math.abs(deltaY/2));
+				// zoom out
 				} else {
-					evt.data.intervalNum.num = setInterval(function() {
-						evt.data.action();
-					}, 50);
+					makeImageSmaller(deltaY);
+					moveImageRight(deltaY/2);
+					moveImageDown(deltaY/2);
 				}
 			};
-
-			$element.find(".fa-long-arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
-			$element.find(".fa-long-arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
-			$element.find(".fa-long-arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find(".fa-long-arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-
-			$element.find(".fa-long-arrow-left").on('mousedown', null, {intervalNum: intervalNum, action: moveImageLeft}, changeImage);
-			$element.find(".fa-long-arrow-right").on('mousedown', null, {intervalNum: intervalNum, action: moveImageRight}, changeImage);
-			$element.find(".fa-long-arrow-left").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find(".fa-long-arrow-right").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-
-			$element.find(".fa-plus").on('mousedown', null, {intervalNum: intervalNum, action: makeImageLarger}, changeImage);
-			$element.find(".fa-minus").on('mousedown', null, {intervalNum: intervalNum, action: makeImageSmaller}, changeImage);
-			$element.find(".fa-plus").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
-			$element.find(".fa-minus").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
+			var moveImage = function(event) {
+				movementX = startX - event.originalEvent.clientX;
+				movementY = startY - event.originalEvent.clientY;
+				if (!imageMoveabled()) {
+					return;
+				}
+				if (movementX < 0) {
+					moveImageRight(Math.abs(movementX));
+				} else {
+					moveImageLeft(movementX);
+				}
+				if (movementY > 0) {
+					moveImageUp(movementY);
+				} else {
+					moveImageDown(Math.abs(movementY));
+				}
+				//console.log('moveImage', 'movementX', movementX, 'movementY', movementY);
+				startX = event.originalEvent.clientX;
+				startY = event.originalEvent.clientY;
+			};
+			$($scope.prevImage).on('drag dragstart dragover dragenter dragend drop', function(event) {
+				event.preventDefault();
+			});
+			$($scope.prevImage).on('wheel', function(event) {
+				//console.log('wheel', 'deltaX', event.originalEvent.deltaX, 'deltaY', event.originalEvent.deltaY, 'deltaZ', event.originalEvent.deltaZ);
+				event.stopPropagation();
+				event.preventDefault();
+				zoomImage(event);
+			});
+			$($scope.prevImage).on('mousedown', function(event) {
+				event.stopPropagation();
+				startX = event.originalEvent.clientX;
+				startY = event.originalEvent.clientY;
+				$scope.$apply(function() {
+					$scope.dragging = !$scope.dragging;
+				});
+			});
+			$('#settings').on('click mouseup', function(event) {
+				event.stopPropagation();
+				$scope.$apply(function() {
+					$scope.dragging = false;
+				});
+			});
+			$('#settings').on('mousemove', function(event) {
+				event.stopPropagation();
+				if ($scope.dragging) {
+					moveImage(event);
+				}
+			});
 
 		};
 
