@@ -20,6 +20,10 @@
  */
 define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
+	var getNumFromPx = function(px) {
+		return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
+	};
+
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
 
@@ -277,46 +281,18 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var startY = null;
 			var movementX = null;
 			var movementY = null;
-			var prevParent = $('.showUploadPicture').get(0);
-			var prevParentRect = null;
-			var zoomFactor = null;
-			var getCursorCenterInfo = function(event) {
-				prevParentRect = prevParent.getBoundingClientRect();
-				var width = prevParentRect.width;
-				var height = prevParentRect.height;
-				var x = event.originalEvent.clientX - prevParentRect.left;
-				var y = event.originalEvent.clientY - prevParentRect.top;
-				var centerOffsetX = x - width/2;
-				var centerOffsetY = y - height/2;
-				console.log('centerImage', 'centerOffsetX', centerOffsetX, 'centerOffsetY', centerOffsetY);
-				return {'x': centerOffsetX, 'y': centerOffsetY};
-			};
 			var zoomImage = function(event) {
-				// zoom in
 				var deltaY = event.originalEvent.deltaY;
-				var center = getCursorCenterInfo(event);
+				// zoom in
 				if (deltaY < 0) {
 					makeImageLarger(Math.abs(deltaY));
-					if(center.x < 0 && center.y > 0) {
-						//move down and right
-					} else if (center.x > 0 && center.y > 0) {
-						//move down and left 
-						moveImageDown(Math.abs(deltaY) % 10 * 0.5);
-						moveImageLeft(Math.abs(deltaY) % 10 * 0.5);
-					} else if (center.x > 0 && center.y < 0) {
-						//move up and left 
-						moveImageUp(Math.abs(deltaY) % 10 * 0.5);
-						moveImageLeft(Math.abs(deltaY) % 10 * 0.5);
-					} else {
-						//move up and right
-						moveImageUp(Math.abs(deltaY) % 10 * 0.5);
-						moveImageRight(Math.abs(deltaY) % 10 * 0.5);
-					}
+					moveImageLeft(Math.abs(deltaY/2));
+					moveImageUp(Math.abs(deltaY/2));
 				// zoom out
 				} else {
 					makeImageSmaller(deltaY);
-					moveImageRight(deltaY % 10 * 0.5);
-					moveImageDown(deltaY % 10 * 0.5);
+					moveImageRight(deltaY/2);
+					moveImageDown(deltaY/2);
 				}
 			};
 			var moveImage = function(event) {
@@ -340,7 +316,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				event.preventDefault();
 			});
 			$($scope.prevImage).on('wheel', function(event) {
-				console.log('wheel', 'deltaX', event.originalEvent.deltaX, 'deltaY', event.originalEvent.deltaY, 'deltaZ', event.originalEvent.deltaZ);
+				//console.log('wheel', 'deltaX', event.originalEvent.deltaX, 'deltaY', event.originalEvent.deltaY, 'deltaZ', event.originalEvent.deltaZ);
 				event.stopPropagation();
 				event.preventDefault();
 				zoomImage(event);
@@ -354,7 +330,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				});
 			});
 			$('#settings').on('click mouseup', function(event) {
-				console.log('settings click', event);
 				event.stopPropagation();
 				$scope.$apply(function() {
 					$scope.dragging = false;
@@ -363,7 +338,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$('#settings').on('mousemove', function(event) {
 				event.stopPropagation();
 				if ($scope.dragging) {
-					console.log('move mouse with mouse down', event);
 					moveImage(event);
 				}
 			});
