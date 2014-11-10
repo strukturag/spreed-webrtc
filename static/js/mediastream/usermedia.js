@@ -63,7 +63,12 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		console.log("Requesting testGetUserMedia");
 		(function(complete) {
+			var timeout = null;
 			var success_helper = function(stream) {
+				if (timeout) {
+					clearTimeout(timeout);
+					timeout = null;
+				}
 				stream.stop();
 				if (complete.done) {
 					return;
@@ -73,6 +78,10 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				success_cb.apply(this, args);
 			};
 			var error_helper = function() {
+				if (timeout) {
+					clearTimeout(timeout);
+					timeout = null;
+				}
 				if (complete.done) {
 					return;
 				}
@@ -89,7 +98,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				console.error('getUserMedia failed with exception: ' + e.message);
 				error_helper(e);
 			}
-			setTimeout(function() {
+			timeout = setTimeout(function() {
 				var e = new Error("Timeout while waiting for getUserMedia");
 				console.error('getUserMedia timed out');
 				error_helper(e);
