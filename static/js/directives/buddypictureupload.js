@@ -22,10 +22,6 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
-	var getNumFromPx = function(px) {
-		return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
-	};
-
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
 
@@ -289,8 +285,35 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var startY = null;
 			var movementX = null;
 			var movementY = null;
+			// Check for out of bounds values so image stays inside preview block.
+			var imageMoveabled = function(deltaY) {
+				var move = true;
+				var img = {width: getNumFromPx($scope.prevImage.style.width), height: getNumFromPx($scope.prevImage.style.height), left: getNumFromPx($scope.prevImage.style.left), top: getNumFromPx($scope.prevImage.style.top)};
+				if (deltaY > 0) {
+					if (img.width < 50 || img.height < 50) {
+						move = false;
+					} else if (img.height - Math.abs(img.top) < 50) {
+						move = false;
+					} else if (img.width - Math.abs(img.left) < 50) {
+						move = false;
+					}
+				}
+				if (img.top < 0 && img.height - Math.abs(img.top) < 50 && movementY > 0) {
+					move = false;
+				} else if (img.left > 150 && movementX < 0) {
+					move = false;
+				} else if (img.top > 150 && movementY < 0) {
+					move = false;
+				} else if (img.left < 0 && img.width - Math.abs(img.left) < 50 && movementX > 0) {
+					move = false;
+				}
+				return move;
+			};
 			var zoomImage = function(event) {
 				var deltaY = event.originalEvent.deltaY;
+				if (!imageMoveabled(deltaY)) {
+					return;
+				}
 				// zoom in
 				if (deltaY < 0) {
 					makeImageLarger(Math.abs(deltaY));
@@ -306,6 +329,9 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			var moveImage = function(event) {
 				movementX = startX - event.originalEvent.clientX;
 				movementY = startY - event.originalEvent.clientY;
+				if (!imageMoveabled()) {
+					return;
+				}
 				if (movementX < 0) {
 					moveImageRight(Math.abs(movementX));
 				} else {
