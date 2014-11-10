@@ -20,10 +20,6 @@
  */
 define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
-	var getNumFromPx = function(px) {
-		return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
-	};
-
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
 
