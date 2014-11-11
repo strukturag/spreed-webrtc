@@ -1,3 +1,14 @@
+spreed-webrtc-server (0.22.8) precise; urgency=low
+
+  * Removed opacity transition from chat pane to avoid compositing issues.
+  * Fixed timeout of usermedia test.
+  * UI update fps reduces to 10 (was 60).
+  * Buddy picture file upload input is now cleared after cancel.
+  * Make sure to stop stream after testing usermedia.
+  * Several small UI alignment issues.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 11 Nov 2014 18:37:40 +0100
+
 spreed-webrtc-server (0.22.7) precise; urgency=low
 
   * Fixed a typo in getStreamById api.
@@ -8,7 +19,7 @@ spreed-webrtc-server (0.22.7) precise; urgency=low
   * Fixed an issue where incoming chat messages failed when getting called from the sender at the same time.
   * No longer use dpkg-parsechangelog on configure.
 
- -- Simon Eisenmann <longsleep@redemption.intranet.struktur.de>  Mon, 03 Nov 2014 11:02:53 +0100
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 03 Nov 2014 11:02:53 +0100
 
 spreed-webrtc-server (0.22.6) precise; urgency=low
 
