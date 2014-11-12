@@ -92,13 +92,16 @@ define(['underscore', 'mediastream/peercall'], function(_, PeerCall) {
 		console.log("Creating PeerConnection", call);
 		call.createPeerConnection(_.bind(function(peerconnection) {
 			// Success call.
+			call.e.on("negotiationNeeded", _.bind(function(event, extracall) {
+				this.webrtc.sendOfferWhenNegotiationNeeded(extracall);
+			}, this));
 			if (this.webrtc.usermedia) {
 				this.webrtc.usermedia.addToPeerConnection(peerconnection);
 			}
-			call.createOffer(_.bind(function(sessionDescription, extracall) {
+			/*call.createOffer(_.bind(function(sessionDescription, extracall) {
 				console.log("Sending offer with sessionDescription", sessionDescription, extracall.id);
 				this.webrtc.api.sendOffer(extracall.id, sessionDescription);
-			}, this));
+			}, this));*/
 		}, this), _.bind(function() {
 			// Error call.
 			console.error("Failed to create peer connection for conference call.");
