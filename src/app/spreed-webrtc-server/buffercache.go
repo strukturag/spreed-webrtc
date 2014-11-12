@@ -160,3 +160,21 @@ func (cache *bufferCache) New() Buffer {
 func (cache *bufferCache) Wrap(data []byte) Buffer {
 	return &directBuffer{refcnt: 1, cache: cache, buf: bytes.NewBuffer(data)}
 }
+
+func readAll(dest Buffer, r io.Reader) error {
+	var err error
+	defer func() {
+		e := recover()
+		if e == nil {
+			return
+		}
+		if panicErr, ok := e.(error); ok && panicErr == bytes.ErrTooLarge {
+			err = panicErr
+		} else {
+			panic(e)
+		}
+	}()
+
+	_, err = dest.ReadFrom(r)
+	return err
+}

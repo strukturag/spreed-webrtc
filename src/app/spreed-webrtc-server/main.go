@@ -91,12 +91,12 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func makeImageHandler(hub *Hub, expires time.Duration) http.HandlerFunc {
+func makeImageHandler(buddyImages ImageCache, expires time.Duration) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
-		image := hub.buddyImages.Get(vars["imageid"])
+		image := buddyImages.Get(vars["imageid"])
 		if image == nil {
 			http.Error(w, "Unknown image", http.StatusNotFound)
 			return
@@ -221,6 +221,10 @@ func runner(runtime phoenix.Runtime) error {
 		if len(sessionSecret) < 32 {
 			return fmt.Errorf("Length of sessionSecret must be at least 32 bytes.")
 		}
+	}
+
+	if len(sessionSecret) < 32 {
+		log.Printf("Weak sessionSecret (only %d bytes). It is recommended to use a key with 32 or 64 bytes.\n", len(sessionSecret))
 	}
 
 	var encryptionSecret []byte
@@ -371,9 +375,6 @@ func runner(runtime phoenix.Runtime) error {
 	// Create realm string from config.
 	computedRealm := fmt.Sprintf("%s.%s", serverRealm, serverToken)
 
-	// Create our hub instance.
-	hub := NewHub(runtimeVersion, config, sessionSecret, encryptionSecret, turnSecret, computedRealm)
-
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
 		nCPU := goruntime.NumCPU()
@@ -426,12 +427,20 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Add handlers.
+	buddyImages := NewImageCache()
+	codec := NewCodec()
+	roomManager := NewRoomManager(config, codec)
+	hub := NewHub(config, sessionSecret, encryptionSecret, turnSecret, codec)
+	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)
+	sessionManager := NewSessionManager(config, tickets, sessionSecret)
+	statsManager := NewStatsManager(hub, roomManager, sessionManager)
+	channellingAPI := NewChannellingAPI(runtimeVersion, config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, roomManager, buddyImages)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
-	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(hub, time.Duration(24)*time.Hour)))
+	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(buddyImages, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
-	r.Handle("/ws", makeWsHubHandler(hub))
+	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Add API end points.
@@ -442,14 +451,14 @@ func runner(runtime phoenix.Runtime) error {
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 	if usersEnabled {
 		// Create Users handler.
-		users := NewUsers(hub, usersMode, serverRealm, runtime)
-		api.AddResource(&Sessions{hub: hub, users: users}, "/sessions/{id}/")
+		users := NewUsers(hub, tickets, sessionManager, usersMode, serverRealm, runtime)
+		api.AddResource(&Sessions{tickets, hub, users}, "/sessions/{id}/")
 		if usersAllowRegistration {
 			api.AddResource(users, "/users")
 		}
 	}
 	if statsEnabled {
-		api.AddResourceWithWrapper(&Stats{hub: hub}, httputils.MakeGzipHandler, "/stats")
+		api.AddResourceWithWrapper(&Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
 	}
 

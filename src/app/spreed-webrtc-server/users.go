@@ -291,16 +291,21 @@ func (un *UserNonce) Response() (int, interface{}, http.Header) {
 }
 
 type Users struct {
-	hub     *Hub
+	SessionValidator
+	SessionManager
+	SessionStore
 	realm   string
 	handler UsersHandler
 }
 
-func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
+func NewUsers(sessionStore SessionStore, sessionValidator SessionValidator, sessionManager SessionManager, mode, realm string, runtime phoenix.Runtime) *Users {
 
 	var users = &Users{
-		hub:   hub,
-		realm: realm,
+		sessionValidator,
+		sessionManager,
+		sessionStore,
+		realm,
+		nil,
 	}
 
 	var handler UsersHandler
@@ -309,8 +314,8 @@ func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 	// Create handler based on mode.
 	if handler, err = users.createHandler(mode, runtime); handler != nil && err == nil {
 		users.handler = handler
-		// Register handler Get at the hub.
-		users.hub.useridRetriever = func(request *http.Request) (userid string, err error) {
+		// Register handler Get.
+		sessionManager.RetrieveUsersWith(func(request *http.Request) (userid string, err error) {
 			userid, err = handler.Get(request)
 			if err != nil {
 				log.Printf("Failed to get userid from handler: %s", err)
@@ -320,7 +325,7 @@ func NewUsers(hub *Hub, mode, realm string, runtime phoenix.Runtime) *Users {
 				}
 			}
 			return
-		}
+		})
 		log.Printf("Enabled users handler '%s'\n", mode)
 	} else if err != nil {
 		log.Printf("Failed to enable handler '%s': %s\n", mode, err)
@@ -450,11 +455,20 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 	userid := fmt.Sprintf("%s@%s", uuid.NewV4().String(), users.realm)
 
 	// Make sure Sid matches session and is valid.
-	if !users.hub.ValidateSession(snr.Id, snr.Sid) {
+	if !users.ValidateSession(snr.Id, snr.Sid) {
 		return 403, NewApiError("users_invalid_session", "Invalid session"), http.Header{"Content-Type": {"application/json"}}
 	}
 
-	nonce, err := users.hub.sessiontokenHandler(&SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
+	var (
+		nonce string
+		err   error
+	)
+	if session, ok := users.GetSession(snr.Id); ok {
+		nonce, err = session.Authorize(users.Realm(), &SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
+	} else {
+		err = errors.New("no such session")
+	}
+
 	if err != nil {
 		return 400, NewApiError("users_request_failed", fmt.Sprintf("Error: %q", err)), http.Header{"Content-Type": {"application/json"}}
 	}

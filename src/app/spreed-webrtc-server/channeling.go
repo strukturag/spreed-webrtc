@@ -21,10 +21,37 @@
 
 package main
 
+type DataError struct {
+	Type    string
+	Code    string
+	Message string
+}
+
+func (err *DataError) Error() string {
+	return err.Message
+}
+
+type DataRoomCredentials struct {
+	PIN string
+}
+
 type DataHello struct {
-	Version string
-	Ua      string
-	Id      string
+	Version     string
+	Ua          string
+	Id          string
+	Credentials *DataRoomCredentials
+}
+
+type DataWelcome struct {
+	Type  string
+	Room  *DataRoom
+	Users []*DataSession
+}
+
+type DataRoom struct {
+	Type        string
+	Name        string
+	Credentials *DataRoomCredentials
 }
 
 type DataOffer struct {
@@ -159,6 +186,7 @@ type DataIncoming struct {
 	Alive          *DataAlive
 	Authentication *DataAuthentication
 	Sessions       *DataSessions
+	Room           *DataRoom
 	Iid            string `json:",omitempty"`
 }
 

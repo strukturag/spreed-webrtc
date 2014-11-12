@@ -22,14 +22,13 @@
 package main
 
 import (
-	"bytes"
 	"container/list"
-	"github.com/gorilla/websocket"
 	"io"
 	"log"
-	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 const (
@@ -54,110 +53,77 @@ const (
 	maxRatePerSecond = 20
 )
 
-type Connection struct {
+type Connection interface {
+	Index() uint64
+	Send(Buffer)
+	Close(runCallbacks bool)
+	readPump()
+	writePump()
+}
+
+type ConnectionHandler interface {
+	NewBuffer() Buffer
+	OnConnect(Connection)
+	OnText(Buffer)
+	OnDisconnect()
+}
+
+type connection struct {
 	// References.
-	h       *Hub
 	ws      *websocket.Conn
-	request *http.Request
+	handler ConnectionHandler
 
 	// Data handling.
 	condition *sync.Cond
 	queue     list.List
 	mutex     sync.Mutex
 	isClosed  bool
-	isClosing bool
 
-	// Metadata.
-	Id           string
-	Roomid       string // Keep Roomid here for quick acess without locking c.Session.
-	Idx          uint64
-	Session      *Session
-	IsRegistered bool
-	Hello        bool
-	Version      string
+	// Debugging
+	Idx uint64
 }
 
-func NewConnection(h *Hub, ws *websocket.Conn, request *http.Request) *Connection {
-
-	c := &Connection{
-		h:       h,
+func NewConnection(index uint64, ws *websocket.Conn, handler ConnectionHandler) Connection {
+	c := &connection{
 		ws:      ws,
-		request: request,
+		handler: handler,
+		Idx:     index,
 	}
 	c.condition = sync.NewCond(&c.mutex)
 
 	return c
-
 }
 
-func (c *Connection) close() {
+func (c *connection) Index() uint64 {
+	return c.Idx
+}
 
-	if !c.isClosed {
-		c.ws.Close()
-		c.Session.Close()
-		c.mutex.Lock()
-		c.Session = nil
-		c.isClosed = true
-		for {
-			head := c.queue.Front()
-			if head == nil {
-				break
-			}
-			c.queue.Remove(head)
-			message := head.Value.(Buffer)
-			message.Decref()
-		}
-		c.condition.Signal()
+func (c *connection) Close(runCallbacks bool) {
+	c.mutex.Lock()
+	if c.isClosed {
 		c.mutex.Unlock()
+		return
 	}
-
-}
-
-func (c *Connection) register() error {
-
-	s := c.h.CreateSession(c.request, nil)
-	c.h.registerHandler(c, s)
-	return nil
-}
-
-func (c *Connection) reregister(token string) error {
-
-	if st, err := c.h.DecodeSessionToken(token); err == nil {
-		s := c.h.CreateSession(c.request, st)
-		c.h.registerHandler(c, s)
-	} else {
-		log.Println("Error while decoding session token", err)
-		c.register()
+	if runCallbacks {
+		c.handler.OnDisconnect()
 	}
-	return nil
-
-}
-
-func (c *Connection) unregister() {
-	c.isClosing = true
-	c.h.unregisterHandler(c)
-}
-
-func (c *Connection) readAll(dest Buffer, r io.Reader) error {
-	var err error
-	defer func() {
-		e := recover()
-		if e == nil {
-			return
+	c.ws.Close()
+	c.isClosed = true
+	for {
+		head := c.queue.Front()
+		if head == nil {
+			break
 		}
-		if panicErr, ok := e.(error); ok && panicErr == bytes.ErrTooLarge {
-			err = panicErr
-		} else {
-			panic(e)
-		}
-	}()
-
-	_, err = dest.ReadFrom(r)
-	return err
+		c.queue.Remove(head)
+		message := head.Value.(Buffer)
+		message.Decref()
+	}
+	c.condition.Signal()
+	c.mutex.Unlock()
 }
 
 // readPump pumps messages from the websocket connection to the hub.
-func (c *Connection) readPump() {
+func (c *connection) readPump() {
 	c.ws.SetReadLimit(maxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(pongWait))
 	c.ws.SetPongHandler(func(string) error {
@@ -165,6 +131,10 @@ func (c *Connection) readPump() {
 		return nil
 	})
 	times := list.New()
+
+	// NOTE(lcooper): This more or less assumes that the write pump is started.
+	c.handler.OnConnect(c)
+
 	for {
 		//fmt.Println("readPump wait nextReader", c.Idx)
 		op, r, err := c.ws.NextReader()
@@ -177,12 +147,6 @@ func (c *Connection) readPump() {
 		}
 		switch op {
 		case websocket.TextMessage:
-			message := c.h.buffers.New()
-			err = c.readAll(message, r)
-			if err != nil {
-				message.Decref()
-				break
-			}
 			now := time.Now()
 			if times.Len() == maxRatePerSecond {
 				front := times.Front()
@@ -194,18 +158,23 @@ func (c *Connection) readPump() {
 				}
 			}
 			times.PushBack(now)
-			c.h.server.OnText(c, message)
+
+			message := c.handler.NewBuffer()
+			err = readAll(message, r)
+			if err != nil {
+				message.Decref()
+				break
+			}
+			c.handler.OnText(message)
 			message.Decref()
 		}
 	}
 
-	c.unregister()
-	c.ws.Close()
+	c.Close(true)
 }
 
 // Write message to outbound queue.
-func (c *Connection) send(message Buffer) {
-
+func (c *connection) Send(message Buffer) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.isClosed {
@@ -223,8 +192,7 @@ func (c *Connection) send(message Buffer) {
 }
 
 // writePump pumps messages from the queue to the websocket connection.
-func (c *Connection) writePump() {
-
+func (c *connection) writePump() {
 	var timer *time.Timer
 	ping := false
 
@@ -301,16 +269,16 @@ func (c *Connection) writePump() {
 cleanup:
 	//fmt.Println("writePump done")
 	timer.Stop()
-	c.ws.Close()
+	c.Close(true)
 }
 
 // Write ping message.
-func (c *Connection) ping() error {
+func (c *connection) ping() error {
 	return c.write(websocket.PingMessage, []byte{})
 }
 
 // Write writes a message with the given opCode and payload.
-func (c *Connection) write(opCode int, payload []byte) error {
+func (c *connection) write(opCode int, payload []byte) error {
 	c.ws.SetWriteDeadline(time.Now().Add(writeWait))
 	return c.ws.WriteMessage(opCode, payload)
 }

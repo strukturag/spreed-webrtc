@@ -24,6 +24,9 @@ define([
 	'services/desktopnotify',
 	'services/playsound',
 	'services/safeapply',
+	'services/connector',
+	'services/api',
+	'services/webrtc',
 	'services/mediastream',
 	'services/appdata',
 	'services/buddydata',
@@ -56,10 +59,16 @@ define([
 	'services/continueconnector',
 	'services/chromeextension',
 	'services/usersettingsdata',
-	'services/localstatus'], function(_,
+	'services/localstatus',
+	'services/rooms',
+	'services/resturl',
+	'services/roompin'], function(_,
 desktopNotify,
 playSound,
 safeApply,
+connector,
+api,
+webrtc,
 mediaStream,
 appData,
 buddyData,
@@ -92,12 +101,18 @@ screensharing,
 continueConnector,
 chromeExtension,
 userSettingsData,
-localStatus) {
+localStatus,
+rooms,
+restURL,
+roompin) {
 
 	var services = {
 		desktopNotify: desktopNotify,
 		playSound: playSound,
 		safeApply: safeApply,
+		connector: connector,
+		api: api,
+		webrtc: webrtc,
 		mediaStream: mediaStream,
 		appData: appData,
 		buddyData: buddyData,
@@ -130,13 +145,16 @@ localStatus) {
 		continueConnector: continueConnector,
 		chromeExtension: chromeExtension,
 		userSettingsData: userSettingsData,
-		localStatus: localStatus
+		localStatus: localStatus,
+		rooms: rooms,
+		restURL: restURL,
+		roompin: roompin
 	};
 
 	var initialize = function(angModule) {
 		_.each(services, function(service, name) {
 			angModule.factory(name, service);
-		})
+		});
 	};
 
 	return {

@@ -22,9 +22,10 @@
 package main
 
 import (
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 const (
@@ -49,10 +50,8 @@ var (
 	}
 )
 
-func makeWsHubHandler(h *Hub) http.HandlerFunc {
-
+func makeWSHandler(connectionCounter ConnectionCounter, sessionManager SessionManager, codec Codec, channellingAPI ChannellingAPI) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		// Validate incoming request.
 		if r.Method != "GET" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -68,30 +67,14 @@ func makeWsHubHandler(h *Hub) http.HandlerFunc {
 			return
 		}
 
-		// Read request details.
-		r.ParseForm()
-		token := r.FormValue("t")
-
 		// Create a new connection instance.
-		c := NewConnection(h, ws, r)
-		if token != "" {
-			if err := c.reregister(token); err != nil {
-				log.Println(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-		} else {
-			if err := c.register(); err != nil {
-				log.Println(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-		}
+		session := sessionManager.CreateSession(r)
+		defer sessionManager.DestroySession(session)
+		client := NewClient(codec, channellingAPI, session)
+		conn := NewConnection(connectionCounter.CountConnection(), ws, client)
 
 		// Start pumps (readPump blocks).
-		go c.writePump()
-		c.readPump()
-
+		go conn.writePump()
+		conn.readPump()
 	}
-
 }
