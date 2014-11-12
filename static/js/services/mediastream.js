@@ -23,29 +23,31 @@ define([
 	'underscore',
 	'ua-parser',
 	'modernizr',
-	'mediastream/connector',
-	'mediastream/api',
-	'mediastream/webrtc',
 	'mediastream/tokens'
 
-], function($, _, uaparser, Modernizr, Connector, Api, WebRTC, tokens) {
+], function($, _, uaparser, Modernizr, tokens) {
 
-	return ["globalContext", "$rootScope", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", function(context, $rootScope, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector) {
+	return ["globalContext", "connector", "api", "webrtc", "$rootScope", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", "restURL", function(context, connector, api, webrtc, $rootScope, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector, restURL) {
 
 		var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
-		var version = context.Cfg.Version || "unknown";
+		var version = context.Cfg.Version;
 		console.log("Service version: " + version);
 		console.log("Ws URL: " + url);
 		console.log("Secure Contextual Escaping: " + $sce.isEnabled());
 
-		var connector = new Connector(version);
-		var api = new Api(connector);
-		var webrtc = new WebRTC(api);
 		var connectMarker = null;
 
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
-		var authorizing = false;
+
+		var authorizing = context.Cfg.UsersEnabled;
+        $rootScope.authorizing = function(value) {
+			// Boolean flag to indicate that an authentication is currently in progress.
+			if (typeof(value) !== "undefined") {
+				authorizing = !!value;
+			}
+			return authorizing;
+		};
 
 		var mediaStream = {
 			version: version,
@@ -55,21 +57,9 @@ define([
 			connector: connector,
 			api: api,
 			tokens: tokens,
-			url: {
-				room: function(id) {
-					id = $window.encodeURIComponent(id);
-					return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + id;
-				},
-				buddy: function(id) {
-					return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + "static/img/buddy/s46/" + id;
-				},
-				api: function(path) {
-					return (context.Cfg.B || "/") + "api/v1/" + path;
-				}
-			},
 			users: {
 				register: function(form, success_cb, error_cb) {
-					var url = mediaStream.url.api("users");
+					var url = restURL.api("users");
 					if (form) {
 						// Form submit mode.
 						$(form).attr("action", url).attr("method", "POST");
@@ -135,16 +125,9 @@ define([
 						});
 					}
 				},
-				authorizing: function(value) {
-					// Boolean flag to indicate that an authentication is currently in progress.
-					if (typeof(value) !== "undefined") {
-						authorizing = !!value;
-					}
-					return authorizing;
-				},
 				authorize: function(data, success_cb, error_cb) {
-					mediaStream.users.authorizing(true);
-					var url = mediaStream.url.api("sessions") + "/" + mediaStream.api.id + "/";
+					$rootScope.authorizing(true);
+					var url = restURL.api("sessions") + "/" + mediaStream.api.id + "/";
 					var login = _.clone(data);
 					login.id = mediaStream.api.id;
 					login.sid = mediaStream.api.sid;
@@ -160,14 +143,14 @@ define([
 						if (data.nonce !== "" && data.success) {
 							success_cb(data, status);
 						} else {
-							mediaStream.users.authorizing(false);
+							$rootScope.authorizing(false);
 							if (error_cb) {
 								error_cb(data, status);
 							}
 						}
 					}).
 					error(function(data, status) {
-						mediaStream.users.authorizing(false);
+						$rootScope.authorizing(false);
 						if (error_cb) {
 							error_cb(data, status)
 						}
@@ -226,40 +209,12 @@ define([
 					}
 				});
 			},
-			changeRoom: function(id, replace) {
-				id = $window.encodeURIComponent(id);
-				// Allow room ids to start with @,$ and + without quoting.
-				id = id.replace(/^%40/, "@");
-				id = id.replace(/^%24/, "$");
-				id = id.replace(/^%2B/, "+");
-				safeApply($rootScope, function(scope) {
-					$location.path("/" + id);
-					if (replace) {
-						$location.replace();
-					}
-				});
-				return id;
-			},
-			applyRoom: function() {
-				if (authorizing) {
-					// Do nothing while authorizing.
-					return;
-				}
-				var roomid = $rootScope.roomid;
-				if (roomid !== connector.roomid) {
-					console.log("Apply room", roomid);
-					connector.room(roomid);
-				}
-			},
 			initialize: function($rootScope, translation) {
 
 				var cont = false;
 				var ready = false;
 
 				$rootScope.version = version;
-				$rootScope.roomid = null;
-				$rootScope.roomlink = null;
-				$rootScope.roomstatus = false;
 				$rootScope.connect = false;
 
 				var connect = function() {
@@ -278,61 +233,10 @@ define([
 					}
 				};
 
-				var title = (function(e) {
-					return {
-						element: e,
-						text: e.text()
-					}
-				}($("title")));
-
-				// Room selector.
-				$rootScope.$on("$locationChangeSuccess", function(event) {
-
-					var room;
-					if ($route.current) {
-						room = $route.current.params.room;
-						room = $window.decodeURIComponent(room);
-					} else {
-						room = "";
-					}
-					console.info("Selected room is:", [room], ready, cont);
-					$rootScope.roomid = room;
-
-					if (!ready || !cont) {
-						ready = true;
-						connect();
-					} else {
-						// Auto apply room when already connected.
-						mediaStream.applyRoom();
-					}
-
-					$rootScope.roomlink = room ? mediaStream.url.room(room) : null;
-					if ($rootScope.roomlink) {
-						title.element.text(room + " - " + title.text);
-					} else {
-						title.element.text(title.text);
-					}
-
-				});
-
-				// Cache events, to avoid ui flicker during quick room changes.
-				var roomStatusCache = $rootScope.roomstatus;
-				var roomCache = null;
-				var roomCache2 = null;
-				$rootScope.$on("roomStatus", function(event, status) {
-					// roomStatus is triggered by the buddylist when received.users.
-					roomStatusCache = status ? true : false;
-					roomCache = status ? $rootScope.roomid : null;
-					$timeout(function() {
-						if ($rootScope.roomstatus !== roomStatusCache) {
-							$rootScope.roomstatus = roomStatusCache;
-						}
-						if (roomCache !== roomCache2) {
-							// Let every one know about the new room.
-							$rootScope.$broadcast("room", roomCache);
-							roomCache2 = roomCache;
-						}
-					}, 100);
+				$rootScope.$on("rooms.ready", function(event) {
+					console.info("Initial room path set, continuing to connect ...");
+					ready = true;
+					connect();
 				});
 
 				visibility.afterPrerendering(function() {
@@ -356,7 +260,7 @@ define([
 								}
 							}, prompt);
 						};
-						var url = mediaStream.url.api("tokens");
+						var url = restURL.api("tokens");
 						var check = function(code) {
 							$http({
 								method: "POST",
@@ -405,9 +309,6 @@ define([
 
 			}
 		};
-
-		// For debugging.
-		$window.changeRoom = mediaStream.changeRoom;
 
 		return mediaStream;
 

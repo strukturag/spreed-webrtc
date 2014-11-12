@@ -21,7 +21,7 @@
 define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 	// buddyList
-	return ["$compile", "buddyList", "mediaStream", "contacts", function($compile, buddyList, mediaStream, contacts) {
+	return ["buddyList", "api", "webrtc", "contacts", function(buddyList, api, webrtc, contacts) {
 
 		//console.log("buddyList directive");
 
@@ -30,10 +30,34 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			$scope.layout.buddylist = false;
 			$scope.layout.buddylistAutoHide = true;
 
+			var inRoom = false;
+			var updateBuddyListVisibility = function() {
+				if (inRoom && !$scope.peer) {
+					$scope.layout.buddylist = true;
+					$scope.layout.buddylistAutoHide = false;
+				} else if (!$scope.layout.buddylistAutoHide) {
+					$scope.layout.buddylist = false;
+					$scope.layout.buddylistAutoHide = true;
+				}
+			};
+
+			webrtc.e.on("done", function() {
+				updateBuddyListVisibility();
+			});
+
+			$scope.$on("room.joined", function(ev) {
+				inRoom = true;
+				updateBuddyListVisibility();
+			});
+
+			$scope.$on("room.left", function(ev) {
+				inRoom = false;
+				buddylist.onClosed();
+				updateBuddyListVisibility();
+			});
+
 			$scope.doCall = function(id) {
-
-				mediaStream.webrtc.doCall(id);
-
+				webrtc.doCall(id);
 			};
 
 			$scope.doChat = function(id) {
@@ -61,23 +85,6 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
-			/*
-			$scope.doAudioConference = function(id) {
-
-				$scope.updateAutoAccept(id);
-				mediaStream.api.sendChat(id, null, {
-					AutoCall: {
-						Type: "conference",
-						Id: mediaStream.connector.roomid
-					}
-				})
-
-			};*/
-
-			$scope.setRoomStatus = function(status) {
-				$scope.$emit("roomStatus", status);
-			};
-
 			var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
 			var onJoined = _.bind(buddylist.onJoined, buddylist);
 			var onLeft = _.bind(buddylist.onLeft, buddylist);
@@ -85,15 +92,14 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
 			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
 			var onContactUpdated = _.bind(buddylist.onContactUpdated, buddylist);
-			mediaStream.api.e.on("received.userleftorjoined", function(event, dataType, data) {
+			api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);
 				} else {
 					onJoined(data);
 				}
 			});
-			mediaStream.api.e.on("received.users", function(event, data) {
-				$scope.setRoomStatus(true);
+			api.e.on("received.users", function(event, data) {
 				var selfId = $scope.id;
 				_.each(data, function(p) {
 					if (p.Id !== selfId) {
@@ -102,17 +108,10 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				});
 				$scope.$apply();
 			});
-			mediaStream.api.e.on("received.status", function(event, data) {
+			api.e.on("received.status", function(event, data) {
 				onStatus(data);
 			});
-			mediaStream.connector.e.on("closed error", function() {
-				$scope.setRoomStatus(false);
-				buddylist.onClosed();
-			});
-			// Request user list whenever the connection comes ready.
-			mediaStream.connector.ready(function() {
-				mediaStream.api.requestUsers();
-			});
+
 			// Contacts.
 			contacts.e.on("contactadded", function(event, data) {
 				onContactAdded(data);

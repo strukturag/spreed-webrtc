@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function($, _) {
+define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	var alive_check_timeout = 5000;
 	var alive_check_timeout_2 = 10000;
 
-	var Api = function(connector) {
-
+	var Api = function(version, connector) {
+		this.version = version;
 		this.id = null;
 		this.sid = null;
 		this.session = {};
@@ -32,6 +32,15 @@ define(['jquery', 'underscore'], function($, _) {
 		this.iids= 0;
 
 		this.e = $({});
+
+		var ua = uaparser();
+		if (ua.os.name && /Spreed Desktop Caller/i.test(ua.ua)) {
+			this.userAgent = ua.ua.match(/Spreed Desktop Caller\/([\d.]+)/i)[1] + " (" + ua.os.name + ")";
+		} else if (ua.browser.name) {
+			this.userAgent = ua.browser.name + " " + ua.browser.major;
+		} else {
+			this.userAgent = ua.ua;
+		}
 
 		connector.e.on("received", _.bind(function(event, data) {
 			this.received(data);
@@ -92,7 +101,7 @@ define(['jquery', 'underscore'], function($, _) {
 		return this.apply(name, obj);
 	};
 
-	Api.prototype.request = function(type, data, cb) {
+	Api.prototype.request = function(type, data, cb, noqueue) {
 
 		var payload = {
 			Type: type
@@ -103,7 +112,7 @@ define(['jquery', 'underscore'], function($, _) {
 			payload.Iid = iid;
 			this.e.one(iid+".request", cb);
 		}
-		this.connector.send(payload);
+		this.connector.send(payload, noqueue);
 
 	}
 
@@ -199,6 +208,9 @@ define(['jquery', 'underscore'], function($, _) {
 				// Do nothing.
 				//console.log("Alive response received.");
 				break;
+			case "Room":
+				this.e.triggerHandler("received.room", [data]);
+				break;
 			default:
 				console.log("Unhandled type received:", dataType, data);
 				break;
@@ -215,6 +227,37 @@ define(['jquery', 'underscore'], function($, _) {
 
 		return this.send("Self", data, true);
 
+	};
+
+	Api.prototype.sendHello = function(name, pin, success, fault) {
+		var data = {
+			Version: this.version,
+			Ua: this.userAgent,
+			Id: name
+		};
+
+		if (pin) {
+			data.Credentials = {
+				PIN: pin
+			};
+		}
+
+		var that = this;
+		var onResponse = function(event, type, data) {
+			if (type === "Welcome") {
+				if (success) {
+					success(data.Room);
+				}
+				that.e.triggerHandler("received.room", [data.Room]);
+				that.e.triggerHandler("received.users", [data.Users]);
+			} else {
+				if (fault) {
+					fault(data);
+				}
+			}
+		};
+
+		this.request("Hello", data, onResponse, true);
 	};
 
 	Api.prototype.sendOffer = function(to, payload) {
@@ -252,6 +295,21 @@ define(['jquery', 'underscore'], function($, _) {
 		return this.send("Answer", data);
 
 	}
+
+	Api.prototype.requestRoomUpdate = function(room, success, fault) {
+		var onResponse = function(event, type, data) {
+			if (type === "Room") {
+				if (success) {
+					success(data);
+				}
+			} else {
+				if (fault) {
+					fault(data);
+				}
+			}
+		};
+		this.request("Room", room, onResponse, true);
+	};
 
 	Api.prototype.requestUsers = function() {
 

@@ -39,26 +39,28 @@ type Session struct {
 	Status        interface{}
 	Nonce         string
 	Prio          int
+	Hello         bool
+	Roomid        string
 	mutex         sync.RWMutex
 	userid        string
 	fake          bool
 	stamp         int64
 	attestation   *SessionAttestation
+	attestations  *securecookie.SecureCookie
 	subscriptions map[string]*Session
 	subscribers   map[string]*Session
-	h             *Hub
 }
 
-func NewSession(h *Hub, id, sid string) *Session {
+func NewSession(attestations *securecookie.SecureCookie, id, sid string) *Session {
 
 	session := &Session{
 		Id:            id,
 		Sid:           sid,
 		Prio:          100,
 		stamp:         time.Now().Unix(),
+		attestations:  attestations,
 		subscriptions: make(map[string]*Session),
 		subscribers:   make(map[string]*Session),
-		h:             h,
 	}
 	session.NewAttestation()
 	return session
@@ -288,35 +290,27 @@ func (s *Session) DataSessionStatus() *DataSession {
 }
 
 func (s *Session) NewAttestation() {
-
 	s.attestation = &SessionAttestation{
 		s: s,
 	}
 	s.attestation.Update()
-
 }
 
 func (s *Session) Attestation() (attestation string) {
-
 	s.mutex.RLock()
 	attestation = s.attestation.Token()
 	s.mutex.RUnlock()
 	return
-
 }
 
 func (s *Session) UpdateAttestation() {
-
 	s.mutex.Lock()
 	s.attestation.Update()
 	s.mutex.Unlock()
-
 }
 
 type SessionUpdate struct {
-	Id     string
 	Types  []string
-	Roomid string
 	Ua     string
 	Prio   int
 	Status interface{}
@@ -336,39 +330,31 @@ type SessionAttestation struct {
 }
 
 func (sa *SessionAttestation) Update() (string, error) {
-
 	token, err := sa.Encode()
 	if err == nil {
 		sa.token = token
 		sa.refresh = time.Now().Unix() + 180 // expires after 3 minutes
 	}
 	return token, err
-
 }
 
 func (sa *SessionAttestation) Token() (token string) {
-
 	if sa.refresh < time.Now().Unix() {
 		token, _ = sa.Update()
 	} else {
 		token = sa.token
 	}
 	return
-
 }
 
 func (sa *SessionAttestation) Encode() (string, error) {
-
-	return sa.s.h.attestations.Encode("attestation", sa.s.Id)
-
+	return sa.s.attestations.Encode("attestation", sa.s.Id)
 }
 
 func (sa *SessionAttestation) Decode(token string) (string, error) {
-
 	var id string
-	err := sa.s.h.attestations.Decode("attestation", token, &id)
+	err := sa.s.attestations.Decode("attestation", token, &id)
 	return id, err
-
 }
 
 func init() {
