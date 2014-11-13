@@ -19,6 +19,8 @@
  *
  */
 
+$darken-tour-opacity: .4;
+
 #helptour {
 }
 
@@ -115,7 +117,7 @@
 .helptourShowRoomPane {
   #bar,
   #buddylist {
-    opacity: .4;
+    opacity: $darken-tour-opacity;
   }
   .overlaybar {
     background: $componentfg2;
@@ -123,25 +125,26 @@
 }
 .helptourShowSettingsPane {
   #roombar {
-    opacity: .4;
+    opacity: $darken-tour-opacity;
   }
 }
 .helptourShowChatPane {
   #roombar,
   #buddylist {
-    opacity: .4;
+    opacity: $darken-tour-opacity;
   }
 }
 .helptourShowBuddyListPane {
   #bar,
   #roombar {
-    opacity: .4;
+    opacity: $darken-tour-opacity;
   }
 }
-.helptourShowMediaAccessPane {
+.helptourShowMediaAccessPane,
+.helptourShowWelcomePane {
   #bar,
   #roombar,
   #buddylist {
-    opacity: .4;
+    opacity: $darken-tour-opacity;
   }
 }
