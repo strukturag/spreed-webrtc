@@ -25,6 +25,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 	return [function() {
 
 		var controller = ['$scope', '$timeout', '$modal', '$rootScope', 'mediaStream', function($scope, $timeout, $modal, $rootScope, mediaStream) {
+			var isToggled = false;
 			var displayTime = 12000;
 			var shown = localStorage.getItem('mediastream-helptour');
 			var timeoutAutoStepsIn = [];
@@ -38,25 +39,94 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				chatMaximized: false,
 				main: null,
 				presentation: false,
+				roombar: false,
 				screenshare: false,
 				settings: false
 			};
-			var trigger = false;
+			var tourLayoutShowRoomPane = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: true,
+				screenshare: false,
+				settings: false
+			};
+			var tourLayoutShowBuddyListPane = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: false,
+				screenshare: false,
+				settings: false
+			};
+			var tourLayoutShowChatPane = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: true,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: false,
+				screenshare: false,
+				settings: false
+			};
+			var tourLayoutShowSettingsPane = {
+				buddylist: false,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: false,
+				screenshare: false,
+				settings: true
+			};
+			var tourLayoutShowMediaAccessPane = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: false,
+				screenshare: false,
+				settings: false
+			};
+			var tourLayoutShowWelcomePane = {
+				buddylist: true,
+				buddylistAutoHide: false,
+				chat: false,
+				chatMaximized: false,
+				main: null,
+				presentation: false,
+				roombar: false,
+				screenshare: false,
+				settings: false
+			};
 			menus.triggerMediaAccess = function() {
-				if (trigger) {
+				if (isToggled) {
 					mediaStream.webrtc.testMediaAccess(function() {});
 				} else {
 					mediaStream.webrtc.stop();
 				}
 			};
-			menus.toggleRoom = function(css) {
-				$scope.layout.roombar = !$scope.layout.roombar;
+			menus.initRoomLayout = function() {
+				$scope.layout = angular.extend($scope.layout, tourLayout);
+			};
+			menus.toggleRoom = function() {
+				$scope.layout = angular.extend($scope.layout, tourLayoutShowRoomPane);
 			};
 			menus.toggleChat = function() {
-				$scope.layout.chat = !$scope.layout.chat;
+				$scope.layout = angular.extend($scope.layout, tourLayoutShowChatPane);
 			};
 			menus.toggleSettings = function() {
-				$scope.layout.settings = !$scope.layout.settings;
+				$scope.layout = angular.extend($scope.layout, tourLayoutShowSettingsPane);
 			};
 			menus.toggleCSS = function(css) {
 				$('body').toggleClass(css);
@@ -65,10 +135,12 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				var menu = $($scope.steps[$scope.currentIndex]).data('menu');
 				var css = $($scope.steps[$scope.currentIndex]).data('css');
 				if (menu) {
-					if (menu.search('trigger') > -1) {
-						trigger = !trigger;
+					isToggled = !isToggled;
+					if(!isToggled) {
+						menus.initRoomLayout();
+					} else {
+						menus[menu]();
 					}
-					menus[menu](css);
 				}
 				if (css) {
 					menus.toggleCSS(css);
@@ -123,7 +195,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			};
 			var initTour = function() {
 				backupLayout = angular.extend({}, $scope.layout);
-				$scope.layout = angular.extend($scope.layout, tourLayout);
+				menus.initRoomLayout();
 				autoTour();
 			};
 			var reset = function() {
