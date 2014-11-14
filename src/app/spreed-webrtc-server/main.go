@@ -40,7 +40,6 @@ import (
 	"path"
 	goruntime "runtime"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 )
@@ -61,21 +60,6 @@ func getRequestLanguages(r *http.Request, supportedLanguages []string) []string 
 	}
 	return langs
 
-}
-
-// Helper function to clean up string arrays.
-func trimAndRemoveDuplicates(data *[]string) {
-	found := make(map[string]bool)
-	j := 0
-	for i, x := range *data {
-		x = strings.TrimSpace(x)
-		if len(x) > 0 && !found[x] {
-			found[x] = true
-			(*data)[j] = (*data)[i]
-			j++
-		}
-	}
-	*data = (*data)[:j]
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
@@ -184,17 +168,6 @@ func runner(runtime phoenix.Runtime) error {
 		return fmt.Errorf("Unable to find client. Path correct and compiled css?")
 	}
 
-	// Read base path from config and make sure it ends with a slash.
-	basePath, err := runtime.GetString("http", "basePath")
-	if err != nil {
-		basePath = "/"
-	} else {
-		if !strings.HasSuffix(basePath, "/") {
-			basePath = fmt.Sprintf("%s/", basePath)
-		}
-		log.Printf("Using '%s' base base path.", basePath)
-	}
-
 	statsEnabled, err := runtime.GetBool("http", "stats")
 	if err != nil {
 		statsEnabled = false
@@ -246,91 +219,10 @@ func runner(runtime phoenix.Runtime) error {
 		}
 	}
 
-	tokenFile, err := runtime.GetString("app", "tokenFile")
-	if err == nil {
-		if !httputils.HasFilePath(path.Clean(tokenFile)) {
-			return fmt.Errorf("Unable to find token file at %s", tokenFile)
-		}
-	}
-
-	title, err := runtime.GetString("app", "title")
-	if err != nil {
-		title = "Spreed WebRTC"
-	}
-
-	ver, err := runtime.GetString("app", "ver")
-	if err != nil {
-		ver = ""
-	}
-
-	runtimeVersion := version
-	if version != "unreleased" {
-		ver1 := ver
-		if err != nil {
-			ver1 = ""
-		}
-		ver = fmt.Sprintf("%s%s", ver1, strings.Replace(version, ".", "", -1))
-	} else {
-		ts := fmt.Sprintf("%d", time.Now().Unix())
-		if err != nil {
-			ver = ts
-		}
-		runtimeVersion = fmt.Sprintf("unreleased.%s", ts)
-	}
-
-	turnURIsString, err := runtime.GetString("app", "turnURIs")
-	if err != nil {
-		turnURIsString = ""
-	}
-	turnURIs := strings.Split(turnURIsString, " ")
-	trimAndRemoveDuplicates(&turnURIs)
-
 	var turnSecret []byte
 	turnSecretString, err := runtime.GetString("app", "turnSecret")
 	if err == nil {
 		turnSecret = []byte(turnSecretString)
-	}
-
-	stunURIsString, err := runtime.GetString("app", "stunURIs")
-	if err != nil {
-		stunURIsString = ""
-	}
-	stunURIs := strings.Split(stunURIsString, " ")
-	trimAndRemoveDuplicates(&stunURIs)
-
-	globalRoomid, err := runtime.GetString("app", "globalRoom")
-	if err != nil {
-		// Global room is disabled.
-		globalRoomid = ""
-	}
-
-	plugin, err := runtime.GetString("app", "plugin")
-	if err != nil {
-		plugin = ""
-	}
-
-	defaultRoomEnabled := true
-	defaultRoomEnabledString, err := runtime.GetString("app", "defaultRoomEnabled")
-	if err == nil {
-		defaultRoomEnabled = defaultRoomEnabledString == "true"
-	}
-
-	usersEnabled := false
-	usersEnabledString, err := runtime.GetString("users", "enabled")
-	if err == nil {
-		usersEnabled = usersEnabledString == "true"
-	}
-
-	usersAllowRegistration := false
-	usersAllowRegistrationString, err := runtime.GetString("users", "allowRegistration")
-	if err == nil {
-		usersAllowRegistration = usersAllowRegistrationString == "true"
-	}
-
-	serverToken, err := runtime.GetString("app", "serverToken")
-	if err != nil {
-		//TODO(longsleep): When we have a database, generate this once from random source and store it.
-		serverToken = "i-did-not-change-the-public-token-boo"
 	}
 
 	serverRealm, err := runtime.GetString("app", "serverRealm")
@@ -338,17 +230,22 @@ func runner(runtime phoenix.Runtime) error {
 		serverRealm = "local"
 	}
 
-	usersMode, _ := runtime.GetString("users", "mode")
-
 	// Create token provider.
+	tokenFile, err := runtime.GetString("app", "tokenFile")
+	if err == nil {
+		if !httputils.HasFilePath(path.Clean(tokenFile)) {
+			return fmt.Errorf("Unable to find token file at %s", tokenFile)
+		}
+	}
+
 	var tokenProvider TokenProvider
 	if tokenFile != "" {
 		log.Printf("Using token authorization from %s\n", tokenFile)
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
 
-	// Create configuration data structure.
-	config = NewConfig(title, ver, runtimeVersion, basePath, serverToken, stunURIs, turnURIs, tokenProvider != nil, globalRoomid, defaultRoomEnabled, usersEnabled, usersAllowRegistration, usersMode, plugin)
+	// Load remaining configuration items.
+	config = NewConfig(runtime, tokenProvider != nil)
 
 	// Load templates.
 	tt := template.New("")
@@ -373,7 +270,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Create realm string from config.
-	computedRealm := fmt.Sprintf("%s.%s", serverRealm, serverToken)
+	computedRealm := fmt.Sprintf("%s.%s", serverRealm, config.Token)
 
 	// Set number of go routines if it is 1
 	if goruntime.GOMAXPROCS(0) == 1 {
@@ -406,7 +303,7 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Create router.
 	router := mux.NewRouter()
-	r := router.PathPrefix(basePath).Subrouter().StrictSlash(true)
+	r := router.PathPrefix(config.B).Subrouter().StrictSlash(true)
 
 	// HTTP listener support.
 	if _, err = runtime.GetString("http", "listen"); err == nil {
@@ -434,12 +331,12 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := NewSessionManager(config, tickets, sessionSecret)
 	statsManager := NewStatsManager(hub, roomManager, sessionManager)
-	channellingAPI := NewChannellingAPI(runtimeVersion, config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, roomManager, buddyImages)
+	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, roomManager, buddyImages)
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
-	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(basePath, makeImageHandler(buddyImages, time.Duration(24)*time.Hour)))
-	r.Handle("/static/{path:.*}", http.StripPrefix(basePath, httputils.FileStaticServer(http.Dir(rootFolder))))
-	r.Handle("/robots.txt", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
-	r.Handle("/favicon.ico", http.StripPrefix(basePath, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
+	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(config.B, makeImageHandler(buddyImages, time.Duration(24)*time.Hour)))
+	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
+	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
+	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
@@ -449,11 +346,11 @@ func runner(runtime phoenix.Runtime) error {
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResource(config, "/config")
 	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
-	if usersEnabled {
+	if config.UsersEnabled {
 		// Create Users handler.
-		users := NewUsers(hub, tickets, sessionManager, usersMode, serverRealm, runtime)
+		users := NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
 		api.AddResource(&Sessions{tickets, hub, users}, "/sessions/{id}/")
-		if usersAllowRegistration {
+		if config.UsersAllowRegistration {
 			api.AddResource(users, "/users")
 		}
 	}
@@ -466,7 +363,7 @@ func runner(runtime phoenix.Runtime) error {
 	if extraFolder != "" {
 		extraFolderStatic := path.Join(extraFolder, "static")
 		if _, err = os.Stat(extraFolderStatic); err == nil {
-			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", basePath), httputils.FileStaticServer(http.Dir(extraFolder))))
+			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", config.B), httputils.FileStaticServer(http.Dir(extraFolder))))
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
@@ -491,7 +388,7 @@ func boot() error {
 		return nil
 	}
 
-	return phoenix.NewServer("server", "").
+	return phoenix.NewServer("server", version).
 		Config(configPath).
 		Log(logPath).
 		CpuProfile(cpuprofile).

@@ -26,10 +26,6 @@ import (
 	"testing"
 )
 
-const (
-	testAppVersion string = "0.0.0+unittests"
-)
-
 type fakeClient struct {
 	replies map[string]interface{}
 }
@@ -103,7 +99,7 @@ func assertErrorReply(t *testing.T, client *fakeClient, iid, code string) {
 
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
 	client, roomManager, session := &fakeClient{}, &fakeRoomManager{}, &Session{}
-	return NewChannellingAPI(testAppVersion, nil, roomManager, nil, nil, nil, nil, nil, nil, roomManager, nil), client, session, roomManager
+	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil, roomManager, nil), client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {

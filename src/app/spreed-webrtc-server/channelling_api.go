@@ -38,7 +38,6 @@ type ChannellingAPI interface {
 }
 
 type channellingAPI struct {
-	version string
 	*Config
 	RoomStatusManager
 	SessionEncoder
@@ -51,9 +50,8 @@ type channellingAPI struct {
 	buddyImages ImageCache
 }
 
-func NewChannellingAPI(version string, config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, broadcaster Broadcaster, buddyImages ImageCache) ChannellingAPI {
+func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, broadcaster Broadcaster, buddyImages ImageCache) ChannellingAPI {
 	return &channellingAPI{
-		version,
 		config,
 		roomStatus,
 		sessionEncoder,
@@ -255,7 +253,7 @@ func (api *channellingAPI) SendSelf(c Responder, session *Session) {
 		Userid:  session.Userid(),
 		Suserid: api.EncodeSessionUserID(session),
 		Token:   token,
-		Version: api.version,
+		Version: api.Version,
 		Turn:    api.CreateTurnData(session),
 		Stun:    api.StunURIs,
 	}

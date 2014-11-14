@@ -24,6 +24,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
+
+	"github.com/strukturag/phoenix"
 )
 
 type Config struct {
@@ -41,30 +45,77 @@ type Config struct {
 	UsersMode              string   // Users mode string
 	DefaultRoomEnabled     bool     // Flag if default room ("") is enabled
 	Plugin                 string   // Plugin to load
-	globalRoomid           string   // Id of the global room (not exported to Javascript)
+	globalRoomID           string   // Id of the global room (not exported to Javascript)
 }
 
-func NewConfig(title, ver, runtimeVersion, basePath, serverToken string, stunURIs, turnURIs []string, tokens bool, globalRoomid string, defaultRoomEnabled, usersEnabled, usersAllowRegistration bool, usersMode, plugin string) *Config {
-	sv := fmt.Sprintf("static/ver=%s", ver)
+func NewConfig(container phoenix.Container, tokens bool) *Config {
+	ver := container.GetStringDefault("app", "ver", "")
+
+	version := container.Version()
+	if version != "unreleased" {
+		ver = fmt.Sprintf("%s%s", ver, strings.Replace(version, ".", "", -1))
+	} else {
+		ts := fmt.Sprintf("%d", time.Now().Unix())
+		if ver == "" {
+			ver = ts
+		}
+		version = fmt.Sprintf("unreleased.%s", ts)
+	}
+
+	// Read base path from config and make sure it ends with a slash.
+	basePath := container.GetStringDefault("http", "basePath", "/")
+	if !strings.HasSuffix(basePath, "/") {
+		basePath = fmt.Sprintf("%s/", basePath)
+	}
+	if basePath != "/" {
+		container.Printf("Using '%s' base base path.", basePath)
+	}
+
+	//TODO(longsleep): When we have a database, generate this once from random source and store it.
+	serverToken := container.GetStringDefault("app", "serverToken", "i-did-not-change-the-public-token-boo")
+
+	stunURIsString := container.GetStringDefault("app", "stunURIs", "")
+	stunURIs := strings.Split(stunURIsString, " ")
+	trimAndRemoveDuplicates(&stunURIs)
+
+	turnURIsString := container.GetStringDefault("app", "turnURIs", "")
+	turnURIs := strings.Split(turnURIsString, " ")
+	trimAndRemoveDuplicates(&turnURIs)
+
 	return &Config{
-		Title:                  title,
+		Title:                  container.GetStringDefault("app", "title", "Spreed WebRTC"),
 		ver:                    ver,
-		S:                      sv,
+		S:                      fmt.Sprintf("static/ver=%s", ver),
 		B:                      basePath,
 		Token:                  serverToken,
 		StunURIs:               stunURIs,
 		TurnURIs:               turnURIs,
 		Tokens:                 tokens,
-		Version:                runtimeVersion,
-		UsersEnabled:           usersEnabled,
-		UsersAllowRegistration: usersAllowRegistration,
-		UsersMode:              usersMode,
-		DefaultRoomEnabled:     defaultRoomEnabled,
-		Plugin:                 plugin,
-		globalRoomid:           globalRoomid,
+		Version:                version,
+		UsersEnabled:           container.GetBoolDefault("users", "enabled", false),
+		UsersAllowRegistration: container.GetBoolDefault("users", "allowRegistration", false),
+		UsersMode:              container.GetStringDefault("users", "mode", ""),
+		DefaultRoomEnabled:     container.GetBoolDefault("app", "defaultRoomEnabled", true),
+		Plugin:                 container.GetStringDefault("app", "plugin", ""),
+		globalRoomID:           container.GetStringDefault("app", "globalRoom", ""),
 	}
 }
 
 func (config *Config) Get(request *http.Request) (int, interface{}, http.Header) {
 	return 200, config, http.Header{"Content-Type": {"application/json; charset=utf-8"}}
+}
+
+// Helper function to clean up string arrays.
+func trimAndRemoveDuplicates(data *[]string) {
+	found := make(map[string]bool)
+	j := 0
+	for i, x := range *data {
+		x = strings.TrimSpace(x)
+		if len(x) > 0 && !found[x] {
+			found[x] = true
+			(*data)[j] = (*data)[i]
+			j++
+		}
+	}
+	*data = (*data)[:j]
 }

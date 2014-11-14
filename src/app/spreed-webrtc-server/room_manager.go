@@ -49,18 +49,16 @@ type RoomManager interface {
 
 type roomManager struct {
 	sync.RWMutex
+	*Config
 	OutgoingEncoder
-	defaultRoomEnabled bool
-	globalRoomID       string
-	roomTable          map[string]RoomWorker
+	roomTable map[string]RoomWorker
 }
 
 func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 	return &roomManager{
 		sync.RWMutex{},
+		config,
 		encoder,
-		config.DefaultRoomEnabled,
-		config.globalRoomid,
 		make(map[string]RoomWorker),
 	}
 }
@@ -74,7 +72,7 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 }
 
 func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
-	if id == "" && !rooms.defaultRoomEnabled {
+	if id == "" && !rooms.DefaultRoomEnabled {
 		return nil, &DataError{Type: "Error", Code: "default_room_disabled", Message: "The default room is not enabled"}
 	}
 

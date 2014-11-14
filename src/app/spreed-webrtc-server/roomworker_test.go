@@ -30,14 +30,14 @@ const (
 )
 
 func NewTestRoomWorker() RoomWorker {
-	worker := NewRoomWorker(&roomManager{}, testRoomName, nil)
+	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomName, nil)
 	go worker.Start()
 	return worker
 }
 
 func NewTestRoomWorkerWithPIN(t *testing.T) (RoomWorker, string) {
 	pin := "asdf"
-	worker := NewRoomWorker(&roomManager{}, testRoomName, &DataRoomCredentials{PIN: pin})
+	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomName, &DataRoomCredentials{PIN: pin})
 	go worker.Start()
 	return worker, pin
 }
