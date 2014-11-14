@@ -161,7 +161,11 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				// Chrome only constraints.
 				if ($scope.isChrome) {
 
-					// For defaults in Chromium see https://code.google.com/p/webrtc/source/browse/trunk/talk/media/webrtc/webrtcvoiceengine.cc#225
+					// Chrome specific constraints overview:
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/mediaconstraintsinterface.cc
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/videosource.cc (video constraints)
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/localaudiosource.cc (audio constraints)
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/webrtcsession.cc (pc constraints)
 
 					// Experimental audio settings.
 					if (settings.experimental.enabled) {
@@ -203,7 +207,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						constraints.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
 						// Removes the noise in the captured video stream at the expense of CPU.
 						constraints.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
-						constraints.add(["video", "screensharing"], "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true) // defaults to true in Chrome
+						constraints.add("pc", "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true); // defaults to true in Chrome
 
 					}
 
