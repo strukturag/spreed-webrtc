@@ -220,7 +220,7 @@ if (Object.create) {
 			// External plugin support.
 			var externalPlugin;
 			if (window.externalPlugin) {
-				externalPlugin = window.externalPlugin($, _, angular);
+				externalPlugin = window.externalPlugin($, _, angular, App);
 				if (externalPlugin && externalPlugin.module) {
 					externalPlugin.module(modules);
 				}

@@ -179,6 +179,10 @@ define([
 
 	};
 
+	// Our API version as float. This value is incremented on
+	// breaking changes to plugins can check on it.
+	var apiversion = 1.0;
+
 	var initialize = function(app) {
 
 		var deferred = $.Deferred();
@@ -262,7 +266,8 @@ define([
 		initialize: initialize,
 		query: urlQuery,
 		config: appConfig,
-		translationData: translationData
+		translationData: translationData,
+		apiversion: apiversion
 	};
 
 });
