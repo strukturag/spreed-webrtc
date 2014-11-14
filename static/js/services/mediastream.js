@@ -22,10 +22,11 @@ define([
 	'jquery',
 	'underscore',
 	'ua-parser',
+	'sjcl',
 	'modernizr',
 	'mediastream/tokens'
 
-], function($, _, uaparser, Modernizr, tokens) {
+], function($, _, uaparser, sjcl, Modernizr, tokens) {
 
 	return ["globalContext", "connector", "api", "webrtc", "$rootScope", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", "restURL", function(context, connector, api, webrtc, $rootScope, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector, restURL) {
 

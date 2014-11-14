@@ -237,7 +237,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				targetcall = this.findTargetCall(from);
 				if (targetcall) {
 					// Hey we know this call.
-					targetcall.setRemoteDescription(new RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
+					targetcall.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
 						if (currentcall === this.currentcall) {
 							// Main call.
 							this.e.triggerHandler("peercall", [this.currentcall]);
@@ -253,7 +253,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						console.log("Received conference Offer -> auto.", from, data._conference);
 						// Clean own internal data before feeding into browser.
 						delete data._conference;
-						this.currentconference.autoAnswer(from, new RTCSessionDescription(data));
+						this.currentconference.autoAnswer(from, new window.RTCSessionDescription(data));
 						break;
 					}
 					// Cannot do anything with this offer, reply with busy.
@@ -268,7 +268,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					console.warn("Received Candidate for unknown id -> ignore.", from);
 					return;
 				}
-				var candidate = new RTCIceCandidate({
+				var candidate = new window.RTCIceCandidate({
 					sdpMLineIndex: data.sdpMLineIndex,
 					sdpMid: data.sdpMid,
 					candidate: data.candidate
@@ -288,7 +288,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}
 				// TODO(longsleep): In case of negotiation this could switch offer and answer
 				// and result in a offer sdp sent as answer data. We need to handle this.
-				targetcall.setRemoteDescription(new RTCSessionDescription(data), function() {
+				targetcall.setRemoteDescription(new window.RTCSessionDescription(data), function() {
 					// Received remote description as answer.
 					console.log("Received answer after we sent offer", data);
 				});

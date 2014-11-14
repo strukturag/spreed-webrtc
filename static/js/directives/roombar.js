@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'text!partials/roombar.html'], function(_, template) {
+define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angular, template) {
 
 	// roomBar
 	return ["$window", "rooms", function($window, rooms) {

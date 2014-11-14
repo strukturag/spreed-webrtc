@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function($, _) {
+define(['jquery', 'underscore', 'moment'], function($, _, moment) {
 
 	return ["fileData", "fileUpload", "fileDownload", "mediaStream", "$window", "alertify", "translation", function(fileData, fileUpload, fileDownload, mediaStream, $window, alertify, translation) {
 

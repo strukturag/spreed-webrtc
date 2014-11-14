@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function($, _, uaparser) {
+define(['jquery', 'underscore'], function($, _) {
 
 	var timeout = 5000;
 	var timeout_max = 20000;

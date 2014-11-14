@@ -21,7 +21,7 @@
 define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], function($, _, template) {
 
 	// buddyPictureCapture
-	return ["$compile", function($compile) {
+	return ["$compile", "$window", function($compile, $window) {
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', function($scope, safeApply, $timeout, $q) {
 
@@ -124,13 +124,13 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 						}]
 					};
 				}
-				getUserMedia({
+				$window.getUserMedia({
 					video: videoConstraints
 				}, function(stream) {
 					$scope.showTakePicture = true;
 					localStream = stream;
 					$scope.waitingForPermission = false;
-					attachMediaStream($scope.video, stream);
+					$window.attachMediaStream($scope.video, stream);
 					safeApply($scope);
 					videoAllowed.resolve(true);
 				}, function(error) {

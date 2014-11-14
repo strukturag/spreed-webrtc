@@ -54,7 +54,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			console.log('Creating RTCPeerConnnection with:\n' +
 				'  config: \'' + JSON.stringify(currentcall.pcConfig) + '\';\n' +
 				'  constraints: \'' + JSON.stringify(currentcall.pcConstraints) + '\'.');
-			pc = this.pc = new RTCPeerConnection(currentcall.pcConfig, currentcall.pcConstraints);
+			pc = this.pc = new window.RTCPeerConnection(currentcall.pcConfig, currentcall.pcConstraints);
 		} catch (e) {
 			console.error('Failed to create PeerConnection, exception: ' + e.message);
 			pc = this.pc = null;
@@ -70,7 +70,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			// for example https://bugzilla.mozilla.org/show_bug.cgi?id=998546.
 			pc.onaddstream = _.bind(this.onRemoteStreamAdded, this);
 			pc.onremovestream = _.bind(this.onRemoteStreamRemoved, this);
-			if (webrtcDetectedBrowser === "firefox") {
+			if (window.webrtcDetectedBrowser === "firefox") {
 				// NOTE(longsleep): onnegotiationneeded is not supported by Firefox. We trigger it
 				// manually when a stream is added or removed.
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=840728
@@ -103,7 +103,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 			// Create default data channel when we are in initiate mode.
 			if (currentcall.initiate) {
-				if (webrtcDetectedBrowser !== "chrome" || !webrtcDetectedAndroid || (webrtcDetectedBrowser === "chrome" && webrtcDetectedVersion >= 33)) {
+				if (window.webrtcDetectedBrowser !== "chrome" || !window.webrtcDetectedAndroid || (window.webrtcDetectedBrowser === "chrome" && window.webrtcDetectedVersion >= 33)) {
 					// NOTE(longsleep): Android (Chrome 32) does have broken SCTP data channels
 					// which makes connection fail because of sdp set error for answer/offer.
 					// See https://code.google.com/p/webrtc/issues/detail?id=2253 Lets hope the

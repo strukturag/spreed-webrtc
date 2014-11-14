@@ -126,7 +126,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				error_cb.apply(this, args);
 			};
 			try {
-				getUserMedia({
+				window.getUserMedia({
 					video: true,
 					audio: true
 				}, success_helper, error_helper);
@@ -171,7 +171,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		try {
 			console.log('Requesting access to local media with mediaConstraints:\n' +
 				'  \'' + JSON.stringify(constraints) + '\'', constraints);
-			getUserMedia(constraints, _.bind(this.onUserMediaSuccess, this), _.bind(this.onUserMediaError, this));
+			window.getUserMedia(constraints, _.bind(this.onUserMediaSuccess, this), _.bind(this.onUserMediaError, this));
 			this.started = true;
 			return true;
 		} catch (e) {
@@ -390,7 +390,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.attachMediaStream = function(video) {
 
-		attachMediaStream(video, this.localStream);
+		window.attachMediaStream(video, this.localStream);
 
 	};
 

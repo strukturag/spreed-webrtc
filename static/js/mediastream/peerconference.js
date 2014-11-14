@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'mediastream/peercall'], function(_, PeerCall) {
+define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall) {
 
 	//NOTE(longsleep): This id should be changed to something undeterministic.
 	var conferences = 0;

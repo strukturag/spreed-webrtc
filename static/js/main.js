@@ -123,9 +123,9 @@ require.config({
 			exports: 'odf',
 			init: function() {
 				return {
-					webodf: webodf,
-					odf: odf,
-					runtime: runtime
+					webodf: this.webodf,
+					odf: this.odf,
+					runtime: this.runtime
 				};
 			}
 		},
@@ -171,7 +171,7 @@ require.onError = (function() {
 			return;
 		}
 		if (err.requireType === "timeout" || err.requireType === "scripterror") {
-			alert('Failed to load application. Confirm to retry.');
+			window.alert('Failed to load application. Confirm to retry.');
 			retrying = true;
 			document.location.reload(true);
 		} else {
@@ -274,5 +274,5 @@ if (Object.create) {
 	});
 
 } else {
-	alert("Your browser does not support this application. Please update your browser to the latest version.");
+	window.alert("Your browser does not support this application. Please update your browser to the latest version.");
 }

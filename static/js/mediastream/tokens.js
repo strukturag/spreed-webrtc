@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function(jquery, _) {
+define(['jquery', 'underscore'], function($, _) {
 
 	var Token = function(handlerKey) {
 		this.e = $({});
@@ -147,7 +147,7 @@ define(['jquery', 'underscore'], function(jquery, _) {
 					// Set message implementation.
 					handler.messageHandler = _.bind(obj.trigger, obj);
 				}
-				handler.setRemoteDescription(new RTCSessionDescription(data), _.bind(function() {
+				handler.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function() {
 					handler.createAnswer(_.bind(function(sessionDescription, currenthandler) {
 						//console.log("Sending handler answer", sessionDescription, currenthandler.id);
 						webrtc.api.sendAnswer(from, sessionDescription);
@@ -159,10 +159,10 @@ define(['jquery', 'underscore'], function(jquery, _) {
 				if (!handler.messageHandler) {
 					handler.messageHandler = _.bind(obj.trigger, obj);
 				}
-				handler.setRemoteDescription(new RTCSessionDescription(data));
+				handler.setRemoteDescription(new window.RTCSessionDescription(data));
 				break;
 			case "Candidate":
-				var candidate = new RTCIceCandidate({
+				var candidate = new window.RTCIceCandidate({
 					sdpMLineIndex: data.sdpMLineIndex,
 					sdpMid: data.sdpMid,
 					candidate: data.candidate

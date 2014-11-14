@@ -246,7 +246,6 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 							mediaStream.tokens.off(token, handler);
 							mediaStream.webrtc.e.off("statechange", updater);
 							handler = null;
-							updated = null;
 							// Send by to all connected peers.
 							_.each(screenshares, function(peerscreenshare) {
 								peerscreenshare.send({

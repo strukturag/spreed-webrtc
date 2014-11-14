@@ -26,7 +26,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 		this.db = null;
 		this.name = name;
 		this.e = $({});
-		var request = indexedDB.open(this.name, this.version);
+		var request = window.indexedDB.open(this.name, this.version);
 		var that = this;
 		request.onupgradeneeded = function(event) {
 			var db = event.target.result;
@@ -90,7 +90,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 	Database.prototype.all = function(storename, iteratorCallback, errorCallback) {
 		var transaction = this.db.transaction(storename);
 		var store = transaction.objectStore(storename);
-		var keyRange = IDBKeyRange.lowerBound(0);
+		var keyRange = window.IDBKeyRange.lowerBound(0);
 		var cursorRequest = store.openCursor(keyRange);
 		cursorRequest.onsuccess = function(event) {
 			var result = event.target.result;
