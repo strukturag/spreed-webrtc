@@ -181,7 +181,7 @@ define([
 
 	// Our API version as float. This value is incremented on
 	// breaking changes to plugins can check on it.
-	var apiversion = 1.0;
+	var apiversion = 1.1;
 
 	var initialize = function(app) {
 
