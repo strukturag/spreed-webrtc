@@ -1,4 +1,4 @@
-<div class="remoteVideo" ng-class="{'withvideo': withvideo, 'onlyaudio': onlyaudio, 'talking': talking}">
+<div class="remoteVideo" ng-class="{'withvideo': withvideo, 'onlyaudio': onlyaudio, 'talking': peersTalking[peerid]}">
 	<video autoplay="autoplay"></video>
 	<div class="peerLabel">{{peerid|displayName}}</div>
 	<div class="peerActions">

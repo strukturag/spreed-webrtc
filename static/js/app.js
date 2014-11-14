@@ -184,6 +184,9 @@ define([
 		var deferred = $.Deferred();
 
 		var globalContext = JSON.parse($("#globalcontext").text());
+		if (!globalContext.Cfg.Version) {
+            globalContext.Cfg.Version = "unknown";
+        }
 		app.constant("globalContext", globalContext);
 
 		// Configure language.
