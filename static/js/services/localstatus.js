@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['angular', 'underscore'], function(angular, underscore) {
+define(['angular', 'underscore'], function(angular, _) {
 
 	// localStatus
 	return ["mediaStream", "$window", function(mediaStream, $window) {

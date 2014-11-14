@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function(_, templateChat, templateChatroom) {
+define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function($, _, templateChat, templateChatroom) {
 
 	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
 

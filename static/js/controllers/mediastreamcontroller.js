@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
+define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, angular, BigScreen, moment, sjcl, Modernizr) {
 
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms) {
 
@@ -225,13 +225,13 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			var iceServers = [];
 			var iceServer;
 			if ($scope.stun.length) {
-				iceServer = createIceServers($scope.stun);
+				iceServer = $window.createIceServers($scope.stun);
 				if (iceServer.length) {
 					iceServers.push.apply(iceServers, iceServer);
 				}
 			}
 			if ($scope.turn.urls && $scope.turn.urls.length) {
-				iceServer = createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
+				iceServer = $window.createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
 				if (iceServer.length) {
 					iceServers.push.apply(iceServers, iceServer);
 				}

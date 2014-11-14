@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'jquery'], function(underscore, $) {
+define(['underscore', 'jquery'], function(_, $) {
 
 	// contactData
 	return [function() {

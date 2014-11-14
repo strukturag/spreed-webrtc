@@ -19,7 +19,7 @@
  *
  */
 
- define(['underscore'], function(underscore) {
+ define([], function() {
 
 	// buddyPicture
 	return ["$window", "restURL", function($window, restURL) {

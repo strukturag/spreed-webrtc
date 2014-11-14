@@ -273,7 +273,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				isYouTubeIframeAPIReady.done(function() {
 					if (!player) {
 						var origin = $window.location.protocol + "//" + $window.location.host;
-						player = new YT.Player("youtubeplayer", {
+						player = new $window.YT.Player("youtubeplayer", {
 							height: "390",
 							width: "640",
 							playerVars: {
@@ -563,11 +563,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.toggleFullscreen = function(elem) {
 
 				if (BigScreen.enabled) {
-					if (elem) {
-						BigScreen.toggle(elem);
-					} else {
-						BigScreen.toggle(pane.get(0));
-					}
+					BigScreen.toggle(elem);
 				}
 
 			};

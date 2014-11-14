@@ -22,15 +22,15 @@ define(['jquery', 'underscore'], function($, _) {
 
 	return ["$window", function($window) {
 
-		var mediaSources = function() {
+		var MediaSources = function() {
 
-			this.supported = window.MediaStreamTrack && window.MediaStreamTrack.getSources
+			this.supported = $window.MediaStreamTrack && $window.MediaStreamTrack.getSources
 			this.audio = [];
 			this.video = [];
 
 		};
 
-		mediaSources.prototype.refresh = function(cb) {
+		MediaSources.prototype.refresh = function(cb) {
 
 			if (!this.supported) {
 				if (cb) {
@@ -53,9 +53,9 @@ define(['jquery', 'underscore'], function($, _) {
 
 		};
 
-		mediaSources.prototype._refresh = function(cb) {
+		MediaSources.prototype._refresh = function(cb) {
 
-			MediaStreamTrack.getSources(_.bind(function(sources) {
+			$window.MediaStreamTrack.getSources(_.bind(function(sources) {
 				var audio = this.audio = [];
 				var video = this.video = [];
 				_.each(sources, function(source) {
@@ -78,7 +78,7 @@ define(['jquery', 'underscore'], function($, _) {
 
 		};
 
-		mediaSources.prototype.hasAudioId = function(id) {
+		MediaSources.prototype.hasAudioId = function(id) {
 
 			var i;
 			for (i = 0; i < this.audio.length; i++) {
@@ -90,7 +90,7 @@ define(['jquery', 'underscore'], function($, _) {
 
 		};
 
-		mediaSources.prototype.hasVideoId = function(id) {
+		MediaSources.prototype.hasVideoId = function(id) {
 
 			var i;
 			for (i = 0; i < this.video.length; i++) {
@@ -103,7 +103,7 @@ define(['jquery', 'underscore'], function($, _) {
 		};
 
 
-		return new mediaSources();
+		return new MediaSources();
 
 	}];
 

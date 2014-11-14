@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function(_, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
+define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
 
 	// ChatroomController
 	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation) {
