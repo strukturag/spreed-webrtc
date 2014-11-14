@@ -215,30 +215,32 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			mediaStream.webrtc.e.on("done", function() {
 
-				$scope.hasUsermedia = false;
-				$scope.isActive = false;
-				$scope.peersTalking = {};
-				if (BigScreen.enabled) {
-					BigScreen.exit();
-				}
-				_.delay(function() {
-					if ($scope.isActive) {
-						return;
+				$scope.$apply(function() {
+					$scope.hasUsermedia = false;
+					$scope.isActive = false;
+					$scope.peersTalking = {};
+					if (BigScreen.enabled) {
+						BigScreen.exit();
 					}
-					$scope.localVideo.src = '';
-					$scope.miniVideo.src = '';
-					$($scope.remoteVideos).children(".remoteVideo").remove();
-				}, 1500);
-				$($scope.mini).removeClass("visible");
-				$scope.localVideo.style.opacity = 0;
-				$scope.remoteVideos.style.opacity = 0;
-				$element.removeClass('active');
-				_.each(streams, function(scope, k) {
-					scope.$destroy();
-					delete streams[k];
+					_.delay(function() {
+						if ($scope.isActive) {
+							return;
+						}
+						$scope.localVideo.src = '';
+						$scope.miniVideo.src = '';
+						$($scope.remoteVideos).children(".remoteVideo").remove();
+					}, 1500);
+					$($scope.mini).removeClass("visible");
+					$scope.localVideo.style.opacity = 0;
+					$scope.remoteVideos.style.opacity = 0;
+					$element.removeClass('active');
+					_.each(streams, function(scope, k) {
+						scope.$destroy();
+						delete streams[k];
+					});
+					$scope.rendererName = $scope.defaultRendererName;
+					$scope.haveStreams = false;
 				});
-				$scope.rendererName = $scope.defaultRendererName;
-				$scope.haveStreams = false;
 
 			});
 

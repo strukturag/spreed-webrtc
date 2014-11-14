@@ -42,7 +42,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 			};
 
 			webrtc.e.on("done", function() {
-				updateBuddyListVisibility();
+				$scope.$apply(updateBuddyListVisibility);
 			});
 
 			$scope.$on("room.joined", function(ev) {

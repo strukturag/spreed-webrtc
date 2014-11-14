@@ -608,17 +608,21 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				if (reason !== "receivedbye") {
 					this.api.sendBye(id, reason);
 				}
-				if (this.currentcall && currentcall) {
-					this.e.triggerHandler("statechange", ["connected", this.currentcall]);
-				} else {
-					this.e.triggerHandler("done", [reason]);
-				}
+				_.defer(_.bind(function() {
+					if (this.currentcall && currentcall) {
+						this.e.triggerHandler("statechange", ["connected", this.currentcall]);
+					} else {
+						this.e.triggerHandler("done", [reason]);
+					}
+				}, this));
 				return;
 			}
 		}
 		if (this.currentcall) {
 			id = this.currentcall.id;
-			this.e.triggerHandler("done", [reason]);
+			_.defer(_.bind(function() {
+				this.e.triggerHandler("done", [reason]);
+			}, this));
 		}
 		this.stop();
 		if (id) {

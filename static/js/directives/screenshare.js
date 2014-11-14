@@ -318,7 +318,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 			};
 
 			mediaStream.webrtc.e.on("done", function() {
-				$scope.stopScreenshare();
+				$scope.$apply($scope.stopScreenshare);
 			});
 
 			$scope.$watch("layout.screenshare", function(newval, oldval) {

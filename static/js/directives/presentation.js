@@ -704,11 +704,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			};
 
 			mediaStream.webrtc.e.on("done", function() {
-				_.each($scope.availablePresentations, function(presentation) {
-					presentation.clear();
+				$scope.$apply(function() {
+					_.each($scope.availablePresentations, function(presentation) {
+						presentation.clear();
+					});
+					$scope.availablePresentations = [];
+					$scope.activeDownloads = [];
 				});
-				$scope.availablePresentations = [];
-				$scope.activeDownloads = [];
 			});
 
 			$(document).on("keyup", function(event) {
