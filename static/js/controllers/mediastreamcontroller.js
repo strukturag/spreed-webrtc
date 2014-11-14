@@ -20,7 +20,7 @@
  */
 define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, angular, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms, constraints) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -85,29 +85,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		});
 
 		appData.set($scope);
-
-		var videoQualityMap = {
-			tiny: {
-				maxWidth: 80,
-				maxHeight: 45
-			},
-			low: {
-				maxWidth: 320,
-				maxHeight: 180
-			},
-			high: {
-				maxWidth: 640,
-				maxHeight: 360
-			},
-			hd: {
-				minWidth: 1280,
-				minHeight: 720
-			},
-			fullhd: {
-				minWidth: 1920,
-				minHeight: 1080
-			}
-		}
 
 		var displayName = safeDisplayName;
 
@@ -219,9 +196,10 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				console.warn("This is not a WebRTC capable browser.");
 				return;
 			}
+
 			var settings = $scope.master.settings;
 
-			// Create iceServers from scope settings.
+			// Create iceServers from scope.
 			var iceServers = [];
 			var iceServer;
 			if ($scope.stun.length) {
@@ -236,139 +214,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					iceServers.push.apply(iceServers, iceServer);
 				}
 			}
-
-			var audioConstraints = [];
-			var videoConstraints = [];
-			var videoConstraintsMandatory = {};
-			var screensharingConstraints = [];
-
-			var pushmulti = function(arrays, data) {
-				_.each(arrays, function(a) {
-					a.push(data);
-				});
-			};
-
-			// Chrome only constraints.
-			if ($scope.isChrome) {
-				// Audio settings.
-				// For defaults in Chromium see https://code.google.com/p/webrtc/source/browse/trunk/talk/media/webrtc/webrtcvoiceengine.cc#225
-
-				// Experimental audio settings.
-				if (settings.experimental.enabled) {
-
-					audioConstraints.push({
-						googEchoCancellation: true // defaults to true
-					});
-					audioConstraints.push({
-						googEchoCancellation2: settings.experimental.audioEchoCancellation2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googAutoGainControl: true // defaults to true
-					});
-					audioConstraints.push({
-						googAutoGainControl2: settings.experimental.audioAutoGainControl2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googNoiseSuppression: true // defaults to true
-					});
-					audioConstraints.push({
-						googgNoiseSuppression2: settings.experimental.audioNoiseSuppression2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googHighpassFilter: true // defaults to true
-					});
-					audioConstraints.push({
-						googTypingNoiseDetection: settings.experimental.audioTypingNoiseDetection && true // defaults to true in Chrome
-					});
-
-				}
-
-				if ($scope.supported.renderToAssociatedSink) {
-					audioConstraints.push({
-						// When true uses the default communications device on Windows.
-						// https://codereview.chromium.org/155863003
-						googDucking: true // defaults to true on Windows.
-					});
-					audioConstraints.push({
-						// Chrome will start rendering mediastream output to an output device that's associated with
-						// the input stream that was opened via getUserMedia.
-						// https://chromiumcodereview.appspot.com/23558010
-						chromeRenderToAssociatedSink: settings.audioRenderToAssociatedSkin && true // defaults to false in Chrome
-					});
-				}
-
-				// Select microphone device by id.
-				if (settings.microphoneId) {
-					audioConstraints.push({
-						sourceId: settings.microphoneId
-					});
-				}
-				// Select camera by device id.
-				if (settings.cameraId) {
-					videoConstraints.push({
-						sourceId: settings.cameraId
-					});
-				}
-
-				// Video settings.
-				if (settings.experimental.enabled) {
-
-					// Experimental video settings.
-					pushmulti([videoConstraints, screensharingConstraints], {
-						// Changes the way the video encoding adapts to the available bandwidth.
-						// https://code.google.com/p/webrtc/issues/detail?id=3351
-						googLeakyBucket: settings.experimental.videoLeakyBucket && true // defaults to false in Chrome
-					});
-					pushmulti([videoConstraints, screensharingConstraints], {
-						// Removes the noise in the captured video stream at the expense of CPU.
-						googNoiseReduction: settings.experimental.videoNoiseReduction && true // defaults to false in Chrome
-					});
-					pushmulti([videoConstraints, screensharingConstraints], {
-						googCpuOveruseDetection: settings.experimental.videoCpuOveruseDetection && true // defaults to true in Chrome
-					});
-
-				}
-
-				// Video.
-				videoConstraintsMandatory = $.extend(videoConstraintsMandatory, videoQualityMap[settings.videoQuality]);
-				// Not supported as of Firefox 27.
-				if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
-					videoConstraintsMandatory.maxFrameRate = parseInt(settings.maxFrameRate, 10);
-				}
-			}
-
-			// Apply the shit.
-			mediaStream.webrtc.settings.stereo = settings.stereo;
-			mediaStream.webrtc.settings.mediaConstraints.video.mandatory = videoConstraintsMandatory;
-			mediaStream.webrtc.settings.mediaConstraints.video.optional = videoConstraints;
-			mediaStream.webrtc.settings.mediaConstraints.audio = {
-				optional: audioConstraints
-			};
 			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-			mediaStream.webrtc.settings.screensharing.mediaConstraints.video.optional = screensharingConstraints;
 
-			// Inject optional stuff.
-			var optionalPcConstraints = mediaStream.webrtc.settings.pcConstraints.optional = [];
-			if ($window.webrtcDetectedBrowser === "chrome") {
-				// NOTE(longsleep): We can always enable SCTP data channels, as we have a workaround
-				// using the "active" event for Firefox < 27.
-				// SCTP does not work correctly with Chrome 31. Require M32.
-				if ($window.webrtcDetectedVersion >= 32) {
-					// SCTP is supported from Chrome M31.
-					// No need to pass DTLS constraint as it is on by default in Chrome M31.
-					// For SCTP, reliable and ordered is true by default.
-				} else {
-					// Chrome < M32 does not yet do DTLS-SRTP by default whereas Firefox only
-					// does DTLS-SRTP. In order to get interop, you must supply Chrome
-					// with a PC constructor constraint to enable DTLS.
-					console.warn("Turning on SCTP combatibility - please update your Chrome.");
-					optionalPcConstraints.push({
-						DtlsSrtpKeyAgreement: true
-					});
-				}
-			}
+			// Stereo.
+			mediaStream.webrtc.settings.stereo = settings.stereo;
 
-			//console.log("WebRTC settings", mediaStream.webrtc.settings);
+			// Refresh constraints.
+			constraints.refresh($scope.master.settings);
 
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.

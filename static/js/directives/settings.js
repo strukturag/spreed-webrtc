@@ -20,9 +20,32 @@
  */
 define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, template) {
 
+	var videoQualityMap = {
+		tiny: {
+			maxWidth: 80,
+			maxHeight: 45
+		},
+		low: {
+			maxWidth: 320,
+			maxHeight: 180
+		},
+		high: {
+			maxWidth: 640,
+			maxHeight: 360
+		},
+		hd: {
+			minWidth: 1280,
+			minHeight: 720
+		},
+		fullhd: {
+			minWidth: 1920,
+			minHeight: 1080
+		}
+	};
+
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -131,17 +154,88 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				}
 			});
 
-		}];
+			constraints.e.on("refresh", function(event, constraints) {
 
-		var link = function($scope, $element) {};
+				var settings = $scope.master.settings;
+
+				// Chrome only constraints.
+				if ($scope.isChrome) {
+
+					// For defaults in Chromium see https://code.google.com/p/webrtc/source/browse/trunk/talk/media/webrtc/webrtcvoiceengine.cc#225
+
+					// Experimental audio settings.
+					if (settings.experimental.enabled) {
+						constraints.add("audio", "googEchoCancellation", true); // defaults to true
+						constraints.add("audio", "googEchoCancellation2", settings.experimental.audioEchoCancellation2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googAutoGainControl", true); // defaults to true
+						constraints.add("audio", "googAutoGainControl2", settings.experimental.audioAutoGainControl2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googNoiseSuppression", true); // defaults to true
+						constraints.add("audio", "googgNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googHighpassFilter", true); // defaults to true
+						constraints.add("audio", "googTypingNoiseDetection", settings.experimental.audioTypingNoiseDetection && true); // defaults to true in Chrome
+					}
+
+					if ($scope.supported.renderToAssociatedSink) {
+						// When true uses the default communications device on Windows.
+						// https://codereview.chromium.org/155863003
+						constraints.add("audio", "googDucking", true); // defaults to true on Windows.
+						// Chrome will start rendering mediastream output to an output device that's associated with
+						// the input stream that was opened via getUserMedia.
+						// https://chromiumcodereview.appspot.com/23558010
+						constraints.add("audio", "chromeRenderToAssociatedSink", settings.audioRenderToAssociatedSkin && true); // defaults to false in Chrome
+					}
+
+					// Select microphone device by id.
+					if (settings.microphoneId) {
+						constraints.add("audio", "sourceId", settings.microphoneId);
+					}
+
+					// Select camera by device id.
+					if (settings.cameraId) {
+						constraints.add("video", "sourceId", settings.cameraId);
+					}
+
+					// Experimental video settings.
+					if (settings.experimental.enabled) {
+
+						// Changes the way the video encoding adapts to the available bandwidth.
+						// https://code.google.com/p/webrtc/issues/detail?id=3351
+						constraints.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
+						// Removes the noise in the captured video stream at the expense of CPU.
+						constraints.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
+						constraints.add(["video", "screensharing"], "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true) // defaults to true in Chrome
+
+					}
+
+					// Set video quality.
+					var videoQuality = videoQualityMap[settings.videoQuality];
+					if (videoQuality) {
+						_.forEach(videoQuality, function(v, k) {
+							constraints.add("video", k, v, true);
+						});
+					}
+
+					// Set max frame rate if any was selected.
+					if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
+						constraints.add("video", "maxFrameRate", parseInt(settings.maxFrameRate, 10), true);
+					}
+
+				} else {
+
+					// Other browsers constraints (there are none as of now.);
+
+				}
+
+			});
+
+		}];
 
 		return {
 			scope: true,
 			restrict: 'E',
 			replace: true,
 			template: template,
-			controller: controller,
-			link: link
+			controller: controller
 		};
 
 	}];
