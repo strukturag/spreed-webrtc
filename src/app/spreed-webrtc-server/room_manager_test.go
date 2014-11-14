@@ -25,26 +25,48 @@ import (
 	"testing"
 )
 
-func NewTestRoomManager() RoomManager {
-	return NewRoomManager(&Config{}, nil)
+func NewTestRoomManager() (RoomManager, *Config) {
+	config := &Config{}
+	return NewRoomManager(config, nil), config
+}
+
+func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenCreationRequiresAnAccount(t *testing.T) {
+	roomManager, config := NewTestRoomManager()
+	config.UsersEnabled = true
+	config.authorizeRoomCreation = true
+
+	unauthenticatedSession := &Session{}
+	_, err := roomManager.JoinRoom("foo", nil, unauthenticatedSession, nil)
+	assertDataError(t, err, "room_join_requires_account")
+
+	authenticatedSession := &Session{userid: "9870457"}
+	_, err = roomManager.JoinRoom("foo", nil, authenticatedSession, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining room while authenticated", err)
+	}
+
+	_, err = roomManager.JoinRoom("foo", nil, unauthenticatedSession, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining room while unauthenticated", err)
+	}
 }
 
 func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfNoRoomHasBeenJoined(t *testing.T) {
-	roomManager := NewTestRoomManager()
+	roomManager, _ := NewTestRoomManager()
 	_, err := roomManager.UpdateRoom(&Session{}, nil)
 
 	assertDataError(t, err, "not_in_room")
 }
 
 func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfUpdatingAnUnjoinedRoom(t *testing.T) {
-	roomManager := NewTestRoomManager()
+	roomManager, _ := NewTestRoomManager()
 	session := &Session{Hello: true, Roomid: "foo"}
 	_, err := roomManager.UpdateRoom(session, &DataRoom{Name: "bar"})
 	assertDataError(t, err, "not_in_room")
 }
 
 func Test_RoomManager_UpdateRoom_ReturnsACorrectlyTypedDocument(t *testing.T) {
-	roomManager := NewTestRoomManager()
+	roomManager, _ := NewTestRoomManager()
 	session := &Session{Hello: true, Roomid: "foo"}
 	room, err := roomManager.UpdateRoom(session, &DataRoom{Name: session.Roomid})
 	if err != nil {

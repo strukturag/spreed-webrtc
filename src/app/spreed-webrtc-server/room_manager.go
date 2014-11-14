@@ -73,10 +73,15 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 
 func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
 	if id == "" && !rooms.DefaultRoomEnabled {
-		return nil, &DataError{Type: "Error", Code: "default_room_disabled", Message: "The default room is not enabled"}
+		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	return rooms.GetOrCreate(id, credentials).Join(credentials, session, sender)
+	roomWorker, err := rooms.GetOrCreate(id, credentials, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return roomWorker.Join(credentials, session, sender)
 }
 
 func (rooms *roomManager) LeaveRoom(session *Session) {
@@ -87,7 +92,7 @@ func (rooms *roomManager) LeaveRoom(session *Session) {
 
 func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoom, error) {
 	if !session.Hello || session.Roomid != room.Name {
-		return nil, &DataError{Type: "Error", Code: "not_in_room", Message: "Cannot update other rooms"}
+		return nil, NewDataError("not_in_room", "Cannot update other rooms")
 	}
 	// XXX(lcooper): We'll process and send documents without this field
 	// correctly, however clients cannot not handle it currently.
@@ -147,32 +152,38 @@ func (rooms *roomManager) Get(id string) (room RoomWorker, ok bool) {
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredentials) RoomWorker {
-	room, ok := rooms.Get(id)
-	if !ok {
-		rooms.Lock()
-		// Need to re-check, another thread might have created the room
-		// while we waited for the lock.
-		room, ok = rooms.roomTable[id]
-		if !ok {
-			room = NewRoomWorker(rooms, id, credentials)
-			rooms.roomTable[id] = room
-			rooms.Unlock()
-			go func() {
-				// Start room, this blocks until room expired.
-				room.Start()
-				// Cleanup room when we are done.
-				rooms.Lock()
-				defer rooms.Unlock()
-				delete(rooms.roomTable, id)
-				log.Printf("Cleaned up room '%s'\n", id)
-			}()
-		} else {
-			rooms.Unlock()
-		}
+func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredentials, session *Session) (RoomWorker, error) {
+	if room, ok := rooms.Get(id); ok {
+		return room, nil
 	}
 
-	return room
+	rooms.Lock()
+	// Need to re-check, another thread might have created the room
+	// while we waited for the lock.
+	if room, ok := rooms.roomTable[id]; ok {
+		rooms.Unlock()
+		return room, nil
+	}
+
+	if rooms.UsersEnabled && rooms.authorizeRoomCreation && !session.Authenticated() {
+		rooms.Unlock()
+		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
+	}
+
+	room := NewRoomWorker(rooms, id, credentials)
+	rooms.roomTable[id] = room
+	rooms.Unlock()
+	go func() {
+		// Start room, this blocks until room expired.
+		room.Start()
+		// Cleanup room when we are done.
+		rooms.Lock()
+		defer rooms.Unlock()
+		delete(rooms.roomTable, id)
+		log.Printf("Cleaned up room '%s'\n", id)
+	}()
+
+	return room, nil
 }
 
 func (rooms *roomManager) GlobalUsers() []*roomUser {

@@ -193,6 +193,8 @@ Special purpose documents for channling
       authorization_not_required : No credentials should be provided for this
                                    room.
       invalid_credentials        : The provided credentials are incorrect.
+      room_join_requires_account : Server configuration requires an
+                                   authenticated user account to join this room.
 
   Welcome
 

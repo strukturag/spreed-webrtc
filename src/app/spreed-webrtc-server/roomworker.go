@@ -244,18 +244,18 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 	worker := func() {
 		r.mutex.Lock()
 		if r.credentials == nil && credentials != nil {
-			results <- joinResult{nil, &DataError{"Error", "authorization_not_required", "No credentials may be provided for this room"}}
+			results <- joinResult{nil, NewDataError("authorization_not_required", "No credentials may be provided for this room")}
 			r.mutex.Unlock()
 			return
 		} else if r.credentials != nil {
 			if credentials == nil {
-				results <- joinResult{nil, &DataError{"Error", "authorization_required", "Valid credentials are required to join this room"}}
+				results <- joinResult{nil, NewDataError("authorization_required", "Valid credentials are required to join this room")}
 				r.mutex.Unlock()
 				return
 			}
 
 			if len(r.credentials.PIN) != len(credentials.PIN) || subtle.ConstantTimeCompare([]byte(r.credentials.PIN), []byte(credentials.PIN)) != 1 {
-				results <- joinResult{nil, &DataError{"Error", "invalid_credentials", "The provided credentials are incorrect"}}
+				results <- joinResult{nil, NewDataError("invalid_credentials", "The provided credentials are incorrect")}
 				r.mutex.Unlock()
 				return
 			}
