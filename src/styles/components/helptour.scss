@@ -1,0 +1,150 @@
+/*!
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+$darken-tour-opacity: .4;
+
+#helptour {
+}
+
+.helptour {
+  .tourControl {
+    top: initial;
+    bottom: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  .in {
+    display: block;
+  }
+  .popover {
+    opacity: 0.95;
+  }
+  .roomPane {
+    top: 97px;
+    left: 10px;
+    .arrow {
+      left: 10%;
+    }
+  }
+  .buddyListPane {
+    left: initial;
+    right: 280px;
+    top: 70px;
+    .arrow {
+      top: 20%;
+    }
+  }
+  .chatPane {
+    left: initial;
+    right: 540px;
+    top: 70px;
+    .arrow {
+      top: 20%;
+    }
+  }
+  .settingsPane {
+    left: initial;
+    right: 540px;
+    top: 200px;
+    .arrow {
+      top: 20%;
+    }
+  }
+  .mediaAccessPane {
+    top: 10px;
+    left: initial;
+    right: 10px;
+  }
+  .welcomePane {
+    position: relative;
+    margin: 0 auto;
+    top: 150px;
+    .btn {
+      margin-top: 10px;
+    }
+  }
+}
+
+.arrow+.secondArrow {
+  border-width: 11px;
+  &:after {
+    border-width: 10px;
+    content: "";
+  }
+}
+.arrow+.secondArrow,
+.arrow+.secondArrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+}
+.secondArrow.right {
+  top: 50%;
+  left: -11px;
+  margin-top: -11px;
+  border-left-width: 0;
+  border-right-color: #999;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  &:after {
+    content: " ";
+    left: 1px;
+    bottom: -10px;
+    border-left-width: 0;
+    border-right-color: #FFF;
+  }
+}
+.helptourShowRoomPane {
+  #bar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+  .overlaybar {
+    background: $componentfg2;
+  }
+}
+.helptourShowSettingsPane {
+  #roombar {
+    opacity: $darken-tour-opacity;
+  }
+}
+.helptourShowChatPane {
+  #roombar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+}
+.helptourShowBuddyListPane {
+  #bar,
+  #roombar {
+    opacity: $darken-tour-opacity;
+  }
+}
+.helptourShowMediaAccessPane,
+.helptourShowWelcomePane {
+  #bar,
+  #roombar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+}
