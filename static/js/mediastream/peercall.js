@@ -180,6 +180,24 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	};
 
+	PeerCall.prototype.onPeerStatisticsChanged = function(statistics) {
+
+		this.e.triggerHandler("statisticsChanged", [statistics, this]);
+
+	};
+
+	PeerCall.prototype.onCertificatesReceived = function(certificates) {
+
+		this.e.triggerHandler("certificatesReceived", [certificates, this]);
+
+	};
+
+	PeerCall.prototype.onCiphersNegotiated = function(ciphers) {
+
+		this.e.triggerHandler("ciphersNegotiated", [ciphers, this]);
+
+	};
+
 	PeerCall.prototype.onRemoteStreamAdded = function(stream) {
 
 		this.streams[stream] = true;
