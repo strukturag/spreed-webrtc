@@ -23,7 +23,7 @@
 define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
 
 	// ChatroomController
-	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation) {
+	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", "mediaStream", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation, mediaStream) {
 
 		$scope.outputElement = $element.find(".output");
 		$scope.inputElement = $element.find(".input");
@@ -50,6 +50,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 		var fileInfo = $compile(templateFileInfo);
 		var contactRequest = $compile(templateContactRequest);
 		var geoLocation = $compile(templateGeolocation);
+		var pictureHover = $compile('<div class="buddyInfoActions"><div class="btn-group"><a class="btn btn-primary" ng-click="doCall()" title="Start video call"><i class="fa fa-phone"></i></a><a class="btn btn-primary" ng-click="startChat()" title="Start chat"><i class="fa fa-comments-o"></i></a></div></div>');
 
 		var knowMessage = {
 			r: {},
@@ -100,6 +101,42 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 				}
 			}
 		};
+
+		var addPictureHover = function(from, msg, is_self) {
+			if (msg.picture && !is_self) {
+				var subscope = $scope.$new();
+				subscope.startChat = function() {
+					$scope.$emit("startchat", from, {
+						autofocus: true,
+						restore: true
+					});
+				};
+				subscope.doCall = function() {
+					mediaStream.webrtc.doCall(from);
+				};
+				pictureHover(subscope, function(clonedElement, scope) {
+					msg.picture.append(clonedElement);
+				});
+			} else {
+				return;
+			}
+			msg.extra_css += "with_hoverimage ";
+		};
+
+		var showTitleAndPicture = function(from, msg, is_self) {
+			if ($scope.isgroupchat) {
+				msg.title = $("<strong>");
+				msg.title.html(displayName(from, true));
+				msg.extra_css += "with_name ";
+				var imgSrc = buddyImageSrc(from);
+				msg.picture = $('<div class="buddyPicture"><i class="fa fa-user fa-3x"/><img/></div>');
+				if (imgSrc) {
+					msg.picture.find("img").attr("src", imgSrc);
+				}
+				addPictureHover(from, msg, is_self);
+			}
+		};
+
 
 		// Make sure that chat links are openend in a new window.
 		$element.on("click", function(event) {
@@ -302,27 +339,16 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			var is_new_message = lastSender !== from;
 			var is_self = from === sessonid;
 
-			var extra_css = "";
-			var title = null;
-			var picture = null;
-
-			var showTitleAndPicture = function() {
-				if ($scope.isgroupchat) {
-					title = $("<strong>");
-					title.html(displayName(from, true));
-					extra_css += "with_name ";
-					var imgSrc = buddyImageSrc(from);
-					picture = $('<div class="buddyPicture"><i class="fa fa-user fa-3x"/><img/></div>');
-					if (imgSrc) {
-						picture.find("img").attr("src", imgSrc);
-					}
-				}
+			var msg = {
+				extra_css: "",
+				title: null,
+				picture: null
 			};
 
 			if (is_new_message) {
 				lastSender = from;
 				$scope.showdate(timestamp);
-				showTitleAndPicture()
+				showTitleAndPicture(from, msg, is_self);
 			}
 
 			var strMessage = s.join(" ");
@@ -336,9 +362,9 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			}
 
 			if (is_self) {
-				extra_css += "is_self";
+				msg.extra_css += "is_self";
 			} else {
-				extra_css += "is_remote";
+				msg.extra_css += "is_remote";
 			}
 			if (timestamp) {
 				var ts = $('<div class="timestamp"/>');
@@ -349,7 +375,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 					nodes = ts;
 				}
 			}
-			return $scope.display(strMessage, nodes, extra_css, title, picture);
+			return $scope.display(strMessage, nodes, msg.extra_css, msg.title, msg.picture);
 
 		};
 
