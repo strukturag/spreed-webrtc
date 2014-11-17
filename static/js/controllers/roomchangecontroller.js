@@ -20,11 +20,14 @@
  */
 define([], function() {
 
+	// Keep variable's state across controller loads.
+	var roomChangeNum = 0;
+	var initialLoad = false;
+
 	// RoomchangeController
 	return ["$scope", "$element", "$window", "mediaStream", "$http", "$timeout", function($scope, $element, $window, mediaStream, $http, $timeout) {
 
 		//console.log("Room change controller", $element, $scope.roomdata);
-
 		var url = mediaStream.url.api("rooms");
 
 		var ctrl = this;
@@ -57,7 +60,13 @@ define([], function() {
 				ctrl.getRoom(function(roomdata) {
 					console.info("Retrieved room data", roomdata);
 					$scope.roomdata = roomdata;
-					$element.find(".btn-roomcreate").get(0).focus();
+					// When the default room is disabled, put focus on the create room button on initial load.
+					if (initialLoad && !mediaStream.config.DefaultRoomEnabled) {
+						$element.find(".btn-roomcreate").get(0).focus();
+						initialLoad = false;
+					} else {
+						$element.find(".roomdata-link-input").get(0).focus();
+					}
 				});
 			}
 		};
@@ -76,6 +85,10 @@ define([], function() {
 			var u = encodeURIComponent(n);
 			$scope.roomdata.url = "/" + u;
 			$scope.roomdata.link = mediaStream.url.room(n);
+			roomChangeNum++;
+			if (roomChangeNum === 1 && $window.location.pathname === '/') {
+				initialLoad = true;
+			}
 		});
 
 		var roomDataLinkInput = $element.find(".roomdata-link-input");
