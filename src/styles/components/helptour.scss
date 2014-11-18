@@ -26,10 +26,10 @@ $darken-tour-opacity: .4;
 
 .helptour {
   .tourControl {
-    top: initial;
-    bottom: 10px;
-    left: 10px;
-    max-width: none;
+    text-align: center;
+    hr {
+        margin: 10px 0;
+    }
   }
   .in {
     display: block;

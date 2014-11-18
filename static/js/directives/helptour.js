@@ -28,8 +28,6 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			var isToggled = false;
 			var displayTime = 12000;
 			var shown = localStorage.getItem('mediastream-helptour');
-			var timeoutAutoStepsIn = [];
-			var timeoutAutoStepsOut = [];
 			var menus = {};
 			var backupLayout = null;
 			var tourLayout = {
@@ -155,52 +153,13 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				toggleTargetMenu();
 				$($scope.steps[$scope.currentIndex]).addClass('in');
 			};
-			var autoStep = function(i, elem, startIndex) {
-				var inTime = startIndex ? displayTime * (i - startIndex) : displayTime * i;
-				var outTime = startIndex ? displayTime * ((i + 1) - startIndex) : displayTime * (i + 1);
-				timeoutAutoStepsIn[i] = $timeout(function() {
-					inStep(i);
-				}, inTime, true);
-				timeoutAutoStepsOut[i] = $timeout(function() {
-					if ($scope.steps.length === i + 1) {
-						$scope.togglePause();
-					} else {
-						outStep();
-					}
-				}, outTime, true);
-			};
-			var autoTour = function(startIndex) {
-				if (!angular.isNumber(startIndex)) {
-					startIndex = 0;
-				// start again from the beginning and ensure window is hidden
-				} else if ($scope.currentIndex > $scope.steps.length - 2) {
-					outStep();
-					startIndex = 0;
-				} else {
-					outStep();
-				}
-				$scope.steps.each(function(i, x) {
-					if (i >= startIndex) {
-						autoStep(i, x, startIndex);
-					}
-				});
-			};
-			var manualTour = function() {
-				timeoutAutoStepsIn.forEach(function(promise) {
-					$timeout.cancel(promise);
-				});
-				timeoutAutoStepsOut.forEach(function(promise) {
-					$timeout.cancel(promise);
-				});
-			};
 			var initTour = function() {
 				backupLayout = angular.extend({}, $scope.layout);
 				menus.initRoomLayout();
-				autoTour();
+				$scope.startTour();
 			};
 			var reset = function() {
 				outStep();
-				$scope.tourPaused = false;
 				$scope.currentIndex = null;
 				$scope.layout = angular.extend($scope.layout, backupLayout);
 			};
@@ -217,48 +176,23 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 					size: 'sm'
 				});
 			};
-			$scope.tourPaused = false;
 			$scope.currentIndex = null;
-			$scope.stepBeginning = function() {
-				if (!$scope.tourPaused) {
-					$scope.togglePause();
+			$scope.startTour = function() {
+				if ($scope.currentIndex === $scope.steps.length - 1) {
+					outStep();
+					$scope.currentIndex = 0;
 				}
-				outStep();
 				inStep(0);
 			};
 			$scope.stepBackward = function() {
-				if (!$scope.tourPaused) {
-					$scope.togglePause();
-				}
 				outStep();
 				inStep($scope.currentIndex - 1);
 			};
 			$scope.stepForward = function() {
-				if (!$scope.tourPaused) {
-					$scope.togglePause();
-				}
 				outStep();
 				inStep($scope.currentIndex + 1);
 			};
-			$scope.stepEnd = function() {
-				if (!$scope.tourPaused) {
-					$scope.togglePause();
-				}
-				outStep();
-				inStep($scope.steps.length - 1);
-			};
-			$scope.togglePause = function() {
-				$scope.tourPaused = !$scope.tourPaused;
-				if ($scope.tourPaused) {
-					manualTour();
-				} else {
-					autoTour($scope.currentIndex + 1);
-				}
-			};
 			$scope.exitTour = function() {
-				if (!$scope.tourPaused) {
-					manualTour();
-				}
 				reset();
 			};
 			$scope.$on('showHelpTour', function() {
