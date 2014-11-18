@@ -396,17 +396,18 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 
 			// Unmark authorization process.
 			if (data.Userid) {
-				$rootScope.authorizing(false);
-				$rootScope.$broadcast("authorization.succeeded");
-			} else if (!$rootScope.authorizing()) {
+				appData.authorizing(false);
+			} else if (!appData.authorizing()) {
 				// Trigger user data load when not in authorizing phase.
 				$scope.loadUserSettings();
 			}
 
+			// Select room if settings have an alternative default room.
 			if (rooms.inDefaultRoom() && $scope.master.settings.defaultRoom) {
 				console.log("Selecting default room from settings:", [$scope.master.settings.defaultRoom]);
 				rooms.joinByName($scope.master.settings.defaultRoom, true);
 			}
+
 		});
 
 		mediaStream.webrtc.e.on("peercall", function(event, peercall) {

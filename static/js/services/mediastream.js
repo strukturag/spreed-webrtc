@@ -28,7 +28,7 @@ define([
 
 ], function($, _, uaparser, sjcl, Modernizr, tokens) {
 
-	return ["globalContext", "connector", "api", "webrtc", "$rootScope", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", "restURL", function(context, connector, api, webrtc, $rootScope, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector, restURL) {
+	return ["globalContext", "connector", "api", "webrtc", "appData", "$route", "$location", "$window", "visibility", "alertify", "$http", "safeApply", "$timeout", "$sce", "localStorage", "continueConnector", "restURL", function(context, connector, api, webrtc, appData, $route, $location, $window, visibility, alertify, $http, safeApply, $timeout, $sce, localStorage, continueConnector, restURL) {
 
 		var url = (context.Ssl ? "wss" : "ws") + "://" + context.Host + (context.Cfg.B || "/") + "ws";
 		var version = context.Cfg.Version;
@@ -40,15 +40,6 @@ define([
 
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
-
-		var authorizing = context.Cfg.UsersEnabled;
-        $rootScope.authorizing = function(value) {
-			// Boolean flag to indicate that an authentication is currently in progress.
-			if (typeof(value) !== "undefined") {
-				authorizing = !!value;
-			}
-			return authorizing;
-		};
 
 		var mediaStream = {
 			version: version,
@@ -127,7 +118,7 @@ define([
 					}
 				},
 				authorize: function(data, success_cb, error_cb) {
-					$rootScope.authorizing(true);
+					appData.authorizing(true);
 					var url = restURL.api("sessions") + "/" + mediaStream.api.id + "/";
 					var login = _.clone(data);
 					login.id = mediaStream.api.id;
@@ -144,14 +135,14 @@ define([
 						if (data.nonce !== "" && data.success) {
 							success_cb(data, status);
 						} else {
-							$rootScope.authorizing(false);
+							appData.authorizing(false);
 							if (error_cb) {
 								error_cb(data, status);
 							}
 						}
 					}).
 					error(function(data, status) {
-						$rootScope.authorizing(false);
+						appData.authorizing(false);
 						if (error_cb) {
 							error_cb(data, status)
 						}

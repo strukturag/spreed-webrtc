@@ -23,7 +23,7 @@ define([
 	'jquery'
 ], function(angular, $) {
 
-	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin) {
+	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData) {
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var currentRoom = null;
@@ -55,7 +55,7 @@ define([
 		};
 
 		var joinRequestedRoom = function() {
-			if ($rootScope.authorizing()) {
+			if (appData.authorizing()) {
 				// Do nothing while authorizing.
 				return;
 			}
