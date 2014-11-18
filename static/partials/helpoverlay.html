@@ -2,34 +2,124 @@
     <div class="tourSteps">
         <div class="popover bottom roomPane" data-menu="toggleRoom" data-css="helptourShowRoomPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('A room')}}</h3>
-            <div class="popover-content">{{_('Place to meet people(buddy). Change rooms here and easily send friends a room link with the social media links provided. Not all room names are available and certain characters are automatically removed.')}}</div>
+            <h3 class="popover-title">{{_('A room')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</span></h3>
+            <div class="popover-content">
+                {{_('Place to meet people(buddy). Change rooms here and easily send friends a room link with the social media links provided. Not all room names are available and certain characters are automatically removed.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover left buddyListPane" data-css="helptourShowBuddyListPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Buddy List')}}</h3>
-            <div class="popover-content">{{_('List of all buddys in the same room and saved contacts.')}}</div>
+            <h3 class="popover-title">{{_('Buddy List')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('List of all buddys in the same room and saved contacts.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover left buddyListPane" data-css="helptourShowBuddyListPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('A buddy')}}</h3>
-            <div class="popover-content">{{_('An individual in the same room. If someone is in the same room, a buddy card will be shown. Simply hover over the card to callout chat/call actions. If a star appears next to a buddy comment, the buddy is logged in. When the star is filled the buddy is a contact. Click the star to add a buddy as a contact or remove a contact.')}}</div>
+            <h3 class="popover-title">{{_('A buddy')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('An individual in the same room. If someone is in the same room, a buddy card will be shown. Simply hover over the card to callout chat/call actions. If a star appears next to a buddy comment, the buddy is logged in. When the star is filled the buddy is a contact. Click the star to add a buddy as a contact or remove a contact.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover left chatPane" data-menu="toggleChat" data-css="helptourShowChatPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Chat sessions')}}</h3>
-            <div class="popover-content">{{_('Group and individual chat sessions. Chat with everyone in a room or chat individually. In group chats you are able to share files and your current location. In individual chats you are also able to start a video call.')}}</div>
+            <h3 class="popover-title">{{_('Chat sessions')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('Group and individual chat sessions. Chat with everyone in a room or chat individually. In group chats you are able to share files and your current location. In individual chats you are also able to start a video call.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover left settingsPane" data-menu="toggleSettings" data-css="helptourShowSettingsPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Settings')}}</h3>
-            <div class="popover-content">{{_('Choose a name, upload a picture, signin, and customize you experience.')}}</div>
+            <h3 class="popover-title">{{_('Settings')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('Choose a name, upload a picture, signin, and customize you experience.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover bottom mediaAccessPane" data-menu="triggerMediaAccess" data-css="helptourShowMediaAccessPane">
             <div class="arrow"></div>
             <div class="secondArrow right"></div>
-            <h3 class="popover-title">{{_('Media permission')}}</h3>
-            <div class="popover-content">{{_('Everytime a call is made or recieved a permission window from the browser will show up like this. To make a call you must accept, otherwise the browser cannot use your wecam and video to make a call. This is a security and privacy precaution.')}}</div>
+            <h3 class="popover-title">{{_('Media permission')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('Everytime a call is made or recieved a permission window from the browser will show up like this. To make a call you must accept, otherwise the browser cannot use your wecam and video to make a call. This is a security and privacy precaution.')}}
+                <hr>
+                <div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
+                        <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
+                        <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
+                        <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="popover bottom welcomePane" data-css="helptourShowWelcomePane">
             <h3 class="popover-title">{{_('Welcome')}}</h3>
@@ -37,21 +127,6 @@
                 {{_('Welcome to spreed-webrtc! Start calling and chatting now.')}}
                 <button class="btn btn-primary btn-block" ng-click="exitTour()">Exit Tour</button>
                 <button class="btn btn-default btn-block" ng-click="togglePause()">Replay Tour</button>
-            </div>
-        </div>
-    </div>
-    <div class="popover in tourControl" ng-if="currentIndex !== null">
-        <div class="arrow"></div><h3 class="popover-title ng-binding">{{_('Tour Control')}} / {{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
-        <div class="popover-content ng-binding">
-            <div class="btn-group">
-                <button class="btn btn-default" ng-model="tourPaused" ng-click="togglePause()"><i class="fa" ng-class="{'fa-play':tourPaused, 'fa-pause':!tourPaused}"></i></button>
-                <button class="btn btn-default" ng-click="exitTour()"><i class="fa fa-stop"></i></button>
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-default" ng-click="stepBeginning()" ng-disabled="currentIndex < 1"><i class="fa fa-fast-backward"></i></button>
-                <button class="btn btn-default" ng-click="stepBackward()" ng-disabled="currentIndex < 1"><i class="fa fa-backward"></i></button>
-                <button class="btn btn-default" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-forward"></i></button>
-                <button class="btn btn-default" ng-click="stepEnd()" ng-disabled="currentIndex === steps.length - 1"><i class="fa fa-fast-forward"></i></button>
             </div>
         </div>
     </div>
