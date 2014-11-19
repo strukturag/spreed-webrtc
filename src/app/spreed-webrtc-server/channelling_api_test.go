@@ -26,10 +26,6 @@ import (
 	"testing"
 )
 
-const (
-	testAppVersion string = "0.0.0+unittests"
-)
-
 type fakeClient struct {
 	replies map[string]interface{}
 }
@@ -103,7 +99,7 @@ func assertErrorReply(t *testing.T, client *fakeClient, iid, code string) {
 
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
 	client, roomManager, session := &fakeClient{}, &fakeRoomManager{}, &Session{}
-	return NewChannellingAPI(testAppVersion, nil, roomManager, nil, nil, nil, nil, nil, nil, roomManager, nil), client, session, roomManager
+	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil, roomManager, nil), client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {
@@ -199,7 +195,7 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t
 func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfTheRoomCannotBeJoined(t *testing.T) {
 	iid := "foo"
 	api, client, session, roomManager := NewTestChannellingAPI()
-	roomManager.joinError = &DataError{Type: "Error", Code: "bad_join"}
+	roomManager.joinError = NewDataError("bad_join", "")
 
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
 
@@ -235,7 +231,7 @@ func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpda
 func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAnErrorIfUpdatingTheRoomFails(t *testing.T) {
 	iid, roomName := "123", "foo"
 	api, client, session, roomManager := NewTestChannellingAPI()
-	roomManager.updateError = &DataError{Type: "Error", Code: "a_room_error", Message: ""}
+	roomManager.updateError = NewDataError("a_room_error", "")
 
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: "0", Hello: &DataHello{Id: roomName}})
 	api.OnIncoming(client, session, &DataIncoming{Type: "Room", Iid: iid, Room: &DataRoom{Name: roomName}})

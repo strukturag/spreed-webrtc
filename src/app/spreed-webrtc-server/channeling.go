@@ -27,6 +27,10 @@ type DataError struct {
 	Message string
 }
 
+func NewDataError(code, message string) error {
+	return &DataError{"Error", code, message}
+}
+
 func (err *DataError) Error() string {
 	return err.Message
 }

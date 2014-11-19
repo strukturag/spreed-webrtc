@@ -173,6 +173,13 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 }
 
+func (s *Session) Authenticated() (authenticated bool) {
+	s.mutex.Lock()
+	authenticated = s.userid != ""
+	s.mutex.Unlock()
+	return
+}
+
 func (s *Session) Authenticate(realm string, st *SessionToken, userid string) error {
 
 	s.mutex.Lock()
