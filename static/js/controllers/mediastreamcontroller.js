@@ -273,6 +273,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			} else {
 				$scope.loadedUser = false;
 			}
+			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
 			$scope.reset();
 		};
 

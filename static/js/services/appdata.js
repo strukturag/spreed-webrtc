@@ -21,7 +21,7 @@
 define(["jquery"], function($) {
 
 	// appData.e events:
-	// subscribe these events with appData.e.on(eventname, function() {}).
+	// Subscribe these events with appData.e.on(eventname, function() {}).
 	//
 	// - authenticationChanged(event, userid, suserid)
 	//     userid (string)  : Public user id of the authenticated user.
@@ -39,11 +39,17 @@ define(["jquery"], function($) {
 	//     status (string)  : Status id (connected, waiting, ...)
 	//
 	// - authorizing(event, flag)
-	//     flag (bool)      : True if authorizing, else false.
+	//     flag (bool)      : True if authorizing phase, else false.
 	//
-	// appData properties:
+	// - userSettingsLoaded(event, loaded, user_settings)
+	//     loaded (bool)    : True if something was loaded, else false.
+	//     user_settings (map) : User map which was loaded.
 	//
-	// - language (string): ISO language code of active language
+	// Other appData properties:
+	//
+	// - language (string) : ISO language code of active language.
+	// - id (string)       : Random string generated on app startup.
+	// - flags (map)       : Flag table.
 
 	// appData
 	return ["randomGen", "$window", function(randomGen, $window) {

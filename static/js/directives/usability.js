@@ -88,14 +88,12 @@ define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, 
 
 			$scope.$on("room.joined", function(event) {
 				if (complete) {
-					$scope.layout.settings = !$scope.loadedUser;
 					ctrl.setInfo("ok");
 				}
 			});
 
 			$scope.$on("room.left", function(event) {
 				if (complete) {
-					$scope.layout.settings = false;
 					ctrl.setInfo("ok");
 				}
 			});
