@@ -1,0 +1,125 @@
+/*
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+#buddycondensed {
+  display: inline-block;
+  position: fixed;
+  padding-left: 20px;
+  @media (max-width: 1125px) {
+    display: none;
+  }
+  @media (max-width: 480px) {
+    display: none;
+    padding-left: 0;
+    position: relative;
+    width: 80%;
+  }
+}
+.buddycondensed {
+  &.buddy {
+    background: none;
+    border-bottom: none;
+    cursor: auto;
+    min-height: 50px;
+    vertical-align: bottom;
+    overflow: visible;
+    .buddyPicture {
+      margin: 2px;
+    }
+  }
+  .defaultDisplayNum {
+    @media (max-width: 480px) {
+      padding: 10px 0px;
+    }
+  }
+  .overDefaultDisplayNum {
+    background: #f8f8f8;
+    display: none;
+    max-width: 80%;
+    position: fixed;
+    top: 49px;
+    @media (max-width: 480px) {
+      overflow-y: auto;
+      max-height: 400px;
+      top: 109px;
+    }
+  }
+  .desc {
+    display: none;
+    font-weight: bold;
+    padding-left: 10px;
+    cursor: default;
+    @media (max-width: 480px) {
+      position: absolute;
+      top: 50px;
+    }
+    &.overNum {
+      display: inline-block;
+      @media (max-width: 480px) {
+        display: block;
+      }
+    }
+  }
+  .actions {
+    background: #FFF;
+    border: 1px solid rgba(128, 128, 128, 0.16);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    display: none;
+    cursor: default;
+    height: 51px;
+    padding: 0 15px;
+    bottom: 12px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 10;
+    @media (max-width: 480px) {
+      height: 60px;
+      padding: 0 5px;
+      bottom: 22px;
+    }
+    .btn-group {
+      margin-bottom: 5px;
+      width: 55px;
+      @media (max-width: 480px) {
+        display: block;
+      }
+    }
+    .btn-primary {
+      padding: 2px 4px;
+    }
+    .fa {
+      font-size: 20px;
+      color: #FFF;
+      line-height: 24px;
+    }
+    .displayName {
+      margin-right: 10px;
+      @media (max-width: 480px) {
+        line-height: 22px;
+        display: block;
+      }
+    }
+  }
+  .buddyPicture {
+    cursor: default;
+    overflow: visible;
+  }
+}
