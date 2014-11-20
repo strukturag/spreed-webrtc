@@ -30,7 +30,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		}
 		if (videos.length) {
 			if (videos.length === 1) {
-				var remoteVideo = streams[videos[0]].element.find("video").get(0);
+				var remoteVideo = streams[videos[0]].element.find("video")[0];
 				if (remoteVideo) {
 					size.width = remoteVideo.videoWidth;
 					size.height = remoteVideo.videoHeight;
@@ -183,7 +183,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			var $mini = $(scope.mini);
 			this.miniParent = $mini.parent();
 			$mini.prependTo(scope.remoteVideos);
-			$mini.find("video").get(0).play();
+			$mini.find("video")[0].play();
 			this.countSelfAsRemote = true;
 		}
 		Democrazy.prototype = Object.create(OnePeople.prototype);
@@ -193,7 +193,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			OnePeople.prototype.close.call(this, container, scope, controller);
 			var $mini = $(scope.mini);
 			$mini.appendTo(this.miniParent);
-			$mini.find("video").get(0).play();
+			$mini.find("video")[0].play();
 			this.miniParent = null;
 		};
 
@@ -202,7 +202,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		var ConferenceKiosk = function(container, scope, controller) {
 
 			this.remoteVideos = $(container).find(".remoteVideos");
-			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
+			this.bigVideo = $("<div>").addClass("bigVideo")[0];
 			this.remoteVideos.before(this.bigVideo);
 
 			this.big = null;
@@ -226,12 +226,12 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			if (this.big) {
 				// Add old video back.
 				this.big.insertAfter(remoteVideo);
-				this.big.find("video").get(0).play();
+				this.big.find("video")[0].play();
 			}
 
 			this.big = remoteVideo;
 			remoteVideo.appendTo(this.bigVideo);
-			remoteVideo.find("video").get(0).play();
+			remoteVideo.find("video")[0].play();
 
 		};
 
@@ -287,7 +287,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			this.closed = true;
 			if (this.big) {
 				this.remoteVideos.append(this.big);
-				this.big.find("video").get(0).play();
+				this.big.find("video")[0].play();
 			}
 			this.big = null;
 			this.bigVideo.remove()

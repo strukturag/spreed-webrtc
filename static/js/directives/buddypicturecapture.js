@@ -176,10 +176,10 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 
 		var link = function($scope, $element, $attrs, modelController) {
 
-			$scope.video = $element.find("video").get(0);
+			$scope.video = $element.find("video")[0];
 			$scope.flash = $element.find(".videoFlash");
-			$scope.canvasPic = $element.find("canvas.videoPic").get(0);
-			$scope.canvasPrev = $element.find("canvas.videoPrev").get(0);
+			$scope.canvasPic = $element.find("canvas.videoPic")[0];
+			$scope.canvasPrev = $element.find("canvas.videoPrev")[0];
 			$($scope.canvasPic).attr($scope.captureSize);
 
 			$scope.save = function() {

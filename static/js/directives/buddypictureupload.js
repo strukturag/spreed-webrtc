@@ -211,7 +211,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var link = function($scope, $element) {
 
-			$scope.prevImage = $element.find("img.preview").get(0);
+			$scope.prevImage = $element.find("img.preview")[0];
 			$scope.clearInput = function() {
 				$element.find("input[type=file]")[0].value = "";
 			};

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'text!partials/socialshare.html'], function($, template) {
+define(['text!partials/socialshare.html'], function(template) {
 
 	var urls = {
 		email: "mailto:?subject=_TEXT_%20_URL_",
@@ -49,13 +49,11 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 				$scope.$on("room.updated", function(ev, room) {
 					$scope.roomlink = rooms.link(room);
 				});
-
 				$scope.$on("room.left", function(ev) {
 					$scope.roomlink = null;
 				});
-
-				$element.on("click", "a", function(event) {
-					var nw = $(event.currentTarget).data("nw");
+				$element.find("a").on("click", function(event) {
+					var nw = event.currentTarget.getAttribute("data-nw");
 					var url = makeUrl(nw, $scope.roomlink);
 					if (url) {
 						if (nw === "email") {

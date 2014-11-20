@@ -601,7 +601,7 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 						delete status.message;
 						// Convert buddy image.
 						if (status.buddyPicture) {
-							var img = buddyPicture.toString(scope.element.find(".buddyPicture img").get(0));
+							var img = buddyPicture.toString(scope.element.find(".buddyPicture img")[0]);
 							if (img) {
 								status.buddyPicture = img;
 							} else {
@@ -645,12 +645,12 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 
 		Buddylist.prototype.click = function(buddyElement, target) {
 
-			var be = buddyElement.get(0);
+			var be = buddyElement[0];
 			// Traverse up to find click action.
 			var action;
 			do {
 				action = $(target).data("action");
-				target = $(target).parent().get(0);
+				target = $(target).parent()[0];
 			} while (!action && target && target !== be);
 
 			// Make call the default action.

@@ -33,13 +33,13 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				return id;
 			};
 
-			$scope.container = $element.get(0);
+			$scope.container = $element[0];
 			$scope.layoutparent = $element.parent();
 
-			$scope.remoteVideos = $element.find(".remoteVideos").get(0);
-			$scope.localVideo = $element.find(".localVideo").get(0);
-			$scope.miniVideo = $element.find(".miniVideo").get(0);
-			$scope.mini = $element.find(".miniContainer").get(0);
+			$scope.remoteVideos = $element.find(".remoteVideos")[0];
+			$scope.localVideo = $element.find(".localVideo")[0];
+			$scope.miniVideo = $element.find(".miniVideo")[0];
+			$scope.mini = $element.find(".miniContainer")[0];
 
 			$scope.hasUsermedia = false;
 			$scope.isActive = false;
@@ -85,7 +85,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					$($scope.remoteVideos).append(clonedElement);
 					clonedElement.data("peerid", scope.peerid);
 					scope.element = clonedElement;
-					var video = clonedElement.find("video").get(0);
+					var video = clonedElement.find("video")[0];
 					$window.attachMediaStream(video, stream);
 					// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
 					videoWaiter.wait(video, stream, function(withvideo) {
@@ -174,7 +174,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				//console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
 				if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
 					$scope.layoutparent.toggleClass("fullscreen");
-					BigScreen.toggle($scope.layoutparent.get(0));
+					BigScreen.toggle($scope.layoutparent[0]);
 				}
 			};
 

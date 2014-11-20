@@ -685,7 +685,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					if (elem) {
 						BigScreen.toggle(elem);
 					} else {
-						BigScreen.toggle(pane.get(0));
+						BigScreen.toggle(pane[0]);
 					}
 				}
 
