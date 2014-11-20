@@ -22,13 +22,18 @@ define(['angular'], function(angular) {
 
 	return {
 
-		// Angular modules - either overwrite existing modules or add new
-		// ones. All app dependencies are already loaded so modules defined
-		// here will be used instead of the default ones.
-		// To load add a new module to the angular app, append the name of
-		// the module to the modules array.
-		// Defining a module in a plugin is optional.
-		module: function(modules) {
+		/**
+		 * Modules function for this plugin. Use it to add Angular modules.
+		 * either overwrite existing modules or add new ones. All app dependencies
+		 * are already loaded so modules defined here will be used instead of
+		 * the default ones. Defining the module function on a plugin is optional.
+		 *
+		 * @param {array} modules - To add a new module to the angular app, append
+		 *                          the name of the module to the modules array.
+		 * @param {Object} launcher - The launcher object containg $q and $http.
+		 *
+		 */
+		module: function(modules, launcher) {
 
 			// Create and add a new module.
 			// See http://docs.angularjs.org/guide/module for details on Angular.
@@ -61,12 +66,18 @@ define(['angular'], function(angular) {
 
 		},
 
-		// Initialize function for this module.
-		// Add your angular stuff here. The app is the base Angular module for
-		// the web application. The plugin initialize function is called after
-		// the app initialize function.
-		// Defining the initialize function is optional.
-		initialize: function(app) {
+		/**
+		 * Initialize function for this plugin. Use this function to add your
+		 * your Angular stuff to the app. The plugin initializse function is
+		 * called after the app initialize function.
+		 *
+		 * @param {App} app - The base Angular module for the web application.
+		 * @param {Object} launcher - The launcher object containg $q and $http.
+		 * @returns {($q.promise|null)} - Return a $q.promise when you need the
+		 *                                launcher to wait.
+		 *
+		 */
+		initialize: function(app, launcher) {
 
 			console.log("Initializing plugin-example ...");
 
