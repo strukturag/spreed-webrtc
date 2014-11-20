@@ -36,6 +36,8 @@ styles:
 		$(CURDIR)/bootstrap.scss:$(STATIC)/css/bootstrap.min.css
 	$(SASS) --compass --scss $(SASSFLAGS) \
 		$(CURDIR)/font-awesome.scss:$(STATIC)/css/font-awesome.min.css
+	$(SASS) --compass --scss $(SASSFLAGS) \
+		$(CURDIR)/csp.scss:$(STATIC)/css/csp.min.css
 
 styleshint:
 	@if [ "$(SASS)" = "" ]; then echo "Command 'sass' not found, required when checking styles"; exit 1; fi

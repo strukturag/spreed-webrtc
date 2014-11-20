@@ -1,4 +1,4 @@
-/*
+/*!
  * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
@@ -17,17 +17,4 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- */
-
-package main
-
-type Context struct {
-	App       string // Main client script
-	Cfg       *Config
-	Host      string
-	Ssl       bool
-	Csp       bool
-	Languages []string
-	Room      string `json:"-"`
-	Scheme    string `json:"-"`
-}
+ */[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important}ng\:form{display:block}.ng-animate-block-transitions{transition:0s all !important;-webkit-transition:0s all !important}.ng-hide-add-active,.ng-hide-remove{display:block !important}

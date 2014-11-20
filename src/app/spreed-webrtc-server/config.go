@@ -31,22 +31,24 @@ import (
 )
 
 type Config struct {
-	Title                  string   // Title
-	ver                    string   // Version (not exported to Javascript)
-	S                      string   // Static URL prefix with version
-	B                      string   // Base URL
-	Token                  string   // Server token
-	StunURIs               []string // STUN server URIs
-	TurnURIs               []string // TURN server URIs
-	Tokens                 bool     // True when we got a tokens file
-	Version                string   // Server version number
-	UsersEnabled           bool     // Flag if users are enabled
-	UsersAllowRegistration bool     // Flag if users can register
-	UsersMode              string   // Users mode string
-	DefaultRoomEnabled     bool     // Flag if default room ("") is enabled
-	Plugin                 string   // Plugin to load
-	globalRoomID           string   // Id of the global room (not exported to Javascript)
-	authorizeRoomCreation  bool     // Whether a user account is required to create rooms (not exported to Javascript)
+	Title                           string   // Title
+	ver                             string   // Version (not exported to Javascript)
+	S                               string   // Static URL prefix with version
+	B                               string   // Base URL
+	Token                           string   // Server token
+	StunURIs                        []string // STUN server URIs
+	TurnURIs                        []string // TURN server URIs
+	Tokens                          bool     // True when we got a tokens file
+	Version                         string   // Server version number
+	UsersEnabled                    bool     // Flag if users are enabled
+	UsersAllowRegistration          bool     // Flag if users can register
+	UsersMode                       string   // Users mode string
+	DefaultRoomEnabled              bool     // Flag if default room ("") is enabled
+	Plugin                          string   // Plugin to load
+	globalRoomID                    string   // Id of the global room (not exported to Javascript)
+	authorizeRoomCreation           bool     // Whether a user account is required to create rooms (not exported to Javascript)
+	contentSecurityPolicy           string   // HTML content security policy
+	contentSecurityPolicyReportOnly string   // HTML content security policy in report only mode
 }
 
 func NewConfig(container phoenix.Container, tokens bool) *Config {
@@ -84,22 +86,24 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 	trimAndRemoveDuplicates(&turnURIs)
 
 	return &Config{
-		Title:                  container.GetStringDefault("app", "title", "Spreed WebRTC"),
-		ver:                    ver,
-		S:                      fmt.Sprintf("static/ver=%s", ver),
-		B:                      basePath,
-		Token:                  serverToken,
-		StunURIs:               stunURIs,
-		TurnURIs:               turnURIs,
-		Tokens:                 tokens,
-		Version:                version,
-		UsersEnabled:           container.GetBoolDefault("users", "enabled", false),
-		UsersAllowRegistration: container.GetBoolDefault("users", "allowRegistration", false),
-		UsersMode:              container.GetStringDefault("users", "mode", ""),
-		DefaultRoomEnabled:     container.GetBoolDefault("app", "defaultRoomEnabled", true),
-		Plugin:                 container.GetStringDefault("app", "plugin", ""),
-		globalRoomID:           container.GetStringDefault("app", "globalRoom", ""),
-		authorizeRoomCreation:  container.GetBoolDefault("app", "authorizeRoomCreation", false),
+		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
+		ver:                             ver,
+		S:                               fmt.Sprintf("static/ver=%s", ver),
+		B:                               basePath,
+		Token:                           serverToken,
+		StunURIs:                        stunURIs,
+		TurnURIs:                        turnURIs,
+		Tokens:                          tokens,
+		Version:                         version,
+		UsersEnabled:                    container.GetBoolDefault("users", "enabled", false),
+		UsersAllowRegistration:          container.GetBoolDefault("users", "allowRegistration", false),
+		UsersMode:                       container.GetStringDefault("users", "mode", ""),
+		DefaultRoomEnabled:              container.GetBoolDefault("app", "defaultRoomEnabled", true),
+		Plugin:                          container.GetStringDefault("app", "plugin", ""),
+		globalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
+		authorizeRoomCreation:           container.GetBoolDefault("app", "authorizeRoomCreation", false),
+		contentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
+		contentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
 	}
 }
 

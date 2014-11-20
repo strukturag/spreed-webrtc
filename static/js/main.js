@@ -273,7 +273,7 @@ if (Object.create) {
 					// Wait for all others to complete and then boostrap the main app.
 					$q.all(promises).then(function() {
 						console.log("Bootstrapping ...");
-						angular.bootstrap(document, ['app'], {
+						angular.bootstrap(document.body, ['app'], {
 							strictDi: true
 						});
 					});

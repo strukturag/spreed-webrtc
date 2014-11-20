@@ -1,4 +1,4 @@
-/*
+/*!
  * Spreed WebRTC.
  * Copyright (C) 2013-2014 struktur AG
  *
@@ -19,15 +19,4 @@
  *
  */
 
-package main
-
-type Context struct {
-	App       string // Main client script
-	Cfg       *Config
-	Host      string
-	Ssl       bool
-	Csp       bool
-	Languages []string
-	Room      string `json:"-"`
-	Scheme    string `json:"-"`
-}
+@import "libs/angular/angular-csp.scss";

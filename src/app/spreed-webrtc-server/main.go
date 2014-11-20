@@ -109,6 +109,17 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Expires", "-1")
 	w.Header().Set("Cache-Control", "private, max-age=0")
 
+	csp := false
+
+	if config.contentSecurityPolicy != "" {
+		w.Header().Set("Content-Security-Policy", config.contentSecurityPolicy)
+		csp = true
+	}
+	if config.contentSecurityPolicyReportOnly != "" {
+		w.Header().Set("Content-Security-Policy-Report-Only", config.contentSecurityPolicyReportOnly)
+		csp = true
+	}
+
 	scheme := "http"
 
 	// Detect if the request was made with SSL.
@@ -126,7 +137,7 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare context to deliver to HTML..
-	context := &Context{Cfg: config, App: "main", Host: r.Host, Scheme: scheme, Ssl: ssl, Languages: langs, Room: room}
+	context := &Context{Cfg: config, App: "main", Host: r.Host, Scheme: scheme, Ssl: ssl, Csp: csp, Languages: langs, Room: room}
 
 	// Get URL parameters.
 	r.ParseForm()

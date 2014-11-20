@@ -101,6 +101,10 @@ serverRealm = local
 ; a front end webserver. Check the doc folder for more info about plugins and
 ; examples.
 ;plugin = extra/static/myplugin.js
+; Content-Security-Policy HTTP response header value.
+;contentSecurityPolicy =
+; Content-Security-Policy-Report-Only HTTP response header value.
+;contentSecurityPolicyReportOnly =
 
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log
