@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'], function($, _, template, BigScreen) {
 
 	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q) {

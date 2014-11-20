@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["jquery", "underscore"], function($, _) {
 
 	return ["fileData", "fileTransfer", "$window", "mediaStream", "safeApply", "$timeout", function(fileData, fileTransfer, $window, mediaStream, safeApply, $timeout) {

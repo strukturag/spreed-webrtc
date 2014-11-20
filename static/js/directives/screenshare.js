@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
 	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing) {

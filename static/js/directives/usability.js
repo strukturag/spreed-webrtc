@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/usability.html'], function($, _, template) {
 
 	var MEDIA_CHECK = "1" // First version of media check flag.

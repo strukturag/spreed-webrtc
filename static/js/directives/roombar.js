@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angular, template) {
 
 	// roomBar

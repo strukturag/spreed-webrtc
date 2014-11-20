@@ -22,7 +22,8 @@
 	"smarttabs": true,
 	"trailing": true,
 	"undef": true,
-	"unused": false // Disabled for now
+	"unused": false, // Disabled for now
+	"globalstrict": true
 }
 
 

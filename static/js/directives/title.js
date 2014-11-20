@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define([], function() {
 	return [function() {
 		var link = function($scope, $element, attrs) {

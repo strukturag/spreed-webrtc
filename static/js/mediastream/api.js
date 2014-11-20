@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	var alive_check_timeout = 5000;

@@ -41,6 +41,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
+"use strict";
 define(["jquery"], function($) {
 
 	var dispatchClick = function(coords) {

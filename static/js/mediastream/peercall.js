@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection'], function($, _, utils, PeerConnection) {
 
 	var PeerCall = function(webrtc, id, from, to) {

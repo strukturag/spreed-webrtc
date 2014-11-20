@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'], function($, _, template, BigScreen) {
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {

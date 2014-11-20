@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["angular"], function(angular) {
 
 	var modalController = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {

@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmanager.html', 'text!partials/contactsmanageredit.html'], function(_, $, Modernizr, sjcl, templateContactsManager, templateContactsManagerEdit) {
 
 	var Database = function(name) {

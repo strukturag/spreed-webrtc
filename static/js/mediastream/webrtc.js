@@ -19,6 +19,8 @@
  *
  */
 
+"use strict";
+
 // Android detection hack - probably put this someplace else.
 var webrtcDetectedAndroid = ((window.navigator || {}).userAgent).match(/android (\d+)/i) !== null;
 

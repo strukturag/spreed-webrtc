@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
 
 	// ChatroomController

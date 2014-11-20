@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
 	var SoundInterval = function(sound, id, time) {

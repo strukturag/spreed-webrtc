@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _, AudioContext) {
 
 	// Create AudioContext singleton, if supported.

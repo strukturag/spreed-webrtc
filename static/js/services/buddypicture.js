@@ -19,6 +19,7 @@
  *
  */
 
+"use strict";
  define([], function() {
 
 	// buddyPicture
