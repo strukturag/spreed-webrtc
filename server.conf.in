@@ -102,8 +102,16 @@ serverRealm = local
 ; examples.
 ;plugin = extra/static/myplugin.js
 ; Content-Security-Policy HTTP response header value.
+; Spreed WebRTC requires inline styles, WebSocket connection to itself and
+; data: URL for images.
+; The currently recommended CSP is:
+;   default-src 'self';
+;   style-src 'self' 'unsafe-inline';
+;   img-src 'self' data:;
+;   connect-src 'self' wss://server:port/ws;
 ;contentSecurityPolicy =
-; Content-Security-Policy-Report-Only HTTP response header value.
+; Content-Security-Policy-Report-Only HTTP response header value. Use this
+; to test your CSP before putting it into production.
 ;contentSecurityPolicyReportOnly =
 
 [log]
