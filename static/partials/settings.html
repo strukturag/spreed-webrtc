@@ -13,7 +13,7 @@
                 <div ng-if="!userid">
                   <keygen class="hidden" name="pubkey"/>
                   <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
-                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event)">{{_('Register')}}</button>
                   </label>
                   <iframe class="hidden" name="users_registration_certificate_iframe"></iframe>
                 </div>
@@ -28,7 +28,7 @@
                     <button class="btn btn-small btn-primary btn-sign-in" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
+                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
                   </label>
                 </div>
                 <p class="form-control-static well well-sm" ng-if="userid">{{userid|displayUserid}}</p>
