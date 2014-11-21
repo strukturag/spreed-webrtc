@@ -195,9 +195,9 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					var options = $.extend({}, opts);
 					var subscope = controller.rooms[id];
 					var index = controller.visibleRooms.length;
-					var buddy = buddyData.lookup(id);
 					if (!subscope) {
 						console.log("Create new chatroom", [id]);
+						var buddy = buddyData.lookup(id);
 						if (settings.group) {
 							controller.visibleRooms.unshift(id);
 						} else {
@@ -217,9 +217,9 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.p2pstate = false;
 						subscope.active = false;
 						subscope.pending = 0;
-						subscope.isuser = !!(buddy && buddy.session && buddy.session.Userid);
-						subscope.iscontact = !!(buddy && buddy.contact);
-						subscope.canAddContact = !subscope.isgroupchat && subscope.isuser;
+						subscope.isUser = !!(buddy && buddy.session && buddy.session.Userid);
+						subscope.isContact = !!(buddy && buddy.contact);
+						subscope.canAddContact = !subscope.isgroupchat && subscope.isUser;
 						if (!subscope.isgroupchat) {
 							buddyData.push(id);
 						}
@@ -345,7 +345,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							contacts.remove(buddy.contact.Userid);
 						};
 						subscope.updateContactStatus = function(event, data) {
-							subscope.iscontact = event.type === "contactadded";
+							subscope.isContact = event.type === "contactadded";
 						};
 						contacts.e.on("contactadded", subscope.updateContactStatus);
 						contacts.e.on("contactremoved", subscope.updateContactStatus);
