@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
+define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html', 'text!partials/picturehover.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation, templatePictureHover) {
 
 	// ChatroomController
 	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", "mediaStream", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation, mediaStream) {
@@ -50,7 +50,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 		var fileInfo = $compile(templateFileInfo);
 		var contactRequest = $compile(templateContactRequest);
 		var geoLocation = $compile(templateGeolocation);
-		var pictureHover = $compile('<div class="buddyInfoActions"><div class="btn-group"><a class="btn btn-primary" ng-click="doCall()" title="Start video call"><i class="fa fa-phone"></i></a><a class="btn btn-primary" ng-click="startChat()" title="Start chat"><i class="fa fa-comments-o"></i></a></div></div>');
+		var pictureHover = $compile(templatePictureHover);
 
 		var knowMessage = {
 			r: {},
