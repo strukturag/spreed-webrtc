@@ -250,7 +250,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 				console.log("Remote stream added.", stream, currentcall);
 				if (!$scope.haveStreams) {
-					console.log("xxxxxxx First stream");
+					//console.log("First stream");
 					$window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
 					$scope.haveStreams = true;
 				}
