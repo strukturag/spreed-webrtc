@@ -319,8 +319,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 					}
 				} else {
-					targetcall.close();
-					//this.api.sendBye(targetcall.id, null);
+					this.doHangup("receivedbye", targetcall.id);
+					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 				}
 				break;
 			case "Conference":
