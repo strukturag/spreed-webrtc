@@ -194,7 +194,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					usermedia.attachMediaStream($scope.localVideo);
 					var count = 0;
 					var waitForLocalVideo = function() {
-						if (!$scope.hasUsermedia) {
+						if (!$scope.hasUsermedia || $scope.isActive) {
 							return;
 						}
 						if ($scope.localVideo.videoWidth > 0) {
@@ -250,7 +250,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 				console.log("Remote stream added.", stream, currentcall);
 				if (!$scope.haveStreams) {
-					//console.log("First stream");
+					console.log("xxxxxxx First stream");
 					$window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
 					$scope.haveStreams = true;
 				}
