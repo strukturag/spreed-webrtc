@@ -29,10 +29,17 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			var streams = {};
+			var calls = {};
+
 			var getStreamId = function(stream, currentcall) {
 				var id = currentcall.id + "-" + stream.id;
 				console.log("Created stream ID", id);
 				return id;
+			};
+
+			// Dummy stream.
+			var dummy = {
+				id: "defaultDummyStream"
 			};
 
 			$scope.container = $element[0];
@@ -62,11 +69,30 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					return;
 				}
 
+				var subscope;
+
+				// Dummy replacement support.
+				if (calls.hasOwnProperty(currentcall.id)) {
+					subscope = calls[currentcall.id];
+					if (stream === dummy) {
+						return;
+					}
+					if (subscope.dummy) {
+						subscope.$apply(function() {
+							subscope.attachStream(stream);
+						});
+						return;
+					}
+				} else {
+					// Create scope.
+					subscope = $scope.$new();
+					calls[currentcall.id] = subscope;
+				}
+
 				//console.log("Add remote stream to scope", stream.id, stream, currentcall);
-				// Create scope.
-				var subscope = $scope.$new();
 				var peerid = subscope.peerid = currentcall.id;
 				buddyData.push(peerid);
+				subscope.unattached = true;
 				subscope.withvideo = false;
 				subscope.onlyaudio = false;
 				subscope.destroyed = false;
@@ -80,48 +106,60 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				console.log("Created stream scope", id, peerid);
 
 				// Add created scope.
-				streams[id] = subscope;
+				if (stream === dummy) {
+					subscope.dummy = true;
+				} else {
+					streams[id] = subscope;
+				}
 
 				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {
 					$($scope.remoteVideos).append(clonedElement);
 					clonedElement.data("peerid", scope.peerid);
 					scope.element = clonedElement;
-					var video = clonedElement.find("video")[0];
-					$window.attachMediaStream(video, stream);
-					// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
-					videoWaiter.wait(video, stream, function(withvideo) {
-						if (scope.destroyed) {
-							console.log("Abort wait for video on destroyed scope.");
+					scope.attachStream = function(stream) {
+						if (stream === dummy) {
 							return;
 						}
-						if (withvideo) {
-							scope.$apply(function($scope) {
-								$scope.withvideo = true;
-							});
-						} else {
-							console.info("Incoming stream has no video tracks.");
-							scope.$apply(function($scope) {
-								$scope.onlyaudio = true;
-							});
-						}
-						scope.$emit("active", currentcall);
-						$scope.redraw();
-					}, function() {
-						if (scope.destroyed) {
-							console.log("No longer wait for video on destroyed scope.");
-							return;
-						}
-						console.warn("We did not receive video data for remote stream", currentcall, stream, video);
-						scope.$emit("active", currentcall);
-						$scope.redraw();
-					});
+						var video = clonedElement.find("video")[0];
+						$window.attachMediaStream(video, stream);
+						// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
+						videoWaiter.wait(video, stream, function(withvideo) {
+							if (scope.destroyed) {
+								console.log("Abort wait for video on destroyed scope.");
+								return;
+							}
+							if (withvideo) {
+								scope.$apply(function($scope) {
+									$scope.withvideo = true;
+								});
+							} else {
+								console.info("Incoming stream has no video tracks.");
+								scope.$apply(function($scope) {
+									$scope.onlyaudio = true;
+								});
+							}
+							scope.$emit("active", currentcall);
+							$scope.redraw();
+						}, function() {
+							if (scope.destroyed) {
+								console.log("No longer wait for video on destroyed scope.");
+								return;
+							}
+							console.warn("We did not receive video data for remote stream", currentcall, stream, video);
+							scope.$emit("active", currentcall);
+							$scope.redraw();
+						});
+						scope.unattached = false;
+						scope.dummy = false;
+					};
 					scope.doChat = function() {
 						$scope.$emit("startchat", currentcall.id, {
 							autofocus: true,
 							restore: true
 						});
 					};
+					scope.attachStream(stream);
 				});
 
 			};
@@ -138,6 +176,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					//console.log("remove scope", subscope);
 					if (subscope.element) {
 						subscope.element.remove();
+					}
+					var callscope = calls[currentcall.id];
+					if (subscope === callscope) {
+						delete calls[currentcall.id];
 					}
 					subscope.$destroy();
 					$scope.redraw();
@@ -262,6 +304,24 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 				console.log("Remote stream removed.", stream, currentcall);
 				$scope.removeRemoteStream(stream, currentcall);
+
+			});
+
+			mediaStream.webrtc.e.on("statechange", function(event, iceConnectionState, currentcall) {
+
+				if (!$scope.haveStreams) {
+					return;
+				}
+
+				switch (iceConnectionState) {
+				case "new":
+				case "checking":
+				case "connected":
+				case "completed":
+				case "failed":
+					$scope.addRemoteStream(dummy, currentcall);
+					break;
+				}
 
 			});
 

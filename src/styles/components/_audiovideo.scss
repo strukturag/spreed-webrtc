@@ -169,14 +169,14 @@
   overflow: hidden;
   position: relative;
   vertical-align: bottom;
-  visibility: hidden;
+  //visibility: hidden;
   width: 100%;
   &.withvideo {
-    visibility: visible;
+    //visibility: visible;
   }
   &.onlyaudio {
     background: $video-onlyaudio-background;
-    visibility: visible;
+    //visibility: visible;
   }
   .onlyaudio {
     color: $video-onlyaudio;
@@ -190,10 +190,13 @@
     text-align: center;
     top: 45%;
   }
-  &.onlyaudio video {
+  &.onlyaudio video, &.dummy video {
     visibility: hidden;
   }
   &.onlyaudio .onlyaudio {
+    display: block;
+  }
+  &.dummy .onlyaudio {
     display: block;
   }
   .peerActions {
