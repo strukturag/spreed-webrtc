@@ -30,8 +30,8 @@ define(['toastr'], function(toastr) {
 			"debug": false,
 			"positionClass": "toast-bottom-right",
 			"onclick": null,
-			"fadeIn": 500,
-			"fadeOut": 500,
+			"showMethod": "show",
+			"hideMethod": "hide",
 			"timeOut": 0,
 			"extendedTimeOut": 0
 		}
