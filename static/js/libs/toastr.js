@@ -304,9 +304,10 @@
 
                 function stickAround() {
                     clearTimeout(intervalId);
+                    /* Disabled to support custom jQuery without animations.
                     $toastElement.stop(true, true)[options.showMethod](
                         { duration: options.showDuration, easing: options.showEasing }
-                    );
+                    );*/
                 }
             }
 
