@@ -42,8 +42,8 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 
 			$scope.roomdata = {};
 			$scope.$watch("roomdata.name", function(name) {
-				$scope.roomdata.link = rooms.link($scope.roomdata);
-			});
+				$scope.roomdata.link = rooms.link({Name: name});
+			}, true);
 		};
 
 		return {
