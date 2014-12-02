@@ -23,11 +23,9 @@
 define([
 ], function() {
 
-	return ["$window", "$q", function($window, $q) {
+	return ["$window", "$q", "alertify", "translation", function($window, $q, alertify, translation) {
 
 		var pinCache = {};
-
-		// XXX(longsleep): This service needs to get rid of all window.alert and prompt calls.
 		var roompin = {
 			get: function(roomName) {
 				var cachedPIN = pinCache[roomName];
@@ -40,21 +38,24 @@ define([
 			update: function(roomName, pin) {
 				if (pin) {
 					pinCache[roomName] = pin;
-					$window.alert("PIN for room " + roomName + " is now '" + pin + "'");
+					alertify.dialog.alert(translation._("PIN for room %s is now '%s'.", roomName, pin));
 				} else {
 					roompin.clear(roomName);
-					$window.alert("PIN lock has been removed from room " + roomName);
+					alertify.dialog.alert(translation._("PIN lock has been removed from room %s.", roomName));
 				}
 			},
 			requestInteractively: function(roomName) {
 				var deferred = $q.defer();
-				var pin = $window.prompt("Enter the PIN for " + roomName + " below");
-				if (pin) {
-					pinCache[roomName] = pin;
-					deferred.resolve();
-				} else {
+				alertify.dialog.prompt(translation._("Enter the PIN for room %s", roomName), function(pin) {
+					if (pin) {
+						pinCache[roomName] = pin;
+						deferred.resolve();
+					} else {
+						deferred.reject();
+					}
+				}, function() {
 					deferred.reject();
-				}
+				});
 				return deferred.promise;
 			}
 		};
