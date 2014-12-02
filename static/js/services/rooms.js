@@ -53,7 +53,9 @@ define([
 				break;
 			case "room_join_requires_account":
 				console.log("Room join requires a logged in user.");
-				alertify.dialog.alert(translation._("Please sign in to create rooms."), function() {
+				alertify.dialog.notify("", translation._("Please sign in to create rooms."), function() {
+					rooms.joinDefault();
+				}, function() {
 					rooms.joinDefault();
 				});
 				break;
