@@ -104,6 +104,18 @@ define(['jquery', 'underscore'], function($, _) {
 
 		};
 
+		MediaSources.prototype.hasVideo = function() {
+
+			return !this.supported || this.video.length > 0;
+
+		};
+
+		MediaSources.prototype.hasAudio = function() {
+
+			return !this.supported || this.audio.length > 0;
+
+		};
+
 
 		return new MediaSources();
 

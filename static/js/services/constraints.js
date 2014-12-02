@@ -23,10 +23,11 @@
  define(["jquery", "underscore"], function($, _) {
 
 	// constraints
-	return ["webrtc", "$window", function(webrtc, $window) {
+	return ["webrtc", "$window", "$q", function(webrtc, $window, $q) {
 
 		var service = this;
 
+		// Constraints implementation holder. Created new all the time.
 		var Constraints = function(settings) {
 			this.settings = _.clone(settings, true);
 			this.pc = [];
@@ -34,8 +35,24 @@
 			this.video = [];
 			this.videoMandatory = {};
 			this.screensharing =[];
+			this.disabled = {};
+			// Add a single promise for ourselves.
+			this.promises = [];
+			this.defer().resolve();
 		};
 
+		// Helpers to wait on stuff.
+		Constraints.prototype.defer = function() {
+			var deferred = $q.defer();
+			this.promises.push(deferred.promise);
+			return deferred;
+		};
+		Constraints.prototype.wait = function(promise) {
+			this.promises.push(promise);
+			return promise;
+		};
+
+		// Add constraints.
 		Constraints.prototype.add = function(t, k, v, mandatory) {
 			if (_.isArray(t)) {
 				_.forEach(t, function(x) {
@@ -63,6 +80,7 @@
 			}
 		};
 
+		// Set constraints, overwriting existing.
 		Constraints.prototype.set = function(t, data, mandatory) {
 			if (mandatory) {
 				t = t + "Mandatory";
@@ -74,19 +92,36 @@
 			}
 		};
 
+		// Set disable flag for video/audio.
+		Constraints.prototype.disable = function(name) {
+			this.disabled[name] = true;
+		};
+
+		// Define our service helpers
 		service.e = $({}); // events
 
+		// Create as WebRTC data structure.
 		service.mediaConstraints = function(constraints) {
-			webrtc.settings.mediaConstraints.audio = {
-				optional: constraints.audio
-			};
-			webrtc.settings.mediaConstraints.video = {
-				optional: constraints.video,
-				mandatory: constraints.videoMandatory
-			};
+			if (constraints.disabled.audio) {
+				webrtc.settings.mediaConstraints.audio = false
+			} else {
+				webrtc.settings.mediaConstraints.audio = {
+					optional: constraints.audio
+				};
+			}
+			if (constraints.disabled.video) {
+				webrtc.settings.mediaConstraints.video = false;
+			} else {
+				webrtc.settings.mediaConstraints.video = {
+					optional: constraints.video,
+					mandatory: constraints.videoMandatory
+				};
+			}
+			console.log("media constraints", webrtc.settings.mediaConstraints);
 			webrtc.settings.screensharing.mediaConstraints.video.optional = constraints.screensharing;
 		};
 
+		// Create as WebRTC data structure.
 		service.pcConstraints = function(constraints) {
 			webrtc.settings.pcConstraints.optional = constraints.pc;
 		};
@@ -119,8 +154,10 @@
 			refresh: function(settings) {
 				var constraints = new Constraints(settings);
 				service.e.triggerHandler("refresh", [constraints]);
-				service.mediaConstraints(constraints);
-				service.pcConstraints(constraints);
+				return $q.all(constraints.promises).then(function() {
+					service.mediaConstraints(constraints);
+					service.pcConstraints(constraints);
+				});
 			},
 			turn: function(turnData) {
 				// Set TURN server details.

@@ -111,27 +111,14 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			};
 
 			$scope.checkDefaultMediaSources = function() {
+				// Check if the stuff exists.
 				if ($scope.master.settings.microphoneId && !$scope.mediaSources.hasAudioId($scope.master.settings.microphoneId)) {
 					$scope.master.settings.microphoneId = null;
 				}
 				if ($scope.master.settings.cameraId && !$scope.mediaSources.hasVideoId($scope.master.settings.cameraId)) {
 					$scope.master.settings.cameraId = null;
 				}
-				var audio = $scope.mediaSources.audio;
-				var video = $scope.mediaSources.video;
-				if (!$scope.master.settings.microphoneId && audio.length > 0) {
-					$scope.master.settings.microphoneId = audio[0].id;
-				}
-				if (!$scope.master.settings.cameraId && video.length > 0) {
-					$scope.master.settings.cameraId = $scope.mediaSources.video[0].id;
-				}
-				//console.log("master sources updates", $scope.master);
-				$scope.refreshWebrtcSettings();
 			};
-
-			$scope.mediaSources.refresh(function() {
-				safeApply($scope, $scope.checkDefaultMediaSources);
-			});
 
 			$scope.$watch("layout.settings", function(showSettings, oldValue) {
 				if (showSettings) {
@@ -151,6 +138,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 								$scope.user.settings.cameraId = video[0].id;
 							}
 						});
+						$scope.refreshWebrtcSettings();
 					});
 				} else if (!showSettings && oldValue) {
 					$scope.saveSettings();
@@ -173,6 +161,31 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			constraints.e.on("refresh", function(event, constraints) {
 
 				var settings = $scope.master.settings;
+
+				// Assert that selected devices are there.
+				(function() {
+					var deferred = constraints.defer();
+					mediaSources.refresh(function() {
+						$scope.checkDefaultMediaSources();
+						// Select microphone device by id.
+						if (settings.microphoneId) {
+							constraints.add("audio", "sourceId", settings.microphoneId);
+						}
+						// Select camera by device id.
+						if (settings.cameraId) {
+							constraints.add("video", "sourceId", settings.cameraId);
+						}
+						if (!mediaSources.hasAudio()) {
+							constraints.disable('audio');
+							console.info("Disabled audio input as no audio source was found.");
+						}
+						if (!mediaSources.hasVideo()) {
+							constraints.disable('video');
+							console.info("Disabled video input as no video source was found.");
+						}
+						deferred.resolve("complete");
+					});
+				})();
 
 				// Chrome only constraints.
 				if ($scope.isChrome) {
@@ -203,16 +216,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						// the input stream that was opened via getUserMedia.
 						// https://chromiumcodereview.appspot.com/23558010
 						constraints.add("audio", "chromeRenderToAssociatedSink", settings.audioRenderToAssociatedSkin && true); // defaults to false in Chrome
-					}
-
-					// Select microphone device by id.
-					if (settings.microphoneId) {
-						constraints.add("audio", "sourceId", settings.microphoneId);
-					}
-
-					// Select camera by device id.
-					if (settings.cameraId) {
-						constraints.add("video", "sourceId", settings.cameraId);
 					}
 
 					// Experimental video settings.
