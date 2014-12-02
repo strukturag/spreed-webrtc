@@ -43,12 +43,17 @@ define([
 			case "authorization_required":
 				roompin.requestInteractively(requestedRoomName).then(joinRequestedRoom,
 				function() {
-					console.log("Authentication cancelled, try a different room");
+					console.log("Authentication cancelled, try a different room.");
+					rooms.joinDefault();
 				});
 				break;
 			case "authorization_not_required":
 				roompin.clear(requestedRoomName);
 				joinRequestedRoom();
+				break;
+			case "room_join_requires_account":
+				console.log("Room join requires a logged in user.");
+				rooms.joinDefault();
 				break;
 			default:
 				console.log("Unknown error", error, "while joining room ", requestedRoomName);
@@ -179,6 +184,9 @@ define([
 					}
 				});
 				return name;
+			},
+			joinDefault: function(replace) {
+				return rooms.joinByName("", replace);
 			},
 			link: function(room) {
 				var name = room ? room.Name : null;
