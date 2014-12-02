@@ -25,7 +25,7 @@ define([
 	'jquery'
 ], function(angular, $) {
 
-	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData) {
+	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", "alertify", "translation", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData, alertify, translation) {
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var currentRoom = null;
@@ -53,7 +53,9 @@ define([
 				break;
 			case "room_join_requires_account":
 				console.log("Room join requires a logged in user.");
-				rooms.joinDefault();
+				alertify.dialog.alert(translation._("Please sign in to create rooms."), function() {
+					rooms.joinDefault();
+				});
 				break;
 			default:
 				console.log("Unknown error", error, "while joining room ", requestedRoomName);
