@@ -254,6 +254,25 @@
     text-shadow: 0 0 5px black;
     width: 40px;
   }
+  button.renderer-auditorium {
+    position: relative;
+    span:before {
+      position:absolute;
+      left:50%;
+      top:50%;
+      margin-left: -0.8em;
+      margin-top: -0.5em;
+      content: "\f183";
+    }
+    span:after {
+      position:absolute;
+      top:50%;
+      right:50%;
+      margin-right: -0.9em;
+      margin-top: -0.5em;
+      content: "\f183";
+    }
+  }
 }
 
 .remoteVideo {
@@ -387,7 +406,7 @@
   }
 }
 
-.renderer-classroom {
+.renderer-auditorium {
   .remoteContainer {
     border-left: 40px solid black;
   }
@@ -446,3 +465,4 @@
     }
   }
 }
+

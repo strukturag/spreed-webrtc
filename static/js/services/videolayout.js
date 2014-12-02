@@ -298,15 +298,15 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		};
 
 
-		// Classroom inherits from ConferenceKiosk
-		var Classroom = function(container, scope, controller) {
+		// Auditorium inherits from ConferenceKiosk
+		var Auditorium = function(container, scope, controller) {
 			// Call super.
 			ConferenceKiosk.call(this, container, scope, controller);
 		}
-		Classroom.prototype = Object.create(ConferenceKiosk.prototype);
-		Classroom.prototype.constructor = Classroom;
-		Classroom.prototype.name = "classroom";
-		Classroom.prototype.render = function(container, size, scope, videos, streams) {
+		Auditorium.prototype = Object.create(ConferenceKiosk.prototype);
+		Auditorium.prototype.constructor = Auditorium;
+		Auditorium.prototype.name = "auditorium";
+		Auditorium.prototype.render = function(container, size, scope, videos, streams) {
 			var big = this.big;
 			if (big) {
 				var currentbigpeerid = this.big.data("peerid");
@@ -329,7 +329,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		renderers[Smally.prototype.name] = Smally;
 		renderers[Democrazy.prototype.name] = Democrazy;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
-		renderers[Classroom.prototype.name] = Classroom;
+		renderers[Auditorium.prototype.name] = Auditorium;
 
 		// Public api.
 		var current = null;
