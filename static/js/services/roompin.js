@@ -24,7 +24,10 @@ define([
 ], function() {
 
 	return ["$window", "$q", function($window, $q) {
+
 		var pinCache = {};
+
+		// XXX(longsleep): This service needs to get rid of all window.alert and prompt calls.
 		var roompin = {
 			get: function(roomName) {
 				var cachedPIN = pinCache[roomName];
@@ -55,6 +58,8 @@ define([
 				return deferred.promise;
 			}
 		};
+
 		return roompin;
+
 	}];
 });
