@@ -117,7 +117,6 @@
 					mandatory: constraints.videoMandatory
 				};
 			}
-			console.log("media constraints", webrtc.settings.mediaConstraints);
 			webrtc.settings.screensharing.mediaConstraints.video.optional = constraints.screensharing;
 		};
 
