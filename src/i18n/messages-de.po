@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-10-24 10:17+0200\n"
-"PO-Revision-Date: 2014-10-23 11:28+0100\n"
+"POT-Creation-Date: 2014-12-02 16:55+0100\n"
+"PO-Revision-Date: 2014-12-02 16:57+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -54,8 +54,8 @@ msgstr "Große Videos"
 msgid "Kiosk view"
 msgstr "Kiosk-Ansicht"
 
-msgid "Classroom"
-msgstr "Klassenzimmer"
+msgid "Auditorium"
+msgstr "Auditorium"
 
 msgid "Start chat"
 msgstr "Chat starten"
@@ -66,8 +66,8 @@ msgstr "Video-Anruf starten"
 msgid "Start audio conference"
 msgstr "Audio-Konferenz starten"
 
-msgid "No other users online"
-msgstr "Niemand sonst online"
+msgid "No one else here"
+msgstr "Niemand sonst hier"
 
 msgid "Take"
 msgstr "Los"
@@ -154,6 +154,9 @@ msgid ""
 msgstr ""
 "Betreten Sie einen Raum und klicken dann auf das Stern-Symbol eines "
 "anderen Nutzers um eine Kontaktanfrage zu starten."
+
+msgid "Edit contact"
+msgstr "Kontakt bearbeiten"
 
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -722,6 +725,21 @@ msgid ""
 msgstr ""
 "Der Zugriffscode konnte nicht überprueft werden. Bitte prüfen Sie Ihre "
 "Internetverbindung."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "PIN für Raum %s ist jetzt '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "Raum %s ist nicht mehr PIN-geschützt."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "Geben Sie die PIN für Raum %s ein"
+
+msgid "Please sign in to create rooms."
+msgstr "Bitte melden Sie sich an um Räume zu erstellen."
 
 #, python-format
 msgid "and %s"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-10-24 10:17+0200\n"
+"POT-Creation-Date: 2014-12-02 16:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Kiosk view"
 msgstr ""
 
-msgid "Classroom"
+msgid "Auditorium"
 msgstr ""
 
 msgid "Start chat"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "Start audio conference"
 msgstr ""
 
-msgid "No other users online"
+msgid "No one else here"
 msgstr ""
 
 msgid "Take"
@@ -151,6 +151,9 @@ msgstr ""
 msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
+msgstr ""
+
+msgid "Edit contact"
 msgstr ""
 
 msgid "Edit"
@@ -689,6 +692,21 @@ msgstr ""
 msgid ""
 "Failed to verify access code. Check your Internet connection and try "
 "again."
+msgstr ""
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr ""
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr ""
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr ""
+
+msgid "Please sign in to create rooms."
 msgstr ""
 
 #, python-format
