@@ -31,14 +31,13 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 			};
 
 			//console.log("roomBar directive link", arguments);
-			$scope.layout.roombar = false;
+			$scope.layout.roombar = true;
 
 			$scope.save = function() {
 				var roomName = rooms.joinByName($scope.newRoomName);
 				if (roomName !== $scope.currentRoomName) {
 					$scope.roombarform.$setPristine();
 				}
-				$scope.layout.roombar = false;
 			};
 
 			$scope.hitEnter = function(evt) {
@@ -66,6 +65,10 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 
 			$scope.$watch("layout.roombar", function(value) {
 				$element.find("input").focus();
+			});
+
+			$scope.$watch("peer", function(peer) {
+				$scope.layout.roombar = !peer;
 			});
 
 			clearRoomName();
