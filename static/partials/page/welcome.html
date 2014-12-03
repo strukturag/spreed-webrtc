@@ -6,8 +6,8 @@
 		  <div class="form-group welcome-input">
 		    <input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdataInput.name" placeholder="{{roomdata.name||_('Creating room ...')}}">
 		    <div class="welcome-input-buttons">
-		      <a class="fa fa-refresh" ng-click="randomRoom()"></a>
-		      <button class="btn btn-primary btn-roomcreate" type="button" ng-disabled="!roomdata.link" ng-click="joinRoomByName(roomdata.name)">{{_("Go")}}</button>
+		      <a class="fa fa-refresh" title="{{_('Random room name')}}" ng-click="randomRoom()"></a>
+		      <button class="btn btn-success btn-roomcreate" title="{{_('Enter room')}}" type="button" ng-disabled="!roomdata.link" ng-click="joinRoomByName(roomdata.name)"><i class="fa fa-sign-in"></i></button>
 		    </div>
 		  </div>
 		</p>
