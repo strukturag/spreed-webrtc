@@ -25,7 +25,7 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 	// roomBar
 	return ["$window", "rooms", function($window, rooms) {
 
-		var link = function($scope) {
+		var link = function($scope, $element) {
 			var clearRoomName = function(ev) {
 				$scope.currentRoomName = $scope.newRoomName = "";
 			};
@@ -62,6 +62,10 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 				if (name === $scope.currentRoomName) {
 					$scope.roombarform.$setPristine();
 				}
+			});
+
+			$scope.$watch("layout.roombar", function(value) {
+				$element.find("input").focus();
 			});
 
 			clearRoomName();
