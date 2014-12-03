@@ -81,7 +81,6 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 			replace: true,
 			scope: true,
 			template: template,
-			controller: "RoomchangeController",
 			link: link
 		}
 

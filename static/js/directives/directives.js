@@ -46,7 +46,8 @@ define([
 	'directives/presentation',
 	'directives/youtubevideo',
 	'directives/bfi',
-	'directives/title'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi, title) {
+	'directives/title',
+	'directives/welcome'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi, title, welcome) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -72,7 +73,8 @@ define([
 		presentation: presentation,
 		youtubevideo: youtubevideo,
 		bfi: bfi,
-		title: title
+		title: title,
+		welcome: welcome
 	};
 
 	var initialize = function(angModule) {

@@ -31,6 +31,7 @@ define([
 		var requestedRoomName = "";
 		var helloedRoomName = null;
 		var currentRoom = null;
+		var randomRoom = null;
 
 		var joinFailed = function(error) {
 			setCurrentRoom(null);
@@ -179,12 +180,17 @@ define([
 						if (!data.name) {
 							data.name = "";
 						}
-						$rootScope.$broadcast('room.random', {name: data.name});
+						randomRoom = {name: data.name};
+						$rootScope.$broadcast('room.random', randomRoom);
 					}).
 					error(function() {
 						console.error("Failed to retrieve random room data.");
-						$rootScope.$broadcast('room.random', {});
+						randomRoom = {};
+						$rootScope.$broadcast('room.random', randomRoom);
 					});
+			},
+			getRandomRoom: function() {
+				return randomRoom;
 			},
 			joinByName: function(name, replace) {
 				name = $window.encodeURIComponent(name);
