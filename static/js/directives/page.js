@@ -36,7 +36,7 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 				$scope.page = "page/welcome.html";
 				$scope.roomdata = roomdata;
 				$timeout(function() {
-					$element.find(".btn-roomcreate:visible:enabled:first").focus();
+					$element.find(".roomdata-link-input:visible:enabled:first").focus();
 				});
 			});
 
