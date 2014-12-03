@@ -126,6 +126,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
+		$scope.roomsHistory = [];
 		$scope.defaults = {
 			displayName: null,
 			buddyPicture: null,
@@ -275,6 +276,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			} else {
 				$scope.loadedUser = false;
 			}
+			$scope.roomsHistory = [];
 			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
 			$scope.reset();
 		};
@@ -753,6 +755,17 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			var count = chatMessagesUnseen[id] || 0;
 			delete chatMessagesUnseen[id];
 			$scope.chatMessagesUnseen = $scope.chatMessagesUnseen - count;
+		});
+
+		$scope.$on("room.joined", function(event, roomName) {
+			if (roomName) {
+				_.pull($scope.roomsHistory, roomName);
+				$scope.roomsHistory.unshift(roomName);
+				if ($scope.roomsHistory.length > 15) {
+					// Limit the history.
+					$scope.roomsHistory = $scope.roomsHistory.splice(0, 15);
+				}
+			}
 		});
 
 		_.defer(function() {

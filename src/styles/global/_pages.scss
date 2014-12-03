@@ -58,10 +58,10 @@
   .welcome-logo {
     position: absolute;
     left: 0px;
-    top: 0px;
+    top: 20px;
     bottom: 0px;
     width: 140px;
-    background: $scalable-logo no-repeat left;
+    background: $scalable-logo no-repeat left top;
     background-size: contain;
     @include breakpt($breakpoint-medium) {
       position: relative;
@@ -88,6 +88,17 @@
       padding-right: .5em;
       color: black;
       user-select: none;
+    }
+  }
+
+  .rooms-history {
+    margin-top: 2.5em;
+    a {
+      &:hover {
+        text-decoration: none;
+      }
+      margin-right: .5em;
+      display: inline-block;
     }
   }
 
