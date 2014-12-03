@@ -22,12 +22,14 @@
 "use strict";
 define([
 	'angular',
-	'jquery'
-], function(angular, $) {
+	'jquery',
+	'underscore'
+], function(angular, $, _) {
 
 	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", "alertify", "translation", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData, alertify, translation) {
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
+		var helloedRoomName = null;
 		var currentRoom = null;
 
 		var joinFailed = function(error) {
@@ -70,12 +72,20 @@ define([
 				// Do nothing while authorizing.
 				return;
 			}
-
 			if (!connector.connected || !currentRoom || requestedRoomName !== currentRoom.Name) {
 				if (requestedRoomName !== "" || globalContext.Cfg.DefaultRoomEnabled) {
-					console.log("Joining room", requestedRoomName);
 					requestedRoomName = requestedRoomName ? requestedRoomName : "";
-					api.sendHello(requestedRoomName, roompin.get(requestedRoomName), setCurrentRoom, joinFailed);
+					if (helloedRoomName !== requestedRoomName) {
+						console.log("Joining room", requestedRoomName);
+						helloedRoomName = requestedRoomName;
+						api.sendHello(requestedRoomName, roompin.get(requestedRoomName), function(room) {
+							helloedRoomName = null;
+							setCurrentRoom(room);
+						}, function(error) {
+							helloedRoomName = null;
+							joinFailed(error);
+						});
+					}
 				} else {
 					console.log("Default room disabled, requesting a random room.");
 					setCurrentRoom(null);
@@ -120,17 +130,19 @@ define([
 			setCurrentRoom(null);
 		});
 
-		api.e.on("received.self", function(event, data) {
-			joinRequestedRoom();
-		});
-
 		api.e.on("received.room", function(event, room) {
 			applyRoomUpdate(room);
 		});
 
-		$rootScope.$on("authorization.succeeded", function() {
-			// NOTE(lcooper): This will have been skipped earlier, so try again.
-			joinRequestedRoom();
+		appData.e.on("authorizing", function(event, value) {
+			if (!value) {
+				// NOTE(lcooper): This will have been skipped earlier, so try again.
+				_.defer(joinRequestedRoom);
+			}
+		});
+
+		appData.e.on("selfReceived", function(event, data) {
+			_.defer(joinRequestedRoom);
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
@@ -141,10 +153,9 @@ define([
 			} else {
 				roomName = "";
 			}
-
 			requestedRoomName = roomName;
 			if (connector.connected) {
-				joinRequestedRoom();
+				_.defer(joinRequestedRoom);
 			} else {
 				$rootScope.$broadcast("rooms.ready");
 			}
