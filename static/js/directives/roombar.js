@@ -26,8 +26,10 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 	return ["$window", "rooms", function($window, rooms) {
 
 		var link = function($scope, $element) {
-			var clearRoomName = function(ev) {
-				$scope.currentRoomName = $scope.newRoomName = "";
+
+			var clearRoomName = function() {
+				$scope.currentRoomName = null;
+				$scope.newRoomName = "";
 			};
 
 			//console.log("roomBar directive link", arguments);
