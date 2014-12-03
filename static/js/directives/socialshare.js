@@ -31,7 +31,7 @@ define(['text!partials/socialshare.html'], function(template) {
 	};
 
 	// socialShare
-	return ["$window", "translation", "rooms", function($window, translation, rooms) {
+	return ["$window", "translation", "rooms", "alertify", function($window, translation, rooms, alertify) {
 
 		var title = $window.encodeURIComponent($window.document.title);
 		var makeUrl = function(nw, target) {
@@ -55,6 +55,7 @@ define(['text!partials/socialshare.html'], function(template) {
 					$scope.roomlink = null;
 				});
 				$element.find("a").on("click", function(event) {
+					event.preventDefault();
 					var nw = event.currentTarget.getAttribute("data-nw");
 					var url = makeUrl(nw, $scope.roomlink);
 					if (url) {
@@ -63,6 +64,11 @@ define(['text!partials/socialshare.html'], function(template) {
 							$scope.manualReloadApp(url);
 						} else {
 							$window.open(url, "social_" + nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
+						}
+					} else {
+						if (nw === "link") {
+							//$window.alert("Room link: " + $scope.roomlink);
+							alertify.dialog.notify(translation._("Room link"), '<a href="'+$scope.roomlink+'" rel="external" target="_blank">'+$scope.roomlink+'</a>');
 						}
 					}
 				});
