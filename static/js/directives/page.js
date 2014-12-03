@@ -40,10 +40,23 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 				});
 			});
 
+			$scope.roomdataInput = {
+				name: ""
+			};
 			$scope.roomdata = {};
+
 			$scope.$watch("roomdata.name", function(name) {
 				$scope.roomdata.link = rooms.link({Name: name});
 			}, true);
+
+			$scope.$watch("roomdataInput.name", function(name) {
+				if (name === "") {
+					$scope.randomRoom();
+				} else {
+					$scope.roomdata.name = name;
+				}
+			});
+
 		};
 
 		return {

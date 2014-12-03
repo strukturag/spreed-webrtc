@@ -44,7 +44,6 @@
   }
 
   h1 {
-    text-align: center;
     white-space: nowrap;
     @include breakpt($breakpoint-medium) {
       white-space: normal;
@@ -88,6 +87,7 @@
     a {
       padding-right: .5em;
       color: black;
+      user-select: none;
     }
   }
 
