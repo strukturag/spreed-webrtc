@@ -35,7 +35,7 @@
   text-shadow: 0 0 5px black;
   max-width:600px;
   min-height: 160px;
-  padding-left:100px;
+  padding-left:105px;
   padding-right: 0px;
   position: relative;
   @include breakpt($breakpoint-medium) {
@@ -61,7 +61,7 @@
     left: 0px;
     top: 1px;
     bottom: 0px;
-    width: 80px;
+    width: 90px;
     background: $scalable-logo no-repeat left top;
     background-size: contain;
     @include breakpt($breakpoint-medium) {
