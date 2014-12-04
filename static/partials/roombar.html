@@ -4,7 +4,7 @@
 		<label class="pull-left control-label hidden-xs">{{_('Room')}}</label>
 		<div class="pull-left">
 			<div class="input-group">
-				<input class="form-control input-sm" ng-model="newRoomName" on-enter="save()" type="text" placeholder="{{_('Main')}}"></input><span ng-if="currentRoomName && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-sign-out"></i></a></span><span ng-if="!currentRoomName || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Change room')}}" ng-click="save()"><i class="fa fa-sign-in"></i></a></span>
+				<input class="form-control input-sm" ng-model="newRoomName" ng-maxlength="30" on-enter="save()" type="text" placeholder="{{_('Main')}}"></input><span ng-if="currentRoomName && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-sign-out"></i></a></span><span ng-if="!currentRoomName || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Change room')}}" ng-disabled="roombarform.$invalid" ng-click="save()"><i class="fa fa-sign-in"></i></a></span>
 			</div>
 		</div>
 		<div class="pull-left">

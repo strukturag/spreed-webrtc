@@ -36,6 +36,9 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 			$scope.layout.roombar = true;
 
 			$scope.save = function() {
+				if ($scope.roombarform.$invalid) {
+					return;
+				}
 				var roomName = rooms.joinByName($scope.newRoomName);
 				if (roomName !== $scope.currentRoomName) {
 					$scope.roombarform.$setPristine();

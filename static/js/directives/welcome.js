@@ -29,8 +29,16 @@ define([], function() {
 			//console.log("xxx welcome", $scope.$id, $element);
 
 			$scope.randomRoom = rooms.randomRoom;
-			$scope.joinRoomByName = rooms.joinByName;
 			$scope.canCreateRooms = rooms.canCreateRooms;
+			$scope.joinRoomByName = function(name) {
+				if ($scope.welcome.$invalid) {
+					return;
+				}
+				if (!name) {
+					return;
+				}
+				rooms.joinByName(name);
+			};
 
 			var roomdata = rooms.getRandomRoom();
 			if (roomdata) {
