@@ -42,12 +42,6 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 				}
 			};
 
-			$scope.hitEnter = function(evt) {
-				if (angular.equals(evt.keyCode, 13)) {
-					$scope.save();
-				}
-			};
-
 			$scope.exit = function() {
 				$scope.newRoomName = "";
 				$scope.save();
