@@ -8,13 +8,15 @@
 				<a ng-show="roomdata.last" class="fa fa-refresh" title="{{_('Random room name')}}" ng-click="randomRoom()"></a>
 				<button class="btn btn-success btn-roomcreate" title="{{_('Enter room')}}" type="button" ng-disabled="!roomdata.link || welcome.$invalid" ng-click="joinRoomByName(roomdata.name)"><i class="fa fa-sign-in"></i></button>
 			</div>
+			<welcome-form-extra></welcome-form-extra>
 		</div>
 		<p class="room-link small" ng-show="roomdata.name"><span><i class="fa fa-link" title="{{_('Room link')}}"></i> <a href="{{roomdata.link}}" ng-click="joinRoomByName(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></span></p>
-		<p ng-show="welcome.$invalid" class="text-danger">This room name can not be used. Please choose another name.</p>
-		<div ng-hide="canCreateRooms()">
+		<p ng-show="welcome.$invalid" class="welcome-error text-danger">This room name can not be used. Please choose another name.</p>
+		<div class="welcome-login" ng-hide="canCreateRooms()">
 			<p class="h4">{{_("Enter the name of an existing room. You can create your own rooms when you sign in.")}}</p>
 			<button ng-if="!myuserid && usersettings.loginUserid" type="button" class="btn btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
 		</div>
+		<welcome-extra></welcome-extra>
 		<p class="rooms-history" ng-show="roomsHistory.length">
 			<span>{{_("Room history")}}</span>
 			<br/>
