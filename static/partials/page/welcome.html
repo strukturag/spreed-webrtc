@@ -9,9 +9,9 @@
 				<button class="btn btn-success btn-roomcreate" title="{{_('Enter room')}}" type="button" ng-disabled="!roomdata.link" ng-click="joinRoomByName(roomdata.name)"><i class="fa fa-sign-in"></i></button>
 			</div>
 		</div>
-		<p class="room-link small"><span ng-show="roomdata.name"><i class="fa fa-link" title="{{_('Room link')}}"></i> <a href="{{roomdata.link}}" ng-click="joinRoomByName(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></span></p>
+		<p class="room-link small" ng-show="roomdata.name"><span><i class="fa fa-link" title="{{_('Room link')}}"></i> <a href="{{roomdata.link}}" ng-click="joinRoomByName(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></span></p>
 		<div ng-hide="canCreateRooms()">
-			<p class="h4">{{_("Enter the name of an existing room. Please sign in to create a room.")}}</p>
+			<p class="h4">{{_("Enter the name of an existing room. You can create your own rooms when you sign in.")}}</p>
 			<button ng-if="!myuserid && usersettings.loginUserid" type="button" class="btn btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
 		</div>
 		<p class="rooms-history" ng-show="roomsHistory.length">
