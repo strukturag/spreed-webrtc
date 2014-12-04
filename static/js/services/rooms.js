@@ -151,7 +151,6 @@ define([
 			} else {
 				canCreateRooms = true;
 			}
-			console.log("xxx canCreate", canCreateRooms);
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
