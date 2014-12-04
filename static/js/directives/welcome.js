@@ -23,13 +23,14 @@
 define([], function() {
 
 	// welcome
-	return ["rooms", "$timeout", function(rooms, $timeout) {
+	return ["rooms", "$timeout", "mediaStream", function(rooms, $timeout, mediaStream) {
 
 		function link($scope, $element) {
 			//console.log("xxx welcome", $scope.$id, $element);
 
 			$scope.randomRoom = rooms.randomRoom;
 			$scope.joinRoomByName = rooms.joinByName;
+			$scope.canCreateRooms = rooms.canCreateRooms;
 
 			var roomdata = rooms.getRandomRoom();
 			if (roomdata) {
@@ -55,7 +56,7 @@ define([], function() {
 			});
 
 			$scope.$on("room.random", function(event, roomdata) {
-				$scope.roomdata = {name: roomdata.name};
+				$scope.roomdata = {name: roomdata.name, last: roomdata.name};
 				$scope.roomdataInput.name = "";
 			});
 

@@ -26,12 +26,14 @@ define([
 	'underscore'
 ], function(angular, $, _) {
 
-	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", "alertify", "translation", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData, alertify, translation) {
+	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", "alertify", "translation", "mediaStream", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData, alertify, translation, mediaStream) {
+
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var helloedRoomName = null;
 		var currentRoom = null;
 		var randomRoom = null;
+		var canCreateRooms = !mediaStream.config.AuthorizeRoomCreation;
 
 		var joinFailed = function(error) {
 			setCurrentRoom(null);
@@ -144,6 +146,12 @@ define([
 
 		appData.e.on("selfReceived", function(event, data) {
 			_.defer(joinRequestedRoom);
+			if (mediaStream.config.AuthorizeRoomCreation && !$rootScope.myuserid) {
+				canCreateRooms = false;
+			} else {
+				canCreateRooms = true;
+			}
+			console.log("xxx canCreate", canCreateRooms);
 		});
 
 		$rootScope.$on("$locationChangeSuccess", function(event) {
@@ -167,6 +175,12 @@ define([
 				return (currentRoom !== null ? currentRoom.Name : requestedRoomName) === "";
 			},
 			randomRoom: function() {
+				if (!canCreateRooms) {
+					$timeout(function() {
+						$rootScope.$broadcast('room.random', {});
+					});
+					return;
+				}
 				$http({
 					method: "POST",
 					url: url,
@@ -191,6 +205,9 @@ define([
 			},
 			getRandomRoom: function() {
 				return randomRoom;
+			},
+			canCreateRooms: function() {
+				return canCreateRooms;
 			},
 			joinByName: function(name, replace) {
 				name = $window.encodeURIComponent(name);

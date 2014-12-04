@@ -1,18 +1,22 @@
 <div welcome class="welcome container-fluid">
 	<div class="welcome-logo"></div>
-	<div class="welcome-container">
+	<div class="welcome-container" ng-controller="UsersettingsController as usersettings">
 		<h1>{{_("Enter a room name")}}</h1>
-		<p>
-			<div class="form-group welcome-input">
-			<input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdataInput.name" placeholder="{{roomdata.name||_('Creating room ...')}}">
+		<div class="form-group welcome-input">
+			<input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdataInput.name" on-enter="joinRoomByName(roomdata.name)" placeholder="{{roomdata.name||_('Room name')}}">
 			<div class="welcome-input-buttons">
-				<a class="fa fa-refresh" title="{{_('Random room name')}}" ng-click="randomRoom()"></a>
+				<a ng-show="roomdata.last" class="fa fa-refresh" title="{{_('Random room name')}}" ng-click="randomRoom()"></a>
 				<button class="btn btn-success btn-roomcreate" title="{{_('Enter room')}}" type="button" ng-disabled="!roomdata.link" ng-click="joinRoomByName(roomdata.name)"><i class="fa fa-sign-in"></i></button>
 			</div>
-			</div>
-		</p>
-		<p ng-show="roomdata.name"><i class="fa fa-link" title="{{_('Room link')}}"></i> <a href="{{roomdata.link}}" ng-click="joinRoomByName(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></p>
-		<p class="rooms-history">
+		</div>
+		<p class="room-link small"><span ng-show="roomdata.name"><i class="fa fa-link" title="{{_('Room link')}}"></i> <a href="{{roomdata.link}}" ng-click="joinRoomByName(roomdata.name);$event.preventDefault()">{{roomdata.link}}</a></span></p>
+		<div ng-hide="canCreateRooms()">
+			<p class="h4">{{_("Enter the name of an existing room. Please sign in to create a room.")}}</p>
+			<button ng-if="!myuserid && usersettings.loginUserid" type="button" class="btn btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
+		</div>
+		<p class="rooms-history" ng-show="roomsHistory.length">
+			<span>{{_("Room history")}}</span>
+			<br/>
 			<a ng-repeat="room in roomsHistory" ng-click="joinRoomByName(room)"><span class="label label-default">{{room}}</span></a>
 		</p>
 	</div>
