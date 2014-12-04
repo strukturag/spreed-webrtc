@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-04 12:36+0100\n"
+"POT-Creation-Date: 2014-12-04 13:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -666,6 +666,9 @@ msgid "Use browser language"
 msgstr ""
 
 msgid "Meet with me here:"
+msgstr ""
+
+msgid "Room name"
 msgstr ""
 
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-04 12:36+0100\n"
+"POT-Creation-Date: 2014-12-04 13:52+0100\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -678,6 +678,10 @@ msgstr "브라우저 언어 사용"
 
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
+
+#, fuzzy
+msgid "Room name"
+msgstr "사용자 이름"
 
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
