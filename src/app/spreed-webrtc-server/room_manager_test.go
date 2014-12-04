@@ -33,7 +33,7 @@ func NewTestRoomManager() (RoomManager, *Config) {
 func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenCreationRequiresAnAccount(t *testing.T) {
 	roomManager, config := NewTestRoomManager()
 	config.UsersEnabled = true
-	config.authorizeRoomCreation = true
+	config.AuthorizeRoomCreation = true
 
 	unauthenticatedSession := &Session{}
 	_, err := roomManager.JoinRoom("foo", nil, unauthenticatedSession, nil)

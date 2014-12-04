@@ -165,7 +165,7 @@ func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredential
 		return room, nil
 	}
 
-	if rooms.UsersEnabled && rooms.authorizeRoomCreation && !session.Authenticated() {
+	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !session.Authenticated() {
 		rooms.Unlock()
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}

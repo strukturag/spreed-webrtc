@@ -45,8 +45,8 @@ type Config struct {
 	UsersMode                       string   // Users mode string
 	DefaultRoomEnabled              bool     // Flag if default room ("") is enabled
 	Plugin                          string   // Plugin to load
+	AuthorizeRoomCreation           bool     // Whether a user account is required to create rooms
 	globalRoomID                    string   // Id of the global room (not exported to Javascript)
-	authorizeRoomCreation           bool     // Whether a user account is required to create rooms (not exported to Javascript)
 	contentSecurityPolicy           string   // HTML content security policy
 	contentSecurityPolicyReportOnly string   // HTML content security policy in report only mode
 }
@@ -100,8 +100,8 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		UsersMode:                       container.GetStringDefault("users", "mode", ""),
 		DefaultRoomEnabled:              container.GetBoolDefault("app", "defaultRoomEnabled", true),
 		Plugin:                          container.GetStringDefault("app", "plugin", ""),
+		AuthorizeRoomCreation:           container.GetBoolDefault("app", "authorizeRoomCreation", false),
 		globalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
-		authorizeRoomCreation:           container.GetBoolDefault("app", "authorizeRoomCreation", false),
 		contentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
 		contentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
 	}
