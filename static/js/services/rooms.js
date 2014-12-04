@@ -76,23 +76,17 @@ define([
 				return;
 			}
 			if (!connector.connected || !currentRoom || requestedRoomName !== currentRoom.Name) {
-				if (requestedRoomName !== "" || globalContext.Cfg.DefaultRoomEnabled) {
-					requestedRoomName = requestedRoomName ? requestedRoomName : "";
-					if (helloedRoomName !== requestedRoomName) {
-						console.log("Joining room", requestedRoomName);
-						helloedRoomName = requestedRoomName;
-						api.sendHello(requestedRoomName, roompin.get(requestedRoomName), function(room) {
-							helloedRoomName = null;
-							setCurrentRoom(room);
-						}, function(error) {
-							helloedRoomName = null;
-							joinFailed(error);
-						});
-					}
-				} else {
-					console.log("Default room disabled, requesting a random room.");
-					setCurrentRoom(null);
-					rooms.randomRoom();
+				requestedRoomName = requestedRoomName ? requestedRoomName : "";
+				if (helloedRoomName !== requestedRoomName) {
+					console.log("Joining room", [requestedRoomName]);
+					helloedRoomName = requestedRoomName;
+					api.sendHello(requestedRoomName, roompin.get(requestedRoomName), function(room) {
+						helloedRoomName = null;
+						setCurrentRoom(room);
+					}, function(error) {
+						helloedRoomName = null;
+						joinFailed(error);
+					});
 				}
 			}
 		};
@@ -108,7 +102,7 @@ define([
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
 			if (currentRoom) {
-				console.log("Joined room", currentRoom.Name);
+				console.log("Joined room", [currentRoom.Name]);
 				$rootScope.$broadcast("room.joined", currentRoom.Name);
 			}
 		};

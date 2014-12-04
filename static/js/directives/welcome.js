@@ -43,8 +43,10 @@ define([], function() {
 			};
 
 			var roomdata = rooms.getRandomRoom();
+			var recreate = true;
 			if (roomdata) {
-				$scope.roomdata = {name: roomdata.name, placeholder: roomdata.name ? roomdata.name : placeHolder}
+				$scope.roomdata = {name: roomdata.name, placeholder: roomdata.name ? roomdata.name : placeHolder};
+				recreate = false;
 			} else {
 				$scope.roomdata = {placeholder: placeHolder};
 			}
@@ -59,7 +61,11 @@ define([], function() {
 
 			$scope.$watch("roomdataInput.name", function(name) {
 				if (name === "") {
-					$scope.randomRoom();
+					if (recreate) {
+						$scope.randomRoom();
+					} else {
+						recreate = true;
+					}
 				} else {
 					$scope.roomdata.name = name;
 				}
