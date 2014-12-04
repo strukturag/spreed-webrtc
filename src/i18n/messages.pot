@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-02 16:55+0100\n"
+"POT-Creation-Date: 2014-12-04 12:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -389,19 +389,22 @@ msgid ""
 " ID."
 msgstr ""
 
-msgid "Share by Email"
+msgid "Room link"
 msgstr ""
 
-msgid "Share on Facebook"
+msgid "Invite by Email"
 msgstr ""
 
-msgid "Share on Twitter"
+msgid "Invite with Facebook"
 msgstr ""
 
-msgid "Share on Google Plus"
+msgid "Invite with Twitter"
 msgstr ""
 
-msgid "Share on XING"
+msgid "Invite with Google Plus"
+msgstr ""
+
+msgid "Invite with XING"
 msgstr ""
 
 msgid "Initializing"
@@ -469,13 +472,21 @@ msgstr ""
 msgid "Please set your user details and settings."
 msgstr ""
 
-msgid "Create a room and talk together"
+msgid "Enter a room name"
 msgstr ""
 
-msgid "Creating room ..."
+msgid "Random room name"
 msgstr ""
 
-msgid "Create"
+msgid "Enter room"
+msgstr ""
+
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+
+msgid "Room history"
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."

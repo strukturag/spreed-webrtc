@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-02 16:55+0100\n"
+"POT-Creation-Date: 2014-12-04 12:36+0100\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -393,20 +393,24 @@ msgid ""
 " ID."
 msgstr ""
 
-msgid "Share by Email"
+msgid "Room link"
+msgstr ""
+
+#, fuzzy
+msgid "Invite by Email"
 msgstr "Eメールでシェア"
 
-msgid "Share on Facebook"
-msgstr "フェイスブックでシェア"
+msgid "Invite with Facebook"
+msgstr ""
 
-msgid "Share on Twitter"
-msgstr "ツィッターでシェア"
+msgid "Invite with Twitter"
+msgstr ""
 
-msgid "Share on Google Plus"
-msgstr "Google+でシェア"
+msgid "Invite with Google Plus"
+msgstr ""
 
-msgid "Share on XING"
-msgstr "XINGでシェア"
+msgid "Invite with XING"
+msgstr ""
 
 msgid "Initializing"
 msgstr "初期化中"
@@ -473,14 +477,22 @@ msgstr "ここをクリックしてヘルプ表示(Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "あなたのプロフィールとアプリの動作を設定してください."
 
-msgid "Create a room and talk together"
+msgid "Enter a room name"
+msgstr ""
+
+msgid "Random room name"
 msgstr ""
 
 #, fuzzy
-msgid "Creating room ..."
-msgstr "ルームへのリンクを作る..."
+msgid "Enter room"
+msgstr "現在のルーム"
 
-msgid "Create"
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+
+msgid "Room history"
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."
