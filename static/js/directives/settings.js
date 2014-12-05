@@ -47,7 +47,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -145,17 +145,22 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				}
 			});
 
-			appData.e.on("userSettingsLoaded", function(event, loaded) {
+			$scope.maybeShowSettings = function() {
 				if ($scope.autoshowSettings) {
 					$scope.autoshowSettings = false;
-					if (!loaded) {
+					if (!$scope.loadedUser) {
 						$scope.layout.settings = true;
 					}
 				}
+			};
+
+			$scope.$on("room.joined", function() {
+				$timeout($scope.maybeShowSettings);
 			});
 
 			appData.e.on("authenticationChanged", function() {
 				$scope.autoshowSettings = true;
+				$timeout($scope.maybeShowSettings);
 			});
 
 			constraints.e.on("refresh", function(event, constraints) {
