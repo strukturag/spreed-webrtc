@@ -151,9 +151,9 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						return;
 					}
 					this.msgQueue.unshift([to, data, type, to2, from]);
-					// create call
+					// Create call.
 					this.currentcall = this.createCall(from, from, from);
-					// delegate next steps to Ui
+					// Delegate next steps to UI.
 					this.e.triggerHandler("offer", [from, to2, to]);
 					break;
 				case "Bye":
@@ -167,6 +167,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					}
 					console.log("Bye process (started false)");
 					this.doHangup("receivedbye", from);
+					// Delegate bye to UI.
+					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 					break;
 				default:
 					this.msgQueue.push([to, data, type, to2, from]);

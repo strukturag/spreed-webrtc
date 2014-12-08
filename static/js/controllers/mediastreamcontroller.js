@@ -663,6 +663,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		});
 
 		mediaStream.webrtc.e.on("bye", function(event, reason, from) {
+			console.log("received bye", pickupTimeout, reason);
 			switch (reason) {
 				case "busy":
 					console.log("User is busy", reason, from);
@@ -688,6 +689,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				case "error":
 					console.log("User cannot accept call because of error");
 					alertify.dialog.alert(translation._("Oops") + "<br/>" + translation._("User hung up because of error."));
+					break;
+				case "abort":
+					console.log("Remote call was aborted before we did pick up");
+					$scope.$emit("notification", "abortbeforepickup", {
+						reason: reason,
+						from: from
+					});
 					break;
 			}
 		});
@@ -725,6 +733,8 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				case "incomingbusy":
 					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" tried to call you."));
 					break;
+				case "abortbeforepickup":
+					// Fall through
 				case "incomingpickuptimeout":
 					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" called you."));
 					break;
