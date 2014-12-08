@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-04 13:52+0100\n"
+"POT-Creation-Date: 2014-12-08 16:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -245,6 +245,23 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
+msgid "Your name"
+msgstr ""
+
+msgid "Your picture"
+msgstr ""
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+
 msgid "Your ID"
 msgstr ""
 
@@ -266,26 +283,6 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
-msgstr ""
-
-msgid "Your picture"
-msgstr ""
-
-msgid "Your name"
-msgstr ""
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-msgid ""
-"Your picture, name and status message identify yourself in calls, chats "
-"and rooms."
-msgstr ""
-
-msgid "Manage contacts"
 msgstr ""
 
 msgid "Media"
@@ -593,10 +590,10 @@ msgstr ""
 msgid " does not pick up."
 msgstr ""
 
-msgid " tried to call you."
+msgid " tried to call you"
 msgstr ""
 
-msgid " called you."
+msgid " called you"
 msgstr ""
 
 msgid "Your browser is not supported. Please upgrade to a current version."

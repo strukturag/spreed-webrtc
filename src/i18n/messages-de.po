@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-04 13:52+0100\n"
-"PO-Revision-Date: 2014-12-04 13:52+0100\n"
+"POT-Creation-Date: 2014-12-08 16:48+0100\n"
+"PO-Revision-Date: 2014-12-08 16:48+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -249,6 +249,25 @@ msgstr "Bildschirm einpassen."
 msgid "Profile"
 msgstr "Profil"
 
+msgid "Your name"
+msgstr "Ihr Name"
+
+msgid "Your picture"
+msgstr "Ihr Bild"
+
+msgid "Status message"
+msgstr "Status Nachricht"
+
+msgid "What's on your mind?"
+msgstr "Was machen Sie gerade?"
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+"Ihr Bild, Name und Status Nachricht repräsentiert Sie in Anrufen, Chats "
+"und Räumen."
+
 msgid "Your ID"
 msgstr "Ihre ID"
 
@@ -273,28 +292,6 @@ msgstr "Abmelden"
 
 msgid "Manage account"
 msgstr "Konto verwalten"
-
-msgid "Your picture"
-msgstr "Ihr Bild"
-
-msgid "Your name"
-msgstr "Ihr Name"
-
-msgid "Status message"
-msgstr "Status Nachricht"
-
-msgid "What's on your mind?"
-msgstr "Was machen Sie gerade?"
-
-msgid ""
-"Your picture, name and status message identify yourself in calls, chats "
-"and rooms."
-msgstr ""
-"Ihr Bild, Name und Status Nachricht repräsentiert Sie in Anrufen, Chats "
-"und Räumen."
-
-msgid "Manage contacts"
-msgstr "Kontakte verwalten"
 
 msgid "Media"
 msgstr "Kamera / Mikrofon"
@@ -611,11 +608,11 @@ msgstr " hat Ihren Anruf abgelehnt."
 msgid " does not pick up."
 msgstr " nimmt nicht ab."
 
-msgid " tried to call you."
-msgstr " hat versucht Sie anzurufen."
+msgid " tried to call you"
+msgstr " hat versucht Sie anzurufen"
 
-msgid " called you."
-msgstr " hat Sie angerufen."
+msgid " called you"
+msgstr " hat Sie angerufen"
 
 msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
