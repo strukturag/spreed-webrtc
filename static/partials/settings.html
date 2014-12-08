@@ -29,14 +29,6 @@
           </div>
         </div>
         <div ng-if="(withUsers && withUsersRegistration) || userid">
-          <div class="form-group" ng-if="userid">
-            <label class="col-xs-4 control-label">{{_('Contacts')}}</label>
-            <div class="col-xs-8">
-              <p class="form-control-static"><a ng-click="openContactsManager()">{{_('Manage contacts')}}</a></p>
-            </div>
-          </div>
-        </div>
-        <div ng-if="(withUsers && withUsersRegistration) || userid">
           <div class="form-group profile-yourid">
             <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
             <div ng-switch="withUsersMode">
