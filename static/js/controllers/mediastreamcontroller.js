@@ -731,12 +731,12 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					message = displayName(details.from) + translation._(" does not pick up.");
 					break;
 				case "incomingbusy":
-					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" tried to call you."));
+					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" tried to call you."));
 					break;
 				case "abortbeforepickup":
 					// Fall through
 				case "incomingpickuptimeout":
-					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" called you."));
+					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" called you."));
 					break;
 			}
 			if (message) {

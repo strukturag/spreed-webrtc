@@ -33,7 +33,8 @@ define(['toastr'], function(toastr) {
 			"showMethod": "show",
 			"hideMethod": "hide",
 			"timeOut": 0,
-			"extendedTimeOut": 0
+			"extendedTimeOut": 0,
+			"closeButton": true
 		}
 
 		return toastr;
