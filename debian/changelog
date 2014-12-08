@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.22.99+0.23pre1) precise; urgency=low
+
+  * Placeholder.
+
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 08 Dec 2014 17:52:09 +0100
+
 spreed-webrtc-server (0.22.8) precise; urgency=low
 
   * Removed opacity transition from chat pane to avoid compositing issues.
