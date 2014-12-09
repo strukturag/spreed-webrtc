@@ -1,0 +1,11 @@
+We use a custom build of jquery to reduce size.
+
+$ git clone git://github.com/jquery/jquery.git
+$ cd jquery
+$ git checkout 2.1.1
+$ npm install
+$ grunt custom:-ajax,-ajax/script,-ajax/jsonp,-ajax/load,-ajax/parseJSON,-ajax/parseXML,-ajax/script,-ajax/var/nonce,-ajax/var/rquery,-ajax/xhr,-manipulation/_evalUrl,-deprecated,-effects,-effects/Tween,-effects/animatedSelector,-event-alias
+
+Make sure that you update all three generated files. Minified,
+non minified and the map.
+

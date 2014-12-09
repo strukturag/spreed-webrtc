@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define([
 	'underscore',
 
@@ -43,7 +45,9 @@ define([
 	'directives/odfcanvas',
 	'directives/presentation',
 	'directives/youtubevideo',
-	'directives/bfi'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi) {
+	'directives/bfi',
+	'directives/title',
+	'directives/welcome'], function(_, onEnter, onEscape, statusMessage, buddyList, buddyPictureCapture, buddyPictureUpload, settings, chat, audioVideo, usability, audioLevel, fileInfo, screenshare, roomBar, socialShare, page, contactRequest, defaultDialog, pdfcanvas, odfcanvas, presentation, youtubevideo, bfi, title, welcome) {
 
 	var directives = {
 		onEnter: onEnter,
@@ -68,13 +72,15 @@ define([
 		odfcanvas: odfcanvas,
 		presentation: presentation,
 		youtubevideo: youtubevideo,
-		bfi: bfi
+		bfi: bfi,
+		title: title,
+		welcome: welcome
 	};
 
 	var initialize = function(angModule) {
 		_.each(directives, function(directive, name) {
 			angModule.directive(name, directive);
-		})
+		});
 	};
 
 	return {

@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
 	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing) {
@@ -132,7 +134,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				peerTemplate(subscope, function(clonedElement, scope) {
 					pane.append(clonedElement);
 					scope.element = clonedElement;
-					var video = clonedElement.find("video").get(0);
+					var video = clonedElement.find("video")[0];
 					$window.attachMediaStream(video, stream);
 					videoWaiter.wait(video, stream, function() {
 						console.log("Screensharing size: ", video.videoWidth, video.videoHeight);
@@ -246,7 +248,6 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 							mediaStream.tokens.off(token, handler);
 							mediaStream.webrtc.e.off("statechange", updater);
 							handler = null;
-							updated = null;
 							// Send by to all connected peers.
 							_.each(screenshares, function(peerscreenshare) {
 								peerscreenshare.send({
@@ -312,14 +313,14 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					if (elem) {
 						BigScreen.toggle(elem);
 					} else {
-						BigScreen.toggle(pane.get(0));
+						BigScreen.toggle(pane[0]);
 					}
 				}
 
 			};
 
 			mediaStream.webrtc.e.on("done", function() {
-				$scope.stopScreenshare();
+				$scope.$apply($scope.stopScreenshare);
 			});
 
 			$scope.$watch("layout.screenshare", function(newval, oldval) {

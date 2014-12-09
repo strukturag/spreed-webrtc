@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection'], function($, _, utils, PeerConnection) {
 
 	var PeerCall = function(webrtc, id, from, to) {
@@ -138,7 +140,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// after the remote SDP was set successfully.
 			_.defer(_.bind(function() {
 				_.each(peerconnection.getRemoteStreams(), _.bind(function(stream) {
-					if (!this.streams.hasOwnProperty(stream) && (stream.getAudioTracks().length > 0 || stream.getVideoTracks().length > 0)) {
+					if (!this.streams.hasOwnProperty(stream.id) && (stream.getAudioTracks().length > 0 || stream.getVideoTracks().length > 0)) {
 						// NOTE(longsleep): Add stream here when it has at least one audio or video track, to avoid FF >= 33 to add it multiple times.
 						console.log("Adding stream after remote SDP success.", stream);
 						this.onRemoteStreamAdded(stream);
@@ -182,7 +184,11 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	PeerCall.prototype.onRemoteStreamAdded = function(stream) {
 
-		this.streams[stream] = true;
+		var id = stream.id;
+		if (this.streams.hasOwnProperty(id)) {
+			return;
+		}
+		this.streams[id] = stream;
 		this.e.triggerHandler("remoteStreamAdded", [stream, this]);
 
 	};
@@ -191,16 +197,17 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 		this.e.triggerHandler("remoteStreamRemoved", [stream, this]);
 		if (stream) {
-			delete this.streams[stream];
+			delete this.streams[stream.id];
 		}
 
 	};
 
-	PeerCall.prototype.onNegotiationNeeded = function(peerconnection) {
+	PeerCall.prototype.onNegotiationNeeded = function() {
 
 		if (!this.negotiationNeeded) {
 			this.negotiationNeeded = true;
 			console.log("Negotiation needed.", this);
+			this.e.triggerHandler("negotiationNeeded", [this]);
 		}
 
 	};
@@ -298,12 +305,17 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			datachannel.close();
 		});
 		this.datachannels = {};
-		this.streams = {};
 
 		if (this.peerconnection) {
 			this.peerconnection.close();
 			this.peerconnection = null;
 		}
+
+		// Trigger event for all previously added streams.
+		_.each(this.streams, _.bind(function(stream, id) {
+			this.e.triggerHandler("remoteStreamRemoved", [stream, this]);
+		}, this));
+		this.streams = {};
 
 		console.log("Peercall close", this);
 		this.e.triggerHandler("closed", [this]);

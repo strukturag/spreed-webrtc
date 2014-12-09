@@ -26,6 +26,7 @@ type Context struct {
 	Cfg       *Config
 	Host      string
 	Ssl       bool
+	Csp       bool
 	Languages []string
 	Room      string `json:"-"`
 	Scheme    string `json:"-"`

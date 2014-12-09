@@ -18,10 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], function($, _, template) {
 
 	// buddyPictureCapture
-	return ["$compile", function($compile) {
+	return ["$compile", "$window", function($compile, $window) {
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', function($scope, safeApply, $timeout, $q) {
 
@@ -124,13 +126,13 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 						}]
 					};
 				}
-				getUserMedia({
+				$window.getUserMedia({
 					video: videoConstraints
 				}, function(stream) {
 					$scope.showTakePicture = true;
 					localStream = stream;
 					$scope.waitingForPermission = false;
-					attachMediaStream($scope.video, stream);
+					$window.attachMediaStream($scope.video, stream);
 					safeApply($scope);
 					videoAllowed.resolve(true);
 				}, function(error) {
@@ -176,10 +178,10 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 
 		var link = function($scope, $element, $attrs, modelController) {
 
-			$scope.video = $element.find("video").get(0);
+			$scope.video = $element.find("video")[0];
 			$scope.flash = $element.find(".videoFlash");
-			$scope.canvasPic = $element.find("canvas.videoPic").get(0);
-			$scope.canvasPrev = $element.find("canvas.videoPrev").get(0);
+			$scope.canvasPic = $element.find("canvas.videoPic")[0];
+			$scope.canvasPrev = $element.find("canvas.videoPrev")[0];
 			$($scope.canvasPic).attr($scope.captureSize);
 
 			$scope.save = function() {

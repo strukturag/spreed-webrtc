@@ -1,3 +1,31 @@
+spreed-webrtc-server (0.23.0) precise; urgency=low
+
+  * Added support for renegotation in web client (disabled).
+  * Rooms were refactored to be able to confirm joins.
+  * Added support to PIN lock rooms (server side).
+  * Updated javascript to follow now jshin rules.
+  * Updated plugin API to make the main App object available.
+  * Refactored server side configuration loading.
+  * Improved usability of image upload positioning and scaling.
+  * Stream lined third party javascript to reduce size.
+  * Javascript is now using 'strict' mode everywhere.
+  * Added suppport for Content Security Policy (CSP).
+  * Added Javascript source mappings where missing.
+  * Fixed bye handling in conferences to avoid endless dial tones.
+  * Added support for audio and/or video only connections when
+    the corresponding device is not there.
+  * Several icons were changed for usability reasons.
+  * Improved dialogs and texts for usability reasons.
+  * Room bar is now automatically visible when not in a call.
+  * Updated auto focus behavior of room select forms.
+  * Implemented a room history on welcome screen.
+  * Added a sign in button to the top bar.
+  * Changed order of settings form for usability reasons.
+  * Missed call toast now always is shown.
+  * Improved toast notification styles.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 09 Dec 2014 15:45:52 +0100
+
 spreed-webrtc-server (0.22.8) precise; urgency=low
 
   * Removed opacity transition from chat pane to avoid compositing issues.

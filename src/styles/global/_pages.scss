@@ -35,16 +35,17 @@
   text-shadow: 0 0 5px black;
   max-width:600px;
   min-height: 160px;
-  padding-left:160px;
+  padding-left:105px;
   padding-right: 0px;
   position: relative;
   @include breakpt($breakpoint-medium) {
-    padding-left:0px;
-    margin: 0 10px;
+    padding-left:10px;
+    padding-right:20px;
+    margin: 0 auto;
   }
 
   h1 {
-    text-align: center;
+    margin-top: 0px;
     white-space: nowrap;
     @include breakpt($breakpoint-medium) {
       white-space: normal;
@@ -52,24 +53,23 @@
   }
 
   .welcome-container {
-    max-width: 450px;
     margin: 0 auto;
   }
 
   .welcome-logo {
     position: absolute;
     left: 0px;
-    top: 0px;
+    top: 1px;
     bottom: 0px;
-    width: 140px;
-    background: $scalable-logo no-repeat left;
+    width: 90px;
+    background: $scalable-logo no-repeat left top;
     background-size: contain;
     @include breakpt($breakpoint-medium) {
       position: relative;
-      margin: 0 auto;
       height: 70px;
       width: 70px;
       margin-top: 30px;
+      margin-bottom: 20px;
     }
   }
 
@@ -88,6 +88,28 @@
     a {
       padding-right: .5em;
       color: black;
+      user-select: none;
+    }
+  }
+
+  .room-link {
+    margin-top: -10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    a {
+      color: $welcome;
+    }
+  }
+
+  .rooms-history {
+    margin-top: 3em;
+    a {
+      &:hover {
+        text-decoration: none;
+      }
+      margin-right: .5em;
+      display: inline-block;
     }
   }
 

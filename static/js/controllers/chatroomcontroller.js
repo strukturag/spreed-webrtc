@@ -18,15 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function(_, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
+
+"use strict";
+define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation) {
 
 	// ChatroomController
 	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation) {
 
-		$scope.outputElement = $(".output", $element);
-		$scope.inputElement = $(".input", $element);
-		$scope.bodyElement = $(".chatbody", $element);
-		$scope.menuElement = $(".chatmenu", $element);
+		$scope.outputElement = $element.find(".output");
+		$scope.inputElement = $element.find(".input");
+		$scope.bodyElement = $element.find(".chatbody");
+		$scope.menuElement = $element.find(".chatmenu");
 		var lastSender = null;
 		var lastDate = null;
 		var lastMessageContainer = null;
@@ -159,7 +161,7 @@ define(['underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/co
 
 		$scope.canScroll = function() {
 
-			var o = $scope.outputElement.get(0);
+			var o = $scope.outputElement[0];
 			if ((o.clientHeight - 20) < o.scrollHeight) {
 				if (!scrollAfterInput && (o.clientHeight + 20) < (o.scrollHeight - o.scrollTop)) {
 					// Manually scrolled -> do nothing.

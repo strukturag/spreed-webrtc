@@ -16,6 +16,7 @@ import json
 def main():
 
 	print """// This file is auto generated, do not modify.
+"use strict";
 define([], function() {
 return %s;
 });""" % json.dumps(LANGUAGES)

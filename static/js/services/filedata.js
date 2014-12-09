@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) {
+
+"use strict";
+define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, JsSHA) {
 
 	var requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem || null;
 	if (!requestFileSystem) {
@@ -27,7 +29,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 
 	// NOTE(longsleep): A single chunk is 60k - https://code.google.com/p/webrtc/issues/detail?id=2270
 	// also Firefox does only support 16k maximum sents. See https://code.google.com/p/webrtc/issues/detail?id=2279.
-	var fileChunkSize = webrtcDetectedBrowser === "chrome" ? 60000 : 16000;
+	var fileChunkSize = window.webrtcDetectedBrowser === "chrome" ? 60000 : 16000;
 
 	// Fake implementation for browsers which do not support FileSystem API.
 	var FileWriterFake = function(owner) {
@@ -423,7 +425,7 @@ define(["jquery", "underscore", "sha", "webrtc.adapter"], function($, _, jsSHA) 
 			},
 			createFile: function(namespace, data) {
 				var id = namespace + "_" + (fileCount++);
-				var shaObj = new jsSHA(id, "TEXT");
+				var shaObj = new JsSHA(id, "TEXT");
 				var token = shaObj.getHMAC(randomSecret, "TEXT", "SHA-384", "HEX");
 				var file = filesTable[token] = new File(token, data);
 				return file;

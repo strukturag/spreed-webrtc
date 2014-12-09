@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["jed", "underscore"], function(Jed, _) {
 
 	var TranslationScope = function(service, context, domain) {

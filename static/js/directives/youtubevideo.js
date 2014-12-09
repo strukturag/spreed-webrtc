@@ -18,17 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'], function($, _, template, BigScreen) {
 
-	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", function($window, $document, mediaStream, alertify, translation, safeApply, appData) {
+	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q) {
 
 		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
-		var isYouTubeIframeAPIReady = $.Deferred();
-		$window.onYouTubeIframeAPIReady = function() {
-			console.log("YouTube IFrame ready");
-			isYouTubeIframeAPIReady.resolve();
-		};
+		var isYouTubeIframeAPIReady = (function() {
+			var d = $q.defer();
+			$window.onYouTubeIframeAPIReady = function() {
+				console.log("YouTube IFrame ready");
+				d.resolve();
+			};
+			return d.promise;
+		})();
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -68,7 +73,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.volumebarVisible = true;
 			$scope.volume = null;
 
-			isYouTubeIframeAPIReady.done(function() {
+			isYouTubeIframeAPIReady.then(function() {
 				$scope.$apply(function(scope) {
 					scope.youtubeAPIReady = true;
 				});
@@ -270,10 +275,10 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					playerReady = $.Deferred();
 				}
 
-				isYouTubeIframeAPIReady.done(function() {
+				isYouTubeIframeAPIReady.then(function() {
 					if (!player) {
 						var origin = $window.location.protocol + "//" + $window.location.host;
-						player = new YT.Player("youtubeplayer", {
+						player = new $window.YT.Player("youtubeplayer", {
 							height: "390",
 							width: "640",
 							playerVars: {
@@ -563,11 +568,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.toggleFullscreen = function(elem) {
 
 				if (BigScreen.enabled) {
-					if (elem) {
-						BigScreen.toggle(elem);
-					} else {
-						BigScreen.toggle(pane.get(0));
-					}
+					BigScreen.toggle(elem);
 				}
 
 			};
@@ -576,7 +577,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).on("dblclick", "#youtubecontainer", _.debounce(function(event) {
+				$(iElement).find("#youtubecontainer").on("dblclick", _.debounce(function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
 				}, 100, true));
 			}

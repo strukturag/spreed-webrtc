@@ -18,48 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(template, welcome) {
 
-	return ["$templateCache", "mediaStream", function($templateCache, mediaStream) {
+	return ["$templateCache", "$timeout", "rooms", function($templateCache, $timeout, rooms) {
 
 		$templateCache.put('page/welcome.html', welcome);
 
-		var link = function(scope, element, attrs) {
-
-			scope.room = false;
-			scope.page = null;
-
-			if (mediaStream.config.DefaultRoomEnabled !== true) {
-
-				scope.$on("welcome", function() {
-					if (!scope.initialized) {
-						scope.initialized = true;
-						scope.refresh();
-					}
+		var link = function($scope, $element, attrs) {
+			$scope.$on("room.joined", function(event) {
+				// Show no page when joined a room.
+				$scope.page = null;
+			});
+			$scope.$on("room.random", function(ev, roomdata) {
+				// Show welcome page on room random events.
+				$timeout(function() {
+					$scope.page = "page/welcome.html";
 				});
-
-				scope.$on("room", function(event, room) {
-					scope.initialized = true;
-					scope.room = room !== null ? true : false;
-					scope.refresh();
-				});
-
-				scope.$watch("status", function(event) {
-					if (scope.initialized) {
-						scope.refresh();
-					}
-				});
-
-				scope.refresh = function() {
-					if (scope.roomid || scope.room || scope.status !== "waiting") {
-						scope.page = null;
-					} else {
-						scope.page = "page/welcome.html";
-					}
-				};
-
-			}
-
+			});
 		};
 
 		return {
@@ -67,8 +44,7 @@ define(['text!partials/page.html', 'text!partials/page/welcome.html'], function(
 			replace: true,
 			template: template,
 			link: link
-		}
-
+		};
 	}];
 
 });

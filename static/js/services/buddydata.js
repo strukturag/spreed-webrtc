@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore'], function(underscore) {
+
+"use strict";
+define(['underscore'], function(_) {
 
 	// buddyData
 	return ["appData", "contactData", "mediaStream", "$rootScope", function(appData, contactData, mediaStream, $rootScope) {

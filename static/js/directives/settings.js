@@ -18,14 +18,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, template) {
+
+	var videoQualityMap = {
+		tiny: {
+			maxWidth: 80,
+			maxHeight: 45
+		},
+		low: {
+			maxWidth: 320,
+			maxHeight: 180
+		},
+		high: {
+			maxWidth: 640,
+			maxHeight: 360
+		},
+		hd: {
+			minWidth: 1280,
+			minHeight: 720
+		},
+		fullhd: {
+			minWidth: 1920,
+			minHeight: 1080
+		}
+	};
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
+			$scope.autoshowSettings = true;
 			$scope.rememberSettings = true;
 			$scope.desktopNotify = desktopNotify;
 			$scope.mediaSources = mediaSources;
@@ -85,27 +111,14 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			};
 
 			$scope.checkDefaultMediaSources = function() {
+				// Check if the stuff exists.
 				if ($scope.master.settings.microphoneId && !$scope.mediaSources.hasAudioId($scope.master.settings.microphoneId)) {
 					$scope.master.settings.microphoneId = null;
 				}
 				if ($scope.master.settings.cameraId && !$scope.mediaSources.hasVideoId($scope.master.settings.cameraId)) {
 					$scope.master.settings.cameraId = null;
 				}
-				var audio = $scope.mediaSources.audio;
-				var video = $scope.mediaSources.video;
-				if (!$scope.master.settings.microphoneId && audio.length > 0) {
-					$scope.master.settings.microphoneId = audio[0].id;
-				}
-				if (!$scope.master.settings.cameraId && video.length > 0) {
-					$scope.master.settings.cameraId = $scope.mediaSources.video[0].id;
-				}
-				//console.log("master sources updates", $scope.master);
-				$scope.refreshWebrtcSettings();
 			};
-
-			$scope.mediaSources.refresh(function() {
-				safeApply($scope, $scope.checkDefaultMediaSources);
-			});
 
 			$scope.$watch("layout.settings", function(showSettings, oldValue) {
 				if (showSettings) {
@@ -125,23 +138,132 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 								$scope.user.settings.cameraId = video[0].id;
 							}
 						});
+						$scope.refreshWebrtcSettings();
 					});
 				} else if (!showSettings && oldValue) {
 					$scope.saveSettings();
 				}
 			});
 
-		}];
+			$scope.maybeShowSettings = function() {
+				if ($scope.autoshowSettings) {
+					$scope.autoshowSettings = false;
+					if (!$scope.loadedUser) {
+						$scope.layout.settings = true;
+					}
+				}
+			};
 
-		var link = function($scope, $element) {};
+			$scope.$on("room.joined", function() {
+				$timeout($scope.maybeShowSettings);
+			});
+
+			appData.e.on("authenticationChanged", function() {
+				$scope.autoshowSettings = true;
+				$timeout($scope.maybeShowSettings);
+			});
+
+			constraints.e.on("refresh", function(event, constraints) {
+
+				var settings = $scope.master.settings;
+
+				// Assert that selected devices are there.
+				(function() {
+					var deferred = constraints.defer();
+					mediaSources.refresh(function() {
+						$scope.checkDefaultMediaSources();
+						// Select microphone device by id.
+						if (settings.microphoneId) {
+							constraints.add("audio", "sourceId", settings.microphoneId);
+						}
+						// Select camera by device id.
+						if (settings.cameraId) {
+							constraints.add("video", "sourceId", settings.cameraId);
+						}
+						if (!mediaSources.hasAudio()) {
+							constraints.disable('audio');
+							console.info("Disabled audio input as no audio source was found.");
+						}
+						if (!mediaSources.hasVideo()) {
+							constraints.disable('video');
+							console.info("Disabled video input as no video source was found.");
+						}
+						deferred.resolve("complete");
+					});
+				})();
+
+				// Chrome only constraints.
+				if ($scope.isChrome) {
+
+					// Chrome specific constraints overview:
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/mediaconstraintsinterface.cc
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/videosource.cc (video constraints)
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/localaudiosource.cc (audio constraints)
+					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/webrtcsession.cc (pc constraints)
+
+					// Experimental audio settings.
+					if (settings.experimental.enabled) {
+						constraints.add("audio", "googEchoCancellation", true); // defaults to true
+						constraints.add("audio", "googEchoCancellation2", settings.experimental.audioEchoCancellation2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googAutoGainControl", true); // defaults to true
+						constraints.add("audio", "googAutoGainControl2", settings.experimental.audioAutoGainControl2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googNoiseSuppression", true); // defaults to true
+						constraints.add("audio", "googgNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
+						constraints.add("audio", "googHighpassFilter", true); // defaults to true
+						constraints.add("audio", "googTypingNoiseDetection", settings.experimental.audioTypingNoiseDetection && true); // defaults to true in Chrome
+					}
+
+					if ($scope.supported.renderToAssociatedSink) {
+						// When true uses the default communications device on Windows.
+						// https://codereview.chromium.org/155863003
+						constraints.add("audio", "googDucking", true); // defaults to true on Windows.
+						// Chrome will start rendering mediastream output to an output device that's associated with
+						// the input stream that was opened via getUserMedia.
+						// https://chromiumcodereview.appspot.com/23558010
+						constraints.add("audio", "chromeRenderToAssociatedSink", settings.audioRenderToAssociatedSkin && true); // defaults to false in Chrome
+					}
+
+					// Experimental video settings.
+					if (settings.experimental.enabled) {
+
+						// Changes the way the video encoding adapts to the available bandwidth.
+						// https://code.google.com/p/webrtc/issues/detail?id=3351
+						constraints.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
+						// Removes the noise in the captured video stream at the expense of CPU.
+						constraints.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
+						constraints.add("pc", "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true); // defaults to true in Chrome
+
+					}
+
+					// Set video quality.
+					var videoQuality = videoQualityMap[settings.videoQuality];
+					if (videoQuality) {
+						_.forEach(videoQuality, function(v, k) {
+							constraints.add("video", k, v, true);
+						});
+					}
+
+					// Set max frame rate if any was selected.
+					if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
+						constraints.add("video", "maxFrameRate", parseInt(settings.maxFrameRate, 10), true);
+					}
+
+				} else {
+
+					// Other browsers constraints (there are none as of now.);
+
+				}
+
+			});
+
+		}];
 
 		return {
 			scope: true,
 			restrict: 'E',
 			replace: true,
 			template: template,
-			controller: controller,
-			link: link
+			controller: controller
 		};
 
 	}];

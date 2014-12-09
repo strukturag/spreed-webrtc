@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 require.config({
 	waitSeconds: 300,
 	paths: {
@@ -123,9 +125,9 @@ require.config({
 			exports: 'odf',
 			init: function() {
 				return {
-					webodf: webodf,
-					odf: odf,
-					runtime: runtime
+					webodf: this.webodf,
+					odf: this.odf,
+					runtime: this.runtime
 				};
 			}
 		},
@@ -171,7 +173,7 @@ require.onError = (function() {
 			return;
 		}
 		if (err.requireType === "timeout" || err.requireType === "scripterror") {
-			alert('Failed to load application. Confirm to retry.');
+			window.alert('Failed to load application. Confirm to retry.');
 			retrying = true;
 			document.location.reload(true);
 		} else {
@@ -190,89 +192,106 @@ if (Object.create) {
 		'require',
 		'base'], function($, _, angular, require) {
 
-		// Dynamic app loader with plugin support.
-		var load = ['app'];
-		_.each(document.getElementsByTagName('script'), function(script) {
-			var dataPlugin = script.getAttribute('data-plugin');
-			if (dataPlugin) {
-				load.push(dataPlugin);
-			}
-		});
+		var launcherApp = angular.module('launcherApp', []);
+		launcherApp.run(["$q", "$window", "$http", function($q, $window, $http) {
 
-		require(load, function(App) {
-
-			// All other arguments are plugins.
-			var args = Array.prototype.slice.call(arguments, 1);
-
-			// Prepare our promised based initialization.
-			var promises = [];
-			var loading = $.Deferred();
-			promises.push(loading.promise());
-
-			// Add Angular modules from plugins.
-			var modules = [];
-			_.each(args, function(plugin) {
-				if (plugin && plugin.module) {
-					plugin.module(modules);
+			// Dynamic app loader with plugin support.
+			var load = ['app'];
+			_.each($window.document.getElementsByTagName('script'), function(script) {
+				var dataPlugin = script.getAttribute('data-plugin');
+				if (dataPlugin) {
+					load.push(dataPlugin);
 				}
 			});
 
-			// External plugin support.
-			var externalPlugin;
-			if (window.externalPlugin) {
-				externalPlugin = window.externalPlugin($, _, angular);
-				if (externalPlugin && externalPlugin.module) {
-					externalPlugin.module(modules);
-				}
-			}
+			require(load, function(App) {
 
-			// Create Angular app.
-			var app = App.create(modules);
+				// All other arguments are plugins.
+				var args = Array.prototype.slice.call(arguments, 1);
 
-			// Helper function to initialize with deferreds.
-			var initialize = function(obj) {
-				if (obj && obj.initialize) {
-					var result = obj.initialize(app);
-					if (result && result.done) {
-						// If we got a promise add it to our wait queue.
-						promises.push(result);
+				// Prepare our promised based initialization.
+				var promises = [];
+				var loading = $q.defer();
+				promises.push(loading.promise);
+
+				// Add Angular modules from plugins.
+				var modules = [];
+				_.each(args, function(plugin) {
+					if (plugin && plugin.module) {
+						plugin.module(modules);
+					}
+				});
+
+				// External plugin support.
+				var externalPlugin;
+				if ($window.externalPlugin) {
+					externalPlugin = $window.externalPlugin($, _, angular, App);
+					if (externalPlugin && externalPlugin.module) {
+						externalPlugin.module(modules);
 					}
 				}
-			};
 
-			// Wait until dom is ready before we initialize.
-			angular.element(document).ready(function() {
+				// Launcher helper API.
+				var launcher = {
+					$q: $q,
+					$http: $http
+				};
 
-				// Init base application.
-				initialize(App);
+				// Create Angular app.
+				var app = App.create(modules, launcher);
 
-				// Init plugins.
-				_.each(args, function(plugin) {
-					initialize(plugin);
-				});
+				// Helper function to initialize with deferreds.
+				var initialize = function(obj) {
+					if (obj && obj.initialize) {
+						var result = obj.initialize(app, launcher);
+						if (result && result.then) {
+							// If we got a promise add it to our wait queue.
+							promises.push(result);
+						}
+					}
+				};
 
-				// Init external plugin.
-				if (externalPlugin) {
-					initialize(externalPlugin);
-				}
+				// Wait until dom is ready before we initialize.
+				angular.element(document).ready(function() {
 
-				// Resolve the base loader.
-				loading.resolve();
+					// Init base application.
+					initialize(App);
 
-				// Wait for all others to complete and then boostrap the app.
-				$.when.apply($, promises).done(function() {
-					console.log("Bootstrapping ...");
-					angular.bootstrap(document, ['app'], {
-						strictDi: true
+					// Init plugins.
+					_.each(args, function(plugin) {
+						initialize(plugin);
 					});
+
+					// Init external plugin.
+					if (externalPlugin) {
+						initialize(externalPlugin);
+					}
+
+					// Resolve the base loader.
+					loading.resolve();
+
+					// Wait for all others to complete and then boostrap the main app.
+					$q.all(promises).then(function() {
+						console.log("Bootstrapping ...");
+						angular.bootstrap(document.body, ['app'], {
+							strictDi: true
+						});
+					});
+
 				});
 
 			});
 
+		}]);
+
+		// Bootstrap our launcher app.
+		console.log("Launching ...");
+		angular.bootstrap(null, ['launcherApp'], {
+			strictDi: true
 		});
 
 	});
 
 } else {
-	alert("Your browser does not support this application. Please update your browser to the latest version.");
+	window.alert("Your browser does not support this application. Please update your browser to the latest version.");
 }

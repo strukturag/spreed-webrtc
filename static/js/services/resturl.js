@@ -19,8 +19,22 @@
  *
  */
 
-// Quickly change out logo
-// --------------------------------------------------
-$logo: url("../img/logo-small.png");
-$scalable-logo: url("../img/logo.svg");
-$load-logo: url("../img/logo.svg");
+"use strict";
+define([
+], function() {
+
+	return ["globalContext", "$window", function(context, $window) {
+		return {
+			room: function(id) {
+				id = $window.encodeURIComponent(id);
+				return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + id;
+			},
+			buddy: function(id) {
+				return $window.location.protocol + '//' + $window.location.host + context.Cfg.B + "static/img/buddy/s46/" + id;
+			},
+			api: function(path) {
+				return (context.Cfg.B || "/") + "api/v1/" + path;
+			}
+		};
+	}];
+});

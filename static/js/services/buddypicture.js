@@ -19,10 +19,11 @@
  *
  */
 
- define(['underscore'], function(underscore) {
+"use strict";
+ define([], function() {
 
 	// buddyPicture
-	return ["mediaStream", "$window", function(mediaStream, $window) {
+	return ["$window", "restURL", function($window, restURL) {
 
 		var buddyPicture = {
 
@@ -38,7 +39,7 @@
 				}
 
 				if (url.indexOf("img:") === 0) {
-					data.buddyPicture = data.buddyPictureLocalUrl = mediaStream.url.buddy(url.substr(4));
+					data.buddyPicture = data.buddyPictureLocalUrl = restURL.buddy(url.substr(4));
 				}
 
 			},

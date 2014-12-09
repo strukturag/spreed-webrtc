@@ -18,10 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define([], function() {
 
 	// ContactsmanagerController
-	return ["$scope", "$modalInstance", "contactData", "data", "contacts", 'dialogs', 'translation', function($scope, $modalInstance, contactData, data, contacts, dialogs, translation) {
+	return ["$scope", "$modalInstance", "contactData", "data", "contacts", "dialogs", "translation", "mediaStream", "buddyData", function($scope, $modalInstance, contactData, data, contacts, dialogs, translation, mediaStream, buddyData) {
+		var getContactSessionId = function(userid) {
+			var session = null;
+			var scope = buddyData.lookup(userid, false, false);
+			if (scope) {
+				session = scope.session.get();
+			}
+			return session && session.Id ? session.Id : null;
+		};
 		$scope.header = data.header;
 		$scope.contacts = [];
 		$scope.openContactsManagerEdit = function(contact) {
@@ -36,7 +46,6 @@ define([], function() {
 				}
 			);
 		};
-
 		var updateContacts = function() {
 			$scope.contacts = contactData.getAll();
 		};
@@ -50,7 +59,17 @@ define([], function() {
 		contacts.e.on('contactremoved', function() {
 			updateContacts();
 		});
-
+		$scope.doCall = function(contact) {
+			mediaStream.webrtc.doCall(getContactSessionId(contact.Userid));
+			$modalInstance.close();
+		};
+		$scope.startChat = function(contact) {
+			$scope.$emit("startchat", getContactSessionId(contact.Userid), {
+				autofocus: true,
+				restore: true
+			});
+			$modalInstance.close();
+		};
 	}];
 
 });

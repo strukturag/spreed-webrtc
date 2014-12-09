@@ -18,22 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define([
 	'underscore',
 
 	'controllers/mediastreamcontroller',
 	'controllers/statusmessagecontroller',
 	'controllers/chatroomcontroller',
-	'controllers/roomchangecontroller',
 	'controllers/usersettingscontroller',
 	'controllers/contactsmanagercontroller',
-	'controllers/contactsmanagereditcontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, RoomchangeController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController) {
+	'controllers/contactsmanagereditcontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController) {
 
 	var controllers = {
 		MediastreamController: MediastreamController,
 		StatusmessageController: StatusmessageController,
 		ChatroomController: ChatroomController,
-		RoomchangeController: RoomchangeController,
 		UsersettingsController: UsersettingsController,
 		ContactsmanagerController: ContactsmanagerController,
 		ContactsmanagereditController: ContactsmanagereditController

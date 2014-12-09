@@ -18,10 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], function($, _, template) {
 
 	// buddyPictureUpload
 	return ["$compile", function($compile) {
+
+		var getNumFromPx = function(px) {
+			var num = px.match(/[\-0-9]+/);
+			if (num) {
+				num = Number(num[0]);
+			} else {
+				num = 0;
+			}
+			return num;
+		};
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', 'translation', function($scope, safeApply, $timeout, $q, translation) {
 
@@ -40,6 +52,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$scope.upload = {
 				status: 0
 			};
+			$scope.aspectRatio = 1;
 
 			var completedUpload = function() {
 				$scope.upload.status = 100;
@@ -49,6 +62,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.onload = function() {
 					// clear old dimensions
 					this.style.cssText = null;
+					$scope.aspectRatio = this.width/this.height;
 					// get new dimensions
 					var dim = getAutoFitDimensions(this, {width: previewWidth, height: previewHeight});
 					this.style.width = dim.width + 'px';
@@ -59,10 +73,6 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					safeApply($scope);
 				};
 				$scope.prevImage.src = data;
-			};
-
-			var getNumFromPx = function(px) {
-				return px.match(/[\-0-9]+/) ? Number(px.match(/[\-0-9]+/)[0]) : 0;
 			};
 
 			// Auto fit by smallest dimension
@@ -149,7 +159,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					//console.log('file progress', event);
 					var percentComplete = event.loaded/event.total * 100;
 					// show complete only when src is loaded in image element
-					if(percentComplete != 100) {
+					if (percentComplete !== 100) {
 						$scope.$apply(function(scope) {
 							$scope.upload.status = percentComplete;
 						});
@@ -203,7 +213,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 		var link = function($scope, $element) {
 
-			$scope.prevImage = $element.find("img.preview").get(0);
+			$scope.prevImage = $element.find("img.preview")[0];
 			$scope.clearInput = function() {
 				$element.find("input[type=file]")[0].value = "";
 			};
@@ -216,17 +226,21 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 			var pxDefaultMovementSpeed = 5;
 
+			// Return the correct image height based on changes to the image width.
+			var calcHeight = function(width) {
+				return (getNumFromPx(width) / $scope.aspectRatio) + 'px';
+			};
 			var incrementPx = function(num, pxToMove) {
-				if(pxToMove === undefined) {
+				if (pxToMove === undefined) {
 					pxToMove = pxDefaultMovementSpeed;
 				}
-				return ((Number(num.match(/[\-0-9]+/)) + pxToMove) + 'px');
+				return (getNumFromPx(num) + pxToMove) + 'px';
 			};
 			var decrementPx = function(num, pxToMove) {
-				if(pxToMove === undefined) {
+				if (pxToMove === undefined) {
 					pxToMove = pxDefaultMovementSpeed;
 				}
-				return ((Number(num.match(/[\-0-9]+/)) - pxToMove) + 'px');
+				return (getNumFromPx(num) - pxToMove) + 'px';
 			};
 			var moveImageUp = function(pxMove) {
 				$scope.prevImage.style.top = decrementPx($scope.prevImage.style.top, pxMove);
@@ -241,15 +255,15 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				$scope.prevImage.style.left = incrementPx($scope.prevImage.style.left, pxMove);
 			};
 			var makeImageLarger = function() {
-				$scope.prevImage.style.height = incrementPx($scope.prevImage.style.height);
-				moveImageLeft(1);
 				$scope.prevImage.style.width = incrementPx($scope.prevImage.style.width);
+				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
+				moveImageLeft(1);
 				moveImageUp(2);
 			};
 			var makeImageSmaller = function() {
-				$scope.prevImage.style.height = decrementPx($scope.prevImage.style.height);
-				moveImageRight(1);
 				$scope.prevImage.style.width = decrementPx($scope.prevImage.style.width);
+				$scope.prevImage.style.height = calcHeight($scope.prevImage.style.width);
+				moveImageRight(1);
 				moveImageDown(2);
 			};
 			var changeImage = function(evt) {
@@ -263,8 +277,8 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 
-			$element.find(".fa-long-arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
-			$element.find(".fa-long-arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
+			$element.find(".fa-long-arrow-up").on('mousedown', null, {intervalNum: intervalNum, action: moveImageDown}, changeImage);
+			$element.find(".fa-long-arrow-down").on('mousedown', null, {intervalNum: intervalNum, action: moveImageUp}, changeImage);
 			$element.find(".fa-long-arrow-up").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 			$element.find(".fa-long-arrow-down").on('mouseup', null, {intervalNum: intervalNum}, changeImage);
 

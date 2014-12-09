@@ -18,19 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modernizr) {
 
 	var dynamicCSSContainer = "audiovideo-dynamic";
 	var renderers = {};
 
-	var getRemoteVideoSize = function(videos, peers) {
+	var getRemoteVideoSize = function(videos, streams) {
 		var size = {
 			width: 1920,
 			height: 1080
 		}
 		if (videos.length) {
 			if (videos.length === 1) {
-				var remoteVideo = peers[videos[0]].element.find("video").get(0);
+				var remoteVideo = streams[videos[0]].element.find("video")[0];
 				if (remoteVideo) {
 					size.width = remoteVideo.videoWidth;
 					size.height = remoteVideo.videoHeight;
@@ -51,7 +53,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 
 		OnePeople.prototype.name = "onepeople";
 
-		OnePeople.prototype.render = function(container, size, scope, videos, peers) {
+		OnePeople.prototype.render = function(container, size, scope, videos, streams) {
 
 			if (this.closed) {
 				return;
@@ -61,7 +63,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			var videoHeight;
 
 			if (videos.length) {
-				var remoteSize = getRemoteVideoSize(videos, peers);
+				var remoteSize = getRemoteVideoSize(videos, streams);
 				videoWidth = remoteSize.width;
 				videoHeight = remoteSize.height;
 			}
@@ -183,7 +185,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			var $mini = $(scope.mini);
 			this.miniParent = $mini.parent();
 			$mini.prependTo(scope.remoteVideos);
-			$mini.find("video").get(0).play();
+			$mini.find("video")[0].play();
 			this.countSelfAsRemote = true;
 		}
 		Democrazy.prototype = Object.create(OnePeople.prototype);
@@ -193,7 +195,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			OnePeople.prototype.close.call(this, container, scope, controller);
 			var $mini = $(scope.mini);
 			$mini.appendTo(this.miniParent);
-			$mini.find("video").get(0).play();
+			$mini.find("video")[0].play();
 			this.miniParent = null;
 		};
 
@@ -202,7 +204,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		var ConferenceKiosk = function(container, scope, controller) {
 
 			this.remoteVideos = $(container).find(".remoteVideos");
-			this.bigVideo = $("<div>").addClass("bigVideo").get(0);
+			this.bigVideo = $("<div>").addClass("bigVideo")[0];
 			this.remoteVideos.before(this.bigVideo);
 
 			this.big = null;
@@ -226,34 +228,34 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			if (this.big) {
 				// Add old video back.
 				this.big.insertAfter(remoteVideo);
-				this.big.find("video").get(0).play();
+				this.big.find("video")[0].play();
 			}
 
 			this.big = remoteVideo;
 			remoteVideo.appendTo(this.bigVideo);
-			remoteVideo.find("video").get(0).play();
+			remoteVideo.find("video")[0].play();
 
 		};
 
-		ConferenceKiosk.prototype.render = function(container, size, scope, videos, peers) {
+		ConferenceKiosk.prototype.render = function(container, size, scope, videos, streams) {
 
 			var big = this.big;
 			if (big) {
 				var currentbigpeerid = this.big.data("peerid");
-				if (!peers[currentbigpeerid]) {
+				if (!streams[currentbigpeerid]) {
 					console.log("Current big peer is no longer there", currentbigpeerid);
 					this.big = big = null;
 				}
 			}
 			if (!big) {
 				if (videos.length) {
-					this.makeBig(peers[videos[0]].element);
+					this.makeBig(streams[videos[0]].element);
 					this.bigVideo.style.opacity = 1;
 				}
 
 			}
 
-			var remoteSize = getRemoteVideoSize(videos, peers);
+			var remoteSize = getRemoteVideoSize(videos, streams);
 			var aspectRatio = remoteSize.width / remoteSize.height;
 			var innerHeight = size.height - 110;
 			var innerWidth = size.width;
@@ -287,7 +289,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			this.closed = true;
 			if (this.big) {
 				this.remoteVideos.append(this.big);
-				this.big.find("video").get(0).play();
+				this.big.find("video")[0].play();
 			}
 			this.big = null;
 			this.bigVideo.remove()
@@ -296,26 +298,26 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		};
 
 
-		// Classroom inherits from ConferenceKiosk
-		var Classroom = function(container, scope, controller) {
+		// Auditorium inherits from ConferenceKiosk
+		var Auditorium = function(container, scope, controller) {
 			// Call super.
 			ConferenceKiosk.call(this, container, scope, controller);
 		}
-		Classroom.prototype = Object.create(ConferenceKiosk.prototype);
-		Classroom.prototype.constructor = Classroom;
-		Classroom.prototype.name = "classroom";
-		Classroom.prototype.render = function(container, size, scope, videos, peers) {
+		Auditorium.prototype = Object.create(ConferenceKiosk.prototype);
+		Auditorium.prototype.constructor = Auditorium;
+		Auditorium.prototype.name = "auditorium";
+		Auditorium.prototype.render = function(container, size, scope, videos, streams) {
 			var big = this.big;
 			if (big) {
 				var currentbigpeerid = this.big.data("peerid");
-				if (!peers[currentbigpeerid]) {
+				if (!streams[currentbigpeerid]) {
 					console.log("Current big peer is no longer there", currentbigpeerid);
 					this.big = big = null;
 				}
 			}
 			if (!big) {
 				if (videos.length) {
-					this.makeBig(peers[videos[0]].element);
+					this.makeBig(streams[videos[0]].element);
 					this.bigVideo.style.opacity = 1;
 				}
 
@@ -327,7 +329,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		renderers[Smally.prototype.name] = Smally;
 		renderers[Democrazy.prototype.name] = Democrazy;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
-		renderers[Classroom.prototype.name] = Classroom;
+		renderers[Auditorium.prototype.name] = Auditorium;
 
 		// Public api.
 		var current = null;
@@ -345,8 +347,8 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 					return r;
 				};
 
-				var videos = _.keys(controller.peers);
-				var peers = controller.peers;
+				var videos = _.keys(controller.streams);
+				var streams = controller.streams;
 				var container = scope.container;
 				var layoutparent = scope.layoutparent;
 
@@ -370,7 +372,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 					}
 				}
 
-				return current.render(container, size, scope, videos, peers);
+				return current.render(container, size, scope, videos, streams);
 
 			},
 			register: function(name, impl) {

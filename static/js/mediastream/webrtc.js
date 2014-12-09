@@ -19,6 +19,8 @@
  *
  */
 
+"use strict";
+
 // Android detection hack - probably put this someplace else.
 var webrtcDetectedAndroid = ((window.navigator || {}).userAgent).match(/android (\d+)/i) !== null;
 
@@ -117,6 +119,10 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			// Start always, no matter what.
 			this.maybeStart();
 		}, this));
+		this.usermedia.e.on("mediachanged", _.bind(function() {
+			// Propagate media change events.
+			this.e.triggerHandler("usermedia", [this.usermedia]);
+		}, this));
 
 	};
 
@@ -145,9 +151,9 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						return;
 					}
 					this.msgQueue.unshift([to, data, type, to2, from]);
-					// create call
+					// Create call.
 					this.currentcall = this.createCall(from, from, from);
-					// delegate next steps to Ui
+					// Delegate next steps to UI.
 					this.e.triggerHandler("offer", [from, to2, to]);
 					break;
 				case "Bye":
@@ -161,6 +167,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					}
 					console.log("Bye process (started false)");
 					this.doHangup("receivedbye", from);
+					// Delegate bye to UI.
+					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 					break;
 				default:
 					this.msgQueue.push([to, data, type, to2, from]);
@@ -226,32 +234,36 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		switch (type) {
 			case "Offer":
-				var busy = false;
-				var conference = null;
-				if (this.currentcall.from !== from) {
-					if (this.currentconference && this.currentconference.id === data._conference) {
-						console.log("Received conference Offer -> auto.", from, data._conference);
-						conference = data._conference;
-						// clean own internal data before feeding into browser.
-						delete data._conference;
-					} else {
-						console.log("Received Offer from unknown id -> busy.", from, this.currentconference);
-						busy = true;
-					}
-				}
-				if (busy) {
-					this.api.sendBye(from, "busy");
-					this.e.triggerHandler("busy", [from, to2, to]);
-					return;
-				}
 				console.log("Offer process.");
 				if (this.settings.stereo) {
 					data.sdp = utils.addStereo(data.sdp);
 				}
-				if (conference) {
-					this.currentconference.autoAnswer(from, new RTCSessionDescription(data));
+				targetcall = this.findTargetCall(from);
+				if (targetcall) {
+					// Hey we know this call.
+					targetcall.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
+						if (currentcall === this.currentcall) {
+							// Main call.
+							this.e.triggerHandler("peercall", [this.currentcall]);
+						}
+						currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
+							console.log("Sending answer", sessionDescription, currentcall.id);
+							this.api.sendAnswer(currentcall.id, sessionDescription);
+						}, this));
+					}, this));
 				} else {
-					this.currentcall.setRemoteDescription(new RTCSessionDescription(data), _.bind(this.doAnswer, this));
+					// No target call. Check conference auto answer support.
+					if (this.currentconference && this.currentconference.id === data._conference) {
+						console.log("Received conference Offer -> auto.", from, data._conference);
+						// Clean own internal data before feeding into browser.
+						delete data._conference;
+						this.currentconference.autoAnswer(from, new window.RTCSessionDescription(data));
+						break;
+					}
+					// Cannot do anything with this offer, reply with busy.
+					console.log("Received Offer from unknown id -> busy.", from);
+					this.api.sendBye(from, "busy");
+					this.e.triggerHandler("busy", [from, to2, to]);
 				}
 				break;
 			case "Candidate":
@@ -260,7 +272,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					console.warn("Received Candidate for unknown id -> ignore.", from);
 					return;
 				}
-				var candidate = new RTCIceCandidate({
+				var candidate = new window.RTCIceCandidate({
 					sdpMLineIndex: data.sdpMLineIndex,
 					sdpMid: data.sdpMid,
 					candidate: data.candidate
@@ -280,7 +292,10 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}
 				// TODO(longsleep): In case of negotiation this could switch offer and answer
 				// and result in a offer sdp sent as answer data. We need to handle this.
-				targetcall.setRemoteDescription(new RTCSessionDescription(data));
+				targetcall.setRemoteDescription(new window.RTCSessionDescription(data), function() {
+					// Received remote description as answer.
+					console.log("Received answer after we sent offer", data);
+				});
 				break;
 			case "Bye":
 				targetcall = this.findTargetCall(from);
@@ -306,8 +321,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 					}
 				} else {
-					targetcall.close();
-					//this.api.sendBye(targetcall.id, null);
+					this.doHangup("receivedbye", targetcall.id);
+					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 				}
 				break;
 			case "Conference":
@@ -425,16 +440,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	};
 
-	WebRTC.prototype.doAnswer = function() {
-
-		this.e.triggerHandler("peercall", [this.currentcall]);
-		this.currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
-			console.log("Sending answer", sessionDescription, currentcall.id);
-			this.api.sendAnswer(currentcall.id, sessionDescription);
-		}, this));
-
-	};
-
 	WebRTC.prototype.doXfer = function(id, token, options) {
 
 		var registeredToken = tokens.get(token);
@@ -482,12 +487,17 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		xfer.setInitiate(true);
-		xfer.createPeerConnection();
+		xfer.createPeerConnection(_.bind(function() {
+			xfer.e.on("negotiationNeeded", _.bind(function(event, currentxfer) {
+				this.sendOfferWhenNegotiationNeeded(currentxfer, id);
+			}, this));
+		}, this));
+		/*
 		xfer.createOffer(_.bind(function(sessionDescription, currentxfer) {
 			console.log("Sending xfer offer with sessionDescription", sessionDescription, currentxfer.id);
 			// TODO(longsleep): Support sending this through data channel too if we have one.
 			this.api.sendOffer(id, sessionDescription);
-		}, this));
+		}, this));*/
 
 	};
 
@@ -553,12 +563,17 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		peerscreenshare.setInitiate(true); //XXX(longsleep): This creates a data channel which is not needed.
-		peerscreenshare.createPeerConnection();
+		peerscreenshare.createPeerConnection(_.bind(function() {
+			peerscreenshare.e.on("negotiationNeeded", _.bind(function(event, currentscreenshare) {
+				this.sendOfferWhenNegotiationNeeded(currentscreenshare, id);
+			}, this));
+		}, this));
+		/*
 		peerscreenshare.createOffer(_.bind(function(sessionDescription, currentscreenshare) {
 			console.log("Sending screen share offer with sessionDescription", sessionDescription, currentscreenshare.id);
 			// TODO(longsleep): Support sending this through data channel too if we have one.
 			this.api.sendOffer(id, sessionDescription);
-		}, this));
+		}, this));*/
 
 	};
 
@@ -597,17 +612,21 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				if (reason !== "receivedbye") {
 					this.api.sendBye(id, reason);
 				}
-				if (this.currentcall && currentcall) {
-					this.e.triggerHandler("statechange", ["connected", this.currentcall]);
-				} else {
-					this.e.triggerHandler("done", [reason]);
-				}
+				_.defer(_.bind(function() {
+					if (this.currentcall && currentcall) {
+						this.e.triggerHandler("statechange", ["connected", this.currentcall]);
+					} else {
+						this.e.triggerHandler("done", [reason]);
+					}
+				}, this));
 				return;
 			}
 		}
 		if (this.currentcall) {
 			id = this.currentcall.id;
-			this.e.triggerHandler("done", [reason]);
+			_.defer(_.bind(function() {
+				this.e.triggerHandler("done", [reason]);
+			}, this));
 		}
 		this.stop();
 		if (id) {
@@ -637,13 +656,16 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}
 				this.started = true;
 				if (this.initiator) {
-					currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
+					/*currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
 						console.log("Sending offer with sessionDescription", sessionDescription, currentcall.id);
 						this.api.sendOffer(currentcall.id, sessionDescription);
-					}, this));
+					}, this));*/
 				} else {
 					this.calleeStart();
 				}
+				currentcall.e.on("negotiationNeeded", _.bind(function(event, currentcall) {
+					this.sendOfferWhenNegotiationNeeded(currentcall);
+				}, this));
 			}, this), _.bind(function() {
 				// Error call.
 				this.e.triggerHandler("error", ["Failed to create peer connection. See log for details."]);
@@ -660,6 +682,22 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		while (this.msgQueue.length > 0) {
 			args = this.msgQueue.shift();
 			this.processReceivedMessage.apply(this, args);
+		}
+
+	};
+
+	WebRTC.prototype.sendOfferWhenNegotiationNeeded = function(currentcall, to) {
+
+		// TODO(longsleep): Check if the check for stable is really required.
+		if (currentcall.peerconnection.pc.signalingState === "stable") {
+			if (!to) {
+				to = currentcall.id;
+			}
+			currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
+				console.log("Sending offer with sessionDescription", sessionDescription, to, currentcall);
+				// TODO(longsleep): Support sending this through data channel too if we have one.
+				this.api.sendOffer(to, sessionDescription);
+			}, this));
 		}
 
 	};

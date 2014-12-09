@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
+
+"use strict";
+define(['jquery', 'underscore'], function($, _) {
 
 	var timeout = 5000;
 	var timeout_max = 20000;
 
-	var Connector = function(version) {
-
-		this.version = version;
+	var Connector = function() {
 		this.e = $({});
 		this.error = false;
 		this.connected = false;
@@ -35,18 +35,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		this.token = null;
 		this.queue = [];
-
-		this.roomid = null;
-
-		var ua = uaparser();
-		if (ua.os.name && /Spreed Desktop Caller/i.test(ua.ua)) {
-			this.userAgent = ua.ua.match(/Spreed Desktop Caller\/([\d.]+)/i)[1] + " (" + ua.os.name + ")";
-		} else if (ua.browser.name) {
-			this.userAgent = ua.browser.name + " " + ua.browser.major;
-		} else {
-			this.userAgent = ua.ua;
-		}
-
 	};
 
 	Connector.prototype.connect = function(url) {
@@ -110,7 +98,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 	Connector.prototype.close = function() {
 
 		this.connected = false;
-		this.roomid = null;
 		if (this.conn) {
 			var conn = this.conn;
 			this.conn = null;
@@ -131,42 +118,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Connector.prototype.room = function(roomid) {
-
-		var was_connected = this.connected;
-
-		if (was_connected) {
-			if (this.roomid === roomid) {
-				return;
-			}
-			this.e.triggerHandler("closed", [{
-				soft: true
-			}]);
-		}
-
-		this.roomid = roomid;
-		roomid = this.roomid ? this.roomid : "";
-
-		this.send({
-			Type: "Hello",
-			Hello: {
-				Version: this.version,
-				Ua: this.userAgent,
-				Id: roomid
-			}
-		}, true);
-		this.e.triggerHandler("helloed", [roomid]);
-
-		if (was_connected) {
-			this.e.triggerHandler("open", [{
-				soft: true
-			}]);
-		}
-
-	};
-
 	Connector.prototype.onopen = function(event) {
-
 		window.clearTimeout(this.connecting);
 		this.connecting_timeout = timeout;
 
@@ -181,9 +133,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			data = this.queue.shift();
 			this.send(data);
 		}
-
-		this.e.triggerHandler("opened");
-
 	};
 
 	Connector.prototype.onerror = function(event) {
@@ -210,8 +159,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		if (!this.error) {
 			this.e.triggerHandler("close", [null, event]);
 		}
-		this.e.triggerHandler("closed", [null, event]);
-
 	};
 
 	Connector.prototype.onmessage = function(event) {

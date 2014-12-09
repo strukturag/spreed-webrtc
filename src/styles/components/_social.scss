@@ -20,6 +20,9 @@
  */
 
 .#{$fa-css-prefix} {
+  &.link {
+    color: $social-email-color;
+  }
   &.email {
     color: $social-email-color;
   }

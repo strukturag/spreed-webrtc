@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'], function($, _, template, BigScreen) {
 
 	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
@@ -685,7 +687,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 					if (elem) {
 						BigScreen.toggle(elem);
 					} else {
-						BigScreen.toggle(pane.get(0));
+						BigScreen.toggle(pane[0]);
 					}
 				}
 
@@ -704,11 +706,13 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			};
 
 			mediaStream.webrtc.e.on("done", function() {
-				_.each($scope.availablePresentations, function(presentation) {
-					presentation.clear();
+				$scope.$apply(function() {
+					_.each($scope.availablePresentations, function(presentation) {
+						presentation.clear();
+					});
+					$scope.availablePresentations = [];
+					$scope.activeDownloads = [];
 				});
-				$scope.availablePresentations = [];
-				$scope.activeDownloads = [];
 			});
 
 			$(document).on("keyup", function(event) {

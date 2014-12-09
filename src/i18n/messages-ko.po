@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-10-24 10:17+0200\n"
+"POT-Creation-Date: 2014-12-08 16:48+0100\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Kiosk view"
 msgstr ""
 
-msgid "Classroom"
+msgid "Auditorium"
 msgstr ""
 
 msgid "Start chat"
@@ -66,8 +66,8 @@ msgstr "화상회의 시작"
 msgid "Start audio conference"
 msgstr "음성회의 시작"
 
-msgid "No other users online"
-msgstr "온라인에 다른 대화상대 없음"
+msgid "No one else here"
+msgstr ""
 
 msgid "Take"
 msgstr ""
@@ -155,6 +155,9 @@ msgstr ""
 msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
+msgstr ""
+
+msgid "Edit contact"
 msgstr ""
 
 msgid "Edit"
@@ -246,6 +249,23 @@ msgstr "화면에 맟춤"
 msgid "Profile"
 msgstr ""
 
+msgid "Your name"
+msgstr "사용자 이름"
+
+msgid "Your picture"
+msgstr "사용자 사진"
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+
 msgid "Your ID"
 msgstr ""
 
@@ -267,26 +287,6 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
-msgstr ""
-
-msgid "Your picture"
-msgstr "사용자 사진"
-
-msgid "Your name"
-msgstr "사용자 이름"
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-msgid ""
-"Your picture, name and status message identify yourself in calls, chats "
-"and rooms."
-msgstr ""
-
-msgid "Manage contacts"
 msgstr ""
 
 msgid "Media"
@@ -390,20 +390,24 @@ msgid ""
 " ID."
 msgstr ""
 
-msgid "Share by Email"
+msgid "Room link"
+msgstr ""
+
+#, fuzzy
+msgid "Invite by Email"
 msgstr "이메일로 공유"
 
-msgid "Share on Facebook"
-msgstr "Facebook에서 공유"
+msgid "Invite with Facebook"
+msgstr ""
 
-msgid "Share on Twitter"
-msgstr "Twitter에서 공유"
+msgid "Invite with Twitter"
+msgstr ""
 
-msgid "Share on Google Plus"
-msgstr "구글 플러스에서 공유"
+msgid "Invite with Google Plus"
+msgstr ""
 
-msgid "Share on XING"
-msgstr "Xing에서 공유"
+msgid "Invite with XING"
+msgstr ""
 
 msgid "Initializing"
 msgstr "초기화"
@@ -470,14 +474,22 @@ msgstr "도움말을 원하면 여기를 클릭 하세요 (구글 크롬)"
 msgid "Please set your user details and settings."
 msgstr "사용자의 세부상세와 설정을 지정하세요 "
 
-msgid "Create a room and talk together"
+msgid "Enter a room name"
+msgstr ""
+
+msgid "Random room name"
 msgstr ""
 
 #, fuzzy
-msgid "Creating room ..."
-msgstr "방 링크 만들기..."
+msgid "Enter room"
+msgstr "현재 방"
 
-msgid "Create"
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+
+msgid "Room history"
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."
@@ -585,10 +597,12 @@ msgstr "전화가 거부 되었습니다."
 msgid " does not pick up."
 msgstr "전화를 받지 않습니다."
 
-msgid " tried to call you."
+#, fuzzy
+msgid " tried to call you"
 msgstr "연결을 시도 중입니다"
 
-msgid " called you."
+#, fuzzy
+msgid " called you"
 msgstr "전화 드렸습니다."
 
 #, fuzzy
@@ -664,6 +678,10 @@ msgstr "브라우저 언어 사용"
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
 
+#, fuzzy
+msgid "Room name"
+msgstr "사용자 이름"
+
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
 
@@ -700,6 +718,21 @@ msgid ""
 "Failed to verify access code. Check your Internet connection and try "
 "again."
 msgstr "접속코드 확인이 실패 했습니다. 인터넷 연결을 확인하고 다시 시도해 주십시오. "
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr ""
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr ""
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr ""
+
+msgid "Please sign in to create rooms."
+msgstr ""
 
 #, fuzzy, python-format
 msgid "and %s"

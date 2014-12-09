@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 	return ["$window", "$compile", "translation", "safeApply", function($window, $compile, translation, safeApply) {

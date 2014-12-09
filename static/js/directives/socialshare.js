@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'text!partials/socialshare.html'], function($, template) {
+
+"use strict";
+define(['text!partials/socialshare.html'], function(template) {
 
 	var urls = {
 		email: "mailto:?subject=_TEXT_%20_URL_",
@@ -29,7 +31,7 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 	};
 
 	// socialShare
-	return ["$window", "translation", function($window, translation) {
+	return ["$window", "translation", "rooms", "alertify", function($window, translation, rooms, alertify) {
 
 		var title = $window.encodeURIComponent($window.document.title);
 		var makeUrl = function(nw, target) {
@@ -46,8 +48,15 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 			template: template,
 			replace: true,
 			link: function($scope, $element, $attr) {
-				$element.on("click", "a", function(event) {
-					var nw = $(event.currentTarget).data("nw");
+				$scope.$on("room.updated", function(ev, room) {
+					$scope.roomlink = rooms.link(room);
+				});
+				$scope.$on("room.left", function(ev) {
+					$scope.roomlink = null;
+				});
+				$element.find("a").on("click", function(event) {
+					event.preventDefault();
+					var nw = event.currentTarget.getAttribute("data-nw");
 					var url = makeUrl(nw, $scope.roomlink);
 					if (url) {
 						if (nw === "email") {
@@ -55,6 +64,11 @@ define(['jquery', 'text!partials/socialshare.html'], function($, template) {
 							$scope.manualReloadApp(url);
 						} else {
 							$window.open(url, "social_" + nw, "menubar=no,toolbar=no,resizable=yes,width=600,height=600,scrollbars=yes");
+						}
+					} else {
+						if (nw === "link") {
+							//$window.alert("Room link: " + $scope.roomlink);
+							alertify.dialog.notify(translation._("Room link"), '<a href="'+$scope.roomlink+'" rel="external" target="_blank">'+$scope.roomlink+'</a>');
 						}
 					}
 				});

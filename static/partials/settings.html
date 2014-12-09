@@ -5,15 +5,38 @@
 
       <settings-account ng-controller="UsersettingsController as usersettings">
         <legend>{{_('Profile')}}</legend>
+        <div class="form-group profile-yourname">
+          <label class="col-xs-4 control-label">{{_('Your name')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
+          </div>
+        </div>
+        <div class="form-group profile-yourpicture">
+          <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
+            <div class="col-xs-8">
+                <buddy-picture-capture ng-model="user.buddyPicture"></buddy-picture-capture>
+            </div>
+        </div>
+        <div class="form-group profile-statusmessage">
+          <label class="col-xs-4 control-label">{{_('Status message')}}</label>
+          <div class="col-xs-8">
+            <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
+          </div>
+        </div>
+        <div class="form-group profile-publicnotice">
+          <div class="col-xs-8 col-xs-offset-4">
+            <p class="help-block">{{_('Your picture, name and status message identify yourself in calls, chats and rooms.')}}</p>
+          </div>
+        </div>
         <div ng-if="(withUsers && withUsersRegistration) || userid">
-          <div class="form-group">
+          <div class="form-group profile-yourid">
             <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
             <div ng-switch="withUsersMode">
               <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
                 <div ng-if="!userid">
                   <keygen class="hidden" name="pubkey"/>
                   <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
-                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event.target)">{{_('Register')}}</button>
+                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event)">{{_('Register')}}</button>
                   </label>
                   <iframe class="hidden" name="users_registration_certificate_iframe"></iframe>
                 </div>
@@ -28,7 +51,7 @@
                     <button class="btn btn-small btn-primary btn-sign-in" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event.target)">{{_('Create an account')}}</button>
+                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
                   </label>
                 </div>
                 <p class="form-control-static well well-sm" ng-if="userid">{{userid|displayUserid}}</p>
@@ -39,37 +62,6 @@
                   <button class="btn btn-small btn-link btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
                 </label>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Your picture')}}</label>
-            <div class="col-xs-8">
-                <buddy-picture-capture ng-model="user.buddyPicture"></buddy-picture-capture>
-            </div>
-        </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Your name')}}</label>
-          <div class="col-xs-8">
-            <input type="text" class="form-control" ng-model="user.displayName" placeholder="{{_('Name')}}" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Status message')}}</label>
-          <div class="col-xs-8">
-            <input type="text" class="form-control" ng-model="user.message" placeholder="{{_('What\'s on your mind?')}}" />
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-8 col-xs-offset-4">
-            <p class="help-block">{{_('Your picture, name and status message identify yourself in calls, chats and rooms.')}}</p>
-          </div>
-        </div>
-        <div ng-if="(withUsers && withUsersRegistration) || userid">
-          <div class="form-group" ng-if="userid">
-            <label class="col-xs-4 control-label">{{_('Contacts')}}</label>
-            <div class="col-xs-8">
-              <p class="form-control-static"><a ng-click="openContactsManager()">{{_('Manage contacts')}}</a></p>
             </div>
           </div>
         </div>

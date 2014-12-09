@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define([
 	'require',
 	'jquery',
@@ -38,6 +40,7 @@ define([
 	'angular-animate',
 	'angular-humanize',
 	'angular-route',
+
 	'mobile-events'
 
 ], function(require, $, _, angular, modernizr, moment, services, directives, filters, controllers, languages) {
@@ -65,12 +68,13 @@ define([
 	var appConfig = {};
 
 	// Implement translation store.
-	var TranslationData = function(default_language) {
+	var TranslationData = function(default_language, launcher) {
 		// Create data structure.
 		this.data = {
 			locale_data: {}
 		};
 		this.lang = this.default_lang = default_language;
+		this.getHTTP = launcher.$http.get;
 	};
 	TranslationData.prototype.language = function() {
 		// Return language.
@@ -97,25 +101,24 @@ define([
 	};
 	TranslationData.prototype.load = function(domain, url) {
 		var that = this;
-		return $.ajax({
-			dataType: "json",
-			url: url,
-			success: function(data) {
+		return this.getHTTP(url).
+			success(function(data) {
 				//console.log("loaded translation data", data);
 				that.add(domain, data);
-			},
-			error: function(err, textStatus, errorThrown) {
-				console.warn("Failed to load translation data: " + errorThrown);
+			}).
+			error(function(data, status) {
+				console.warn("Failed to load translation data: " + status);
 				that.add(domain, null);
-			}
-		});
+			});
 	};
 	TranslationData.prototype.get = function() {
 		return this.data;
 	};
-	var translationData = new TranslationData("en");
 
-	var create = function(ms) {
+	var create = function(ms, launcher) {
+
+		// Create translation data instance.
+		var translationData = launcher.translationData = new TranslationData("en", launcher);
 
 		var modules = ['ui.bootstrap', 'ngSanitize', 'ngAnimate', 'ngHumanize', 'ngRoute'];
 		if (ms && ms.length) {
@@ -179,11 +182,18 @@ define([
 
 	};
 
-	var initialize = function(app) {
+	// Our API version as float. This value is incremented on
+	// breaking changes to plugins can check on it.
+	var apiversion = 1.1;
 
-		var deferred = $.Deferred();
+	var initialize = function(app, launcher) {
 
-		var globalContext = JSON.parse($("#globalcontext").text());
+		var deferred = launcher.$q.defer();
+
+		var globalContext = JSON.parse(document.getElementById("globalcontext").innerHTML);
+		if (!globalContext.Cfg.Version) {
+            globalContext.Cfg.Version = "unknown";
+        }
 		app.constant("globalContext", globalContext);
 
 		// Configure language.
@@ -233,16 +243,19 @@ define([
 		console.info("Selected language: "+lang);
 
 		// Set language and load default translations.
-		translationData.lang = lang;
-		var domain = "messages";
-		if (lang === translationData.default_lang) {
+		launcher.translationData.lang = lang;
+		var translationDomain = "messages";
+		if (lang === launcher.translationData.default_lang) {
 			// No need to load default language as it is built in.
-			translationData.add(domain, null);
+			launcher.translationData.add(translationDomain, null);
 			deferred.resolve();
 		} else {
 			// Load default translation catalog.
-			var url = require.toUrl('translation/' + domain + "-" + lang + '.json');
-			$.when(translationData.load(domain, url)).always(function() {
+			var url = require.toUrl('translation/'+translationDomain+"-"+lang+'.json');
+			launcher.translationData.load(translationDomain, url).then(function() {
+				deferred.resolve();
+			}, function() {
+				// Ignore errors.
 				deferred.resolve();
 			});
 		}
@@ -250,7 +263,7 @@ define([
 		// Set momemt language.
 		moment.lang(lang);
 
-		return deferred.promise();
+		return deferred.promise;
 
 	};
 
@@ -259,7 +272,7 @@ define([
 		initialize: initialize,
 		query: urlQuery,
 		config: appConfig,
-		translationData: translationData
+		apiversion: apiversion
 	};
 
 });

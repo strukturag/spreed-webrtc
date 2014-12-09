@@ -13,14 +13,18 @@
         <table class="table table-hover table-condensed">
           <tbody>
             <tr ng-repeat="contact in contacts">
-              <td class="picture buddy" width="56">
+              <td class="picture buddy">
                 <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="contact.Status.buddyPicture" alt ng-src="{{contact.Status.buddyPicture}}"/></div>
               </td>
               <td class="name">
                 <span>{{contact.Userid|displayName}}</span>
               </td>
               <td class="action">
-                <button class="btn btn-primary" ng-click="openContactsManagerEdit(contact)">{{_('Edit')}}</button>
+                <div class="btn-group buddyactions">
+                    <button class="btn btn-primary" ng-click="doCall(contact)" title="{{_('Start video call')}}"><i class="fa fa-phone"></i></button>
+                    <button class="btn btn-primary" ng-click="startChat(contact)" title="{{_('Start chat')}}"><i class="fa fa-comments-o"></i></button>
+                </div>
+                <button class="btn btn-primary" ng-click="openContactsManagerEdit(contact)" title="{{_('Edit contact')}}">{{_('Edit')}}</button>
               </td>
             </tr>
           </tbody>

@@ -1,10 +1,27 @@
 {
-	"smarttabs": true,
-	"onecase": true,
+	"asi": true,
+	"bitwise": false,
+	"browser": true,
+	"camelcase": false, // Disabled for now.
 	"curly": true,
 	"forin": true,
-	"trailing": true,
-	"asi": true,
+	"immed": true,
+	"latedef": true,
 	"maxlen": 1000,
-	"quotmark": false
+	"newcap": true,
+	"noarg": true,
+	"noempty": false, // Disabled for now.
+	"nonew": true,
+	"onecase": true,
+	"predef": [
+		"define",
+		"require",
+		"console"
+	],
+	"quotmark": false,
+	"smarttabs": true,
+	"trailing": true,
+	"undef": true,
+	"unused": false, // Disabled for now
+	"globalstrict": true
 }

@@ -78,6 +78,9 @@ encryptionSecret = tne-default-encryption-block-key
 ; all users will join this room if enabled. If it is disabled then a room join
 ; form will be shown instead.
 ;defaultRoomEnabled = true
+; Whether a user account is required to create a room. This only has an effect
+; if user accounts are enabled. Optional, defaults to false.
+;authorizeRoomCreation = false
 ; Server token is a public random string which is used to enhance security of
 ; server generated security tokens. When the serverToken is changed all existing
 ; nonces become invalid. Use 32 or 64 characters (eg. 16 or 32 byte hex).
@@ -98,6 +101,18 @@ serverRealm = local
 ; a front end webserver. Check the doc folder for more info about plugins and
 ; examples.
 ;plugin = extra/static/myplugin.js
+; Content-Security-Policy HTTP response header value.
+; Spreed WebRTC requires inline styles, WebSocket connection to itself and
+; data: URL for images.
+; The currently recommended CSP is:
+;   default-src 'self';
+;   style-src 'self' 'unsafe-inline';
+;   img-src 'self' data:;
+;   connect-src 'self' wss://server:port/ws;
+;contentSecurityPolicy =
+; Content-Security-Policy-Report-Only HTTP response header value. Use this
+; to test your CSP before putting it into production.
+;contentSecurityPolicyReportOnly =
 
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log

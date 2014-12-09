@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-10-24 10:17+0200\n"
+"POT-Creation-Date: 2014-12-08 16:48+0100\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Kiosk view"
 msgstr ""
 
-msgid "Classroom"
+msgid "Auditorium"
 msgstr ""
 
 msgid "Start chat"
@@ -66,8 +66,8 @@ msgstr "开始视频通话"
 msgid "Start audio conference"
 msgstr "开始语音会议"
 
-msgid "No other users online"
-msgstr "无其他联系人在线"
+msgid "No one else here"
+msgstr ""
 
 msgid "Take"
 msgstr ""
@@ -155,6 +155,9 @@ msgstr ""
 msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
+msgstr ""
+
+msgid "Edit contact"
 msgstr ""
 
 msgid "Edit"
@@ -246,6 +249,23 @@ msgstr "适合屏幕"
 msgid "Profile"
 msgstr ""
 
+msgid "Your name"
+msgstr "您的名字"
+
+msgid "Your picture"
+msgstr "您的图片"
+
+msgid "Status message"
+msgstr ""
+
+msgid "What's on your mind?"
+msgstr ""
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+
 msgid "Your ID"
 msgstr ""
 
@@ -267,26 +287,6 @@ msgid "Sign out"
 msgstr ""
 
 msgid "Manage account"
-msgstr ""
-
-msgid "Your picture"
-msgstr "您的图片"
-
-msgid "Your name"
-msgstr "您的名字"
-
-msgid "Status message"
-msgstr ""
-
-msgid "What's on your mind?"
-msgstr ""
-
-msgid ""
-"Your picture, name and status message identify yourself in calls, chats "
-"and rooms."
-msgstr ""
-
-msgid "Manage contacts"
 msgstr ""
 
 msgid "Media"
@@ -390,20 +390,24 @@ msgid ""
 " ID."
 msgstr ""
 
-msgid "Share by Email"
+msgid "Room link"
+msgstr ""
+
+#, fuzzy
+msgid "Invite by Email"
 msgstr "电子邮件共享"
 
-msgid "Share on Facebook"
-msgstr "Facebook共享"
+msgid "Invite with Facebook"
+msgstr ""
 
-msgid "Share on Twitter"
-msgstr "Twitter共享"
+msgid "Invite with Twitter"
+msgstr ""
 
-msgid "Share on Google Plus"
-msgstr "Google Plus共享"
+msgid "Invite with Google Plus"
+msgstr ""
 
-msgid "Share on XING"
-msgstr "XING共享"
+msgid "Invite with XING"
+msgstr ""
 
 msgid "Initializing"
 msgstr "初始化"
@@ -470,14 +474,22 @@ msgstr "点击这里获取帮助 (Google Chrome)"
 msgid "Please set your user details and settings."
 msgstr "请设定您的用户信息及设置"
 
-msgid "Create a room and talk together"
+msgid "Enter a room name"
+msgstr ""
+
+msgid "Random room name"
 msgstr ""
 
 #, fuzzy
-msgid "Creating room ..."
-msgstr "创建房间链接"
+msgid "Enter room"
+msgstr "當前房间"
 
-msgid "Create"
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+
+msgid "Room history"
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."
@@ -585,10 +597,12 @@ msgstr " 拒绝了您的呼叫。"
 msgid " does not pick up."
 msgstr " 无人接听。"
 
-msgid " tried to call you."
+#, fuzzy
+msgid " tried to call you"
 msgstr " 曾呼叫您。"
 
-msgid " called you."
+#, fuzzy
+msgid " called you"
 msgstr " 曾与您通话。"
 
 #, fuzzy
@@ -663,6 +677,10 @@ msgstr "使用浏览器语言"
 msgid "Meet with me here:"
 msgstr "我们这里见："
 
+#, fuzzy
+msgid "Room name"
+msgstr "您的名字"
+
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
 
@@ -699,6 +717,21 @@ msgid ""
 "Failed to verify access code. Check your Internet connection and try "
 "again."
 msgstr "接入码认证失败。请检查您的网络连接并重试。"
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr ""
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr ""
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr ""
+
+msgid "Please sign in to create rooms."
+msgstr ""
 
 #, python-format
 msgid "and %s"

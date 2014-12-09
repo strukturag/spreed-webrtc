@@ -18,7 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['jquery', 'underscore'], function($, _) {
+
+"use strict";
+define([], function() {
 
 	var Utils = function() {}
 

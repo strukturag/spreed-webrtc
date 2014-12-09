@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 	return ["$window", function($window) {
@@ -35,7 +37,7 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		var helper = notify;
 
-		var desktopNotify = function() {
+		var DesktopNotify = function() {
 
 			this.asked = false;
 			this.windowHasFocus = true;
@@ -51,7 +53,7 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		};
 
-		desktopNotify.prototype.enabled = function() {
+		DesktopNotify.prototype.enabled = function() {
 
 			if (this.level === "default") {
 				this.asked = true;
@@ -61,14 +63,14 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		};
 
-		desktopNotify.prototype.refresh = function() {
+		DesktopNotify.prototype.refresh = function() {
 
 			this.supported = helper.isSupported;
 			this.level = helper.permissionLevel();
 
 		};
 
-		desktopNotify.prototype.requestPermission = function(cb) {
+		DesktopNotify.prototype.requestPermission = function(cb) {
 
 			//console.log("request permission");
 			return helper.requestPermission(_.bind(function() {
@@ -83,13 +85,13 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		};
 
-		desktopNotify.prototype.createNotification = function(title, options) {
+		DesktopNotify.prototype.createNotification = function(title, options) {
 
 			return helper.createNotification(title, options);
 
 		};
 
-		desktopNotify.prototype.notify = function(title, body, options) {
+		DesktopNotify.prototype.notify = function(title, body, options) {
 
 			if (!this.enabled()) {
 				return this.dummy;
@@ -113,7 +115,7 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		};
 
-		return new desktopNotify();
+		return new DesktopNotify();
 
 	}];
 

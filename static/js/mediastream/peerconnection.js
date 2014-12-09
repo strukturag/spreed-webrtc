@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	var count = 0;
@@ -36,7 +38,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			this.createPeerConnection(currentcall);
 		}
 
-	}
+	};
 
 	PeerConnection.prototype.createPeerConnection = function(currentcall) {
 
@@ -54,7 +56,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			console.log('Creating RTCPeerConnnection with:\n' +
 				'  config: \'' + JSON.stringify(currentcall.pcConfig) + '\';\n' +
 				'  constraints: \'' + JSON.stringify(currentcall.pcConstraints) + '\'.');
-			pc = this.pc = new RTCPeerConnection(currentcall.pcConfig, currentcall.pcConstraints);
+			pc = this.pc = new window.RTCPeerConnection(currentcall.pcConfig, currentcall.pcConstraints);
 		} catch (e) {
 			console.error('Failed to create PeerConnection, exception: ' + e.message);
 			pc = this.pc = null;
@@ -70,11 +72,22 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 			// for example https://bugzilla.mozilla.org/show_bug.cgi?id=998546.
 			pc.onaddstream = _.bind(this.onRemoteStreamAdded, this);
 			pc.onremovestream = _.bind(this.onRemoteStreamRemoved, this);
-			pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
+			if (window.webrtcDetectedBrowser === "firefox") {
+				// NOTE(longsleep): onnegotiationneeded is not supported by Firefox. We trigger it
+				// manually when a stream is added or removed.
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=840728
+				this.negotiationNeeded = _.bind(function() {
+					if (this.currentcall.initiate) {
+						// Trigger onNegotiationNeeded once for Firefox.
+						console.log("Negotiation needed.");
+						this.onNegotiationNeeded({target: this.pc});
+					}
+				}, this);
+			} else {
+				pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
+			}
 			pc.ondatachannel = _.bind(this.onDatachannel, this);
 			pc.onsignalingstatechange = function(event) {
-				// XXX(longsleep): Remove this or handle it in a real function.
-				// XXX(longsleep): Firefox 25 does send event as a string (like stable).
 				console.debug("Signaling state changed", pc.signalingState);
 			};
 			// NOTE(longsleep):
@@ -92,7 +105,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 			// Create default data channel when we are in initiate mode.
 			if (currentcall.initiate) {
-				if (webrtcDetectedBrowser !== "chrome" || !webrtcDetectedAndroid || (webrtcDetectedBrowser === "chrome" && webrtcDetectedVersion >= 33)) {
+				if (window.webrtcDetectedBrowser !== "chrome" || !window.webrtcDetectedAndroid || (window.webrtcDetectedBrowser === "chrome" && window.webrtcDetectedVersion >= 33)) {
 					// NOTE(longsleep): Android (Chrome 32) does have broken SCTP data channels
 					// which makes connection fail because of sdp set error for answer/offer.
 					// See https://code.google.com/p/webrtc/issues/detail?id=2253 Lets hope the
@@ -109,6 +122,10 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 		return pc;
 
+	};
+
+	PeerConnection.prototype.negotiationNeeded = function() {
+		// Per default this does nothing as the browser is expected to handle this.
 	};
 
 	PeerConnection.prototype.createDatachannel = function(label, init) {
@@ -224,13 +241,9 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	PeerConnection.prototype.onNegotiationNeeded = function(event) {
 
-		// XXX(longsleep): Renegotiation seems to break video streams on Chrome 31.
-		// XXX(longsleep): Renegotiation can happen from both sides, meaning this
-		// could switch offer/answer side - oh crap.
 		var peerconnection = event.target;
 		if (peerconnection === this.pc) {
-			//console.log("Negotiation needed.", peerconnection.remoteDescription, peerconnection.iceConnectionState, peerconnection.signalingState, this);
-			this.currentcall.onNegotiationNeeded(this);
+			this.currentcall.onNegotiationNeeded();
 		}
 
 	};
@@ -243,8 +256,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		if (this.pc) {
 			this.pc.close();
 		}
-
-		this.currentcall.onRemoteStreamRemoved(null);
 
 		this.datachannel = null;
 		this.pc = null;
@@ -271,12 +282,14 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	PeerConnection.prototype.addStream = function() {
 
+		_.defer(this.negotiationNeeded);
 		return this.pc.addStream.apply(this.pc, arguments);
 
 	};
 
 	PeerConnection.prototype.removeStream = function() {
 
+		_.defer(this.negotiationNeeded);
 		return this.pc.removeStream.apply(this.pc, arguments);
 
 	};

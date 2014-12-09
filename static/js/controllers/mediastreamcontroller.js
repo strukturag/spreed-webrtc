@@ -18,9 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function(_, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs) {
+"use strict";
+define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, angular, BigScreen, moment, sjcl, Modernizr) {
+
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms, constraints) {
 
 		/*console.log("route", $route, $routeParams, $location);*/
 
@@ -86,29 +88,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 		appData.set($scope);
 
-		var videoQualityMap = {
-			tiny: {
-				maxWidth: 80,
-				maxHeight: 45
-			},
-			low: {
-				maxWidth: 320,
-				maxHeight: 180
-			},
-			high: {
-				maxWidth: 640,
-				maxHeight: 360
-			},
-			hd: {
-				minWidth: 1280,
-				minHeight: 720
-			},
-			fullhd: {
-				minWidth: 1920,
-				minHeight: 1080
-			}
-		}
-
 		var displayName = safeDisplayName;
 
 		// Init STUN and TURN servers.
@@ -147,6 +126,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
+		$scope.roomsHistory = [];
 		$scope.defaults = {
 			displayName: null,
 			buddyPicture: null,
@@ -219,156 +199,31 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				console.warn("This is not a WebRTC capable browser.");
 				return;
 			}
+
 			var settings = $scope.master.settings;
 
-			// Create iceServers from scope settings.
+			// Create iceServers from scope.
 			var iceServers = [];
 			var iceServer;
 			if ($scope.stun.length) {
-				iceServer = createIceServers($scope.stun);
+				iceServer = $window.createIceServers($scope.stun);
 				if (iceServer.length) {
 					iceServers.push.apply(iceServers, iceServer);
 				}
 			}
 			if ($scope.turn.urls && $scope.turn.urls.length) {
-				iceServer = createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
+				iceServer = $window.createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
 				if (iceServer.length) {
 					iceServers.push.apply(iceServers, iceServer);
 				}
 			}
-
-			var audioConstraints = [];
-			var videoConstraints = [];
-			var videoConstraintsMandatory = {};
-			var screensharingConstraints = [];
-
-			var pushmulti = function(arrays, data) {
-				_.each(arrays, function(a) {
-					a.push(data);
-				});
-			};
-
-			// Chrome only constraints.
-			if ($scope.isChrome) {
-				// Audio settings.
-				// For defaults in Chromium see https://code.google.com/p/webrtc/source/browse/trunk/talk/media/webrtc/webrtcvoiceengine.cc#225
-
-				// Experimental audio settings.
-				if (settings.experimental.enabled) {
-
-					audioConstraints.push({
-						googEchoCancellation: true // defaults to true
-					});
-					audioConstraints.push({
-						googEchoCancellation2: settings.experimental.audioEchoCancellation2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googAutoGainControl: true // defaults to true
-					});
-					audioConstraints.push({
-						googAutoGainControl2: settings.experimental.audioAutoGainControl2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googNoiseSuppression: true // defaults to true
-					});
-					audioConstraints.push({
-						googgNoiseSuppression2: settings.experimental.audioNoiseSuppression2 && true // defaults to false in Chrome
-					});
-					audioConstraints.push({
-						googHighpassFilter: true // defaults to true
-					});
-					audioConstraints.push({
-						googTypingNoiseDetection: settings.experimental.audioTypingNoiseDetection && true // defaults to true in Chrome
-					});
-
-				}
-
-				if ($scope.supported.renderToAssociatedSink) {
-					audioConstraints.push({
-						// When true uses the default communications device on Windows.
-						// https://codereview.chromium.org/155863003
-						googDucking: true // defaults to true on Windows.
-					});
-					audioConstraints.push({
-						// Chrome will start rendering mediastream output to an output device that's associated with
-						// the input stream that was opened via getUserMedia.
-						// https://chromiumcodereview.appspot.com/23558010
-						chromeRenderToAssociatedSink: settings.audioRenderToAssociatedSkin && true // defaults to false in Chrome
-					});
-				}
-
-				// Select microphone device by id.
-				if (settings.microphoneId) {
-					audioConstraints.push({
-						sourceId: settings.microphoneId
-					});
-				}
-				// Select camera by device id.
-				if (settings.cameraId) {
-					videoConstraints.push({
-						sourceId: settings.cameraId
-					});
-				}
-
-				// Video settings.
-				if (settings.experimental.enabled) {
-
-					// Experimental video settings.
-					pushmulti([videoConstraints, screensharingConstraints], {
-						// Changes the way the video encoding adapts to the available bandwidth.
-						// https://code.google.com/p/webrtc/issues/detail?id=3351
-						googLeakyBucket: settings.experimental.videoLeakyBucket && true // defaults to false in Chrome
-					});
-					pushmulti([videoConstraints, screensharingConstraints], {
-						// Removes the noise in the captured video stream at the expense of CPU.
-						googNoiseReduction: settings.experimental.videoNoiseReduction && true // defaults to false in Chrome
-					});
-					pushmulti([videoConstraints, screensharingConstraints], {
-						googCpuOveruseDetection: settings.experimental.videoCpuOveruseDetection && true // defaults to true in Chrome
-					});
-
-				}
-
-				// Video.
-				videoConstraintsMandatory = $.extend(videoConstraintsMandatory, videoQualityMap[settings.videoQuality]);
-				// Not supported as of Firefox 27.
-				if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
-					videoConstraintsMandatory.maxFrameRate = parseInt(settings.maxFrameRate, 10);
-				}
-			}
-
-			// Apply the shit.
-			mediaStream.webrtc.settings.stereo = settings.stereo;
-			mediaStream.webrtc.settings.mediaConstraints.video.mandatory = videoConstraintsMandatory;
-			mediaStream.webrtc.settings.mediaConstraints.video.optional = videoConstraints;
-			mediaStream.webrtc.settings.mediaConstraints.audio = {
-				optional: audioConstraints
-			};
 			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-			mediaStream.webrtc.settings.screensharing.mediaConstraints.video.optional = screensharingConstraints;
 
-			// Inject optional stuff.
-			var optionalPcConstraints = mediaStream.webrtc.settings.pcConstraints.optional = [];
-			if ($window.webrtcDetectedBrowser === "chrome") {
-				// NOTE(longsleep): We can always enable SCTP data channels, as we have a workaround
-				// using the "active" event for Firefox < 27.
-				// SCTP does not work correctly with Chrome 31. Require M32.
-				if ($window.webrtcDetectedVersion >= 32) {
-					// SCTP is supported from Chrome M31.
-					// No need to pass DTLS constraint as it is on by default in Chrome M31.
-					// For SCTP, reliable and ordered is true by default.
-				} else {
-					// Chrome < M32 does not yet do DTLS-SRTP by default whereas Firefox only
-					// does DTLS-SRTP. In order to get interop, you must supply Chrome
-					// with a PC constructor constraint to enable DTLS.
-					console.warn("Turning on SCTP combatibility - please update your Chrome.");
-					optionalPcConstraints.push({
-						DtlsSrtpKeyAgreement: true
-					});
-				}
-			}
+			// Stereo.
+			mediaStream.webrtc.settings.stereo = settings.stereo;
 
-			//console.log("WebRTC settings", mediaStream.webrtc.settings);
+			// Refresh constraints.
+			constraints.refresh($scope.master.settings);
 
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
@@ -421,6 +276,8 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			} else {
 				$scope.loadedUser = false;
 			}
+			$scope.roomsHistory = [];
+			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
 			$scope.reset();
 		};
 
@@ -544,19 +401,17 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 
 			// Unmark authorization process.
 			if (data.Userid) {
-				mediaStream.users.authorizing(false);
-			} else if (!mediaStream.users.authorizing()) {
+				appData.authorizing(false);
+			} else if (!appData.authorizing()) {
 				// Trigger user data load when not in authorizing phase.
 				$scope.loadUserSettings();
 			}
 
-			if (!$rootScope.roomid && $scope.master.settings.defaultRoom) {
+			// Select room if settings have an alternative default room.
+			if (rooms.inDefaultRoom() && $scope.master.settings.defaultRoom) {
 				console.log("Selecting default room from settings:", [$scope.master.settings.defaultRoom]);
-				mediaStream.changeRoom($scope.master.settings.defaultRoom, true);
+				rooms.joinByName($scope.master.settings.defaultRoom, true);
 			}
-
-			// Always apply room after self received to avoid double stuff.
-			mediaStream.applyRoom();
 
 		});
 
@@ -660,36 +515,36 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			}
 		};
 
-		mediaStream.connector.e.on("open error close", function(event, options) {
-			var t = event.type;
-			var opts = $.extend({}, options);
+		$scope.$on("room.joined", function(ev) {
+			// TODO(lcooper): Is it really needful to do this stuff?
 			$timeout.cancel(ttlTimeout);
-			if (!opts.soft) {
-				// Reset login information for anything not soft.
-				$scope.userid = $scope.suserid = null;
-			}
-			switch (t) {
+			connected = true;
+			reconnecting = false;
+			$scope.updateStatus(true);
+		});
+
+		mediaStream.connector.e.on("open error close", function(event) {
+			$timeout.cancel(ttlTimeout);
+			$scope.userid = $scope.suserid = null;
+			switch (event.type) {
 				case "open":
-					t = "waiting";
 					connected = true;
 					reconnecting = false;
 					$scope.updateStatus(true);
-					if (opts.soft) {
-						return;
-					}
+					$scope.setStatus("waiting");
 					break;
 				case "error":
 					if (reconnecting || connected) {
 						reconnecting = false;
 						reconnect();
-						return;
+					} else {
+						$scope.setStatus(event.type);
 					}
 					break;
 				case "close":
 					reconnect();
-					return;
+					break;
 			}
-			$scope.setStatus(t);
 		});
 
 		mediaStream.webrtc.e.on("waitforusermedia connecting", function(event, currentcall) {
@@ -797,23 +652,6 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			if (mediaStream.connector.connected) {
 				$scope.setStatus("waiting");
 			}
-			if ($scope.roomstatus) {
-				$scope.layout.buddylist = true;
-				$scope.layout.buddylistAutoHide = false;
-			} else {
-				$scope.layout.buddylist = false;
-				$scope.layout.buddylistAutoHide = true;
-			}
-		});
-
-		$scope.$watch("roomstatus", function(roomstatus) {
-			if (roomstatus && !$scope.peer) {
-				$scope.layout.buddylist = true;
-				$scope.layout.buddylistAutoHide = false;
-			} else if (!$scope.layout.buddylistAutoHide) {
-				$scope.layout.buddylist = false;
-				$scope.layout.buddylistAutoHide = true;
-			}
 		});
 
 		mediaStream.webrtc.e.on("busy", function(event, from) {
@@ -825,6 +663,7 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 		});
 
 		mediaStream.webrtc.e.on("bye", function(event, reason, from) {
+			console.log("received bye", pickupTimeout, reason);
 			switch (reason) {
 				case "busy":
 					console.log("User is busy", reason, from);
@@ -850,6 +689,13 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 				case "error":
 					console.log("User cannot accept call because of error");
 					alertify.dialog.alert(translation._("Oops") + "<br/>" + translation._("User hung up because of error."));
+					break;
+				case "abort":
+					console.log("Remote call was aborted before we did pick up");
+					$scope.$emit("notification", "abortbeforepickup", {
+						reason: reason,
+						from: from
+					});
 					break;
 			}
 		});
@@ -885,10 +731,12 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 					message = displayName(details.from) + translation._(" does not pick up.");
 					break;
 				case "incomingbusy":
-					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" tried to call you."));
+					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" tried to call you"));
 					break;
+				case "abortbeforepickup":
+					// Fall through
 				case "incomingpickuptimeout":
-					toastr.info(moment().format("llll"), displayName(details.from) + translation._(" called you."));
+					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" called you"));
 					break;
 			}
 			if (message) {
@@ -917,6 +765,17 @@ define(['underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapte
 			var count = chatMessagesUnseen[id] || 0;
 			delete chatMessagesUnseen[id];
 			$scope.chatMessagesUnseen = $scope.chatMessagesUnseen - count;
+		});
+
+		$scope.$on("room.joined", function(event, roomName) {
+			if (roomName) {
+				_.pull($scope.roomsHistory, roomName);
+				$scope.roomsHistory.unshift(roomName);
+				if ($scope.roomsHistory.length > 15) {
+					// Limit the history.
+					$scope.roomsHistory = $scope.roomsHistory.splice(0, 15);
+				}
+			}
 		});
 
 		_.defer(function() {

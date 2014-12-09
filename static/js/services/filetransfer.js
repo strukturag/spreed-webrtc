@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["mediastream/webrtc", "webrtc.adapter"], function() {
 
 	// Simple array buffer join function, to create a third array buffer

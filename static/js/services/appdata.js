@@ -18,10 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+"use strict";
 define(["jquery"], function($) {
 
 	// appData.e events:
-	// subscribe these events with appData.e.on(eventname, function() {}).
+	// Subscribe these events with appData.e.on(eventname, function() {}).
 	//
 	// - authenticationChanged(event, userid, suserid)
 	//     userid (string)  : Public user id of the authenticated user.
@@ -37,33 +39,55 @@ define(["jquery"], function($) {
 	//
 	// - mainStatus(event, status)
 	//     status (string)  : Status id (connected, waiting, ...)
-
-	// appData properties:
 	//
-	// - language (string): ISO language code of active language
+	// - authorizing(event, flag)
+	//     flag (bool)      : True if authorizing phase, else false.
+	//
+	// - userSettingsLoaded(event, loaded, user_settings)
+	//     loaded (bool)    : True if something was loaded, else false.
+	//     user_settings (map) : User map which was loaded.
+	//
+	// Other appData properties:
+	//
+	// - language (string) : ISO language code of active language.
+	// - id (string)       : Random string generated on app startup.
+	// - flags (map)       : Flag table.
 
 	// appData
-	return ["randomGen", function(randomGen) {
+	return ["randomGen", "$window", function(randomGen, $window) {
 
-		var data = {
-			data: null,
-			e: $({})
-		}
-		var html = document.getElementsByTagName("html")[0];
-		var appData = {
-			id: randomGen.id(),
-			get: function() {
-				return data.data;
-			},
-			set: function(d) {
-				data.data = d;
-				return d;
-			},
-			e: data.e,
-			language: html.getAttribute("lang")
-		}
-		console.info("App runtime id: "+appData.id);
-		return appData;
+		var service = this;
+
+		service.e = $({});
+		service.data = null;
+		service.flags = {
+			authorizing: false
+		};
+
+		service.language = $window.document.getElementsByTagName("html")[0].getAttribute("lang");
+		service.id = randomGen.id();
+
+		service.get = function() {
+			return service.data;
+		};
+		service.set = function(d) {
+			service.data = d;
+			return d;
+		};
+		service.authorizing = function(value) {
+			// Boolean flag to indicate that an authentication is currently in progress.
+			if (typeof(value) !== "undefined") {
+				var v = !!value;
+				if (v !== service.flags.authorizing) {
+					service.flags.authorizing = v;
+					service.e.triggerHandler("authorizing", v);
+				}
+			}
+			return service.flags.authorizing;
+		};
+
+		console.info("App runtime id: "+service.id);
+		return service;
 
 	}];
 

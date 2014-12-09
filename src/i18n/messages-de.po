@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-10-24 10:17+0200\n"
-"PO-Revision-Date: 2014-10-23 11:28+0100\n"
+"POT-Creation-Date: 2014-12-08 16:48+0100\n"
+"PO-Revision-Date: 2014-12-08 16:48+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -54,8 +54,8 @@ msgstr "Große Videos"
 msgid "Kiosk view"
 msgstr "Kiosk-Ansicht"
 
-msgid "Classroom"
-msgstr "Klassenzimmer"
+msgid "Auditorium"
+msgstr "Auditorium"
 
 msgid "Start chat"
 msgstr "Chat starten"
@@ -66,8 +66,8 @@ msgstr "Video-Anruf starten"
 msgid "Start audio conference"
 msgstr "Audio-Konferenz starten"
 
-msgid "No other users online"
-msgstr "Niemand sonst online"
+msgid "No one else here"
+msgstr "Niemand sonst hier"
 
 msgid "Take"
 msgstr "Los"
@@ -154,6 +154,9 @@ msgid ""
 msgstr ""
 "Betreten Sie einen Raum und klicken dann auf das Stern-Symbol eines "
 "anderen Nutzers um eine Kontaktanfrage zu starten."
+
+msgid "Edit contact"
+msgstr "Kontakt bearbeiten"
 
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -246,6 +249,25 @@ msgstr "Bildschirm einpassen."
 msgid "Profile"
 msgstr "Profil"
 
+msgid "Your name"
+msgstr "Ihr Name"
+
+msgid "Your picture"
+msgstr "Ihr Bild"
+
+msgid "Status message"
+msgstr "Status Nachricht"
+
+msgid "What's on your mind?"
+msgstr "Was machen Sie gerade?"
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+"Ihr Bild, Name und Status Nachricht repräsentiert Sie in Anrufen, Chats "
+"und Räumen."
+
 msgid "Your ID"
 msgstr "Ihre ID"
 
@@ -270,28 +292,6 @@ msgstr "Abmelden"
 
 msgid "Manage account"
 msgstr "Konto verwalten"
-
-msgid "Your picture"
-msgstr "Ihr Bild"
-
-msgid "Your name"
-msgstr "Ihr Name"
-
-msgid "Status message"
-msgstr "Status Nachricht"
-
-msgid "What's on your mind?"
-msgstr "Was machen Sie gerade?"
-
-msgid ""
-"Your picture, name and status message identify yourself in calls, chats "
-"and rooms."
-msgstr ""
-"Ihr Bild, Name und Status Nachricht repräsentiert Sie in Anrufen, Chats "
-"und Räumen."
-
-msgid "Manage contacts"
-msgstr "Kontakte verwalten"
 
 msgid "Media"
 msgstr "Kamera / Mikrofon"
@@ -396,20 +396,23 @@ msgstr ""
 "Ihre ID bleibt dennoch gespeichert. Klicken Sie Ausloggen weiter oben um "
 "die ID zu löschen."
 
-msgid "Share by Email"
-msgstr "Per E-Mail teilen"
+msgid "Room link"
+msgstr "Raum-Link"
 
-msgid "Share on Facebook"
-msgstr "Auf Facebook teilen"
+msgid "Invite by Email"
+msgstr "Per E-Mail einladen"
 
-msgid "Share on Twitter"
-msgstr "Auf Twitter teilen"
+msgid "Invite with Facebook"
+msgstr "Mit Facebook einladen"
 
-msgid "Share on Google Plus"
-msgstr "Auf Google Plus teilen"
+msgid "Invite with Twitter"
+msgstr "Mit Twitter einladen"
 
-msgid "Share on XING"
-msgstr "Auf XING teilen"
+msgid "Invite with Google Plus"
+msgstr "Mit Google Plus einladen"
+
+msgid "Invite with XING"
+msgstr "Mit XING einladen"
 
 msgid "Initializing"
 msgstr "Initialisiere"
@@ -478,14 +481,24 @@ msgstr "Hier klicken für weitere Infos (Google Chrome)."
 msgid "Please set your user details and settings."
 msgstr "Bitte vervollständigen Sie Ihre Daten und Einstellungen."
 
-msgid "Create a room and talk together"
-msgstr "Erstellen Sie Ihren Raum"
+msgid "Enter a room name"
+msgstr "Raum eingeben"
 
-msgid "Creating room ..."
-msgstr "Raum wird erstellt ..."
+msgid "Random room name"
+msgstr "Zufälliger Raum"
 
-msgid "Create"
-msgstr "Erstellen"
+msgid "Enter room"
+msgstr "Raum betreten"
+
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+"Geben Sie den Namen eines existierenden Raums ein. Melden Sie sich an um "
+"eigene Räume zu erstellen."
+
+msgid "Room history"
+msgstr "Raum-Verlauf"
 
 msgid "Videos are shared with everyone in this call."
 msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."
@@ -595,11 +608,11 @@ msgstr " hat Ihren Anruf abgelehnt."
 msgid " does not pick up."
 msgstr " nimmt nicht ab."
 
-msgid " tried to call you."
-msgstr " hat versucht Sie anzurufen."
+msgid " tried to call you"
+msgstr " hat versucht Sie anzurufen"
 
-msgid " called you."
-msgstr " hat Sie angerufen."
+msgid " called you"
+msgstr " hat Sie angerufen"
 
 msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
@@ -682,6 +695,9 @@ msgstr "Browsereinstellung"
 msgid "Meet with me here:"
 msgstr "Meeting:"
 
+msgid "Room name"
+msgstr "Raum-Name"
+
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr "Unbekanntes URL-Format. Bitte geben Sie eine gültige YouTube URL ein."
 
@@ -722,6 +738,21 @@ msgid ""
 msgstr ""
 "Der Zugriffscode konnte nicht überprueft werden. Bitte prüfen Sie Ihre "
 "Internetverbindung."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "PIN für Raum %s ist jetzt '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "Raum %s ist nicht mehr PIN-geschützt."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "Geben Sie die PIN für Raum %s ein"
+
+msgid "Please sign in to create rooms."
+msgstr "Bitte melden Sie sich an um Räume zu erstellen."
 
 #, python-format
 msgid "and %s"
