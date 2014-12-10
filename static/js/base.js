@@ -19,7 +19,6 @@
  *
  */
 
-"use strict";
 define([ // Helper module to put non dependency base libraries together.
 	'modernizr',
 	'moment',
@@ -33,4 +32,5 @@ define([ // Helper module to put non dependency base libraries together.
 	'rAF',
 	'humanize',
 	'sha',
-	'sjcl'], function() {});
+	'sjcl',
+	'webrtc.adapter'], function() {});
