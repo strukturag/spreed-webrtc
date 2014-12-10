@@ -32,9 +32,9 @@ DESTDIR ?= /
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
 
-BIN := $(DESTDIR)/usr/sbin
-CONFIG_DIR := $(DESTDIR)/$(CONFIG_PATH)
-SHARE := $(DESTDIR)/usr/share/spreed-webrtc-server
+BIN := $(DESTDIR)@prefix@/sbin
+CONFIG_DIR := $(DESTDIR)@prefix@$(CONFIG_PATH)
+SHARE := $(DESTDIR)@prefix@/share/spreed-webrtc-server
 
 BUILD_ARCH := $(shell $(GO) env GOARCH)
 BUILD_OS := $(shell go env GOOS)
