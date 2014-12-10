@@ -62,7 +62,7 @@ endif
 getupdate: vendorclean get
 
 binary: get
-	$(GO) build $(GOBUILDFLAGS) -o $(OUTPUT)/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
+	$(GO) build $(GOBUILDFLAGS) -o bin/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
 
 binaryrace: GOBUILDFLAGS := $(GOBUILDFLAGS) -race
 binaryrace: binary
@@ -130,7 +130,7 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/translation
 	$(INSTALL) -d $(SHARE)/www/static/css
 	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
-	$(INSTALL) $(DIST_BIN)/* $(BIN)
+	$(INSTALL) bin/$(EXENAME) $(BIN)
 	$(INSTALL) -m 644 server.conf.in $(CONFIG_DIR)/$(CONFIG_FILE)
 	$(INSTALL) html/* $(SHARE)/www/html
 	$(INSTALL) static/img/* $(SHARE)/www/static/img
@@ -147,6 +147,7 @@ clean:
 	$(GO) clean -i -r app/... 2>/dev/null || true
 	rm -rf $(CURDIR)/static/fonts
 	rm -rf $(CURDIR)/build/out
+	rm -f $(CURDIR)/bin/$(EXENAME)
 
 distclean: clean
 	rm -rf $(DIST)
