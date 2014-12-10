@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.23.2) precise; urgency=low
+
+  * Do not build combined Javascript in strict mode to avoid compatibility issues. 
+
+ -- Simon Eisenmann <simon@struktur.de>  Wed, 10 Dec 2014 17:18:17 +0100
+
 spreed-webrtc-server (0.23.1) precise; urgency=low
 
   * Fixed strict mode on release compile.
