@@ -38,7 +38,7 @@
 		mangle: true
 	},
 	wrap: false,
-	useStrict: true,
+	useStrict: false,
 	dir: './out',
 	skipDirOptimize: true,
 	removeCombined: true,
