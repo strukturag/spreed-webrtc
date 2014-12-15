@@ -225,6 +225,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			$scope.dragImage = $(".buddyPictureUpload .previewDrag").get(0);
 			$element.find("#uploadFile").on('change', $scope.handleUpload);
 			$scope.dragging = false;
+			$scope.gesture = false;
 
 			var intervalNum = {
 				num: null
@@ -283,8 +284,12 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var startX = null;
 			var startY = null;
+			var baseWidth = null;
 			var movementX = null;
 			var movementY = null;
+			var start = $.getStartEvent();
+			var end = $.getEndEvent() + ' click';
+			var move = $.getMoveEvent();
 			// Check for out of bounds values so image stays inside preview block.
 			var imageMoveabled = function(deltaY) {
 				var move = true;
@@ -309,17 +314,30 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 				return move;
 			};
+			var scaleImage = function(event) {
+				var scalePx = baseWidth * event.originalEvent.scale - $scope.prevImage.width;
+				if (!imageMoveabled()) {
+					return;
+				}
+				if (scalePx > 0) {
+					makeImageLarger(scalePx);
+					moveImageLeft(scalePx/2);
+					moveImageUp(scalePx/2);
+				} else {
+					makeImageSmaller(Math.abs(scalePx));
+					moveImageRight(Math.abs(scalePx/2));
+					moveImageDown(Math.abs(scalePx/2));
+				}
+			}
 			var zoomImage = function(event) {
 				var deltaY = event.originalEvent.deltaY;
 				if (!imageMoveabled(deltaY)) {
 					return;
 				}
-				// zoom in
 				if (deltaY < 0) {
 					makeImageLarger(Math.abs(deltaY));
 					moveImageLeft(Math.abs(deltaY/2));
 					moveImageUp(Math.abs(deltaY/2));
-				// zoom out
 				} else {
 					makeImageSmaller(deltaY);
 					moveImageRight(deltaY/2);
@@ -327,8 +345,8 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				}
 			};
 			var moveImage = function(event) {
-				movementX = startX - event.originalEvent.clientX;
-				movementY = startY - event.originalEvent.clientY;
+				movementX = startX - event.originalEvent.pageX;
+				movementY = startY - event.originalEvent.pageY;
 				if (!imageMoveabled()) {
 					return;
 				}
@@ -343,8 +361,8 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 					moveImageDown(Math.abs(movementY));
 				}
 				//console.log('moveImage', 'movementX', movementX, 'movementY', movementY);
-				startX = event.originalEvent.clientX;
-				startY = event.originalEvent.clientY;
+				startX = event.originalEvent.pageX;
+				startY = event.originalEvent.pageY;
 			};
 			$($scope.prevImage).on('drag dragstart dragover dragenter dragend drop', function(event) {
 				event.preventDefault();
@@ -355,27 +373,49 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				event.preventDefault();
 				zoomImage(event);
 			});
-			$($scope.prevImage).on('mousedown', function(event) {
+			$($scope.prevImage).on('gesturestart', function(event) {
 				event.stopPropagation();
-				startX = event.originalEvent.clientX;
-				startY = event.originalEvent.clientY;
+				$scope.gesture = true;
+				baseWidth = $scope.prevImage.width;
+			});
+			$($scope.prevImage).on('gesturechange', function(event) {
+				event.stopPropagation();
+				scaleImage(event);
+			});
+			$($scope.prevImage).on('gestureend', function(event) {
+				event.stopPropagation();
+				$scope.gesture = false;
+			});
+			$($scope.prevImage).on(start, function(event) {
+				if ($scope.gesture) {
+					return;
+				}
+				event.stopPropagation();
+				startX = event.originalEvent.pageX;
+				startY = event.originalEvent.pageY;
 				$scope.$apply(function() {
 					$scope.dragging = !$scope.dragging;
 				});
 			});
-			$('#settings').on('click mouseup', function(event) {
+			$('#settings').on(end, function(event) {
+				if ($scope.gesture) {
+					return;
+				}
 				event.stopPropagation();
 				$scope.$apply(function() {
 					$scope.dragging = false;
 				});
 			});
-			$('#settings').on('mousemove', function(event) {
+			$('#settings').on(move, function(event) {
+				if ($scope.gesture) {
+					return;
+				}
 				event.stopPropagation();
+				event.preventDefault();
 				if ($scope.dragging) {
 					moveImage(event);
 				}
 			});
-
 		};
 
 		return {
