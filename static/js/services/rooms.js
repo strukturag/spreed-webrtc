@@ -50,7 +50,7 @@ define([
 				roompin.requestInteractively(requestedRoomName).then(joinRequestedRoom,
 				function() {
 					console.log("Authentication cancelled, try a different room.");
-					rooms.joinDefault();
+					rooms.joinPriorOrDefault(true);
 				});
 				break;
 			case "authorization_not_required":
@@ -59,12 +59,8 @@ define([
 				break;
 			case "room_join_requires_account":
 				console.log("Room join requires a logged in user.");
-				if (!priorRoomName || requestedRoomName === priorRoomName) {
-					rooms.joinDefault();
-				} else {
-					rooms.joinByName(priorRoomName, true);
-				}
 				alertify.dialog.notify("", translation._("Please sign in to create rooms."));
+				rooms.joinPriorOrDefault(true);
 				break;
 			default:
 				console.log("Unknown error", error, "while joining room ", requestedRoomName);
@@ -221,6 +217,13 @@ define([
 			},
 			joinDefault: function(replace) {
 				return rooms.joinByName("", replace);
+			},
+			joinPriorOrDefault: function(replace) {
+				if (!priorRoomName || requestedRoomName === priorRoomName) {
+					rooms.joinDefault(replace);
+				} else {
+					rooms.joinByName(priorRoomName, replace);
+				}
 			},
 			link: function(room) {
 				var name = room ? room.Name : null;
