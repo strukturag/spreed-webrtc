@@ -30,6 +30,7 @@ define([
 
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
+		var priorRoomName = null;
 		var helloedRoomName = null;
 		var currentRoom = null;
 		var randomRoom = null;
@@ -58,11 +59,12 @@ define([
 				break;
 			case "room_join_requires_account":
 				console.log("Room join requires a logged in user.");
-				alertify.dialog.notify("", translation._("Please sign in to create rooms."), function() {
+				if (!priorRoomName || requestedRoomName === priorRoomName) {
 					rooms.joinDefault();
-				}, function() {
-					rooms.joinDefault();
-				});
+				} else {
+					rooms.joinByName(priorRoomName, true);
+				}
+				alertify.dialog.notify("", translation._("Please sign in to create rooms."));
 				break;
 			default:
 				console.log("Unknown error", error, "while joining room ", requestedRoomName);
@@ -98,6 +100,7 @@ define([
 			var priorRoom = currentRoom;
 			currentRoom = room;
 			if (priorRoom) {
+				priorRoomName = priorRoom.Name;
 				console.log("Left room", priorRoom.Name);
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
