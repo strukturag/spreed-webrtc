@@ -23,7 +23,7 @@
 define([], function() {
 
 	// UsersettingsController
-	return ["$scope", "$element", "mediaStream", "safeApply", function($scope, $element, mediaStream, safeApply) {
+	return ["$scope", "$element", "mediaStream", "safeApply", "$window", function($scope, $element, mediaStream, safeApply, $window) {
 
 		$scope.withUsersForget = true;
 
@@ -65,7 +65,10 @@ define([], function() {
 
 		this.forgetUserid = function() {
 			mediaStream.users.forget();
-			mediaStream.connector.forgetAndReconnect();
+			mediaStream.webrtc.doHangup("forgetUserid");
+			$window.setTimeout(function() {
+				mediaStream.connector.forgetAndReconnect();
+			}, 0);
 		};
 
 	}];
