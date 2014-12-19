@@ -52,7 +52,7 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 
 			$scope.$on("room.updated", function(ev, room) {
 				$scope.currentRoomName = $scope.newRoomName = room.Name;
-				if ($scope.currentRoomName) {
+				if ($scope.currentRoomName && !$scope.peer) {
 					$scope.layout.roombar = true;
 				}
 			});
