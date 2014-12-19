@@ -563,10 +563,11 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		peerscreenshare.setInitiate(true); //XXX(longsleep): This creates a data channel which is not needed.
-		peerscreenshare.createPeerConnection(_.bind(function() {
+		peerscreenshare.createPeerConnection(_.bind(function(pc) {
 			peerscreenshare.e.on("negotiationNeeded", _.bind(function(event, currentscreenshare) {
 				this.sendOfferWhenNegotiationNeeded(currentscreenshare, id);
 			}, this));
+			_.defer(pc.negotiationNeeded);
 		}, this));
 		/*
 		peerscreenshare.createOffer(_.bind(function(sessionDescription, currentscreenshare) {
