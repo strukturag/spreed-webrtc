@@ -643,6 +643,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					this.usermedia.applyAudioMute(this.audioMute);
 					this.e.triggerHandler("usermedia", [this.usermedia]);
 					this.usermedia.addToPeerConnection(peerconnection);
+				} else {
+					_.defer(peerconnection.negotiationNeeded);
 				}
 				this.started = true;
 				if (!this.initiator) {
