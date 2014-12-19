@@ -487,10 +487,11 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		xfer.setInitiate(true);
-		xfer.createPeerConnection(_.bind(function() {
+		xfer.createPeerConnection(_.bind(function(pc) {
 			xfer.e.on("negotiationNeeded", _.bind(function(event, currentxfer) {
 				this.sendOfferWhenNegotiationNeeded(currentxfer, id);
 			}, this));
+			_.defer(pc.negotiationNeeded);
 		}, this));
 		/*
 		xfer.createOffer(_.bind(function(sessionDescription, currentxfer) {
