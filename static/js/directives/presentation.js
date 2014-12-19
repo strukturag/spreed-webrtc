@@ -429,7 +429,7 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			};
 
 			var connector = function(token, peercall) {
-				console.log("XXX connector", token, peercall, peers);
+				//console.log("XXX connector", token, peercall, peers);
 				if (peers.hasOwnProperty(peercall.id)) {
 					// Already got a connection.
 					return;

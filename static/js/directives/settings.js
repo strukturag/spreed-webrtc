@@ -146,7 +146,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			});
 
 			$scope.maybeShowSettings = function() {
-				if ($scope.autoshowSettings) {
+				if ($scope.autoshowSettings && mediaStream.connector.connected && !appData.authorizing()) {
 					$scope.autoshowSettings = false;
 					if (!$scope.loadedUser) {
 						$scope.layout.settings = true;

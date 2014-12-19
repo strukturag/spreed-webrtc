@@ -1,3 +1,22 @@
+spreed-webrtc-server (0.23.3) precise; urgency=low
+
+  * Improved room bar room change and leave buttons.
+  * Never hide room bar completely.
+  * Stay in prior room when join fails.
+  * Stay in prior room when PIN prompt was aborted.
+  * Updated to PDF.js 1.0.907.
+  * Enhanced example CSP to support for PDF and WebODF presentations.
+  * Fixed Firefox screen sharing interop.
+  * Fixed Firefox file transfer interop.
+  * Fixed peer connection to create and offer when user media failed.
+  * Only show room bar when there is no peer.
+  * Hide welcome screen when there is a peer.
+  * Avoid dead ends in room join UI when connection is lost and reestablished.
+  * Avoid showing settings automatically when not connected or still in authorizing phase.
+  * Added some missing CSS classes to allow easier UI mods.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 19 Dec 2014 17:15:10 +0100
+
 spreed-webrtc-server (0.23.2) precise; urgency=low
 
   * Do not build combined Javascript in strict mode to avoid compatibility issues. 

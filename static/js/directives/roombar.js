@@ -23,7 +23,7 @@
 define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angular, template) {
 
 	// roomBar
-	return ["$window", "rooms", function($window, rooms) {
+	return ["$window", "rooms", "$timeout", function($window, rooms, $timeout) {
 
 		var link = function($scope, $element) {
 
@@ -33,7 +33,7 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 			};
 
 			//console.log("roomBar directive link", arguments);
-			$scope.layout.roombar = true;
+			//$scope.layout.roombar = true;
 
 			$scope.save = function() {
 				if ($scope.roombarform.$invalid) {
@@ -52,6 +52,9 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 
 			$scope.$on("room.updated", function(ev, room) {
 				$scope.currentRoomName = $scope.newRoomName = room.Name;
+				if ($scope.currentRoomName && !$scope.peer) {
+					$scope.layout.roombar = true;
+				}
 			});
 
 			$scope.$on("room.left", clearRoomName);
@@ -63,7 +66,9 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 			});
 
 			$scope.$watch("layout.roombar", function(value) {
-				$element.find("input").focus();
+				$timeout(function() {
+					$element.find("input").focus();
+				});
 			});
 
 			$scope.$watch("peer", function(peer) {

@@ -30,6 +30,7 @@ define([
 
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
+		var priorRoomName = null;
 		var helloedRoomName = null;
 		var currentRoom = null;
 		var randomRoom = null;
@@ -49,7 +50,7 @@ define([
 				roompin.requestInteractively(requestedRoomName).then(joinRequestedRoom,
 				function() {
 					console.log("Authentication cancelled, try a different room.");
-					rooms.joinDefault();
+					rooms.joinPriorOrDefault(true);
 				});
 				break;
 			case "authorization_not_required":
@@ -58,11 +59,8 @@ define([
 				break;
 			case "room_join_requires_account":
 				console.log("Room join requires a logged in user.");
-				alertify.dialog.notify("", translation._("Please sign in to create rooms."), function() {
-					rooms.joinDefault();
-				}, function() {
-					rooms.joinDefault();
-				});
+				alertify.dialog.notify("", translation._("Please sign in to create rooms."));
+				rooms.joinPriorOrDefault(true);
 				break;
 			default:
 				console.log("Unknown error", error, "while joining room ", requestedRoomName);
@@ -71,20 +69,24 @@ define([
 		};
 
 		var joinRequestedRoom = function() {
-			if (appData.authorizing()) {
-				// Do nothing while authorizing.
+			if (!connector.connected || appData.authorizing()) {
+				// Do nothing while not connected or authorizing.
 				return;
 			}
-			if (!connector.connected || !currentRoom || requestedRoomName !== currentRoom.Name) {
+			if (!currentRoom || requestedRoomName !== currentRoom.Name) {
 				requestedRoomName = requestedRoomName ? requestedRoomName : "";
 				if (helloedRoomName !== requestedRoomName) {
-					console.log("Joining room", [requestedRoomName]);
 					helloedRoomName = requestedRoomName;
+					var myHelloedRoomName = helloedRoomName;
+					_.defer(function() {
+						if (helloedRoomName === myHelloedRoomName) {
+							helloedRoomName = null;
+						}
+					});
+					console.log("Joining room", [requestedRoomName]);
 					api.sendHello(requestedRoomName, roompin.get(requestedRoomName), function(room) {
-						helloedRoomName = null;
 						setCurrentRoom(room);
 					}, function(error) {
-						helloedRoomName = null;
 						joinFailed(error);
 					});
 				}
@@ -98,6 +100,7 @@ define([
 			var priorRoom = currentRoom;
 			currentRoom = room;
 			if (priorRoom) {
+				priorRoomName = priorRoom.Name;
 				console.log("Left room", priorRoom.Name);
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
@@ -218,6 +221,13 @@ define([
 			},
 			joinDefault: function(replace) {
 				return rooms.joinByName("", replace);
+			},
+			joinPriorOrDefault: function(replace) {
+				if (!priorRoomName || requestedRoomName === priorRoomName) {
+					rooms.joinDefault(replace);
+				} else {
+					rooms.joinByName(priorRoomName, replace);
+				}
 			},
 			link: function(room) {
 				var name = room ? room.Name : null;

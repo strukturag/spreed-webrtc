@@ -487,17 +487,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		xfer.setInitiate(true);
-		xfer.createPeerConnection(_.bind(function() {
+		xfer.createPeerConnection(_.bind(function(pc) {
 			xfer.e.on("negotiationNeeded", _.bind(function(event, currentxfer) {
 				this.sendOfferWhenNegotiationNeeded(currentxfer, id);
 			}, this));
+			_.defer(pc.negotiationNeeded);
 		}, this));
-		/*
-		xfer.createOffer(_.bind(function(sessionDescription, currentxfer) {
-			console.log("Sending xfer offer with sessionDescription", sessionDescription, currentxfer.id);
-			// TODO(longsleep): Support sending this through data channel too if we have one.
-			this.api.sendOffer(id, sessionDescription);
-		}, this));*/
 
 	};
 
@@ -563,17 +558,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Connect.
 		peerscreenshare.setInitiate(true); //XXX(longsleep): This creates a data channel which is not needed.
-		peerscreenshare.createPeerConnection(_.bind(function() {
+		peerscreenshare.createPeerConnection(_.bind(function(pc) {
 			peerscreenshare.e.on("negotiationNeeded", _.bind(function(event, currentscreenshare) {
 				this.sendOfferWhenNegotiationNeeded(currentscreenshare, id);
 			}, this));
+			_.defer(pc.negotiationNeeded);
 		}, this));
-		/*
-		peerscreenshare.createOffer(_.bind(function(sessionDescription, currentscreenshare) {
-			console.log("Sending screen share offer with sessionDescription", sessionDescription, currentscreenshare.id);
-			// TODO(longsleep): Support sending this through data channel too if we have one.
-			this.api.sendOffer(id, sessionDescription);
-		}, this));*/
 
 	};
 
@@ -653,14 +643,11 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					this.usermedia.applyAudioMute(this.audioMute);
 					this.e.triggerHandler("usermedia", [this.usermedia]);
 					this.usermedia.addToPeerConnection(peerconnection);
+				} else {
+					_.defer(peerconnection.negotiationNeeded);
 				}
 				this.started = true;
-				if (this.initiator) {
-					/*currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
-						console.log("Sending offer with sessionDescription", sessionDescription, currentcall.id);
-						this.api.sendOffer(currentcall.id, sessionDescription);
-					}, this));*/
-				} else {
+				if (!this.initiator) {
 					this.calleeStart();
 				}
 				currentcall.e.on("negotiationNeeded", _.bind(function(event, currentcall) {

@@ -1,10 +1,13 @@
-<div class="roombar overlaybar form-horizontal" ng-hide="currentRoomName===null" ng-class="{notvisible: !layout.roombar}">
+<div class="roombar overlaybar form-horizontal" ng-class="{notvisible: !layout.roombar}">
 	<a class="overlaybar-button" ng-model="layout.roombar" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false" title="{{_('Change room')}}"><i class="fa fa-pencil-square-o"></i></a>
 	<form name="roombarform" class="overlaybar-content form-group">
 		<label class="pull-left control-label hidden-xs">{{_('Room')}}</label>
 		<div class="pull-left">
+			<span ng-if="currentRoomName"><a class="btn btn-danger btn-sm" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-sign-out"></i></a></span>
+		</div>
+		<div class="pull-left">
 			<div class="input-group">
-				<input class="form-control input-sm" ng-model="newRoomName" ng-maxlength="30" on-enter="save()" type="text" placeholder="{{_('Main')}}"></input><span ng-if="currentRoomName && roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Leave room')}}" ng-click="exit()"><i class="fa fa-sign-out"></i></a></span><span ng-if="!currentRoomName || !roombarform.$pristine" class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Change room')}}" ng-disabled="roombarform.$invalid" ng-click="save()"><i class="fa fa-sign-in"></i></a></span>
+				<input class="form-control input-sm" ng-model="newRoomName" ng-maxlength="30" on-enter="save()" type="text" placeholder="{{_('Main')}}"></input><span class="input-group-btn"><a class="btn btn-default btn-sm" title="{{_('Change room')}}" ng-disabled="roombarform.$invalid" ng-click="save()"><i class="fa fa-sign-in"></i></a></span>
 			</div>
 		</div>
 		<div class="pull-left">
