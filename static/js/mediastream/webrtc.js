@@ -493,12 +493,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			}, this));
 			_.defer(pc.negotiationNeeded);
 		}, this));
-		/*
-		xfer.createOffer(_.bind(function(sessionDescription, currentxfer) {
-			console.log("Sending xfer offer with sessionDescription", sessionDescription, currentxfer.id);
-			// TODO(longsleep): Support sending this through data channel too if we have one.
-			this.api.sendOffer(id, sessionDescription);
-		}, this));*/
 
 	};
 
@@ -570,12 +564,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			}, this));
 			_.defer(pc.negotiationNeeded);
 		}, this));
-		/*
-		peerscreenshare.createOffer(_.bind(function(sessionDescription, currentscreenshare) {
-			console.log("Sending screen share offer with sessionDescription", sessionDescription, currentscreenshare.id);
-			// TODO(longsleep): Support sending this through data channel too if we have one.
-			this.api.sendOffer(id, sessionDescription);
-		}, this));*/
 
 	};
 
@@ -657,12 +645,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					this.usermedia.addToPeerConnection(peerconnection);
 				}
 				this.started = true;
-				if (this.initiator) {
-					/*currentcall.createOffer(_.bind(function(sessionDescription, currentcall) {
-						console.log("Sending offer with sessionDescription", sessionDescription, currentcall.id);
-						this.api.sendOffer(currentcall.id, sessionDescription);
-					}, this));*/
-				} else {
+				if (!this.initiator) {
 					this.calleeStart();
 				}
 				currentcall.e.on("negotiationNeeded", _.bind(function(event, currentcall) {
