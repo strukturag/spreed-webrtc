@@ -69,20 +69,24 @@ define([
 		};
 
 		var joinRequestedRoom = function() {
-			if (appData.authorizing()) {
-				// Do nothing while authorizing.
+			if (!connector.connected || appData.authorizing()) {
+				// Do nothing while not connected or authorizing.
 				return;
 			}
-			if (!connector.connected || !currentRoom || requestedRoomName !== currentRoom.Name) {
+			if (!currentRoom || requestedRoomName !== currentRoom.Name) {
 				requestedRoomName = requestedRoomName ? requestedRoomName : "";
 				if (helloedRoomName !== requestedRoomName) {
-					console.log("Joining room", [requestedRoomName]);
 					helloedRoomName = requestedRoomName;
+					var myHelloedRoomName = helloedRoomName;
+					_.defer(function() {
+						if (helloedRoomName === myHelloedRoomName) {
+							helloedRoomName = null;
+						}
+					});
+					console.log("Joining room", [requestedRoomName]);
 					api.sendHello(requestedRoomName, roompin.get(requestedRoomName), function(room) {
-						helloedRoomName = null;
 						setCurrentRoom(room);
 					}, function(error) {
-						helloedRoomName = null;
 						joinFailed(error);
 					});
 				}
