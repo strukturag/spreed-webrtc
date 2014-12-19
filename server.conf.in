@@ -109,7 +109,7 @@ serverRealm = local
 ;   style-src 'self' 'unsafe-inline';
 ;   img-src 'self' data: blob:;
 ;   connect-src 'self' wss://server:port/ws blob:;
-;   font-src 'self' blob;
+;   font-src 'self' data: blob:;
 ;contentSecurityPolicy =
 ; Content-Security-Policy-Report-Only HTTP response header value. Use this
 ; to test your CSP before putting it into production.
