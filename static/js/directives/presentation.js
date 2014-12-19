@@ -743,6 +743,16 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				event.preventDefault();
 			});
 
+			$(document).on("keydown", function(event) {
+				if (!$scope.layout.presentation) {
+					return;
+				}
+				if ($(event.target).is("input,textarea,select")) {
+					return;
+				}
+				event.preventDefault();
+			});
+
 			$scope.$watch("layout.presentation", function(newval, oldval) {
 				if (newval && !oldval) {
 					$scope.showPresentation();
