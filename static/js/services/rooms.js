@@ -41,6 +41,7 @@ define([
 
 			switch(error.Code) {
 			case "default_room_disabled":
+				priorRoomName = null;
 				rooms.randomRoom();
 				break;
 			case "invalid_credentials":
