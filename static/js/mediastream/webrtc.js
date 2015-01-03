@@ -106,13 +106,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
 
-		$(window).on("unload", _.bind(function() {
-			this.doHangup("unload");
-			if (this.api.connector) {
-				this.api.connector.disabled = true;
-			}
-		}, this));
-
 		// Create default media (audio/video).
 		this.usermedia = new UserMedia();
 		this.usermedia.e.on("mediasuccess mediaerror", _.bind(function() {

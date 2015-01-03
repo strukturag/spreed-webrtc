@@ -40,6 +40,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			return translation._("Close this window and disconnect?");
 		});
 
+		$($window).on("unload", function() {
+			mediaStream.webrtc.doHangup("unload");
+			if (mediaStream.api.connector) {
+				mediaStream.api.connector.disabled = true;
+			}
+		});
+
 		// Enable app full screen listener.
 		$("#bar .logo").on("doubletap dblclick", _.debounce(function() {
 			if (BigScreen.enabled) {
