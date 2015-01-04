@@ -383,6 +383,10 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 		Buddylist.prototype.setDisplay = function(id, scope, data, queueName) {
 
 			var status = data.Status;
+			if (!status) {
+				status = {}; // Make sure to show buddies which never set a status.
+			}
+
 			var display = scope.display;
 			// Set display.name.
 			display.displayName = status.displayName;
@@ -501,7 +505,7 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 					scope = newscope;
 				}
 			}, this));
-			if (sessionData && sessionData.Status) {
+			if (sessionData) {
 				this.setDisplay(id, scope, sessionData, "joined");
 			} else if (!noApply) {
 				scope.$apply();
