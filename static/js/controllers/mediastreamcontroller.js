@@ -580,6 +580,11 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			}
 		});
 
+		// Start heartbeat timer.
+		$window.setInterval(function() {
+			mediaStream.api.heartbeat(5000, 11500)
+		}, 1000);
+
 		$scope.$on("active", function(event, currentcall) {
 
 			console.info("Video state active (assuming connected)", currentcall.id);
