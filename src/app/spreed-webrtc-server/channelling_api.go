@@ -229,7 +229,7 @@ func (api *channellingAPI) OnDisconnect(session *Session) {
 	}
 
 	session.RunForAllSubscribers(func(session *Session) {
-		log.Println("Notifying subscriber that we are gone", session.Id, session.Id)
+		log.Println("Notifying subscriber that we are gone", session.Id)
 		api.Unicast(session, session.Id, dsl)
 	})
 
