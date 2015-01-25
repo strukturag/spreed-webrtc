@@ -222,9 +222,11 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 }
 
 func (api *channellingAPI) OnDisconnect(session *Session) {
+	session.Disconnect()
+	api.LeaveRoom(session)
+
 	dsl := session.DataSessionLeft("hard")
 	if session.Hello {
-		api.LeaveRoom(session)
 		api.Broadcast(session, dsl)
 	}
 

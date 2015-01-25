@@ -217,7 +217,6 @@ func (r *roomWorker) Broadcast(session *Session, message Buffer) {
 
 	worker := func() {
 		r.mutex.RLock()
-		defer r.mutex.RUnlock()
 		for id, user := range r.users {
 			if id == session.Id {
 				// Skip broadcast to self.
@@ -226,6 +225,7 @@ func (r *roomWorker) Broadcast(session *Session, message Buffer) {
 			//fmt.Printf("%s\n", m.Message)
 			user.Send(message)
 		}
+		r.mutex.RUnlock()
 		message.Decref()
 	}
 
@@ -261,6 +261,10 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 			}
 		}
 
+		if session.IsDisconnected() {
+			log.Println("Refusing to join a disconnected session to room", session.Id)
+			return
+		}
 		r.users[session.Id] = &roomUser{session, sender}
 		// NOTE(lcooper): Needs to be a copy, else we risk races with
 		// a subsequent modification of room properties.
@@ -276,10 +280,10 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 func (r *roomWorker) Leave(session *Session) {
 	worker := func() {
 		r.mutex.Lock()
-		defer r.mutex.Unlock()
 		if _, ok := r.users[session.Id]; ok {
 			delete(r.users, session.Id)
 		}
+		r.mutex.Unlock()
 	}
 	r.Run(worker)
 }

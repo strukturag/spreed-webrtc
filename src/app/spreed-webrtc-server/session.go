@@ -49,6 +49,7 @@ type Session struct {
 	attestations  *securecookie.SecureCookie
 	subscriptions map[string]*Session
 	subscribers   map[string]*Session
+	disconnected  bool
 }
 
 func NewSession(attestations *securecookie.SecureCookie, id, sid string) *Session {
@@ -113,6 +114,21 @@ func (s *Session) RunForAllSubscribers(f func(session *Session)) {
 	}
 	s.mutex.Unlock()
 
+}
+
+func (s *Session) Disconnect() {
+
+	s.mutex.Lock()
+	s.disconnected = true
+	s.mutex.Unlock()
+
+}
+
+func (s *Session) IsDisconnected() bool {
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.disconnected
 }
 
 func (s *Session) Close() {
