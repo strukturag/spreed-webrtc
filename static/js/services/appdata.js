@@ -40,8 +40,9 @@ define(["jquery"], function($) {
 	// - mainStatus(event, status)
 	//     status (string)  : Status id (connected, waiting, ...)
 	//
-	// - authorizing(event, flag)
+	// - authorizing(event, flag, userid)
 	//     flag (bool)      : True if authorizing phase, else false.
+	//     userid (string)  : User id if a user was authorized.
 	//
 	// - userSettingsLoaded(event, loaded, user_settings)
 	//     loaded (bool)    : True if something was loaded, else false.
@@ -74,13 +75,13 @@ define(["jquery"], function($) {
 			service.data = d;
 			return d;
 		};
-		service.authorizing = function(value) {
+		service.authorizing = function(value, userid) {
 			// Boolean flag to indicate that an authentication is currently in progress.
 			if (typeof(value) !== "undefined") {
 				var v = !!value;
 				if (v !== service.flags.authorizing) {
 					service.flags.authorizing = v;
-					service.e.triggerHandler("authorizing", v);
+					service.e.triggerHandler("authorizing", v, userid);
 				}
 			}
 			return service.flags.authorizing;
