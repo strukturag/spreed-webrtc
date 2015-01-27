@@ -42,7 +42,7 @@ type Client interface {
 	ResponseSender
 	Session() *Session
 	Index() uint64
-	Close(bool)
+	Close()
 }
 
 type client struct {
@@ -68,10 +68,6 @@ func (client *client) OnText(b Buffer) {
 		log.Println("OnText error while decoding JSON", err)
 		log.Printf("JSON:\n%s\n", b)
 	}
-}
-
-func (client *client) OnDisconnect() {
-	client.ChannellingAPI.OnDisconnect(client.session)
 }
 
 func (client *client) Reply(iid string, m interface{}) {

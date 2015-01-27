@@ -69,7 +69,7 @@ func makeWSHandler(connectionCounter ConnectionCounter, sessionManager SessionMa
 
 		// Create a new connection instance.
 		session := sessionManager.CreateSession(r)
-		defer sessionManager.DestroySession(session)
+		defer session.Close()
 		client := NewClient(codec, channellingAPI, session)
 		conn := NewConnection(connectionCounter.CountConnection(), ws, client)
 
