@@ -29,12 +29,12 @@ import (
 type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
 	JoinRoom(string, *DataRoomCredentials, *Session, Sender) (*DataRoom, error)
-	LeaveRoom(*Session)
+	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 }
 
 type Broadcaster interface {
-	Broadcast(*Session, interface{})
+	Broadcast(sessionID, roomID string, outgoing *DataOutgoing)
 }
 
 type RoomStats interface {
@@ -84,9 +84,9 @@ func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, 
 	return roomWorker.Join(credentials, session, sender)
 }
 
-func (rooms *roomManager) LeaveRoom(session *Session) {
-	if room, ok := rooms.Get(session.Roomid); ok {
-		room.Leave(session)
+func (rooms *roomManager) LeaveRoom(roomID, sessionID string) {
+	if room, ok := rooms.Get(roomID); ok {
+		room.Leave(sessionID)
 	}
 }
 
@@ -104,29 +104,22 @@ func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoo
 	return room, nil
 }
 
-func (rooms *roomManager) Broadcast(session *Session, m interface{}) {
-	outgoing := &DataOutgoing{
-		From: session.Id,
-		A:    session.Attestation(),
-		Data: m,
-	}
-
+func (rooms *roomManager) Broadcast(sessionID, roomID string, outgoing *DataOutgoing) {
 	message, err := rooms.EncodeOutgoing(outgoing)
 	if err != nil {
 		return
 	}
 
-	id := session.Roomid
-	if id != "" && id == rooms.globalRoomID {
+	if roomID != "" && roomID == rooms.globalRoomID {
 		rooms.RLock()
 		for _, room := range rooms.roomTable {
-			room.Broadcast(session, message)
+			room.Broadcast(sessionID, message)
 		}
 		rooms.RUnlock()
-	} else if room, ok := rooms.Get(id); ok {
-		room.Broadcast(session, message)
+	} else if room, ok := rooms.Get(roomID); ok {
+		room.Broadcast(sessionID, message)
 	} else {
-		log.Printf("No room named %s found for broadcast message %#v", id, m)
+		log.Printf("No room named %s found for broadcast %#v", roomID, outgoing)
 	}
 	message.Decref()
 }

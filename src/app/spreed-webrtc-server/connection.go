@@ -56,7 +56,7 @@ const (
 type Connection interface {
 	Index() uint64
 	Send(Buffer)
-	Close(runCallbacks bool)
+	Close()
 	readPump()
 	writePump()
 }
@@ -65,7 +65,6 @@ type ConnectionHandler interface {
 	NewBuffer() Buffer
 	OnConnect(Connection)
 	OnText(Buffer)
-	OnDisconnect()
 }
 
 type connection struct {
@@ -98,14 +97,11 @@ func (c *connection) Index() uint64 {
 	return c.Idx
 }
 
-func (c *connection) Close(runCallbacks bool) {
+func (c *connection) Close() {
 	c.mutex.Lock()
 	if c.isClosed {
 		c.mutex.Unlock()
 		return
-	}
-	if runCallbacks {
-		c.handler.OnDisconnect()
 	}
 	c.ws.Close()
 	c.isClosed = true
@@ -170,7 +166,7 @@ func (c *connection) readPump() {
 		}
 	}
 
-	c.Close(true)
+	c.Close()
 }
 
 // Write message to outbound queue.
@@ -269,7 +265,7 @@ func (c *connection) writePump() {
 cleanup:
 	//fmt.Println("writePump done")
 	timer.Stop()
-	c.Close(true)
+	c.Close()
 }
 
 // Write ping message.

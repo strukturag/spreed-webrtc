@@ -39,9 +39,9 @@ type RoomWorker interface {
 	Users() []*roomUser
 	Update(*DataRoom) error
 	GetUsers() []*DataSession
-	Broadcast(*Session, Buffer)
+	Broadcast(sessionID string, buf Buffer)
 	Join(*DataRoomCredentials, *Session, Sender) (*DataRoom, error)
-	Leave(*Session)
+	Leave(sessionID string)
 }
 
 type roomWorker struct {
@@ -213,12 +213,12 @@ func (r *roomWorker) GetUsers() []*DataSession {
 	return <-out
 }
 
-func (r *roomWorker) Broadcast(session *Session, message Buffer) {
+func (r *roomWorker) Broadcast(sessionID string, message Buffer) {
 
 	worker := func() {
 		r.mutex.RLock()
 		for id, user := range r.users {
-			if id == session.Id {
+			if id == sessionID {
 				// Skip broadcast to self.
 				continue
 			}
@@ -261,10 +261,6 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 			}
 		}
 
-		if session.IsDisconnected() {
-			log.Println("Refusing to join a disconnected session to room", session.Id)
-			return
-		}
 		r.users[session.Id] = &roomUser{session, sender}
 		// NOTE(lcooper): Needs to be a copy, else we risk races with
 		// a subsequent modification of room properties.
@@ -277,11 +273,11 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 	return result.DataRoom, result.error
 }
 
-func (r *roomWorker) Leave(session *Session) {
+func (r *roomWorker) Leave(sessionID string) {
 	worker := func() {
 		r.mutex.Lock()
-		if _, ok := r.users[session.Id]; ok {
-			delete(r.users, session.Id)
+		if _, ok := r.users[sessionID]; ok {
+			delete(r.users, sessionID)
 		}
 		r.mutex.Unlock()
 	}
