@@ -37,7 +37,6 @@ define(['text!partials/menu.html'], function(template) {
 		return {
 			restrict: 'E',
 			replace: true,
-			scope: true,
 			template: template,
 			link: link
 		}
