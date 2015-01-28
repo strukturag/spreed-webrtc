@@ -23,11 +23,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/strukturag/phoenix"
+	"log"
 	"net/http"
 	"strings"
 	"time"
-
-	"github.com/strukturag/phoenix"
 )
 
 type Config struct {
@@ -46,6 +46,7 @@ type Config struct {
 	DefaultRoomEnabled              bool     // Flag if default room ("") is enabled
 	Plugin                          string   // Plugin to load
 	AuthorizeRoomCreation           bool     // Whether a user account is required to create rooms
+	Modules                         []string // List of enabled modules
 	globalRoomID                    string   // Id of the global room (not exported to Javascript)
 	contentSecurityPolicy           string   // HTML content security policy
 	contentSecurityPolicyReportOnly string   // HTML content security policy in report only mode
@@ -85,6 +86,16 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 	turnURIs := strings.Split(turnURIsString, " ")
 	trimAndRemoveDuplicates(&turnURIs)
 
+	// Get enabled modules.
+	allModules := []string{"screensharing", "youtube", "presentation"}
+	modules := allModules[:0]
+	for _, module := range allModules {
+		if container.GetBoolDefault("modules", module, true) {
+			modules = append(modules, module)
+		}
+	}
+	log.Println("Enabled modules:", modules)
+
 	return &Config{
 		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
 		ver:                             ver,
@@ -101,6 +112,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		DefaultRoomEnabled:              container.GetBoolDefault("app", "defaultRoomEnabled", true),
 		Plugin:                          container.GetStringDefault("app", "plugin", ""),
 		AuthorizeRoomCreation:           container.GetBoolDefault("app", "authorizeRoomCreation", false),
+		Modules:                         modules,
 		globalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
 		contentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
 		contentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),

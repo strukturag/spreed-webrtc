@@ -115,6 +115,12 @@ serverRealm = local
 ; to test your CSP before putting it into production.
 ;contentSecurityPolicyReportOnly =
 
+[modules]
+; Modules provide optional functionality. Modules are enabled by default and can be disabled by setting false to their corresponding configuration.
+;screensharing = true
+;youtube = true
+;presentation = true
+
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log
 
