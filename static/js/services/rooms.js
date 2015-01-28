@@ -34,7 +34,8 @@ define([
 		var helloedRoomName = null;
 		var currentRoom = null;
 		var randomRoom = null;
-		var canCreateRooms = !mediaStream.config.AuthorizeRoomCreation;
+		var canJoinRooms = !mediaStream.config.AuthorizeRoomJoin;
+		var canCreateRooms = canJoinRooms ? !mediaStream.config.AuthorizeRoomCreation : false;
 
 		var joinFailed = function(error) {
 			setCurrentRoom(null);
@@ -144,10 +145,11 @@ define([
 
 		appData.e.on("selfReceived", function(event, data) {
 			_.defer(joinRequestedRoom);
-			if (mediaStream.config.AuthorizeRoomCreation && !$rootScope.myuserid) {
-				canCreateRooms = false;
+			canJoinRooms = (!mediaStream.config.AuthorizeRoomJoin || $rootScope.myuserid) ? true : false
+			if (canJoinRooms) {
+				canCreateRooms = (!mediaStream.config.AuthorizeRoomCreation || $rootScope.myuserid) ? true : false;
 			} else {
-				canCreateRooms = true;
+				canCreateRooms = false;
 			}
 		});
 
@@ -205,6 +207,9 @@ define([
 			},
 			canCreateRooms: function() {
 				return canCreateRooms;
+			},
+			canJoinRooms: function() {
+				return canJoinRooms;
 			},
 			joinByName: function(name, replace) {
 				name = $window.encodeURIComponent(name);

@@ -1,6 +1,6 @@
-<div welcome ng-form="welcome" class="welcome container-fluid" ng-show="!peer">
+<div welcome ng-form="welcome" class="welcome container-fluid" ng-show="!peer" ng-controller="UsersettingsController as usersettings">
 	<div class="welcome-logo"></div>
-	<div class="welcome-container" ng-controller="UsersettingsController as usersettings">
+	<div ng-if="canJoinRooms()" class="welcome-container">
 		<h1>{{_("Enter a room name")}}</h1>
 		<div class="form-group welcome-input" ng-class="{'has-error': welcome.$invalid, 'has-success': welcome.$valid && roomdata.name}">
 			<input type="text" class="form-control roomdata-link-input input-lg" ng-model="roomdataInput.name" ng-maxlength="30" on-enter="joinRoomByName(roomdata.name)" placeholder="{{roomdata.placeholder}}">
@@ -22,5 +22,11 @@
 			<br/>
 			<a ng-repeat="room in roomsHistory" ng-click="joinRoomByName(room)"><span class="label label-default">{{room}}</span></a>
 		</p>
+	</div>
+	<div ng-if="!canJoinRooms()" class="welcome-container">
+		<div class="welcome-login">
+			<p class="h4">{{_("Please sign in.")}}</p>
+			<button ng-if="!myuserid && usersettings.loginUserid" type="button" class="btn btn-primary" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
+		</div>
 	</div>
 </div>
