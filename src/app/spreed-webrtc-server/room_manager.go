@@ -146,6 +146,10 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 }
 
 func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
+		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+	}
+
 	if room, ok := rooms.Get(roomID); ok {
 		return room, nil
 	}

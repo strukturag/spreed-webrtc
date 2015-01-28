@@ -51,6 +51,25 @@ func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenCreat
 	}
 }
 
+func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenJoinRequiresAnAccount(t *testing.T) {
+	roomManager, config := NewTestRoomManager()
+	config.UsersEnabled = true
+	config.AuthorizeRoomJoin = true
+
+	unauthenticatedSession := &Session{}
+	_, err := roomManager.JoinRoom("foo", nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+
+	authenticatedSession := &Session{userid: "9870457"}
+	_, err = roomManager.JoinRoom("foo", nil, authenticatedSession, true, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining room while authenticated", err)
+	}
+
+	_, err = roomManager.JoinRoom("foo", nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+}
+
 func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfNoRoomHasBeenJoined(t *testing.T) {
 	roomManager, _ := NewTestRoomManager()
 	_, err := roomManager.UpdateRoom(&Session{}, nil)

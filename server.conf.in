@@ -78,6 +78,9 @@ encryptionSecret = tne-default-encryption-block-key
 ; all users will join this room if enabled. If it is disabled then a room join
 ; form will be shown instead.
 ;defaultRoomEnabled = true
+; Whether a user account is required to join a room. This only has an effect
+; if user accounts are enabled. Optional, defaults to false.
+;authorizeRoomJoin = false
 ; Whether a user account is required to create a room. This only has an effect
 ; if user accounts are enabled. Optional, defaults to false.
 ;authorizeRoomCreation = false
