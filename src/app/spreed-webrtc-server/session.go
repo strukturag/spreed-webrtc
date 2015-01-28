@@ -79,6 +79,11 @@ func NewSession(manager SessionManager, unicaster Unicaster, broadcaster Broadca
 
 }
 
+func (s *Session) authenticated() (authenticated bool) {
+	authenticated = s.userid != ""
+	return
+}
+
 func (s *Session) Subscribe(session *Session) {
 
 	s.mutex.Lock()
@@ -132,7 +137,7 @@ func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, send
 		})
 	}
 
-	room, err := s.RoomStatusManager.JoinRoom(roomID, credentials, s, sender)
+	room, err := s.RoomStatusManager.JoinRoom(roomID, credentials, s, s.authenticated(), sender)
 	if err == nil {
 		s.Hello = true
 		s.Roomid = roomID
@@ -290,13 +295,6 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 	return s.Nonce, err
 
-}
-
-func (s *Session) Authenticated() (authenticated bool) {
-	s.mutex.Lock()
-	authenticated = s.userid != ""
-	s.mutex.Unlock()
-	return
 }
 
 func (s *Session) Authenticate(realm string, st *SessionToken, userid string) error {

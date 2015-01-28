@@ -57,7 +57,7 @@ func (fake *fakeRoomManager) RoomUsers(session *Session) []*DataSession {
 	return fake.roomUsers
 }
 
-func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, _ Sender) (*DataRoom, error) {
+func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
 	fake.joinedID = id
 	return &DataRoom{Name: id}, fake.joinError
 }

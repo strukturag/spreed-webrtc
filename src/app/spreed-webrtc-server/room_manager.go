@@ -28,7 +28,7 @@ import (
 
 type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
-	JoinRoom(string, *DataRoomCredentials, *Session, Sender) (*DataRoom, error)
+	JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
 	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 }
@@ -71,12 +71,12 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
+func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
 	if roomID == "" && !rooms.DefaultRoomEnabled {
 		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	roomWorker, err := rooms.GetOrCreate(roomID, credentials, session)
+	roomWorker, err := rooms.GetOrCreate(roomID, credentials, sessionAuthenticated)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, session *Session) (RoomWorker, error) {
+func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
 	if room, ok := rooms.Get(roomID); ok {
 		return room, nil
 	}
@@ -158,7 +158,7 @@ func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCreden
 		return room, nil
 	}
 
-	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !session.Authenticated() {
+	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !sessionAuthenticated {
 		rooms.Unlock()
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}
