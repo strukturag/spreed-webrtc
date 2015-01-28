@@ -71,12 +71,12 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
-	if id == "" && !rooms.DefaultRoomEnabled {
+func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
+	if roomID == "" && !rooms.DefaultRoomEnabled {
 		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	roomWorker, err := rooms.GetOrCreate(id, credentials, session)
+	roomWorker, err := rooms.GetOrCreate(roomID, credentials, session)
 	if err != nil {
 		return nil, err
 	}
@@ -138,22 +138,22 @@ func (rooms *roomManager) RoomInfo(includeSessions bool) (count int, sessionInfo
 	return
 }
 
-func (rooms *roomManager) Get(id string) (room RoomWorker, ok bool) {
+func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	rooms.RLock()
-	room, ok = rooms.roomTable[id]
+	room, ok = rooms.roomTable[roomID]
 	rooms.RUnlock()
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredentials, session *Session) (RoomWorker, error) {
-	if room, ok := rooms.Get(id); ok {
+func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, session *Session) (RoomWorker, error) {
+	if room, ok := rooms.Get(roomID); ok {
 		return room, nil
 	}
 
 	rooms.Lock()
 	// Need to re-check, another thread might have created the room
 	// while we waited for the lock.
-	if room, ok := rooms.roomTable[id]; ok {
+	if room, ok := rooms.roomTable[roomID]; ok {
 		rooms.Unlock()
 		return room, nil
 	}
@@ -163,8 +163,8 @@ func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredential
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}
 
-	room := NewRoomWorker(rooms, id, credentials)
-	rooms.roomTable[id] = room
+	room := NewRoomWorker(rooms, roomID, credentials)
+	rooms.roomTable[roomID] = room
 	rooms.Unlock()
 	go func() {
 		// Start room, this blocks until room expired.
@@ -172,8 +172,8 @@ func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredential
 		// Cleanup room when we are done.
 		rooms.Lock()
 		defer rooms.Unlock()
-		delete(rooms.roomTable, id)
-		log.Printf("Cleaned up room '%s'\n", id)
+		delete(rooms.roomTable, roomID)
+		log.Printf("Cleaned up room '%s'\n", roomID)
 	}()
 
 	return room, nil
