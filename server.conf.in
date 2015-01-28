@@ -116,7 +116,8 @@ serverRealm = local
 ;contentSecurityPolicyReportOnly =
 
 [modules]
-; Modules provide optional functionality. Modules are enabled by default and can be disabled by setting false to their corresponding configuration.
+; Modules provide optional functionality. Modules are enabled by default and
+; can be disabled by setting false to their corresponding configuration.
 ;screensharing = true
 ;youtube = true
 ;presentation = true
