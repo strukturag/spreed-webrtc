@@ -23,7 +23,6 @@ package main
 
 import (
 	"log"
-	"strings"
 	"time"
 )
 
@@ -34,7 +33,6 @@ const (
 type ChannellingAPI interface {
 	OnConnect(Client, *Session)
 	OnIncoming(ResponseSender, *Session, *DataIncoming)
-	OnDisconnect(*Session)
 }
 
 type channellingAPI struct {
@@ -46,11 +44,9 @@ type channellingAPI struct {
 	ContactManager
 	TurnDataCreator
 	Unicaster
-	Broadcaster
-	buddyImages ImageCache
 }
 
-func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, broadcaster Broadcaster, buddyImages ImageCache) ChannellingAPI {
+func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster) ChannellingAPI {
 	return &channellingAPI{
 		config,
 		roomStatus,
@@ -60,8 +56,6 @@ func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEnco
 		contactManager,
 		turnDataCreator,
 		unicaster,
-		broadcaster,
-		buddyImages,
 	}
 }
 
@@ -77,40 +71,31 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 	case "Hello":
 		//log.Println("Hello", msg.Hello, c.Index())
 		// TODO(longsleep): Filter room id and user agent.
-		api.UpdateSession(session, &SessionUpdate{Types: []string{"Ua"}, Ua: msg.Hello.Ua})
-		if session.Hello && session.Roomid != msg.Hello.Id {
-			api.LeaveRoom(session)
-			api.Broadcast(session, session.DataSessionLeft("soft"))
-		}
+		session.Update(&SessionUpdate{Types: []string{"Ua"}, Ua: msg.Hello.Ua})
 
+		room, err := session.JoinRoom(msg.Hello.Id, msg.Hello.Credentials, c)
 		// NOTE(lcooper): Iid filtered for compatibility's sake.
 		// Evaluate sending unconditionally when supported by all clients.
-		if room, err := api.JoinRoom(msg.Hello.Id, msg.Hello.Credentials, session, c); err == nil {
-			session.Hello = true
-			session.Roomid = msg.Hello.Id
-			if msg.Iid != "" {
+		if msg.Iid != "" {
+			if err == nil {
 				c.Reply(msg.Iid, &DataWelcome{
 					Type:  "Welcome",
 					Room:  room,
 					Users: api.RoomUsers(session),
 				})
-			}
-			api.Broadcast(session, session.DataSessionJoined())
-		} else {
-			session.Hello = false
-			if msg.Iid != "" {
+			} else {
 				c.Reply(msg.Iid, err)
 			}
 		}
 	case "Offer":
 		// TODO(longsleep): Validate offer
-		api.Unicast(session, msg.Offer.To, msg.Offer)
+		session.Unicast(msg.Offer.To, msg.Offer)
 	case "Candidate":
 		// TODO(longsleep): Validate candidate
-		api.Unicast(session, msg.Candidate.To, msg.Candidate)
+		session.Unicast(msg.Candidate.To, msg.Candidate)
 	case "Answer":
 		// TODO(longsleep): Validate Answer
-		api.Unicast(session, msg.Answer.To, msg.Answer)
+		session.Unicast(msg.Answer.To, msg.Answer)
 	case "Users":
 		if session.Hello {
 			sessions := &DataSessions{Type: "Users", Users: api.RoomUsers(session)}
@@ -125,27 +110,27 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		if err := api.Authenticate(session, st, ""); err == nil {
 			log.Println("Authentication success", session.Userid)
 			api.SendSelf(c, session)
-			api.BroadcastSessionStatus(session)
+			session.BroadcastStatus()
 		} else {
 			log.Println("Authentication failed", err, st.Userid, st.Nonce)
 		}
 	case "Bye":
-		api.Unicast(session, msg.Bye.To, msg.Bye)
+		session.Unicast(msg.Bye.To, msg.Bye)
 	case "Status":
 		//log.Println("Status", msg.Status)
-		api.UpdateSession(session, &SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
-		api.BroadcastSessionStatus(session)
+		session.Update(&SessionUpdate{Types: []string{"Status"}, Status: msg.Status.Status})
+		session.BroadcastStatus()
 	case "Chat":
 		// TODO(longsleep): Limit sent chat messages per incoming connection.
 		if !msg.Chat.Chat.NoEcho {
-			api.Unicast(session, session.Id, msg.Chat)
+			session.Unicast(session.Id, msg.Chat)
 		}
 		msg.Chat.Chat.Time = time.Now().Format(time.RFC3339)
 		if msg.Chat.To == "" {
 			// TODO(longsleep): Check if chat broadcast is allowed.
 			if session.Hello {
 				api.CountBroadcastChat()
-				api.Broadcast(session, msg.Chat)
+				session.Broadcast(msg.Chat)
 			}
 		} else {
 			if msg.Chat.Chat.Status != nil && msg.Chat.Chat.Status.ContactRequest != nil {
@@ -159,10 +144,10 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 				api.CountUnicastChat()
 			}
 
-			api.Unicast(session, msg.Chat.To, msg.Chat)
+			session.Unicast(msg.Chat.To, msg.Chat)
 			if msg.Chat.Chat.Mid != "" {
 				// Send out delivery confirmation status chat message.
-				api.Unicast(session, session.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatStatus{State: "sent"}}})
+				session.Unicast(session.Id, &DataChat{To: msg.Chat.To, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Chat.Chat.Mid, Status: &DataChatStatus{State: "sent"}}})
 			}
 		}
 	case "Conference":
@@ -173,7 +158,7 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 			// Send conference update to anyone.
 			for _, id := range msg.Conference.Conference {
 				if id != session.Id {
-					api.Unicast(session, id, msg.Conference)
+					session.Unicast(id, msg.Conference)
 				}
 			}
 		}
@@ -211,7 +196,7 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		}
 	case "Room":
 		if room, err := api.UpdateRoom(session, msg.Room); err == nil {
-			api.Broadcast(session, room)
+			session.Broadcast(room)
 			c.Reply(msg.Iid, room)
 		} else {
 			c.Reply(msg.Iid, err)
@@ -219,23 +204,6 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
-}
-
-func (api *channellingAPI) OnDisconnect(session *Session) {
-	dsl := session.DataSessionLeft("hard")
-	if session.Hello {
-		api.LeaveRoom(session)
-		api.Broadcast(session, dsl)
-	}
-
-	session.RunForAllSubscribers(func(session *Session) {
-		log.Println("Notifying subscriber that we are gone", session.Id, session.Id)
-		api.Unicast(session, session.Id, dsl)
-	})
-
-	api.Unicaster.OnDisconnect(session)
-
-	api.buddyImages.Delete(session.Id)
 }
 
 func (api *channellingAPI) SendSelf(c Responder, session *Session) {
@@ -258,27 +226,4 @@ func (api *channellingAPI) SendSelf(c Responder, session *Session) {
 		Stun:    api.StunURIs,
 	}
 	c.Reply("", self)
-}
-
-func (api *channellingAPI) UpdateSession(session *Session, s *SessionUpdate) uint64 {
-	if s.Status != nil {
-		status, ok := s.Status.(map[string]interface{})
-		if ok && status["buddyPicture"] != nil {
-			pic := status["buddyPicture"].(string)
-			if strings.HasPrefix(pic, "data:") {
-				imageId := api.buddyImages.Update(session.Id, pic[5:])
-				if imageId != "" {
-					status["buddyPicture"] = "img:" + imageId
-				}
-			}
-		}
-	}
-
-	return session.Update(s)
-}
-
-func (api *channellingAPI) BroadcastSessionStatus(session *Session) {
-	if session.Hello {
-		api.Broadcast(session, session.DataSessionStatus())
-	}
 }

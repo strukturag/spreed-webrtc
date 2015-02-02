@@ -94,7 +94,6 @@
     position: relative;
     user-select: none;
   }
-  .buddylistloading,
   .buddylistempty {
     bottom: 0;
     color: $font-color-accent;
@@ -108,6 +107,18 @@
     right: 0;
     text-align: center;
     top: 0;
+  }
+  .buddylistloading {
+    bottom: 0;
+    color: $font-color-accent;
+    display: none;
+    font-size: 1.4em;
+    height: 2em;
+    margin: auto;
+    padding:.4em;
+    position: absolute;
+    right: 0;
+    text-align: center;
   }
 }
 

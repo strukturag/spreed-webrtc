@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-08 16:48+0100\n"
+"POT-Creation-Date: 2015-01-28 15:06+0100\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,30 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Share a YouTube video"
-msgstr ""
-
-msgid "Share a file as presentation"
-msgstr ""
-
-msgid "Share your screen"
-msgstr "화면 공유하기"
-
-msgid "Chat"
-msgstr "대화"
-
-msgid "Contacts"
-msgstr ""
-
-msgid "Mute microphone"
-msgstr "음성제거"
-
-msgid "Turn camera off"
-msgstr "카메라꺼짐"
-
-msgid "Settings"
-msgstr "설정"
 
 msgid "Your audio level"
 msgstr "음성크기"
@@ -199,6 +175,30 @@ msgstr "재시도"
 msgid "Download failed."
 msgstr "다운로드실패"
 
+msgid "Share a YouTube video"
+msgstr ""
+
+msgid "Share a file as presentation"
+msgstr ""
+
+msgid "Share your screen"
+msgstr "화면 공유하기"
+
+msgid "Chat"
+msgstr "대화"
+
+msgid "Contacts"
+msgstr ""
+
+msgid "Mute microphone"
+msgstr "음성제거"
+
+msgid "Turn camera off"
+msgstr "카메라꺼짐"
+
+msgid "Settings"
+msgstr "설정"
+
 msgid "Loading presentation ..."
 msgstr ""
 
@@ -231,11 +231,11 @@ msgstr "방 변경"
 msgid "Room"
 msgstr "방"
 
-msgid "Main"
-msgstr "메인"
-
 msgid "Leave room"
 msgstr "방 이동"
+
+msgid "Main"
+msgstr "메인"
 
 msgid "Current room"
 msgstr "현재 방"
@@ -490,6 +490,9 @@ msgid ""
 msgstr ""
 
 msgid "Room history"
+msgstr ""
+
+msgid "Please sign in."
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."

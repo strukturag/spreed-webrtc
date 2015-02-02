@@ -28,13 +28,13 @@ import (
 
 type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
-	JoinRoom(string, *DataRoomCredentials, *Session, Sender) (*DataRoom, error)
-	LeaveRoom(*Session)
+	JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
+	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 }
 
 type Broadcaster interface {
-	Broadcast(*Session, interface{})
+	Broadcast(sessionID, roomID string, outgoing *DataOutgoing)
 }
 
 type RoomStats interface {
@@ -71,12 +71,12 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, session *Session, sender Sender) (*DataRoom, error) {
-	if id == "" && !rooms.DefaultRoomEnabled {
+func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
+	if roomID == "" && !rooms.DefaultRoomEnabled {
 		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	roomWorker, err := rooms.GetOrCreate(id, credentials, session)
+	roomWorker, err := rooms.GetOrCreate(roomID, credentials, sessionAuthenticated)
 	if err != nil {
 		return nil, err
 	}
@@ -84,9 +84,9 @@ func (rooms *roomManager) JoinRoom(id string, credentials *DataRoomCredentials, 
 	return roomWorker.Join(credentials, session, sender)
 }
 
-func (rooms *roomManager) LeaveRoom(session *Session) {
-	if room, ok := rooms.Get(session.Roomid); ok {
-		room.Leave(session)
+func (rooms *roomManager) LeaveRoom(roomID, sessionID string) {
+	if room, ok := rooms.Get(roomID); ok {
+		room.Leave(sessionID)
 	}
 }
 
@@ -104,29 +104,22 @@ func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoo
 	return room, nil
 }
 
-func (rooms *roomManager) Broadcast(session *Session, m interface{}) {
-	outgoing := &DataOutgoing{
-		From: session.Id,
-		A:    session.Attestation(),
-		Data: m,
-	}
-
+func (rooms *roomManager) Broadcast(sessionID, roomID string, outgoing *DataOutgoing) {
 	message, err := rooms.EncodeOutgoing(outgoing)
 	if err != nil {
 		return
 	}
 
-	id := session.Roomid
-	if id != "" && id == rooms.globalRoomID {
+	if roomID != "" && roomID == rooms.globalRoomID {
 		rooms.RLock()
 		for _, room := range rooms.roomTable {
-			room.Broadcast(session, message)
+			room.Broadcast(sessionID, message)
 		}
 		rooms.RUnlock()
-	} else if room, ok := rooms.Get(id); ok {
-		room.Broadcast(session, message)
+	} else if room, ok := rooms.Get(roomID); ok {
+		room.Broadcast(sessionID, message)
 	} else {
-		log.Printf("No room named %s found for broadcast message %#v", id, m)
+		log.Printf("No room named %s found for broadcast %#v", roomID, outgoing)
 	}
 	message.Decref()
 }
@@ -145,33 +138,37 @@ func (rooms *roomManager) RoomInfo(includeSessions bool) (count int, sessionInfo
 	return
 }
 
-func (rooms *roomManager) Get(id string) (room RoomWorker, ok bool) {
+func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	rooms.RLock()
-	room, ok = rooms.roomTable[id]
+	room, ok = rooms.roomTable[roomID]
 	rooms.RUnlock()
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredentials, session *Session) (RoomWorker, error) {
-	if room, ok := rooms.Get(id); ok {
+func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
+		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+	}
+
+	if room, ok := rooms.Get(roomID); ok {
 		return room, nil
 	}
 
 	rooms.Lock()
 	// Need to re-check, another thread might have created the room
 	// while we waited for the lock.
-	if room, ok := rooms.roomTable[id]; ok {
+	if room, ok := rooms.roomTable[roomID]; ok {
 		rooms.Unlock()
 		return room, nil
 	}
 
-	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !session.Authenticated() {
+	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !sessionAuthenticated {
 		rooms.Unlock()
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}
 
-	room := NewRoomWorker(rooms, id, credentials)
-	rooms.roomTable[id] = room
+	room := NewRoomWorker(rooms, roomID, credentials)
+	rooms.roomTable[roomID] = room
 	rooms.Unlock()
 	go func() {
 		// Start room, this blocks until room expired.
@@ -179,8 +176,8 @@ func (rooms *roomManager) GetOrCreate(id string, credentials *DataRoomCredential
 		// Cleanup room when we are done.
 		rooms.Lock()
 		defer rooms.Unlock()
-		delete(rooms.roomTable, id)
-		log.Printf("Cleaned up room '%s'\n", id)
+		delete(rooms.roomTable, roomID)
+		log.Printf("Cleaned up room '%s'\n", roomID)
 	}()
 
 	return room, nil

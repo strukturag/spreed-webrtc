@@ -48,8 +48,8 @@ type SessionStore interface {
 type Unicaster interface {
 	SessionStore
 	OnConnect(Client, *Session)
-	Unicast(session *Session, to string, m interface{})
-	OnDisconnect(*Session)
+	Unicast(to string, outgoing *DataOutgoing)
+	OnDisconnect(sessionID string)
 }
 
 type ContactManager interface {
@@ -158,7 +158,7 @@ func (h *hub) OnConnect(client Client, session *Session) {
 
 	// Register connection or replace existing one.
 	if ec, ok := h.clients[session.Id]; ok {
-		ec.Close(false)
+		ec.Close()
 		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.Id)
 	}
 	h.clients[session.Id] = client
@@ -167,26 +167,20 @@ func (h *hub) OnConnect(client Client, session *Session) {
 	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.Id)
 }
 
-func (h *hub) OnDisconnect(session *Session) {
+func (h *hub) OnDisconnect(sessionID string) {
 	h.mutex.Lock()
-	delete(h.clients, session.Id)
+	delete(h.clients, sessionID)
 	h.mutex.Unlock()
 }
 
-func (h *hub) GetClient(id string) (client Client, ok bool) {
+func (h *hub) GetClient(sessionID string) (client Client, ok bool) {
 	h.mutex.RLock()
-	client, ok = h.clients[id]
+	client, ok = h.clients[sessionID]
 	h.mutex.RUnlock()
 	return
 }
 
-func (h *hub) Unicast(session *Session, to string, m interface{}) {
-	outgoing := &DataOutgoing{
-		From: session.Id,
-		To:   to,
-		A:    session.Attestation(),
-		Data: m,
-	}
+func (h *hub) Unicast(to string, outgoing *DataOutgoing) {
 	if message, err := h.EncodeOutgoing(outgoing); err == nil {
 		client, ok := h.GetClient(to)
 		if !ok {

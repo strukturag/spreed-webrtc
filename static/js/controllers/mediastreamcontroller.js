@@ -40,6 +40,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			return translation._("Close this window and disconnect?");
 		});
 
+		$($window).on("unload", function() {
+			mediaStream.webrtc.doHangup("unload");
+			if (mediaStream.api.connector) {
+				mediaStream.api.connector.disabled = true;
+			}
+		});
+
 		// Enable app full screen listener.
 		$("#bar .logo").on("doubletap dblclick", _.debounce(function() {
 			if (BigScreen.enabled) {
@@ -401,10 +408,28 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 
 			// Unmark authorization process.
 			if (data.Userid) {
-				appData.authorizing(false);
-			} else if (!appData.authorizing()) {
-				// Trigger user data load when not in authorizing phase.
-				$scope.loadUserSettings();
+				appData.authorizing(false, data.Userid);
+			} else {
+				if (!appData.authorizing()) {
+					// Trigger user data load when not in authorizing phase.
+					$scope.loadUserSettings();
+				} else {
+					// Wait until authorizing is over and try it then.
+					var handler = (function() {
+						return function(event, authorizing, userid) {
+							if (!authorizing) {
+								// Turn of handler if we are no longer authorizing.
+								appData.e.off("authorizing", handler);
+								handler = null;
+								if (!userid) {
+									// Trigger user data load when without user after authorizing phase.
+									$scope.loadUserSettings();
+								}
+							}
+						}
+					})();
+					appData.e.on("authorizing", handler);
+				}
 			}
 
 			// Select room if settings have an alternative default room.
@@ -572,6 +597,11 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					break;
 			}
 		});
+
+		// Start heartbeat timer.
+		$window.setInterval(function() {
+			mediaStream.api.heartbeat(5000, 11500)
+		}, 1000);
 
 		$scope.$on("active", function(event, currentcall) {
 

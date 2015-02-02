@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-08 16:48+0100\n"
-"PO-Revision-Date: 2014-12-08 16:48+0100\n"
+"POT-Creation-Date: 2015-01-28 15:06+0100\n"
+"PO-Revision-Date: 2015-01-28 15:07+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,30 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Share a YouTube video"
-msgstr "Ein YouTube Video teilen"
-
-msgid "Share a file as presentation"
-msgstr "Datei als Präsentation teilen."
-
-msgid "Share your screen"
-msgstr "Bildschirm freigeben"
-
-msgid "Chat"
-msgstr "Chat"
-
-msgid "Contacts"
-msgstr "Kontakte"
-
-msgid "Mute microphone"
-msgstr "Mikrofon abschalten"
-
-msgid "Turn camera off"
-msgstr "Kamera abschalten"
-
-msgid "Settings"
-msgstr "Einstellungen"
 
 msgid "Your audio level"
 msgstr "Ihr Audio-Pegel"
@@ -197,6 +173,30 @@ msgstr "Nochmal versuchen"
 msgid "Download failed."
 msgstr "Fehler beim Download."
 
+msgid "Share a YouTube video"
+msgstr "Ein YouTube Video teilen"
+
+msgid "Share a file as presentation"
+msgstr "Datei als Präsentation teilen."
+
+msgid "Share your screen"
+msgstr "Bildschirm freigeben"
+
+msgid "Chat"
+msgstr "Chat"
+
+msgid "Contacts"
+msgstr "Kontakte"
+
+msgid "Mute microphone"
+msgstr "Mikrofon abschalten"
+
+msgid "Turn camera off"
+msgstr "Kamera abschalten"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
 msgid "Loading presentation ..."
 msgstr "Präsentation wird geladen..."
 
@@ -231,11 +231,11 @@ msgstr "Raum wechseln"
 msgid "Room"
 msgstr "Raum"
 
-msgid "Main"
-msgstr "Standard"
-
 msgid "Leave room"
 msgstr "Raum verlassen"
+
+msgid "Main"
+msgstr "Standard"
 
 msgid "Current room"
 msgstr "Raum"
@@ -499,6 +499,9 @@ msgstr ""
 
 msgid "Room history"
 msgstr "Raum-Verlauf"
+
+msgid "Please sign in."
+msgstr "Bitte melden Sie sich an."
 
 msgid "Videos are shared with everyone in this call."
 msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."

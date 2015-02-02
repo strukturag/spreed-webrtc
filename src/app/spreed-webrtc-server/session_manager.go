@@ -37,14 +37,18 @@ type SessionManager interface {
 	UserStats
 	RetrieveUsersWith(func(*http.Request) (string, error))
 	CreateSession(*http.Request) *Session
-	DestroySession(*Session)
+	DestroySession(sessionID, userID string)
 	Authenticate(*Session, *SessionToken, string) error
 	GetUserSessions(session *Session, id string) []*DataSession
 }
 
 type sessionManager struct {
-	Tickets
 	sync.RWMutex
+	Tickets
+	Unicaster
+	Broadcaster
+	RoomStatusManager
+	buddyImages      ImageCache
 	config           *Config
 	userTable        map[string]*User
 	fakesessionTable map[string]*Session
@@ -52,10 +56,14 @@ type sessionManager struct {
 	attestations     *securecookie.SecureCookie
 }
 
-func NewSessionManager(config *Config, tickets Tickets, sessionSecret []byte) SessionManager {
+func NewSessionManager(config *Config, tickets Tickets, unicaster Unicaster, broadcaster Broadcaster, rooms RoomStatusManager, buddyImages ImageCache, sessionSecret []byte) SessionManager {
 	sessionManager := &sessionManager{
-		tickets,
 		sync.RWMutex{},
+		tickets,
+		unicaster,
+		broadcaster,
+		rooms,
+		buddyImages,
 		config,
 		make(map[string]*User),
 		make(map[string]*Session),
@@ -103,7 +111,7 @@ func (sessionManager *sessionManager) CreateSession(request *http.Request) *Sess
 		}
 	}
 
-	session := NewSession(sessionManager.attestations, st.Id, st.Sid)
+	session := NewSession(sessionManager, sessionManager.Unicaster, sessionManager.Broadcaster, sessionManager.RoomStatusManager, sessionManager.buddyImages, sessionManager.attestations, st.Id, st.Sid)
 
 	if userid != "" {
 		// XXX(lcooper): Should errors be handled here?
@@ -113,15 +121,15 @@ func (sessionManager *sessionManager) CreateSession(request *http.Request) *Sess
 	return session
 }
 
-func (sessionManager *sessionManager) DestroySession(session *Session) {
-	session.Close()
+func (sessionManager *sessionManager) DestroySession(sessionID, userID string) {
+	if userID == "" {
+		return
+	}
 
 	sessionManager.Lock()
-	if suserid := session.Userid(); suserid != "" {
-		user, ok := sessionManager.userTable[suserid]
-		if ok && user.RemoveSession(session) {
-			delete(sessionManager.userTable, suserid)
-		}
+	user, ok := sessionManager.userTable[userID]
+	if ok && user.RemoveSession(sessionID) {
+		delete(sessionManager.userTable, userID)
 	}
 	sessionManager.Unlock()
 }
@@ -158,7 +166,7 @@ func (sessionManager *sessionManager) GetUserSessions(session *Session, userid s
 		session, ok := sessionManager.fakesessionTable[userid]
 		if !ok {
 			st := sessionManager.FakeSessionToken(userid)
-			session = NewSession(sessionManager.attestations, st.Id, st.Sid)
+			session = NewSession(sessionManager, sessionManager.Unicaster, sessionManager.Broadcaster, sessionManager.RoomStatusManager, sessionManager.buddyImages, sessionManager.attestations, st.Id, st.Sid)
 			session.SetUseridFake(st.Userid)
 			sessionManager.fakesessionTable[userid] = session
 		}

@@ -39,9 +39,9 @@ type RoomWorker interface {
 	Users() []*roomUser
 	Update(*DataRoom) error
 	GetUsers() []*DataSession
-	Broadcast(*Session, Buffer)
+	Broadcast(sessionID string, buf Buffer)
 	Join(*DataRoomCredentials, *Session, Sender) (*DataRoom, error)
-	Leave(*Session)
+	Leave(sessionID string)
 }
 
 type roomWorker struct {
@@ -213,19 +213,19 @@ func (r *roomWorker) GetUsers() []*DataSession {
 	return <-out
 }
 
-func (r *roomWorker) Broadcast(session *Session, message Buffer) {
+func (r *roomWorker) Broadcast(sessionID string, message Buffer) {
 
 	worker := func() {
 		r.mutex.RLock()
-		defer r.mutex.RUnlock()
 		for id, user := range r.users {
-			if id == session.Id {
+			if id == sessionID {
 				// Skip broadcast to self.
 				continue
 			}
 			//fmt.Printf("%s\n", m.Message)
 			user.Send(message)
 		}
+		r.mutex.RUnlock()
 		message.Decref()
 	}
 
@@ -273,13 +273,13 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 	return result.DataRoom, result.error
 }
 
-func (r *roomWorker) Leave(session *Session) {
+func (r *roomWorker) Leave(sessionID string) {
 	worker := func() {
 		r.mutex.Lock()
-		defer r.mutex.Unlock()
-		if _, ok := r.users[session.Id]; ok {
-			delete(r.users, session.Id)
+		if _, ok := r.users[sessionID]; ok {
+			delete(r.users, sessionID)
 		}
+		r.mutex.Unlock()
 	}
 	r.Run(worker)
 }

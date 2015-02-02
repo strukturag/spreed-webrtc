@@ -25,6 +25,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gorilla/securecookie"
+	"strings"
 	"sync"
 	"time"
 )
@@ -32,6 +33,11 @@ import (
 var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
+	SessionManager
+	Unicaster
+	Broadcaster
+	RoomStatusManager
+	buddyImages   ImageCache
 	Id            string
 	Sid           string
 	Ua            string
@@ -49,22 +55,33 @@ type Session struct {
 	attestations  *securecookie.SecureCookie
 	subscriptions map[string]*Session
 	subscribers   map[string]*Session
+	disconnected  bool
 }
 
-func NewSession(attestations *securecookie.SecureCookie, id, sid string) *Session {
+func NewSession(manager SessionManager, unicaster Unicaster, broadcaster Broadcaster, rooms RoomStatusManager, buddyImages ImageCache, attestations *securecookie.SecureCookie, id, sid string) *Session {
 
 	session := &Session{
-		Id:            id,
-		Sid:           sid,
-		Prio:          100,
-		stamp:         time.Now().Unix(),
-		attestations:  attestations,
-		subscriptions: make(map[string]*Session),
-		subscribers:   make(map[string]*Session),
+		SessionManager:    manager,
+		Unicaster:         unicaster,
+		Broadcaster:       broadcaster,
+		RoomStatusManager: rooms,
+		buddyImages:       buddyImages,
+		Id:                id,
+		Sid:               sid,
+		Prio:              100,
+		stamp:             time.Now().Unix(),
+		attestations:      attestations,
+		subscriptions:     make(map[string]*Session),
+		subscribers:       make(map[string]*Session),
 	}
 	session.NewAttestation()
 	return session
 
+}
+
+func (s *Session) authenticated() (authenticated bool) {
+	authenticated = s.userid != ""
+	return
 }
 
 func (s *Session) Subscribe(session *Session) {
@@ -103,36 +120,143 @@ func (s *Session) RemoveSubscriber(id string) {
 	s.mutex.Unlock()
 }
 
-func (s *Session) RunForAllSubscribers(f func(session *Session)) {
-
+func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, sender Sender) (*DataRoom, error) {
 	s.mutex.Lock()
-	for _, session := range s.subscribers {
-		s.mutex.Unlock()
-		f(session)
-		s.mutex.Lock()
-	}
-	s.mutex.Unlock()
+	defer s.mutex.Unlock()
 
+	if s.Hello && s.Roomid != roomID {
+		s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
+		s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
+			From: s.Id,
+			A:    s.attestation.Token(),
+			Data: &DataSession{
+				Type:   "Left",
+				Id:     s.Id,
+				Status: "soft",
+			},
+		})
+	}
+
+	room, err := s.RoomStatusManager.JoinRoom(roomID, credentials, s, s.authenticated(), sender)
+	if err == nil {
+		s.Hello = true
+		s.Roomid = roomID
+		s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
+			From: s.Id,
+			A:    s.attestation.Token(),
+			Data: &DataSession{
+				Type:   "Joined",
+				Id:     s.Id,
+				Userid: s.userid,
+				Ua:     s.Ua,
+				Prio:   s.Prio,
+			},
+		})
+	} else {
+		s.Hello = false
+	}
+	return room, err
+}
+
+func (s *Session) Broadcast(m interface{}) {
+	s.mutex.RLock()
+	if s.Hello {
+		s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
+			From: s.Id,
+			A:    s.attestation.Token(),
+			Data: m,
+		})
+	}
+	s.mutex.RUnlock()
+}
+
+func (s *Session) BroadcastStatus() {
+	s.mutex.RLock()
+	if s.Hello {
+		s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
+			From: s.Id,
+			A:    s.attestation.Token(),
+			Data: &DataSession{
+				Type:   "Status",
+				Id:     s.Id,
+				Userid: s.userid,
+				Status: s.Status,
+				Rev:    s.UpdateRev,
+				Prio:   s.Prio,
+			},
+		})
+	}
+	s.mutex.RUnlock()
+}
+
+func (s *Session) Unicast(to string, m interface{}) {
+	s.mutex.RLock()
+	outgoing := &DataOutgoing{
+		From: s.Id,
+		To:   to,
+		A:    s.attestation.Token(),
+		Data: m,
+	}
+	s.mutex.RUnlock()
+
+	s.Unicaster.Unicast(to, outgoing)
 }
 
 func (s *Session) Close() {
-
 	s.mutex.Lock()
-	// Remove foreign references.
+
+	outgoing := &DataOutgoing{
+		From: s.Id,
+		A:    s.attestation.Token(),
+		Data: &DataSession{
+			Type:   "Left",
+			Id:     s.Id,
+			Status: "hard",
+		},
+	}
+
+	if s.Hello {
+		// NOTE(lcooper): If we don't check for Hello here, we could deadlock
+		// when implicitly creating a room while a user is reconnecting.
+		s.Broadcaster.Broadcast(s.Id, s.Roomid, outgoing)
+		s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
+	}
+
+	for _, session := range s.subscribers {
+		s.Unicaster.Unicast(session.Id, outgoing)
+	}
+
 	for _, session := range s.subscriptions {
 		session.RemoveSubscriber(s.Id)
 	}
-	// Remove session cross references.
+
+	s.Unicaster.OnDisconnect(s.Id)
+	s.SessionManager.DestroySession(s.Id, s.userid)
+	s.buddyImages.Delete(s.Id)
+
 	s.subscriptions = make(map[string]*Session)
 	s.subscribers = make(map[string]*Session)
-	s.mutex.Unlock()
+	s.disconnected = true
 
+	s.mutex.Unlock()
 }
 
 func (s *Session) Update(update *SessionUpdate) uint64 {
-
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+
+	if update.Status != nil {
+		status, ok := update.Status.(map[string]interface{})
+		if ok && status["buddyPicture"] != nil {
+			pic := status["buddyPicture"].(string)
+			if strings.HasPrefix(pic, "data:") {
+				imageId := s.buddyImages.Update(s.Id, pic[5:])
+				if imageId != "" {
+					status["buddyPicture"] = "img:" + imageId
+				}
+			}
+		}
+	}
 
 	for _, key := range update.Types {
 
@@ -171,13 +295,6 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 
 	return s.Nonce, err
 
-}
-
-func (s *Session) Authenticated() (authenticated bool) {
-	s.mutex.Lock()
-	authenticated = s.userid != ""
-	s.mutex.Unlock()
-	return
 }
 
 func (s *Session) Authenticate(realm string, st *SessionToken, userid string) error {
@@ -252,62 +369,11 @@ func (s *Session) SetUseridFake(userid string) {
 
 }
 
-func (s *Session) DataSessionLeft(state string) *DataSession {
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	return &DataSession{
-		Type:   "Left",
-		Id:     s.Id,
-		Status: state,
-	}
-
-}
-
-func (s *Session) DataSessionJoined() *DataSession {
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	return &DataSession{
-		Type:   "Joined",
-		Id:     s.Id,
-		Userid: s.userid,
-		Ua:     s.Ua,
-		Prio:   s.Prio,
-	}
-
-}
-
-func (s *Session) DataSessionStatus() *DataSession {
-
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	return &DataSession{
-		Type:   "Status",
-		Id:     s.Id,
-		Userid: s.userid,
-		Status: s.Status,
-		Rev:    s.UpdateRev,
-		Prio:   s.Prio,
-	}
-
-}
-
 func (s *Session) NewAttestation() {
 	s.attestation = &SessionAttestation{
 		s: s,
 	}
 	s.attestation.Update()
-}
-
-func (s *Session) Attestation() (attestation string) {
-	s.mutex.RLock()
-	attestation = s.attestation.Token()
-	s.mutex.RUnlock()
-	return
 }
 
 func (s *Session) UpdateAttestation() {

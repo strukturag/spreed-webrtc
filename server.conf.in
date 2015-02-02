@@ -78,6 +78,9 @@ encryptionSecret = tne-default-encryption-block-key
 ; all users will join this room if enabled. If it is disabled then a room join
 ; form will be shown instead.
 ;defaultRoomEnabled = true
+; Whether a user account is required to join a room. This only has an effect
+; if user accounts are enabled. Optional, defaults to false.
+;authorizeRoomJoin = false
 ; Whether a user account is required to create a room. This only has an effect
 ; if user accounts are enabled. Optional, defaults to false.
 ;authorizeRoomCreation = false
@@ -114,6 +117,13 @@ serverRealm = local
 ; Content-Security-Policy-Report-Only HTTP response header value. Use this
 ; to test your CSP before putting it into production.
 ;contentSecurityPolicyReportOnly =
+
+[modules]
+; Modules provide optional functionality. Modules are enabled by default and
+; can be disabled by setting false to their corresponding configuration.
+;screensharing = true
+;youtube = true
+;presentation = true
 
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log

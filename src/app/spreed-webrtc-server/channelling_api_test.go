@@ -57,17 +57,17 @@ func (fake *fakeRoomManager) RoomUsers(session *Session) []*DataSession {
 	return fake.roomUsers
 }
 
-func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, _ Sender) (*DataRoom, error) {
+func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
 	fake.joinedID = id
 	return &DataRoom{Name: id}, fake.joinError
 }
 
-func (fake *fakeRoomManager) LeaveRoom(session *Session) {
-	fake.leftID = session.Roomid
+func (fake *fakeRoomManager) LeaveRoom(roomID, sessionID string) {
+	fake.leftID = roomID
 }
 
-func (fake *fakeRoomManager) Broadcast(_ *Session, msg interface{}) {
-	fake.broadcasts = append(fake.broadcasts, msg)
+func (fake *fakeRoomManager) Broadcast(_, _ string, outgoing *DataOutgoing) {
+	fake.broadcasts = append(fake.broadcasts, outgoing.Data)
 }
 
 func (fake *fakeRoomManager) UpdateRoom(_ *Session, _ *DataRoom) (*DataRoom, error) {
@@ -98,8 +98,14 @@ func assertErrorReply(t *testing.T, client *fakeClient, iid, code string) {
 }
 
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
-	client, roomManager, session := &fakeClient{}, &fakeRoomManager{}, &Session{}
-	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil, roomManager, nil), client, session, roomManager
+	client, roomManager := &fakeClient{}, &fakeRoomManager{}
+	session := &Session{
+		attestations:      sessionNonces,
+		Broadcaster:       roomManager,
+		RoomStatusManager: roomManager,
+	}
+	session.attestation = &SessionAttestation{s: session}
+	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil), client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {

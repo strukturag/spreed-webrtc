@@ -108,9 +108,8 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				// Add created scope.
 				if (stream === dummy) {
 					subscope.dummy = true;
-				} else {
-					streams[id] = subscope;
 				}
+				streams[id] = subscope;
 
 				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {

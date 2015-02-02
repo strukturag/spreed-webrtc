@@ -57,10 +57,10 @@ func (u *User) AddSession(s *Session) bool {
 }
 
 // Return true if no session left.
-func (u *User) RemoveSession(s *Session) bool {
+func (u *User) RemoveSession(sessionID string) bool {
 	last := false
 	u.mutex.Lock()
-	delete(u.sessionTable, s.Id)
+	delete(u.sessionTable, sessionID)
 	if len(u.sessionTable) == 0 {
 		log.Println("Last session unregistered for user", u.Id)
 		last = true

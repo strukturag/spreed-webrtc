@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-08 16:48+0100\n"
+"POT-Creation-Date: 2015-01-28 15:06+0100\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,30 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Share a YouTube video"
-msgstr ""
-
-msgid "Share a file as presentation"
-msgstr ""
-
-msgid "Share your screen"
-msgstr "画面を共有する."
-
-msgid "Chat"
-msgstr "チャット"
-
-msgid "Contacts"
-msgstr ""
-
-msgid "Mute microphone"
-msgstr "消音"
-
-msgid "Turn camera off"
-msgstr "カメラをオフにする"
-
-msgid "Settings"
-msgstr "設定"
 
 msgid "Your audio level"
 msgstr "あなたの音量"
@@ -199,6 +175,30 @@ msgstr "リトライ"
 msgid "Download failed."
 msgstr "ダウンロード失敗."
 
+msgid "Share a YouTube video"
+msgstr ""
+
+msgid "Share a file as presentation"
+msgstr ""
+
+msgid "Share your screen"
+msgstr "画面を共有する."
+
+msgid "Chat"
+msgstr "チャット"
+
+msgid "Contacts"
+msgstr ""
+
+msgid "Mute microphone"
+msgstr "消音"
+
+msgid "Turn camera off"
+msgstr "カメラをオフにする"
+
+msgid "Settings"
+msgstr "設定"
+
 msgid "Loading presentation ..."
 msgstr ""
 
@@ -231,11 +231,11 @@ msgstr "ルームチェンジ"
 msgid "Room"
 msgstr "ルーム"
 
-msgid "Main"
-msgstr "メイン"
-
 msgid "Leave room"
 msgstr "ルームを出る"
+
+msgid "Main"
+msgstr "メイン"
 
 msgid "Current room"
 msgstr "現在のルーム"
@@ -490,6 +490,9 @@ msgid ""
 msgstr ""
 
 msgid "Room history"
+msgstr ""
+
+msgid "Please sign in."
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."

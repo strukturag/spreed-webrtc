@@ -22,9 +22,6 @@
 "use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
-	var alive_check_timeout = 5000;
-	var alive_check_timeout_2 = 10000;
-
 	var Api = function(version, connector) {
 		this.version = version;
 		this.id = null;
@@ -48,35 +45,39 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			this.received(data);
 		}, this));
 
-		// Trigger alive heartbeat when nothing is received for a while.
-		this.heartbeat = window.setInterval(_.bind(function() {
-			var last_receive = this.last_receive;
-			if (this.connector.connected) {
-				if (last_receive !== null) {
-					//console.log("api heartbeat", this.last_receive);
-					var now = new Date().getTime();
-					if (this.last_receive_overdue) {
-						if (now > last_receive + alive_check_timeout_2) {
-							console.log("Reconnecting because alive timeout was reached.");
-							this.last_receive_overdue = false;
-							this.last_receive = null;
-							this.connector.disconnect(true);
-						}
-					} else {
-						if (now > last_receive + alive_check_timeout) {
-							//console.log("overdue 1");
-							this.last_receive_overdue = true;
-							this.sendAlive(now);
-						}
-					}
-				}
-			} else {
-				this.last_receive = null;
-				this.last_receive_overdue = false;
-			}
-		}, this), 1000);
+		// Heartbeat support.
 		this.last_receive = null;
 		this.last_receive_overdue = false;
+
+	};
+
+	Api.prototype.heartbeat = function(timeout, timeout2) {
+
+		// Heartbeat emitter.
+		var last_receive = this.last_receive;
+		if (this.connector.connected) {
+			if (last_receive !== null) {
+				//console.log("api heartbeat", this.last_receive);
+				var now = new Date().getTime();
+				if (this.last_receive_overdue) {
+					if (now > last_receive + timeout2) {
+						console.log("Reconnecting because alive timeout was reached.");
+						this.last_receive_overdue = false;
+						this.last_receive = null;
+						this.connector.disconnect(true);
+					}
+				} else {
+					if (now > last_receive + timeout) {
+						//console.log("overdue 1");
+						this.last_receive_overdue = true;
+						this.sendAlive(now);
+					}
+				}
+			}
+		} else {
+			this.last_receive = null;
+			this.last_receive_overdue = false;
+		}
 
 	};
 

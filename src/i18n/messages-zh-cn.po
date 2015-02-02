@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2014-12-08 16:48+0100\n"
+"POT-Creation-Date: 2015-01-28 15:06+0100\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,30 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Share a YouTube video"
-msgstr ""
-
-msgid "Share a file as presentation"
-msgstr ""
-
-msgid "Share your screen"
-msgstr "共享您的屏幕"
-
-msgid "Chat"
-msgstr "聊天"
-
-msgid "Contacts"
-msgstr ""
-
-msgid "Mute microphone"
-msgstr "关闭麦克风"
-
-msgid "Turn camera off"
-msgstr "关闭摄像头"
-
-msgid "Settings"
-msgstr "系统设置"
 
 msgid "Your audio level"
 msgstr "您的通话音量"
@@ -199,6 +175,30 @@ msgstr "重试"
 msgid "Download failed."
 msgstr "下载失败"
 
+msgid "Share a YouTube video"
+msgstr ""
+
+msgid "Share a file as presentation"
+msgstr ""
+
+msgid "Share your screen"
+msgstr "共享您的屏幕"
+
+msgid "Chat"
+msgstr "聊天"
+
+msgid "Contacts"
+msgstr ""
+
+msgid "Mute microphone"
+msgstr "关闭麦克风"
+
+msgid "Turn camera off"
+msgstr "关闭摄像头"
+
+msgid "Settings"
+msgstr "系统设置"
+
 msgid "Loading presentation ..."
 msgstr ""
 
@@ -231,11 +231,11 @@ msgstr "更换房间"
 msgid "Room"
 msgstr "房间"
 
-msgid "Main"
-msgstr "主房间"
-
 msgid "Leave room"
 msgstr "离开房间"
+
+msgid "Main"
+msgstr "主房间"
 
 msgid "Current room"
 msgstr "當前房间"
@@ -490,6 +490,9 @@ msgid ""
 msgstr ""
 
 msgid "Room history"
+msgstr ""
+
+msgid "Please sign in."
 msgstr ""
 
 msgid "Videos are shared with everyone in this call."

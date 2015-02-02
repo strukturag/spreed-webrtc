@@ -1,3 +1,19 @@
+spreed-webrtc-server (0.23.4) precise; urgency=low
+
+  * Cleanup of README.
+  * Fixed a problem where videos were not sized correctly.
+  * Lodash was updated to 3.0.0.
+  * Server now has an option to require authentication to join rooms.
+  * Screen sharing, youtube and presentation modules can now be disabled in server.conf.
+  * Fixed position of buddy list loader animation.
+  * Fixed loaded of anonymous user data when a plugin uses the authorization api.
+  * Refactored session cleanup to fix ghost sessions.
+  * Reorganization to allow better app support.
+  * Updated require.js and r.js to 2.1.5.
+  * Fixed room reset when default room is disabled.
+
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 02 Feb 2015 17:18:53 +0100
+
 spreed-webrtc-server (0.23.3) precise; urgency=low
 
   * Improved room bar room change and leave buttons.
