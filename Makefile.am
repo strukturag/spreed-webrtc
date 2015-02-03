@@ -27,14 +27,13 @@ CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
-DESTDIR ?= /
+
+BIN ?= @prefix@/sbin
+SHARE ?= @prefix@/share/spreed-webrtc-server
+CONFIG_DIR ?= $(CONFIG_PATH)
 
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
-
-BIN := $(DESTDIR)@prefix@/sbin
-CONFIG_DIR := $(DESTDIR)@prefix@$(CONFIG_PATH)
-SHARE := $(DESTDIR)@prefix@/share/spreed-webrtc-server
 
 BUILD_ARCH := $(shell $(GO) env GOARCH)
 BUILD_OS := $(shell go env GOOS)
@@ -119,8 +118,9 @@ release: OUTPUT = $(DIST_BIN)
 release: $(DIST_BIN) binary releaseassets
 
 install:
-	echo $(BIN)
-	echo $(SHARE)
+	@echo "Installing binaries to: $(BIN)"
+	@echo "Installing static resources to: $(SHARE)"
+	@echo "Installing config file to: $(CONFIG_DIR)"
 	$(INSTALL) -d $(BIN) $(CONFIG_DIR)
 	$(INSTALL) -d $(SHARE)/www/html
 	$(INSTALL) -d $(SHARE)/www/static
