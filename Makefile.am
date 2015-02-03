@@ -30,7 +30,6 @@ GOTESTFLAGS ?=
 
 BIN ?= @prefix@/sbin
 SHARE ?= @prefix@/share/spreed-webrtc-server
-CONFIG_DIR ?= $(CONFIG_PATH)
 
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
@@ -120,8 +119,7 @@ release: $(DIST_BIN) binary releaseassets
 install:
 	@echo "Installing binaries to: $(BIN)"
 	@echo "Installing static resources to: $(SHARE)"
-	@echo "Installing config file to: $(CONFIG_DIR)"
-	$(INSTALL) -d $(BIN) $(CONFIG_DIR)
+	$(INSTALL) -d $(BIN)
 	$(INSTALL) -d $(SHARE)/www/html
 	$(INSTALL) -d $(SHARE)/www/static
 	$(INSTALL) -d $(SHARE)/www/static/img
@@ -131,7 +129,6 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/css
 	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) bin/$(EXENAME) $(BIN)
-	$(INSTALL) -m 644 server.conf.in $(CONFIG_DIR)/$(CONFIG_FILE)
 	$(INSTALL) html/* $(SHARE)/www/html
 	$(INSTALL) static/img/* $(SHARE)/www/static/img
 	$(INSTALL) static/sounds/* $(SHARE)/www/static/sounds
@@ -166,11 +163,11 @@ $(DIST_BIN):
 
 tarball: TARPATH = $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 tarball: BIN = $(TARPATH)/loader
-tarball: CONFIG_DIR = $(TARPATH)/loader
-tarball: DOCS = $(CONFIG_DIR)/docs
+tarball: DOCS = $(TARPATH)/loader/docs
 tarball: SHARE = $(TARPATH)/
 tarball: distclean release install
 		echo -n $(PACKAGE_VERSION) > $(TARPATH)/version.txt
+		cp server.conf.in $(TARPATH)/loader
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 .PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
