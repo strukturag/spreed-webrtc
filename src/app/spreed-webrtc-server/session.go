@@ -204,6 +204,10 @@ func (s *Session) Unicast(to string, m interface{}) {
 
 func (s *Session) Close() {
 	s.mutex.Lock()
+	if s.disconnected {
+		s.mutex.Unlock()
+		return
+	}
 
 	outgoing := &DataOutgoing{
 		From: s.Id,
@@ -230,7 +234,6 @@ func (s *Session) Close() {
 		session.RemoveSubscriber(s.Id)
 	}
 
-	s.Unicaster.OnDisconnect(s.Id)
 	s.SessionManager.DestroySession(s.Id, s.userid)
 	s.buddyImages.Delete(s.Id)
 

@@ -150,24 +150,19 @@ func (h *hub) GetSession(id string) (session *Session, ok bool) {
 }
 
 func (h *hub) OnConnect(client Client, session *Session) {
-	// Set flags.
-
 	h.mutex.Lock()
-
-	log.Printf("Created client with id %s", session.Id)
-
+	log.Printf("Created client %d with id %s\n", client.Index(), session.Id)
 	// Register connection or replace existing one.
 	if ec, ok := h.clients[session.Id]; ok {
-		ec.Close()
-		//log.Printf("Register (%d) from %s: %s (existing)\n", c.Idx, c.Id)
+		log.Printf("Closing obsolete client %d with id %s\n", ec.Index(), session.Id)
+		ec.ReplaceAndClose()
 	}
 	h.clients[session.Id] = client
-	//fmt.Println("registered", c.Id)
 	h.mutex.Unlock()
-	//log.Printf("Register (%d) from %s: %s\n", c.Idx, c.Id)
 }
 
 func (h *hub) OnDisconnect(sessionID string) {
+	log.Printf("Cleaning up session id %s\n", sessionID)
 	h.mutex.Lock()
 	delete(h.clients, sessionID)
 	h.mutex.Unlock()
