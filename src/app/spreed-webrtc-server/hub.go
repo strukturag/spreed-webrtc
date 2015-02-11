@@ -48,8 +48,8 @@ type SessionStore interface {
 type Unicaster interface {
 	SessionStore
 	OnConnect(Client, *Session)
+	OnDisconnect(Client, *Session)
 	Unicast(to string, outgoing *DataOutgoing)
-	OnDisconnect(sessionID string)
 }
 
 type ContactManager interface {
@@ -161,10 +161,16 @@ func (h *hub) OnConnect(client Client, session *Session) {
 	h.mutex.Unlock()
 }
 
-func (h *hub) OnDisconnect(sessionID string) {
-	log.Printf("Cleaning up session id %s\n", sessionID)
+func (h *hub) OnDisconnect(client Client, session *Session) {
 	h.mutex.Lock()
-	delete(h.clients, sessionID)
+	if ec, ok := h.clients[session.Id]; ok {
+		if ec == client {
+			log.Printf("Cleaning up client %d for session id %s\n", ec.Index(), session.Id)
+			delete(h.clients, session.Id)
+		} else {
+			log.Printf("Not cleaning up session %s as client %d was replaced with %d\n", session.Id, client.Index(), ec.Index())
+		}
+	}
 	h.mutex.Unlock()
 }
 

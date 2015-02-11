@@ -32,7 +32,7 @@ const (
 
 type ChannellingAPI interface {
 	OnConnect(Client, *Session)
-	OnDisconnect(string)
+	OnDisconnect(Client, *Session)
 	OnIncoming(ResponseSender, *Session, *DataIncoming)
 }
 
@@ -65,8 +65,8 @@ func (api *channellingAPI) OnConnect(client Client, session *Session) {
 	api.SendSelf(client, session)
 }
 
-func (api *channellingAPI) OnDisconnect(sessionID string) {
-	api.Unicaster.OnDisconnect(sessionID)
+func (api *channellingAPI) OnDisconnect(client Client, session *Session) {
+	api.Unicaster.OnDisconnect(client, session)
 }
 
 func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *DataIncoming) {

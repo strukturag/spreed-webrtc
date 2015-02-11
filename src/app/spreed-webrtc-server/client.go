@@ -50,12 +50,11 @@ type client struct {
 	Codec
 	ChannellingAPI
 	Connection
-	session  *Session
-	replaced bool
+	session *Session
 }
 
 func NewClient(codec Codec, api ChannellingAPI, session *Session) *client {
-	return &client{codec, api, nil, session, false}
+	return &client{codec, api, nil, session}
 }
 
 func (client *client) OnConnect(conn Connection) {
@@ -65,11 +64,7 @@ func (client *client) OnConnect(conn Connection) {
 
 func (client *client) OnDisconnect() {
 	client.session.Close()
-	if client.replaced {
-		log.Printf("Not cleaning up session %s as client %d was replaced\n", client.session.Id, client.Index())
-		return
-	}
-	client.ChannellingAPI.OnDisconnect(client.session.Id)
+	client.ChannellingAPI.OnDisconnect(client, client.session)
 }
 
 func (client *client) OnText(b Buffer) {
@@ -94,7 +89,6 @@ func (client *client) Session() *Session {
 }
 
 func (client *client) ReplaceAndClose() {
-	client.replaced = true
 	client.session.Close()
 	if client.Connection != nil {
 		client.Connection.Close()
