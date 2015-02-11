@@ -64,6 +64,7 @@ type Connection interface {
 type ConnectionHandler interface {
 	NewBuffer() Buffer
 	OnConnect(Connection)
+	OnDisconnect()
 	OnText(Buffer)
 }
 
@@ -167,6 +168,7 @@ func (c *connection) readPump() {
 	}
 
 	c.Close()
+	c.handler.OnDisconnect()
 }
 
 // Write message to outbound queue.

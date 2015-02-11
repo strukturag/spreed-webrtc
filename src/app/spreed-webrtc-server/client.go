@@ -43,6 +43,7 @@ type Client interface {
 	Session() *Session
 	Index() uint64
 	Close()
+	ReplaceAndClose()
 }
 
 type client struct {
@@ -59,6 +60,11 @@ func NewClient(codec Codec, api ChannellingAPI, session *Session) *client {
 func (client *client) OnConnect(conn Connection) {
 	client.Connection = conn
 	client.ChannellingAPI.OnConnect(client, client.session)
+}
+
+func (client *client) OnDisconnect() {
+	client.session.Close()
+	client.ChannellingAPI.OnDisconnect(client, client.session)
 }
 
 func (client *client) OnText(b Buffer) {
@@ -80,4 +86,11 @@ func (client *client) Reply(iid string, m interface{}) {
 
 func (client *client) Session() *Session {
 	return client.session
+}
+
+func (client *client) ReplaceAndClose() {
+	client.session.Close()
+	if client.Connection != nil {
+		client.Connection.Close()
+	}
 }

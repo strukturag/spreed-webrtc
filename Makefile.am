@@ -27,14 +27,12 @@ CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
-DESTDIR ?= /
+
+BIN ?= @prefix@/sbin
+SHARE ?= @prefix@/share/spreed-webrtc-server
 
 OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
-
-BIN := $(DESTDIR)@prefix@/sbin
-CONFIG_DIR := $(DESTDIR)@prefix@$(CONFIG_PATH)
-SHARE := $(DESTDIR)@prefix@/share/spreed-webrtc-server
 
 BUILD_ARCH := $(shell $(GO) env GOARCH)
 BUILD_OS := $(shell go env GOOS)
@@ -119,9 +117,9 @@ release: OUTPUT = $(DIST_BIN)
 release: $(DIST_BIN) binary releaseassets
 
 install:
-	echo $(BIN)
-	echo $(SHARE)
-	$(INSTALL) -d $(BIN) $(CONFIG_DIR)
+	@echo "Installing binaries to: $(BIN)"
+	@echo "Installing static resources to: $(SHARE)"
+	$(INSTALL) -d $(BIN)
 	$(INSTALL) -d $(SHARE)/www/html
 	$(INSTALL) -d $(SHARE)/www/static
 	$(INSTALL) -d $(SHARE)/www/static/img
@@ -131,7 +129,6 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/css
 	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) bin/$(EXENAME) $(BIN)
-	$(INSTALL) -m 644 server.conf.in $(CONFIG_DIR)/$(CONFIG_FILE)
 	$(INSTALL) html/* $(SHARE)/www/html
 	$(INSTALL) static/img/* $(SHARE)/www/static/img
 	$(INSTALL) static/sounds/* $(SHARE)/www/static/sounds
@@ -166,11 +163,11 @@ $(DIST_BIN):
 
 tarball: TARPATH = $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 tarball: BIN = $(TARPATH)/loader
-tarball: CONFIG_DIR = $(TARPATH)/loader
-tarball: DOCS = $(CONFIG_DIR)/docs
+tarball: DOCS = $(TARPATH)/loader/docs
 tarball: SHARE = $(TARPATH)/
 tarball: distclean release install
 		echo -n $(PACKAGE_VERSION) > $(TARPATH)/version.txt
+		cp server.conf.in $(TARPATH)/loader
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 .PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets

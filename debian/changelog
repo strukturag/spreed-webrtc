@@ -1,3 +1,10 @@
+spreed-webrtc-server (0.23.5) precise; urgency=low
+
+  * No longer install config file in install target of Makefile. We leave it to the packaging.
+  * Sessions are no longer cleaned up when another connection replaced the session and a stale connection gets disconnected after that.
+
+ -- Simon Eisenmann <simon@struktur.de>  Wed, 11 Feb 2015 11:16:47 +0100
+
 spreed-webrtc-server (0.23.4) precise; urgency=low
 
   * Cleanup of README.
