@@ -2,7 +2,6 @@
 // ./configure --without-all --with-sha256 --with-sha512 --with-sha1 --with-hmac --with-codecBase64 --with-codecString --with-aes --with-ccm --with-convenience --compress=none
 // Copyright 2009-2010 Emily Stark, Mike Hamburg, Dan Boneh, Stanford University.
 // SJCL is dual-licensed under the GNU GPL version 2.0 or higher, and a 2-clause BSD license.
-
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -75,6 +74,11 @@ var sjcl = {
 
 if(typeof module !== 'undefined' && module.exports){
   module.exports = sjcl;
+}
+if (typeof define === "function") {
+    define([], function () {
+        return sjcl;
+    });
 }
 /** @fileOverview Low-level AES implementation.
  *
@@ -360,7 +364,7 @@ sjcl.bitArray = {
       return a1.concat(a2);
     }
     
-    var out, i, last = a1[a1.length-1], shift = sjcl.bitArray.getPartial(last);
+    var last = a1[a1.length-1], shift = sjcl.bitArray.getPartial(last);
     if (shift === 32) {
       return a1.concat(a2);
     } else {
@@ -469,6 +473,20 @@ sjcl.bitArray = {
    */
   _xor4: function(x,y) {
     return [x[0]^y[0],x[1]^y[1],x[2]^y[2],x[3]^y[3]];
+  },
+
+  /** byteswap a word array inplace.
+   * (does not handle partial words)
+   * @param {sjcl.bitArray} a word array
+   * @return {sjcl.bitArray} byteswapped array
+   */
+  byteswapM: function(a) {
+    var i, v, m = 0xff00;
+    for (i = 0; i < a.length; ++i) {
+      v = a[i];
+      a[i] = (v >>> 24) | ((v >>> 8) & m) | ((v & m) << 8) | (v << 24);
+    }
+    return a;
   }
 };
 /** @fileOverview Bit array codec implementations.
@@ -1094,7 +1112,7 @@ sjcl.hash.sha512.prototype = {
       t1h += chh + ((t1l >>> 0) < (chl >>> 0) ? 1 : 0);
       t1l += krl;
       t1h += krh + ((t1l >>> 0) < (krl >>> 0) ? 1 : 0);
-      t1l += wrl;
+      t1l = t1l + wrl|0;   // FF32..FF34 perf issue https://bugzilla.mozilla.org/show_bug.cgi?id=1054972
       t1h += wrh + ((t1l >>> 0) < (wrl >>> 0) ? 1 : 0);
 
       // t2 = sigma0 + maj
@@ -1281,8 +1299,7 @@ sjcl.hash.sha1.prototype = {
   _block:function (words) {  
     var t, tmp, a, b, c, d, e,
     w = words.slice(0),
-    h = this._h,
-    k = this._key;
+    h = this._h;
    
     a = h[0]; b = h[1]; c = h[2]; d = h[3]; e = h[4]; 
 
@@ -1333,7 +1350,7 @@ sjcl.mode.ccm = {
    * @return {bitArray} The encrypted data, an array of bytes.
    */
   encrypt: function(prf, plaintext, iv, adata, tlen) {
-    var L, i, out = plaintext.slice(0), tag, w=sjcl.bitArray, ivl = w.bitLength(iv) / 8, ol = w.bitLength(out) / 8;
+    var L, out = plaintext.slice(0), tag, w=sjcl.bitArray, ivl = w.bitLength(iv) / 8, ol = w.bitLength(out) / 8;
     tlen = tlen || 64;
     adata = adata || [];
     
@@ -1367,7 +1384,7 @@ sjcl.mode.ccm = {
   decrypt: function(prf, ciphertext, iv, adata, tlen) {
     tlen = tlen || 64;
     adata = adata || [];
-    var L, i, 
+    var L,
         w=sjcl.bitArray,
         ivl = w.bitLength(iv) / 8,
         ol = w.bitLength(ciphertext), 
@@ -1409,7 +1426,7 @@ sjcl.mode.ccm = {
    */
   _computeTag: function(prf, plaintext, iv, adata, tlen, L) {
     // compute B[0]
-    var q, mac, field = 0, offset = 24, tmp, i, macData = [], w=sjcl.bitArray, xor = w._xor4;
+    var mac, tmp, i, macData = [], w=sjcl.bitArray, xor = w._xor4;
 
     tlen /= 8;
   
@@ -1469,7 +1486,7 @@ sjcl.mode.ccm = {
    * @private
    */
   _ctrMode: function(prf, data, iv, tag, tlen, L) {
-    var enc, i, w=sjcl.bitArray, xor = w._xor4, ctr, b, l = data.length, bl=w.bitLength(data);
+    var enc, i, w=sjcl.bitArray, xor = w._xor4, ctr, l = data.length, bl=w.bitLength(data);
 
     // start the ctr
     ctr = w.concat([w.partial(8,L-1)],iv).concat([0,0,0]).slice(0,4);
@@ -1855,14 +1872,16 @@ sjcl.prng.prototype = {
       loadTimeCollector: this._bind(this._loadTimeCollector),
       mouseCollector: this._bind(this._mouseCollector),
       keyboardCollector: this._bind(this._keyboardCollector),
-      accelerometerCollector: this._bind(this._accelerometerCollector)
-    }
+      accelerometerCollector: this._bind(this._accelerometerCollector),
+      touchCollector: this._bind(this._touchCollector)
+    };
 
     if (window.addEventListener) {
       window.addEventListener("load", this._eventListener.loadTimeCollector, false);
       window.addEventListener("mousemove", this._eventListener.mouseCollector, false);
       window.addEventListener("keypress", this._eventListener.keyboardCollector, false);
       window.addEventListener("devicemotion", this._eventListener.accelerometerCollector, false);
+      window.addEventListener("touchmove", this._eventListener.touchCollector, false);
     } else if (document.attachEvent) {
       document.attachEvent("onload", this._eventListener.loadTimeCollector);
       document.attachEvent("onmousemove", this._eventListener.mouseCollector);
@@ -1883,6 +1902,7 @@ sjcl.prng.prototype = {
       window.removeEventListener("mousemove", this._eventListener.mouseCollector, false);
       window.removeEventListener("keypress", this._eventListener.keyboardCollector, false);
       window.removeEventListener("devicemotion", this._eventListener.accelerometerCollector, false);
+      window.removeEventListener("touchmove", this._eventListener.touchCollector, false);
     } else if (document.detachEvent) {
       document.detachEvent("onload", this._eventListener.loadTimeCollector);
       document.detachEvent("onmousemove", this._eventListener.mouseCollector);
@@ -2005,8 +2025,31 @@ sjcl.prng.prototype = {
   },
   
   _mouseCollector: function (ev) {
-    var x = ev.x || ev.clientX || ev.offsetX || 0, y = ev.y || ev.clientY || ev.offsetY || 0;
-    sjcl.random.addEntropy([x,y], 2, "mouse");
+    var x, y;
+
+    try {
+      x = ev.x || ev.clientX || ev.offsetX || 0;
+      y = ev.y || ev.clientY || ev.offsetY || 0;
+    } catch (err) {
+      // Event originated from a secure element. No mouse position available.
+      x = 0;
+      y = 0;
+    }
+
+    if (x != 0 && y!= 0) {
+      sjcl.random.addEntropy([x,y], 2, "mouse");
+    }
+
+    this._addCurrentTimeToEntropy(0);
+  },
+
+  _touchCollector: function(ev) {
+    var touch = ev.touches[0] || ev.changedTouches[0];
+    var x = touch.pageX || touch.clientX,
+        y = touch.pageY || touch.clientY;
+
+    sjcl.random.addEntropy([x,y],1,"touch");
+
     this._addCurrentTimeToEntropy(0);
   },
   
@@ -2015,7 +2058,7 @@ sjcl.prng.prototype = {
   },
 
   _addCurrentTimeToEntropy: function (estimatedEntropy) {
-    if (window && window.performance && typeof window.performance.now === "function") {
+    if (typeof window !== 'undefined' && window.performance && typeof window.performance.now === "function") {
       //how much entropy do we want to add here?
       sjcl.random.addEntropy(window.performance.now(), estimatedEntropy, "loadtime");
     } else {
@@ -2073,7 +2116,7 @@ sjcl.random = new sjcl.prng(6);
   }
 
   try {
-    var buf, crypt, getRandomValues, ab;
+    var buf, crypt, ab;
 
     // get cryptographically strong entropy depending on runtime environment
     if (typeof module !== 'undefined' && module.exports && (crypt = getCryptoModule()) && crypt.randomBytes) {
@@ -2081,7 +2124,7 @@ sjcl.random = new sjcl.prng(6);
       buf = new Uint32Array(new Uint8Array(buf).buffer);
       sjcl.random.addEntropy(buf, 1024, "crypto.randomBytes");
 
-    } else if (window && Uint32Array) {
+    } else if (typeof window !== 'undefined' && typeof Uint32Array !== 'undefined') {
       ab = new Uint32Array(32);
       if (window.crypto && window.crypto.getRandomValues) {
         window.crypto.getRandomValues(ab);
@@ -2111,7 +2154,7 @@ sjcl.random = new sjcl.prng(6);
  * @author Mike Hamburg
  * @author Dan Boneh
  */
- 
+
  /** @namespace JSON encapsulation */
  sjcl.json = {
   /** Default values for encryption */
@@ -2162,7 +2205,7 @@ sjcl.random = new sjcl.prng(6);
       plaintext = sjcl.codec.utf8String.toBits(plaintext);
     }
     if (typeof adata === "string") {
-      adata = sjcl.codec.utf8String.toBits(adata);
+      p.adata = adata = sjcl.codec.utf8String.toBits(adata);
     }
     prp = new sjcl.cipher[p.cipher](password);
 
@@ -2240,7 +2283,11 @@ sjcl.random = new sjcl.prng(6);
     j._add(rp, p);
     rp.key = password;
 
-    return sjcl.codec.utf8String.fromBits(ct);
+    if (params.raw === 1) {
+      return ct;
+    } else {
+      return sjcl.codec.utf8String.fromBits(ct);
+    }
   },
 
   /** Simple decryption function.
@@ -2256,7 +2303,7 @@ sjcl.random = new sjcl.prng(6);
     var j = sjcl.json;
     return j._decrypt(password, j.decode(ciphertext), params, rp);
   },
-  
+
   /** Encode a flat structure into a JSON string.
    * @param {Object} obj The structure to encode.
    * @return {String} A JSON string.
@@ -2294,7 +2341,7 @@ sjcl.random = new sjcl.prng(6);
     }
     return out+'}';
   },
-  
+
   /** Decode a simple (flat) JSON string into a structure.  The ciphertext,
    * adata, salt and iv will be base64-decoded.
    * @param {String} str The string.
@@ -2303,23 +2350,25 @@ sjcl.random = new sjcl.prng(6);
    */
   decode: function (str) {
     str = str.replace(/\s/g,'');
-    if (!str.match(/^\{.*\}$/)) { 
+    if (!str.match(/^\{.*\}$/)) {
       throw new sjcl.exception.invalid("json decode: this isn't json!");
     }
     var a = str.replace(/^\{|\}$/g, '').split(/,/), out={}, i, m;
     for (i=0; i<a.length; i++) {
-      if (!(m=a[i].match(/^(?:(["']?)([a-z][a-z0-9]*)\1):(?:(\d+)|"([a-z0-9+\/%*_.@=\-]*)")$/i))) {
+      if (!(m=a[i].match(/^\s*(?:(["']?)([a-z][a-z0-9]*)\1)\s*:\s*(?:(-?\d+)|"([a-z0-9+\/%*_.@=\-]*)"|(true|false))$/i))) {
         throw new sjcl.exception.invalid("json decode: this isn't json!");
       }
       if (m[3]) {
         out[m[2]] = parseInt(m[3],10);
-      } else {
-        out[m[2]] = m[2].match(/^(ct|salt|iv)$/) ? sjcl.codec.base64.toBits(m[4]) : unescape(m[4]);
+      } else if (m[4]) {
+        out[m[2]] = m[2].match(/^(ct|adata|salt|iv)$/) ? sjcl.codec.base64.toBits(m[4]) : unescape(m[4]);
+      } else if (m[5]) {
+        out[m[2]] = m[5] === 'true';
       }
     }
     return out;
   },
-  
+
   /** Insert all elements of src into target, modifying and returning target.
    * @param {Object} target The object to be modified.
    * @param {Object} src The object to pull data from.
@@ -2341,7 +2390,7 @@ sjcl.random = new sjcl.prng(6);
     }
     return target;
   },
-  
+
   /** Remove all elements of minus from plus.  Does not modify plus.
    * @private
    */
@@ -2356,7 +2405,7 @@ sjcl.random = new sjcl.prng(6);
 
     return out;
   },
-  
+
   /** Return only the specified elements of src.
    * @private
    */
@@ -2401,19 +2450,17 @@ sjcl.misc._pbkdf2Cache = {};
  */
 sjcl.misc.cachedPbkdf2 = function (password, obj) {
   var cache = sjcl.misc._pbkdf2Cache, c, cp, str, salt, iter;
-  
+
   obj = obj || {};
   iter = obj.iter || 1000;
-  
+
   /* open the cache for this password and iteration count */
   cp = cache[password] = cache[password] || {};
   c = cp[iter] = cp[iter] || { firstSalt: (obj.salt && obj.salt.length) ?
                      obj.salt.slice(0) : sjcl.random.randomWords(2,0) };
-          
+
   salt = (obj.salt === undefined) ? c.firstSalt : obj.salt;
-  
+
   c[salt] = c[salt] || sjcl.misc.pbkdf2(password, salt, obj.iter);
   return { key: c[salt].slice(0), salt:salt.slice(0) };
 };
-
-
