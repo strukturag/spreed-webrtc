@@ -74,7 +74,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			$scope.volume = null;
 
 			isYouTubeIframeAPIReady.then(function() {
-				$scope.$apply(function(scope) {
+				safeApply($scope, function(scope) {
 					scope.youtubeAPIReady = true;
 				});
 			});
