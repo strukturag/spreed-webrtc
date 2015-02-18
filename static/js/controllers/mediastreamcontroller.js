@@ -145,6 +145,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				defaultRoom: "",
 				language: "",
 				audioRenderToAssociatedSkin: true,
+				videoCpuOveruseDetection: true,
 				experimental: {
 					enabled: false,
 					audioEchoCancellation2: true,
@@ -152,8 +153,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					audioNoiseSuppression2: true,
 					audioTypingNoiseDetection: true,
 					videoLeakyBucket: true,
-					videoNoiseReduction: false,
-					videoCpuOveruseDetection: true
+					videoNoiseReduction: false
 				}
 			}
 		};
