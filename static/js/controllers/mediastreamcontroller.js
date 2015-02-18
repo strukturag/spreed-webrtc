@@ -140,7 +140,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			message: null,
 			settings: {
 				videoQuality: "high",
-				stereo: true,
+				sendStereo: false,
 				maxFrameRate: 20,
 				defaultRoom: "",
 				language: "",
@@ -225,9 +225,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				}
 			}
 			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-
-			// Stereo.
-			mediaStream.webrtc.settings.stereo = settings.stereo;
 
 			// Refresh constraints.
 			constraints.refresh($scope.master.settings);

@@ -59,7 +59,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		// Settings.are cloned into peer call on call creation.
 		this.settings = {
-			stereo: false,
 			mediaConstraints: {
 				audio: true,
 				video: {
@@ -76,6 +75,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				}]
 			},
 			pcConstraints: {
+				mandatory: {},
 				optional: []
 			},
 			// Set up audio and video regardless of what devices are present.
@@ -83,7 +83,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				mandatory: {
 					OfferToReceiveAudio: true,
 					OfferToReceiveVideo: true
-				}
+				},
+				optional: []
 			},
 			offerConstraints: {
 				mandatory: {},
@@ -97,6 +98,20 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 						mandatory: {}
 					}
 				}
+			},
+			// sdpParams values need to be strings.
+			sdpParams: {
+				//audioSendBitrate: ,
+				audioSendCodec: "opus/48000",
+				//audioRecvBitrate: ,
+				//audioRecvCodec: ,
+				//opusMaxPbr: ,
+				opusStereo: "true",
+				//videoSendBitrate: ,
+				//videoSendInitialBitrate: ,
+				videoSendCodec: "VP8/90000"
+				//videoRecvBitrate: ,
+				//videoRecvCodec
 			}
 		}
 
@@ -228,9 +243,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		switch (type) {
 			case "Offer":
 				console.log("Offer process.");
-				if (this.settings.stereo) {
-					data.sdp = utils.addStereo(data.sdp);
-				}
 				targetcall = this.findTargetCall(from);
 				if (targetcall) {
 					// Hey we know this call.
@@ -280,9 +292,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					return;
 				}
 				console.log("Answer process.");
-				if (this.settings.stereo) {
-					data.sdp = utils.addStereo(data.sdp);
-				}
 				// TODO(longsleep): In case of negotiation this could switch offer and answer
 				// and result in a offer sdp sent as answer data. We need to handle this.
 				targetcall.setRemoteDescription(new window.RTCSessionDescription(data), function() {
