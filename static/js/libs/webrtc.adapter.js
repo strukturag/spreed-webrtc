@@ -70,17 +70,6 @@ if (navigator.mozGetUserMedia) {
   getUserMedia = navigator.mozGetUserMedia.bind(navigator);
   navigator.getUserMedia = getUserMedia;
 
-  // Shim for MediaStreamTrack.getSources.
-  MediaStreamTrack.getSources = function(successCb) {
-    setTimeout(function() {
-      var infos = [
-        {kind: 'audio', id: 'default', label:'', facing:''},
-        {kind: 'video', id: 'default', label:'', facing:''}
-      ];
-      successCb(infos);
-    }, 0);
-  };
-
   // Creates ICE server from the URL for FF.
   window.createIceServer = function(url, username, password) {
     var iceServer = null;
