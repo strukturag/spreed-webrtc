@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-01-28 15:06+0100\n"
+"POT-Creation-Date: 2015-02-18 11:08+0100\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -343,9 +343,6 @@ msgstr "启用"
 msgid "Advanced settings"
 msgstr "高级设置"
 
-msgid "Stereo audio"
-msgstr "立体声"
-
 msgid "Play audio on same device as selected microphone"
 msgstr ""
 
@@ -363,6 +360,15 @@ msgstr "最大视频帧速率"
 
 msgid "auto"
 msgstr "自动"
+
+#, fuzzy
+msgid "Send stereo audio"
+msgstr "立体声"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr ""
 
 msgid "Optimize for high resolution video"
 msgstr ""
