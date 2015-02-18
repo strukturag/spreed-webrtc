@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-02-18 11:08+0100\n"
+"POT-Creation-Date: 2015-02-18 14:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -365,13 +365,16 @@ msgid ""
 "stereo input."
 msgstr ""
 
+msgid "Detect CPU over use"
+msgstr ""
+
+msgid "Automatically reduces video quality as needed."
+msgstr ""
+
 msgid "Optimize for high resolution video"
 msgstr ""
 
 msgid "Reduce video noise"
-msgstr ""
-
-msgid "Detect CPU over use"
 msgstr ""
 
 msgid "Enable experiments"
@@ -494,7 +497,7 @@ msgstr ""
 msgid "Please sign in."
 msgstr ""
 
-msgid "Videos are shared with everyone in this call."
+msgid "Videos play simultaneously for everyone in this call."
 msgstr ""
 
 msgid "YouTube URL"
