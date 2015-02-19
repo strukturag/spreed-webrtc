@@ -165,11 +165,11 @@ if (navigator.mozGetUserMedia) {
 
   // Creates an ICEServer object from multiple URLs.
   window.createIceServers = function(urls, username, password) {
-    return {
+    return [{
       'urls': urls,
       'credential': password,
       'username': username
-    };
+    }];
   };
 
   // The RTCPeerConnection object.
