@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2015 struktur AG
+ * Copyright (C) 2013-2014 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,23 +19,20 @@
  *
  */
 
-"use strict";
-define(['text!partials/menu.html'], function(template) {
+.visible-with-contacts, .visible-with-contacts-inline {
+	display: none;
+}
+.hidden-with-contacts {
+}
 
-	// menu
-	return ["modules", function(modules) {
-
-		var link = function($scope, $element) {
-			$scope.withModule = modules.withModule;
-		};
-
-		return {
-			restrict: 'E',
-			replace: true,
-			template: template,
-			link: link
-		}
-
-	}];
-
-});
+.with-contacts {
+	.visible-with-contacts {
+		display: block;
+	}
+	.visible-with-contacts-inline {
+		display: inline-block;
+	}
+	.hidden-with-contacts {
+		display: none;
+	}
+}
