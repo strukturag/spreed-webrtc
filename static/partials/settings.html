@@ -51,7 +51,7 @@
                     <button class="btn btn-small btn-primary btn-sign-in" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
+                    <button class="btn btn-small btn-info btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
                   </label>
                 </div>
                 <p class="form-control-static well well-sm" ng-if="userid">{{userid|displayUserid}}</p>
@@ -59,7 +59,7 @@
                   <button class="btn btn-small btn-default btn-sign-out" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
                 </label>
                 <label ng-if="userid && usersettings.accountUserid">
-                  <button class="btn btn-small btn-link btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
+                  <button class="btn btn-small btn-info btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
                 </label>
               </div>
             </div>
