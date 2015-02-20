@@ -187,3 +187,13 @@ linters:
 
   Compass::*:
     enabled: true
+
+  Compass::PropertyWithMixin:
+    ignore:
+      - 'inline-block'
+      - 'box-shadow'
+      - 'opacity'
+      - 'border-radius'
+      - 'transform'
+      - 'text-shadow'
+      - 'background-clip'
