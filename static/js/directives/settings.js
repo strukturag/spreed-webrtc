@@ -248,6 +248,12 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						constraints.add("video", "maxFrameRate", parseInt(settings.maxFrameRate, 10), true);
 					}
 
+					// Disable AEC if stereo.
+					// https://github.com/webrtc/apprtc/issues/23
+					if (settings.sendStereo) {
+						constraints.add("audio", "echoCancellation", false);
+					}
+
 				} else {
 
 					// Other browsers constraints (there are none as of now.);

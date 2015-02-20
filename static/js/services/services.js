@@ -65,7 +65,8 @@ define([
 	'services/rooms',
 	'services/resturl',
 	'services/roompin',
-	'services/constraints'], function(_,
+	'services/constraints',
+	'services/modules'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -108,7 +109,8 @@ localStatus,
 rooms,
 restURL,
 roompin,
-constraints) {
+constraints,
+modules) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -153,7 +155,8 @@ constraints) {
 		rooms: rooms,
 		restURL: restURL,
 		roompin: roompin,
-		constraints: constraints
+		constraints: constraints,
+		modules: modules
 	};
 
 	var initialize = function(angModule) {

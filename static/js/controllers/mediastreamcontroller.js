@@ -140,11 +140,12 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			message: null,
 			settings: {
 				videoQuality: "high",
-				stereo: true,
+				sendStereo: false,
 				maxFrameRate: 20,
 				defaultRoom: "",
 				language: "",
 				audioRenderToAssociatedSkin: true,
+				videoCpuOveruseDetection: true,
 				experimental: {
 					enabled: false,
 					audioEchoCancellation2: true,
@@ -152,8 +153,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					audioNoiseSuppression2: true,
 					audioTypingNoiseDetection: true,
 					videoLeakyBucket: true,
-					videoNoiseReduction: false,
-					videoCpuOveruseDetection: true
+					videoNoiseReduction: false
 				}
 			}
 		};
@@ -225,9 +225,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				}
 			}
 			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-
-			// Stereo.
-			mediaStream.webrtc.settings.stereo = settings.stereo;
 
 			// Refresh constraints.
 			constraints.refresh($scope.master.settings);

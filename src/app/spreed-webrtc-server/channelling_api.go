@@ -139,6 +139,9 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 			}
 		} else {
 			if msg.Chat.Chat.Status != nil && msg.Chat.Chat.Status.ContactRequest != nil {
+				if !api.Config.WithModule("contacts") {
+					return
+				}
 				if err := api.contactrequestHandler(session, msg.Chat.To, msg.Chat.Chat.Status.ContactRequest); err != nil {
 					log.Println("Ignoring invalid contact request.", err)
 					return
@@ -173,10 +176,14 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		var users []*DataSession
 		switch msg.Sessions.Sessions.Type {
 		case "contact":
-			if userID, err := api.getContactID(session, msg.Sessions.Sessions.Token); err == nil {
-				users = api.GetUserSessions(session, userID)
+			if api.Config.WithModule("contacts") {
+				if userID, err := api.getContactID(session, msg.Sessions.Sessions.Token); err == nil {
+					users = api.GetUserSessions(session, userID)
+				} else {
+					log.Printf(err.Error())
+				}
 			} else {
-				log.Printf(err.Error())
+				log.Printf("Incoming contacts session request with contacts disabled")
 			}
 		case "session":
 			id, err := session.attestation.Decode(msg.Sessions.Sessions.Token)

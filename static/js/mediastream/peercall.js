@@ -36,6 +36,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		this.pcConstraints = $.extend(true, {}, this.webrtc.settings.pcConstraints);
 		this.sdpConstraints = $.extend(true, {}, this.webrtc.settings.sdpConstraints);
 		this.offerConstraints = $.extend(true, {}, this.webrtc.settings.offerConstraints);
+		this.sdpParams = $.extend(true, {}, this.webrtc.settings.sdpParams);
 
 		this.peerconnection = null;
 		this.datachannels = {};
@@ -84,8 +85,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	PeerCall.prototype.onCreateAnswerOffer = function(cb, sessionDescription) {
 
-		// Prefer Opus.
-		sessionDescription.sdp = utils.preferOpus(sessionDescription.sdp);
+		this.setLocalSdp(sessionDescription);
 
 		// Convert to object to allow custom property injection.
 		var sessionDescriptionObj = sessionDescription;
@@ -128,6 +128,9 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			console.log("Got a remote description but not connected -> ignored.");
 			return;
 		}
+
+		this.setRemoteSdp(sessionDescription);
+
 		peerconnection.setRemoteDescription(sessionDescription, _.bind(function() {
 			console.log("Set remote session description.", sessionDescription, this);
 			if (cb) {
@@ -152,6 +155,28 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			this.close();
 			this.e.triggerHandler("error", "failed_peerconnection_setup");
 		}, this));
+
+	};
+
+	PeerCall.prototype.setLocalSdp = function(sessionDescription) {
+
+		var params = this.sdpParams;
+		sessionDescription.sdp = utils.maybePreferAudioReceiveCodec(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybePreferVideoReceiveCodec(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybeSetAudioReceiveBitRate(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybeSetVideoReceiveBitRate(sessionDescription.sdp, params);
+
+	};
+
+	PeerCall.prototype.setRemoteSdp = function(sessionDescription) {
+
+		var params = this.sdpParams;
+		sessionDescription.sdp = utils.maybeSetOpusOptions(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybePreferAudioSendCodec(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybePreferVideoSendCodec(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybeSetAudioSendBitRate(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybeSetVideoSendBitRate(sessionDescription.sdp, params);
+		sessionDescription.sdp = utils.maybeSetVideoSendInitialBitRate(sessionDescription.sdp, params);
 
 	};
 
@@ -218,7 +243,11 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// Avoid errors when still receiving candidates but closed.
 			return;
 		}
-		this.peerconnection.addIceCandidate(candidate);
+		this.peerconnection.addIceCandidate(candidate, function() {
+			//console.log("Remote candidate added successfully.", candidate);
+		}, function(error) {
+			console.warn("Failed to add remote candidate:", error, candidate);
+		});
 
 	};
 

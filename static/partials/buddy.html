@@ -1,5 +1,5 @@
 <div class="buddy" ng-class="{'contact': contact, 'withSubline': display.subline || session.Userid, 'isself': session.Userid === myuserid}">
     <div class="buddyPicture"><i class="fa fa-user"/><img ng-show="display.buddyPicture" alt ng-src="{{display.buddyPicture}}"/></div>
     <div class="buddy1">{{session.Id|displayName}}</div>
-    <div class="buddy2"><span ng-show="session.Userid"><i class="fa contact" data-action="contact"></i><span ng-show="session.count"> ({{session.count}})</span></span> <span title="{{display.sublineFull}}">{{display.subline}}</span></div>
+    <div class="buddy2"><span ng-show="session.Userid"><i class="fa contact visible-with-contacts-inline" data-action="contact"></i><span ng-show="session.count"> ({{session.count}})</span></span> <span title="{{display.sublineFull}}">{{display.subline}}</span></div>
 </div>

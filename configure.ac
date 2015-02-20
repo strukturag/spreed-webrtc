@@ -37,6 +37,7 @@ GO_VERSION_MIN=1.1
 NODEJS_VERSION_MIN=0.6.0
 NODEJS_VERSION_STYLES_MIN=0.10.0
 SASS_VERSION_MIN=3.3.0
+SCSS_LINT_VERSION_MIN=0.33.0
 
 AC_CONFIG_SRCDIR([src/app/spreed-webrtc-server/main.go])
 AC_CONFIG_MACRO_DIR([m4])
@@ -121,6 +122,15 @@ else
     AX_COMPARE_VERSION([$SASS_VERSION], [lt], [$SASS_VERSION_MIN],
         [AC_MSG_WARN([Please install compass with sass $SASS_VERSION_MIN or newer before trying to build styles (found sass $SASS_VERSION).])
         SASS_SUPPORT_STYLES=no],[SASS_SUPPORT_STYLES=yes])
+fi
+
+AC_PATH_PROG([SCSS_LINT],scss-lint, [], [$PWD/node_modules/.bin$PATH_SEPARATOR$PATH])
+if test x"${SCSS_LINT}" == x"" ; then
+    AC_MSG_WARN([Please install scss-lint to lint styles.])
+else
+    AC_MSG_CHECKING([for version of scss-lint])
+    SCSS_LINT_VERSION=`$SCSS_LINT --version | $SED 's/^scss-lint //' | $SED 's/ .*//'`
+    AC_MSG_RESULT([$SCSS_LINT_VERSION])
 fi
 
 if test x"${SASS}" != x"" ; then

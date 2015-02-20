@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-01-28 15:06+0100\n"
+"POT-Creation-Date: 2015-02-18 14:46+0100\n"
 "PO-Revision-Date: 2014-05-21 09:55+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -343,9 +343,6 @@ msgstr "啟用"
 msgid "Advanced settings"
 msgstr "高級設置"
 
-msgid "Stereo audio"
-msgstr "立體聲"
-
 msgid "Play audio on same device as selected microphone"
 msgstr ""
 
@@ -364,13 +361,25 @@ msgstr "最大視頻幀速率"
 msgid "auto"
 msgstr "自動"
 
+#, fuzzy
+msgid "Send stereo audio"
+msgstr "立體聲"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr ""
+
+msgid "Detect CPU over use"
+msgstr ""
+
+msgid "Automatically reduces video quality as needed."
+msgstr ""
+
 msgid "Optimize for high resolution video"
 msgstr ""
 
 msgid "Reduce video noise"
-msgstr ""
-
-msgid "Detect CPU over use"
 msgstr ""
 
 msgid "Enable experiments"
@@ -495,7 +504,7 @@ msgstr ""
 msgid "Please sign in."
 msgstr ""
 
-msgid "Videos are shared with everyone in this call."
+msgid "Videos play simultaneously for everyone in this call."
 msgstr ""
 
 msgid "YouTube URL"

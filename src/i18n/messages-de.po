@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-01-28 15:06+0100\n"
-"PO-Revision-Date: 2015-01-28 15:07+0100\n"
+"POT-Creation-Date: 2015-02-18 14:46+0100\n"
+"PO-Revision-Date: 2015-02-18 14:49+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -347,9 +347,6 @@ msgstr "Aktiviert"
 msgid "Advanced settings"
 msgstr "Erweiterte Einstellungen"
 
-msgid "Stereo audio"
-msgstr "Stereo-Audio"
-
 msgid "Play audio on same device as selected microphone"
 msgstr "Audioausgabe auf dem zum Mikrofon gehörenden Gerät"
 
@@ -368,14 +365,27 @@ msgstr "Max. Bildwiederholrate"
 msgid "auto"
 msgstr "auto"
 
+msgid "Send stereo audio"
+msgstr "Audio in Stereo übertragen"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr ""
+"Um Stereo zu übertragen wird die Echo-Unterdrückung deaktiviert. Nur "
+"aktivieren wenn das Eingangssignal Stereo ist."
+
+msgid "Detect CPU over use"
+msgstr "CPU-Überlast erkennen"
+
+msgid "Automatically reduces video quality as needed."
+msgstr "Reduziert die Videoqualität wenn nötig."
+
 msgid "Optimize for high resolution video"
 msgstr "Für hohe Auflösung optimieren"
 
 msgid "Reduce video noise"
 msgstr "Rauschen reduzieren"
-
-msgid "Detect CPU over use"
-msgstr "CPU-Überlast erkennen"
 
 msgid "Enable experiments"
 msgstr "Experimente aktivieren"
@@ -503,7 +513,7 @@ msgstr "Raum-Verlauf"
 msgid "Please sign in."
 msgstr "Bitte melden Sie sich an."
 
-msgid "Videos are shared with everyone in this call."
+msgid "Videos play simultaneously for everyone in this call."
 msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."
 
 msgid "YouTube URL"

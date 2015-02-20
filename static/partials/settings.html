@@ -51,7 +51,7 @@
                     <button class="btn btn-small btn-primary btn-sign-in" ng-click="usersettings.loginUserid()">{{_('Sign in')}}</button>
                   </label>
                   <label ng-if="usersettings.registerUserid">
-                    <button class="btn btn-small btn-link btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
+                    <button class="btn btn-small btn-info btn-create-account" ng-click="usersettings.registerUserid($event)">{{_('Create an account')}}</button>
                   </label>
                 </div>
                 <p class="form-control-static well well-sm" ng-if="userid">{{userid|displayUserid}}</p>
@@ -59,7 +59,7 @@
                   <button class="btn btn-small btn-default btn-sign-out" ng-click="usersettings.forgetUserid()">{{_('Sign out')}}</button>
                 </label>
                 <label ng-if="userid && usersettings.accountUserid">
-                  <button class="btn btn-small btn-link btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
+                  <button class="btn btn-small btn-info btn-manage-account" ng-click="usersettings.accountUserid()">{{_('Manage account')}}</button>
                 </label>
               </div>
             </div>
@@ -130,17 +130,6 @@
 
         <div>
 
-          <div class="form-group">
-            <label class="col-xs-4 control-label">{{_('Stereo audio')}}</label>
-            <div class="col-xs-8">
-              <div class="checkbox">
-               <label>
-                  <input type="checkbox" ng-model="user.settings.stereo"/>&nbsp;
-               </label>
-              </div>
-            </div>
-          </div>
-
           <div class="form-group" ng-show="isChrome && supported.renderToAssociatedSink">
             <label class="col-xs-4 control-label">{{_('Play audio on same device as selected microphone')}}</label>
             <div class="col-xs-8">
@@ -202,6 +191,30 @@
             </div>
           </div>
 
+          <div class="form-group" ng-show="isChrome">
+            <label class="col-xs-4 control-label">{{_('Send stereo audio')}}</label>
+            <div class="col-xs-8">
+              <div class="checkbox">
+               <label>
+                  <input type="checkbox" ng-model="user.settings.sendStereo"/>&nbsp;
+               </label>
+              </div>
+              <span class="help-block">{{_('Sending stereo audio disables echo cancellation. Enable only if you have stereo input.')}}</span>
+            </div>
+          </div>
+
+          <div class="form-group" ng-show="isChrome">
+            <label class="col-xs-4 control-label">{{_('Detect CPU over use')}}</label>
+            <div class="col-xs-8">
+              <div class="checkbox">
+               <label>
+                  <input type="checkbox" ng-model="user.settings.videoCpuOveruseDetection"/>&nbsp;
+               </label>
+               <span class="help-block">{{_('Automatically reduces video quality as needed.')}}</span>
+              </div>
+            </div>
+          </div>
+
           <div ng-show="user.settings.experimental.enabled">
 
             <div class="form-group" ng-show="isChrome">
@@ -221,17 +234,6 @@
                 <div class="checkbox">
                  <label>
                     <input type="checkbox" ng-model="user.settings.experimental.videoNoiseReduction"/>&nbsp;
-                 </label>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group" ng-show="isChrome">
-              <label class="col-xs-4 control-label">{{_('Detect CPU over use')}}</label>
-              <div class="col-xs-8">
-                <div class="checkbox">
-                 <label>
-                    <input type="checkbox" ng-model="user.settings.experimental.videoCpuOveruseDetection"/>&nbsp;
                  </label>
                 </div>
               </div>

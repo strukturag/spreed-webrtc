@@ -56,7 +56,10 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		// SCTP is supported from Chrome M31.
 		// No need to pass DTLS constraint as it is on by default in Chrome M31.
 		// For SCTP, reliable and ordered is true by default.
-		this.pcConstraints = {};
+		this.pcConstraints = {
+			mandatory: {},
+			optional: []
+		};
 
 		// Inject token into sessiondescription and ice candidate data.
 		this.e.on("sessiondescription icecandidate", _.bind(function(event, data) {
