@@ -43,3 +43,7 @@ styleshint:
 	@if [ "$(SASS)" = "" ]; then echo "Command 'sass' not found, required when checking styles"; exit 1; fi
 	@if [ "$(SASS_SUPPORT_STYLES)" = "no" ]; then echo "Your version of sass does not support checking styles"; exit 1; fi
 	$(FIND) ./ -maxdepth 1 -name "*.scss" -print0 | xargs -0 -n1 $(SASS) --compass --scss $(SASSFLAGS) -c
+
+styleslint:
+	@if [ "$(SCSS_LINT)" = "" ]; then echo "Command 'scss-lint' not found, required when linting styles"; exit 1; fi
+	$(SCSS_LINT) -c scss.yml
