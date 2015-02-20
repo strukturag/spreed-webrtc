@@ -27,9 +27,9 @@
   margin: 0 auto;
   position: absolute;
   right: 0;
-  text-shadow: 0 0 5px black;
-  transition: right 200ms ease-in-out;
+  text-shadow: 0 0 5px #000;
   top: 80px;
+  transition: right 200ms ease-in-out;
   user-select: none;
   width: 350px;
 }
@@ -45,20 +45,24 @@
 }
 
 #help {
+  @include breakpt($breakpoint-useability-small, max-width, only screen) {
+    display: none;
+  }
+
+  @include breakpt($breakpoint-useability-small, min-width, only screen, $breakpoint-useability-large) {
+    font-size: 1em;
+    width: 250px;
+  }
+
   > div {
     margin: 0 10px;
   }
+
   .help-subline {
     color: #888;
     padding: 20px 0;
   }
-  @include breakpt($breakpoint-useability-small, max-width, only screen){
-    display: none;
-  }
-  @include breakpt($breakpoint-useability-small, min-width, only screen, $breakpoint-useability-large){
-    font-size: 1em;
-    width: 250px;
-  }
+
   .btn {
     text-shadow: none;
   }

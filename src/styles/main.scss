@@ -20,37 +20,37 @@
  */
 
 // must set custom compass variables before import of compass
-@import "global/variables";
-@import "compass";
-@import "libs/libs";
+@import 'global/variables';
+@import 'compass';
+@import 'libs/libs';
 
-@import "global/mixins";
+@import 'global/mixins';
 
-@import "global/base";
-@import "global/loader";
-@import "global/views";
-@import "global/pages";
-@import "global/nicescroll";
-@import "global/animations";
-@import "global/overlaybar";
-@import "global/withs";
+@import 'global/base';
+@import 'global/loader';
+@import 'global/views';
+@import 'global/pages';
+@import 'global/nicescroll';
+@import 'global/animations';
+@import 'global/overlaybar';
+@import 'global/withs';
 
-@import "components/rightslide";
-@import "components/bar";
-@import "components/buddylist";
-@import "components/buddypicturecapture";
-@import "components/buddypictureupload";
-@import "components/settings";
-@import "components/chat";
-@import "components/usability";
-@import "components/audiolevel";
-@import "components/fileinfo";
-@import "components/audiovideo";
-@import "components/screenshare";
-@import "components/roombar";
-@import "components/social";
-@import "components/contactsmanager";
-@import "components/presentation";
-@import "components/youtubevideo";
+@import 'components/rightslide';
+@import 'components/bar';
+@import 'components/buddylist';
+@import 'components/buddypicturecapture';
+@import 'components/buddypictureupload';
+@import 'components/settings';
+@import 'components/chat';
+@import 'components/usability';
+@import 'components/audiolevel';
+@import 'components/fileinfo';
+@import 'components/audiovideo';
+@import 'components/screenshare';
+@import 'components/roombar';
+@import 'components/social';
+@import 'components/contactsmanager';
+@import 'components/presentation';
+@import 'components/youtubevideo';
 
-@import "shame";
+@import 'shame';

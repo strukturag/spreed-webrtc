@@ -19,34 +19,34 @@
  *
  */
 
-@import "compass/utilities/color/contrast";
+@import 'compass/utilities/color/contrast';
 
 // general
 $background: #e5e5e5 !default;
 $componentbg: #f8f8f8 !default;
 $componentfg1: #262626 !default;
-$componentfg2: rgba(0,0,0,.5) !default;
-$componentfg3: rgba(0,0,0,.2) !default;
+$componentfg2: rgba(0, 0, 0, .5) !default;
+$componentfg3: rgba(0, 0, 0, .2) !default;
 $componentfg4: #737373 !default;
-$sidepanebg: white !default;
+$sidepanebg: #fff !default;
 $bordercolor: #e7e7e7 !default;
-$actioncolor1: rgb(132,184,25) !default;
-$actioncolor2: rgb(0,149,52) !default;
+$actioncolor1: rgb(132, 184, 25) !default;
+$actioncolor2: rgb(0, 149, 52) !default;
 
 // branding
-$logo: url("../img/logo-small.png") !default;
-$scalable-logo: url("../img/logo.svg") !default;
+$logo: url('../img/logo-small.png') !default;
+$scalable-logo: url('../img/logo.svg') !default;
 $load-logo: $scalable-logo !default;
 
 // background
-$main-background-image: "../img/bg-tiles.jpg" !default;
-$main-background-image-retina: "../img/bg-tiles_x2.jpg" !default;
+$main-background-image: '../img/bg-tiles.jpg' !default;
+$main-background-image-retina: '../img/bg-tiles_x2.jpg' !default;
 $main-background: url($main-background-image) !default;
 $main-background-retina: url($main-background-image-retina) !default;
 
 // general action based colors
-$action-hover: rgba(0,0,0,.4) !default;
-$action-mute: rgb(219,79,57) !default;
+$action-hover: rgba(0, 0, 0, .4) !default;
+$action-mute: rgb(219, 79, 57) !default;
 $action-enable: $actioncolor1 !default;
 
 // base
@@ -57,7 +57,7 @@ $loading: #ddd !default;
 $pane-width: 260px !default;
 
 // font
-$font-sans-serif: "Helvetica Neue",Helvetica,Arial,sans-serif !default;
+$font-sans-serif: 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
 $base-font-size: 13px; // compass vertical_rhythm mixin
 $base-line-height: 20px; // compass vertical_rhythm mixin
 $font-color: lighten(#000, 20%) !default;
@@ -72,7 +72,7 @@ $audiolevel-top: 43px !default;
 // main navigation bar
 $minbarheight: 51px !default;
 $bar-background: $componentbg;
-$bar-logo-text-desc: rgb(34,34,34) !default;
+$bar-logo-text-desc: rgb(34, 34, 34) !default;
 $bar-btn-action-border: $bordercolor !default;
 $bar-btn-action-color: #333 !default;
 $bar-btn-action-hover: #666 !default;
@@ -87,20 +87,20 @@ $overlaybar-color: $bordercolor !default;
 $overlaybar-btn: $bordercolor !default;
 
 // video
-$video-background: rgba(0,0,0,.4) !default;
+$video-background: rgba(0, 0, 0, .4) !default;
 $video-onlyaudio-background: #666 !default;
-$video-onlyaudio: rgba(255,255,255,.3) !default;
-$video-overlayactions: rgba(0,0,0,.9) !default;
+$video-onlyaudio: rgba(255, 255, 255, .3) !default;
+$video-overlayactions: rgba(0, 0, 0, .9) !default;
 
 // settings
-$settings-background: white !default;
+$settings-background: #fff !default;
 
 // buddylist
 $buddylist-width: $pane-width !default;
 $buddylist-background: $componentbg !default;
-$buddylist-tab-color: rgba(0,0,0,.3) !default;
+$buddylist-tab-color: rgba(0, 0, 0, .3) !default;
 $buddylist-tab-background: $componentbg !default;
-$buddylist-action-background: rgba(255,255,255,0.5) !default;
+$buddylist-action-background: rgba(255, 255, 255, .5) !default;
 $buddylist-buddy1: $componentfg1 !default;
 $buddylist-buddy2: $componentfg2 !default;
 $buddylist-action-font-size: 1.6em;
@@ -108,22 +108,22 @@ $buddylist-action-font-size: 1.6em;
 // chat
 $chat-width: $pane-width !default;
 $chat-background: $componentbg !default;
-$chat-header: rgba(255,255,255,0.9) !default;
+$chat-header: rgba(255, 255, 255, .9) !default;
 $chat-disabled: #aaa !default;
 $chat-badge: #84b819 !default;
-$chat-ctrl: rgba(0,0,0,.3) !default;
+$chat-ctrl: rgba(0, 0, 0, .3) !default;
 $chat-timestamp: #aaa !default;
 $chat-meta: #aaa !default;
-$chat-msg-background: white !default;
+$chat-msg-background: #fff !default;
 $chat-msg-border: transparent !default;
-$chat-msg-shadow: rgba(0, 0, 0, 0.03) !default;
+$chat-msg-shadow: rgba(0, 0, 0, .03) !default;
 $chat-arrow-border: #eee;
 
 $chat-msg-default-icon-color: #ccc !default;
-$chat-msg-unread-icon-color: #FE9A2E !default;
+$chat-msg-unread-icon-color: #fe9a2e !default;
 $chat-msg-sending-icon-color: $chat-msg-default-icon-color !default;
-$chat-msg-sent-icon-color: #5882FA !default;
-$chat-msg-delivered-icon-color: #5882FA !default;
+$chat-msg-sent-icon-color: #5882fa !default;
+$chat-msg-delivered-icon-color: #5882fa !default;
 $chat-msg-received-icon-color: #84b819 !default;
 $chat-msg-read-icon-color: $chat-msg-default-icon-color !default;
 
@@ -134,15 +134,15 @@ $chat-msg-delivered-icon: '\f019' !default;
 $chat-msg-received-icon: '\f06e' !default;
 $chat-msg-read-icon: '\f00c' !default;
 
-$chat-msg-self-background: white !default;
-$chat-msg-remote-background: white !default;
+$chat-msg-self-background: #fff !default;
+$chat-msg-remote-background: #fff !default;
 
 $chat-bottom-background: $chat-background !default;
 $chat-typing: $chat-meta !default;
 $chat-input-border-color: #66afe9 !default;
 
 // fileinfo
-$fileinfo-background: white !default;
+$fileinfo-background: #fff !default;
 $fileinfo-border: #ddd !default;
 $fileinfo-icon-background-color: #eee !default;
 $fileinfo-downloading-size-border: #ddd !default;
@@ -153,14 +153,14 @@ $fileinfo-icon-background-color-remote: $fileinfo-icon-background-color !default
 // settings
 $settings-version: #ccc !default;
 $form-help-text: #737373 !default;
-$settings-background: white !default;
+$settings-background: #fff !default;
 
 // social
 $social-email-color: #aaa !default;
 $social-facebook-color: #45619d !default;
 $social-google-color: #dd4b39 !default;
 $social-twitter-color: #00aced !default;
-$social-xing-color: white !default;
+$social-xing-color: #fff !default;
 
 // useability
 $breakpoint-useability-small: 400px !default;

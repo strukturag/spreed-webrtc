@@ -20,10 +20,10 @@
  */
 
 .youtubevideo {
-  position: absolute;
-  left: 0;
-  right: 0;
   bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
   top: 0;
 }
 
@@ -41,16 +41,17 @@
 }
 
 #youtubeplayerinfo {
-  position: absolute;
-  left: 0;
-  right: 0;
   bottom: 10%;
+  left: 0;
   opacity: 0;
   pointer-events: auto;
+  position: absolute;
+  right: 0;
   text-align: center;
-  transition-property: opacity;
   transition-duration: .2s;
+  transition-property: opacity;
   z-index: 10;
+
   &:hover {
     opacity: .8;
   }
@@ -59,17 +60,17 @@
 #youtubeplayerinfo div {
   background-color: #f9f2f4;
   border-radius: 10px;
-  padding: 20px 40px;
   display: inline-block;
   font-size: 2em;
+  padding: 20px 40px;
 }
 
 .youtubevideo .click-container {
-  position: absolute;
-  left: 0;
-  top: 0;
   bottom: 0;
+  left: 0;
+  position: absolute;
   right: 0;
+  top: 0;
   z-index: 5;
 }
 
@@ -86,8 +87,8 @@
 }
 
 .youtubevideo .welcome .welcome-logo {
-  font-size: 10em;
   background: transparent;
+  font-size: 10em;
 }
 
 .mainYoutubevideo #youtubevideo {
@@ -101,14 +102,14 @@
 }
 
 .youtubevideo .overlaybar-content {
-  width: 100%;
   max-width: 100%;
+  width: 100%;
 }
 
 .youtubevideo .overlaybar-input {
+  padding-right: 15px;
   position: relative;
   width: 100%;
-  padding-right: 15px;
 }
 
 .youtubevideo .overlaybar-content form .overlaybar-buttons {
@@ -118,15 +119,16 @@
 }
 
 .volumecontrol {
-  position: absolute;
-  left: 0;
-  right: 0;
+  background: rgba(0, 0, 0, .6);
   bottom: 0;
+  left: 0;
   opacity: 0;
-  pointer-events: auto;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.6);
   padding: 4px;
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  z-index: 10;
+
   &:hover {
     opacity: 1;
   }
@@ -139,39 +141,39 @@
 
 .volumebar {
   display: inline-block;
-  vertical-align: middle;
   padding: 6px 8px;
+  vertical-align: middle;
 }
 
 .volumebar input[type="range"] {
   -webkit-appearance: none;
   background-color: #aaa;
   border: 1px solid #aaa;
-  width: 100px;
   height: 3px;
   outline: 0;
+  width: 100px;
 }
 
 .volumebar input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   background-color: #fff;
-  width: 6px;
   height: 20px;
+  width: 6px;
 }
 
 .volumebar input[type="range"]::-moz-range-track {
   background: #aaa;
-  border: none;
+  border: 0;
 }
 
 .volumebar input[type="range"]::-moz-range-thumb {
   background-color: #fff;
-  width: 6px;
-  height: 20px;
   border-radius: 0;
+  height: 20px;
+  width: 6px;
 }
 
-.volumebar input[type="range"]::-moz-focusring{
+.volumebar input[type="range"]::-moz-focusring {
   outline: 1px solid #aaa;
   outline-offset: -1px;
 }

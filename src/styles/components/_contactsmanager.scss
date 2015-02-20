@@ -25,52 +25,64 @@
     font-weight: normal;
     text-align: baseline;
   }
+
   .addbtn {
     font-size: 14px;
+
     .fa-users {
       font-size: 22px;
     }
+
     .fa-plus {
       font-size: 15px;
     }
   }
+
   .editpicture {
-    vertical-align: middle;
     float: left;
     margin-right: 20px;
+    vertical-align: middle;
   }
+
   .uploadbtn {
     margin-top: 7px;
   }
+
   .editlist {
     max-height: 250px;
     overflow-y: auto;
   }
+
   .picture {
-    display: table-cell;
     border-bottom: 0;
     cursor: auto;
+    display: table-cell;
     min-height: 46px;
     position: static;
     width: auto;
+
     .buddyPicture {
       margin: 0 0 0 10px;
     }
   }
+
   .table {
-    margin-bottom: 0px;
+    margin-bottom: 0;
+
     tr:first-child td {
-      border-top: none;
+      border-top: 0;
     }
+
     .name {
-      width: 40%;
       text-align: left;
       vertical-align: middle;
+      width: 40%;
     }
+
     .action {
+      padding-right: 15px;
       text-align: right;
       vertical-align: middle;
-      padding-right: 15px;
     }
   }
 }
@@ -83,14 +95,15 @@
 
 .search {
   &:before {
-    position: absolute;
-    font-family: "fontAwesome";
-    content: "\f002";
+    content: '\f002';
+    font-family: 'fontAwesome';
     font-size: 14px;
-    opacity: .4;
-    top: 6px;
     left: 22px;
+    opacity: .4;
+    position: absolute;
+    top: 6px;
   }
+
   ~ input {
     padding-left: 25px;
   }

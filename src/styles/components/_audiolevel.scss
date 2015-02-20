@@ -27,10 +27,12 @@
   top: $audiolevel-top;
   width: 400px;
   z-index: 60;
+
   .audio-level {
+    // scss-lint:disable DuplicateProperty
     background: $audiovideolevel; /* Old browsers */
-    background: gradient(linear, left top, left bottom, color-stop(0%,$audiovideolevel), color-stop(50%,#a1d54f), color-stop(51%,#80c217), color-stop(100%,#7cbc0a)); /* Chrome,Safari4+ */
-    background: linear-gradient(to bottom, $audiovideolevel 0%,#a1d54f 50%,#80c217 51%,#7cbc0a 100%); /* W3C */
+    background: gradient(linear, left top, left bottom, color-stop(0%, $audiovideolevel), color-stop(50%, #a1d54f), color-stop(51%, #80c217), color-stop(100%, #7cbc0a)); /* Chrome,Safari4+ */
+    background: linear-gradient(to bottom, $audiovideolevel 0%, #a1d54f 50%, #80c217 51%, #7cbc0a 100%); /* W3C */
     border-radius: 0 0 2px 2px;
     height: 4px;
     left: 0;

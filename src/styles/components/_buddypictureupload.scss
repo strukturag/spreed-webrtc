@@ -20,80 +20,95 @@
  */
 
 .buddyPictureUpload {
-   position: relative;
+  position: relative;
+
   .loader {
+    left: 90px;
     position: absolute;
     z-index: 1;
-    left: 90px;
+
     .fa-spin {
       color: $componentfg4;
     }
   }
+
   >p {
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
+
   .showUploadPicture {
-    position: relative;
+    background-color: $componentbg;
     border: 1px solid $bordercolor;
     height: 200px;
     line-height: 200px;
     margin-bottom: 10px;
     overflow: hidden;
+    position: relative;
     text-align: center;
-    width: 200px;
-    background-color: $componentbg;
     user-select: none;
+    width: 200px;
+
     &.imgData {
-      background-color: black;
+      background-color: #000;
+
       .chooseUploadPicture {
         display: none;
       }
     }
+
     .chooseUploadPicture {
       color: $componentfg4;
-      position: absolute;
-      z-index: 1;
-      left: 0px;
-      right: 0px;
+      left: 0;
       margin: 0 auto;
+      position: absolute;
+      right: 0;
+      z-index: 1;
     }
+
     .fa {
       color: $componentbg;
-      text-shadow: 0 0 5px black;
-      opacity: 0.8;
+      opacity: .8;
+      text-shadow: 0 0 5px #000;
     }
   }
+
   .preview {
+    left: 0;
     position: relative;
-    top: 0px;
-    left: 0px;
+    top: 0;
   }
+
   .imageUtilites {
     line-height: 30px;
     position: absolute;
     visibility: hidden;
     width: 200px;
     z-index: 1;
+
     .fa {
       cursor: pointer;
       font-size: 40px;
-      width: 50px;
       height: 50px;
+      width: 50px;
     }
   }
+
   .showUploadPicture.imgData:hover .imageUtilites {
-    visibility:visible;
+    visibility: visible;
   }
+
   .moveHorizontal {
-    top: -4px;
     position: relative;
+    top: -4px;
   }
+
   .moveVertical {
-    position: absolute;
     left: 158px;
+    position: absolute;
   }
+
   .resize {
     position: relative;
     top: 108px;

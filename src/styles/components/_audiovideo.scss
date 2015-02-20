@@ -29,22 +29,25 @@
 }
 
 #audiovideo {
+  @include breakpt($breakpoint-video-small, max-width, only screen) {
+    right: 0;
+  }
+
   &.fullscreen {
-    background: black !important;
+    background: #000 !important;
     bottom: 0 !important;
     left: 0 !important;
-    top: 0 !important;
     right: 0 !important;
+    top: 0 !important;
+
     .remoteVideo .peerActions {
       display: none;
     }
   }
-  @include breakpt($breakpoint-video-small, max-width, only screen) {
-    right: 0;
-  }
 }
 
-.mainScreenshare #audiovideo, .mainPresentation #audiovideo {
+.mainScreenshare #audiovideo,
+.mainPresentation #audiovideo {
   @include breakpt($breakpoint-video-medium, max-width, only screen) {
     display: none;
   }
@@ -63,29 +66,35 @@
   bottom: 0;
   left: 0;
   position: absolute;
-  top: 0;
   right: 0;
+  top: 0;
+
   &.active {
     perspective: 1000;
+
     &:hover .overlayActions {
       opacity: .3;
     }
+
     .overlayActions:hover {
       opacity: .6;
     }
+
     .audiovideoBase {
       transform: rotateY(180deg);
     }
   }
+
   .audiovideoBase {
-    position: relative;
-    width: 100%;
     height: 100%;
-    transition-property: transform;
-    transition-duration: 2s;
+    position: relative;
     transform: rotateY(0deg);
+    transition-duration: 2s;
+    transition-property: transform;
+    width: 100%;
     z-index: 2;
   }
+
   .localContainer {
     bottom: 0;
     left: 0;
@@ -96,6 +105,7 @@
     transform: scale(-1, 1);
     z-index: 2;
   }
+
   video {
     object-fit: cover;
   }
@@ -112,36 +122,40 @@
     transform: rotateY(180deg);
     z-index: 2;
   }
+
   .miniContainer {
+    background: #000;
     bottom: 2px;
-    max-height: 18%;
     height: 100%;
+    max-height: 18%;
     opacity: 0;
     position: absolute;
     right: 2px;
     transform: scale(-1, 1);
-    transition-property: opacity;
     transition-duration: .5s;
+    transition-property: opacity;
     z-index: 25;
-    background: black;
+
     &.visible {
       opacity: 1;
     }
   }
+
   .miniVideo {
     display: block;
+    height: 100%;
     max-height: 100%;
     max-width: 100%;
-    height: 100%;
     width: 100%;
   }
+
   .localVideo {
     background: $video-background;
     display: block;
     max-height: 100%;
     opacity: 0;
-    transition-property: opacity;
     transition-duration: 2s;
+    transition-property: opacity;
     width: 100%;
   }
 }
@@ -153,8 +167,9 @@
   position: absolute;
   right: 0;
   top: 0;
-  transition-property: opacity;
   transition-duration: 2s;
+  transition-property: opacity;
+
   video {
     display: block;
     height: 100%;
@@ -162,7 +177,7 @@
   }
 }
 
-.audiovideo .remoteVideo{
+.audiovideo .remoteVideo {
   background: $video-background;
   display: inline-block;
   max-height: 100%;
@@ -172,13 +187,16 @@
   vertical-align: bottom;
   //visibility: hidden;
   width: 100%;
+
   &.withvideo {
     //visibility: visible;
   }
+
   &.onlyaudio {
     background: $video-onlyaudio-background;
     //visibility: visible;
   }
+
   .onlyaudio {
     color: $video-onlyaudio;
     display: none;
@@ -191,15 +209,20 @@
     text-align: center;
     top: 45%;
   }
-  &.onlyaudio video, &.dummy video {
+
+  &.onlyaudio video,
+  &.dummy video {
     visibility: hidden;
   }
+
   &.onlyaudio .onlyaudio {
     display: block;
   }
+
   &.dummy .onlyaudio {
     display: block;
   }
+
   .peerActions {
     bottom: 5%;
     left: 40px;
@@ -208,28 +231,31 @@
     position: absolute;
     right: 40px;
     text-align: center;
-    transition-property: opacity;
     transition-duration: .2s;
+    transition-property: opacity;
     z-index: 10;
+
     &:hover {
       opacity: .5;
     }
+
     i {
       font-size: 3vw;
     }
   }
+
   .peerLabel {
     bottom: 4%;
-    color: white;
-    left: 4%;
+    color: #fff;
     font-size: 2.5vw;
+    left: 4%;
     max-width: 30%;
     opacity: .7;
     overflow: hidden;
     padding: 4px;
     position: absolute;
     text-overflow: ellipsis;
-    text-shadow: 0 0 4px black;
+    text-shadow: 0 0 4px #000;
     white-space: nowrap;
     z-index: 8;
   }
@@ -240,38 +266,42 @@
   bottom: 0;
   height: 140px;
   left: 0;
-  margin:auto 0;
+  margin: auto 0;
   opacity: 0;
   padding: 3px 0;
   position: absolute;
   top: 0;
   width: 40px;
   z-index: 5;
+
   button {
     color: #ccc;
     cursor: pointer;
     display: block;
     outline: 0;
-    text-shadow: 0 0 5px black;
+    text-shadow: 0 0 5px #000;
     width: 40px;
   }
+
   button.renderer-auditorium {
     position: relative;
+
     span:before {
-      position:absolute;
-      left:50%;
-      top:50%;
-      margin-left: -0.8em;
-      margin-top: -0.5em;
-      content: "\f183";
+      content: '\f183';
+      left: 50%;
+      margin-left: -.8em;
+      margin-top: -.5em;
+      position: absolute;
+      top: 50%;
     }
+
     span:after {
-      position:absolute;
-      top:50%;
-      right:50%;
-      margin-right: -0.9em;
-      margin-top: -0.5em;
-      content: "\f183";
+      content: '\f183';
+      margin-right: -.9em;
+      margin-top: -.5em;
+      position: absolute;
+      right: 50%;
+      top: 50%;
     }
   }
 }
@@ -280,11 +310,13 @@
   &.talking .peerLabel {
     color: $audiovideolevel;
   }
+
   .peerLabel {
     transition: color 500ms ease-out;
   }
+
   .overlayLogo {
-    background: url(../img/logo-overlay.png) no-repeat center;
+    background: url('../img/logo-overlay.png') no-repeat center;
     background-size: 100%;
     height: 20%;
     max-height: 40px;
@@ -301,35 +333,40 @@
 
 .miniContainer {
   &.talking:after {
-    content: "";
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    right: 2px;
     bottom: 2px;
-    box-shadow: 0px 0px 20px $audiovideolevel inset;
+    box-shadow: 0 0 20px $audiovideolevel inset;
+    content: '';
+    left: 2px;
+    position: absolute;
+    right: 2px;
+    top: 2px;
   }
+
   video {
   }
 }
 
 .renderer-smally {
+  background: #000;
+  border-right: 0;
+  border-top: 0;
   width: 150px;
-  background: black;
-  border-right: none;
-  border-top: none;
+
   .remoteVideos {
     padding-bottom: 85px;
   }
+
   .remoteVideo {
     .peerLabel {
       font-size: .9em;
       font-weight: bold;
     }
+
     .peerActions i {
       font-size: 1em;
     }
   }
+
   .miniContainer {
     bottom: 0;
     height: 85px;
@@ -345,13 +382,13 @@
 .renderer-democrazy {
 
   .remoteVideos .miniContainer {
-    position: relative;
+    bottom: auto;
+    display: inline-block;
     max-height: 100%;
     max-width: 100%;
-    display: inline-block;
-    vertical-align: bottom;
-    bottom: auto;
+    position: relative;
     right: auto;
+    vertical-align: bottom;
   }
 
   .active .miniContainer {
@@ -369,27 +406,33 @@
     text-align: center;
     top: auto;
     white-space: nowrap;
+
     > div {
       cursor: pointer;
       height: 108px;
       width: 192px;
     }
+
     .overlayLogo {
       display: none;
     }
+
     .peerLabel,
     .peerActions i {
       font-size: 1.1em;
     }
+
     .peerLabel {
       background: $video-overlayactions;
     }
   }
+
   .miniContainer {
     height: 108px;
     max-height: none;
     width: 192px;
   }
+
   .bigVideo {
     bottom: 112px;
     left: 0;
@@ -398,71 +441,83 @@
     position: absolute;
     right: 0;
     top: 2px;
-    transition-property: opacity;
     transition-duration: 2s;
+    transition-property: opacity;
+
     video {
-      width: 100%;
       height: 100%;
+      width: 100%;
     }
   }
 }
 
 .renderer-auditorium {
   .remoteContainer {
-    border-left: 40px solid black;
+    border-left: 40px solid #000;
   }
+
   .remoteVideos {
+    background: $video-background;
+    pointer-events: auto;
     top: 180px;
     width: 320px;
-    pointer-events: auto;
-    background: $video-background;
+
     .overlayLogo {
       display: none;
     }
+
     video {
       height: 100%;
-      width: 100%;
-      object-fit: cover;
       margin-top: -9px;
+      object-fit: cover;
+      width: 100%;
     }
+
     > div {
       cursor: pointer;
-      width: 80px;
-      height: 60px;
       display: inline-block;
+      height: 60px;
+      width: 80px;
     }
+
     .overlayLogo {
       display: none;
     }
+
     .peerLabel {
-      font-size: 0.6em;
       background: $video-overlayactions;
-      max-width: 100%;
-      bottom: 0px;
-      left: 0px;
-      right: 0px;
-      padding: 0 4px;
+      bottom: 0;
+      font-size: .6em;
+      left: 0;
       line-height: 9px;
+      max-width: 100%;
+      padding: 0 4px;
+      right: 0;
     }
+
     .peerActions {
       display: none;
     }
+
     .miniContainer {
-      right: auto;
       max-height: auto;
+      right: auto;
     }
   }
+
   .bigVideo {
-    width: 320px;
     height: 180px;
+    width: 320px;
+
     video {
       height: 100%;
       width: 100%;
     }
+
     .peerLabel {
+      bottom: 8%;
       font-size: 1vw;
       max-width: 40%;
-      bottom: 8%;
     }
   }
 }

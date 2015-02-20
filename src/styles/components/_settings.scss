@@ -20,8 +20,8 @@
  */
 
 #settings {
-  border-left: 1px solid $bordercolor;
   background: $settings-background;
+  border-left: 1px solid $bordercolor;
   bottom: 0;
   padding-right: 20px;
   position: fixed;
@@ -34,12 +34,15 @@
 
 #settings.show {
   right: 0;
+
   @include breakpt($breakpoint-settings-medium, max-width, only screen) {
     background: $settings-background;
     left: 0;
     width: auto;
   }
-  .form-actions{
+
+  .form-actions {
+
     @include breakpt($breakpoint-settings-medium, max-width, only screen) {
       bottom: 0;
       height: 60px;
@@ -65,6 +68,10 @@
 }
 
 .settings {
+  @include breakpt($breakpoint-settings-medium, max-width, only screen) {
+    padding-bottom: 10px;
+  }
+
   .version {
     color: $settings-version;
     font-size: 10px;
@@ -72,12 +79,14 @@
     right: 10px;
     top: 10px;
   }
+
   .form-horizontal {
     .controls {
       @include breakpt($breakpoint-settings-medium, max-width, only screen) {
         margin-left: 110px;
       }
     }
+
     .control-label {
       @include breakpt($breakpoint-settings-medium, max-width, only screen) {
         width: 100px;
@@ -85,12 +94,9 @@
       }
     }
   }
-  @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-    padding-bottom: 10px;
-  }
 }
 
 settings-advanced {
-  padding-top: 15px;
   display: block;
+  padding-top: 15px;
 }

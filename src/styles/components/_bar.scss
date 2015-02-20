@@ -20,6 +20,7 @@
  */
 
 .bar {
+  // scss-lint:disable PropertySpelling
   background: $bar-background;
   color: $componentfg1;
   font: bold 1em/50px $font-sans-serif;
@@ -31,50 +32,57 @@
 
 .bar .left {
   padding: 5px 5px 5px 15px;
+
+  @include breakpt($breakpoint-medium) {
+    padding: 2px 5px 0 11px;
+    padding: 2px 5px 0 11px;
+  }
+
   .logo {
     background: $logo no-repeat;
     background-size: 100%;
+    color: #000;
     display: inline-block;
-    color: black;
-    height: 32px;
-    width: 90px;
     font: normal 11px/11px $font-sans-serif;
+    height: 32px;
     text-align: left;
     vertical-align: middle;
+    width: 90px;
+
+    @include breakpt($breakpoint-medium) {
+      background: $scalable-logo no-repeat center;
+      height: 46px;
+      width: 46px;
+
+      span {
+        display: none;
+      }
+    }
+
     span {
       font-style: italic;
       left: 38px;
       position: relative;
       top: 26px;
     }
+
     span a {
       color: $bar-logo-text-desc;
     }
-    @include breakpt($breakpoint-medium) {
-      background: $scalable-logo no-repeat center;
-      width: 46px;
-      height: 46px;
-      span {
-        display: none;
-      }
-    }
-  }
-  @include breakpt($breakpoint-medium) {
-    padding: 2px 5px 0px 11px;
   }
 }
 
 .bar .middle {
-  position: absolute;
-  left: 0px;
-  right: 60px;
-  top: 0px;
+  left: 0;
   pointer-events: none;
+  position: absolute;
+  right: 60px;
   text-align: center;
+  top: 0;
 
   > span {
-    display: inline-block;
     background: $bar-background;
+    display: inline-block;
     min-height: 50px;
     pointer-events: auto;
   }
@@ -82,9 +90,10 @@
   .userpicture {
     border-radius: 2px;
     display: inline-block;
-    width: 46px;
     height: 46px;
-    margin: -1px .5em 0 .5em;
+    margin: -1px .5em 0;
+    width: 46px;
+
     @include breakpt($breakpoint-medium) {
       display: none;
     }
@@ -97,13 +106,15 @@
   .status-reconnecting,
   .status-error,
   .status-ringing {
+
     @include breakpt($breakpoint-medium) {
-      max-width: 100%;
       left: 0;
+      max-width: 100%;
       position: absolute;
       right: 0;
     }
   }
+
   .status-connecting .actions,
   .status-closed .actions,
   .status-reconnecting .actions,
@@ -113,87 +124,112 @@
 }
 
 .bar .right {
-  padding-right: 4px;
   margin-top: -1px;
+  padding-right: 4px;
+
   .badge {
     background-color: $actioncolor1;
-    border: 1px solid white;
+    border: 1px solid #fff;
     font-size: .4em;
     position: absolute;
     right: 0;
     top: 2px;
   }
+
   .btn {
     background: $bar-btn-action-normal;
     border-color: $bar-btn-action-normal-border;
     color: $bar-btn-action-color;
-    height: 42px;
     font: 24px/40px $font-sans-serif;
+    height: 42px;
     margin-left: -2px;
     padding: 0;
+    position: relative;
     text-align: center;
     width: 42px;
-    position: relative;
+
     &:focus {
-      border: none;
-      outline: none;
+      border: 0;
       box-shadow: 0;
+      outline: none;
     }
+
     &:hover {
       background-color: transparent;
       border-color: $bar-btn-action-border;
       color: $bar-btn-action-hover;
     }
+
     &.active {
       background-color: transparent;
       border-color: $bordercolor;
       color: $bar-btn-action-hover;
     }
+
     &.active.amutebtn {
       background-color: $bar-btn-action-mute;
       border-color: $bar-btn-action-mute;
-      color: white;
+      color: #fff;
     }
+
     &.active.aenablebtn {
       background-color: $bar-btn-action-enable;
       border-color: $bar-btn-action-enable;
-      color: white;
+      color: #fff;
     }
   }
+
   .btn-mutemicrophone i:before {
-    content: "\f130";
+    content: '\f130';
   }
+
   .btn-mutemicrophone.active i:before {
-    content: "\f131";
+    content: '\f131';
   }
+
   .btn-mutecamera i:before {
-    content: "\f06e";
+    content: '\f06e';
   }
+
   .btn-mutecamera.active i:before {
-    content: "\f070";
+    content: '\f070';
   }
 
 }
 
 @keyframes shakeityeah {
   0% { transform: translate(2px, 1px) rotate(0deg); }
+
   2% { transform: translate(-1px, -2px) rotate(-1deg); }
-  4% { transform: translate(-3px, 0px) rotate(1deg); }
-  8% { transform: translate(0px, 2px) rotate(0deg); }
+
+  4% { transform: translate(-3px, 0) rotate(1deg); }
+  4% { transform: translate(-3px, 0) rotate(1deg); }
+
+  8% { transform: translate(0, 2px) rotate(0deg); }
+  8% { transform: translate(0, 2px) rotate(0deg); }
+
   10% { transform: translate(1px, -1px) rotate(1deg); }
+
   12% { transform: translate(-1px, 2px) rotate(-1deg); }
+
   14% { transform: translate(-3px, 1px) rotate(0deg); }
+
   16% { transform: translate(2px, 1px) rotate(-1deg); }
+
   18% { transform: translate(-1px, -1px) rotate(1deg); }
+
   20% { transform: translate(2px, 2px) rotate(0deg); }
+
   22% { transform: translate(1px, -2px) rotate(-1deg); }
-  24% { transform: translate(0px, 0px) rotate(0deg); }
+
+  24% { transform: translate(0, 0) rotate(0deg); }
+  24% { transform: translate(0, 0) rotate(0deg); }
 }
 
 .btn-shakeityeah {
-  animation-name: shakeityeah;
-  animation-duration: 4.0s;
-  transform-origin:50% 50%;
+  animation-duration: 4s;
   animation-iteration-count: infinite;
+  animation-name: shakeityeah;
   animation-timing-function: linear;
+  transform-origin: 50% 50%;
 }
