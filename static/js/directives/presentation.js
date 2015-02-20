@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'], function($, _, template, BigScreen) {
 
-	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData) {
+	return ["$window", "mediaStream", "fileUpload", "fileDownload", "alertify", "translation", "randomGen", "fileData", "appData", function($window, mediaStream, fileUpload, fileDownload, alertify, translation, randomGen, fileData, appData) {
 
 		var SUPPORTED_TYPES = {
 			// rendered by pdfcanvas directive
@@ -743,14 +743,28 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			$scope.$watch("layout.presentation", function(newval, oldval) {
 				if (newval && !oldval) {
 					$scope.showPresentation();
+					appData.e.triggerHandler("presentationEnabled", [true]);
 				} else if (!newval && oldval) {
 					$scope.hidePresentation();
+					appData.e.triggerHandler("presentationEnabled", [false]);
 				}
 			});
 
 			$scope.$watch("layout.main", function(newval, oldval) {
 				if (newval && newval !== "presentation") {
 					$scope.hidePresentation();
+				}
+			});
+
+			$scope.$watch("currentPresentation", function(newval, oldval) {
+				if (oldval !== newval) {
+					appData.e.triggerHandler("presentationSelected", [newval]);
+				}
+			});
+
+			$scope.$watch("currentPageNumber", function(newval, oldval) {
+				if (oldval !== newval) {
+					appData.e.triggerHandler("presentationPageChanged", [newval]);
 				}
 			});
 
