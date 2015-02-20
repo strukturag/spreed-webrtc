@@ -95,9 +95,9 @@ locally by running `npm install` from the project root. Consult the
   - [JSHint](http://www.jshint.com/) >= 2.0.0
   - [scss-lint](https://github.com/causes/scss-lint) >= 0.33.0
 
-  Styles can be found in src/styles. Translations are found in src/i18n.
-  Each folder has its own Makefile to build the corresponding files. Check the
-  Makefile.am templates for available make targets.
+Styles can be found in src/styles. Translations are found in src/i18n.
+Each folder has its own Makefile to build the corresponding files. Check the
+Makefile.am templates for available make targets.
 
 
 ## Running server for development
