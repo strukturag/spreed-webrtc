@@ -9,16 +9,16 @@ go:
   - tip
 
 env:
-  - GEM_HOME=/var/lib/gems/1.9
+  - GEM_HOME=/var/lib/gems/1.9.1
 
 before_install:
   - sudo add-apt-repository -y ppa:chris-lea/node.js
   - sudo apt-get update
 
 install:
-  - sudo apt-get -y install nodejs rubygems python-babel
-  - sudo gem install oj
-  - sudo gem install compass
+  - sudo apt-get -y install nodejs python-babel ruby1.9.1-dev
+  - sudo gem1.9.1 install compass
+  - sudo gem1.9.1 install scss-lint
   - npm install
 
 script:
