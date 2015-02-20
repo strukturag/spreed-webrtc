@@ -19,20 +19,26 @@
  *
  */
 
-.visible-with-contacts, .visible-with-contacts-inline {
-	display: none;
+.visible-with-contacts,
+.visible-with-contacts-inline {
+  display: none;
 }
+
 .hidden-with-contacts {
 }
 
 .with-contacts {
-	.visible-with-contacts {
-		display: block;
-	}
-	.visible-with-contacts-inline {
-		display: inline-block;
-	}
-	.hidden-with-contacts {
-		display: none;
-	}
+
+  .visible-with-contacts {
+    display: block;
+  }
+
+  .visible-with-contacts-inline {
+    display: inline-block;
+  }
+
+  .hidden-with-contacts {
+    display: none;
+  }
+
 }
