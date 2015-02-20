@@ -31,26 +31,27 @@ import (
 )
 
 type Config struct {
-	Title                           string   // Title
-	ver                             string   // Version (not exported to Javascript)
-	S                               string   // Static URL prefix with version
-	B                               string   // Base URL
-	Token                           string   // Server token
-	StunURIs                        []string // STUN server URIs
-	TurnURIs                        []string // TURN server URIs
-	Tokens                          bool     // True when we got a tokens file
-	Version                         string   // Server version number
-	UsersEnabled                    bool     // Flag if users are enabled
-	UsersAllowRegistration          bool     // Flag if users can register
-	UsersMode                       string   // Users mode string
-	DefaultRoomEnabled              bool     // Flag if default room ("") is enabled
-	Plugin                          string   // Plugin to load
-	AuthorizeRoomCreation           bool     // Whether a user account is required to create rooms
-	AuthorizeRoomJoin               bool     // Whether a user account is required to join rooms
-	Modules                         []string // List of enabled modules
-	globalRoomID                    string   // Id of the global room (not exported to Javascript)
-	contentSecurityPolicy           string   // HTML content security policy
-	contentSecurityPolicyReportOnly string   // HTML content security policy in report only mode
+	Title                           string          // Title
+	ver                             string          // Version (not exported to Javascript)
+	S                               string          // Static URL prefix with version
+	B                               string          // Base URL
+	Token                           string          // Server token
+	StunURIs                        []string        // STUN server URIs
+	TurnURIs                        []string        // TURN server URIs
+	Tokens                          bool            // True when we got a tokens file
+	Version                         string          // Server version number
+	UsersEnabled                    bool            // Flag if users are enabled
+	UsersAllowRegistration          bool            // Flag if users can register
+	UsersMode                       string          // Users mode string
+	DefaultRoomEnabled              bool            // Flag if default room ("") is enabled
+	Plugin                          string          // Plugin to load
+	AuthorizeRoomCreation           bool            // Whether a user account is required to create rooms
+	AuthorizeRoomJoin               bool            // Whether a user account is required to join rooms
+	Modules                         []string        // List of enabled modules
+	modulesTable                    map[string]bool // Map of enabled modules
+	globalRoomID                    string          // Id of the global room (not exported to Javascript)
+	contentSecurityPolicy           string          // HTML content security policy
+	contentSecurityPolicyReportOnly string          // HTML content security policy in report only mode
 }
 
 func NewConfig(container phoenix.Container, tokens bool) *Config {
@@ -88,11 +89,18 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 	trimAndRemoveDuplicates(&turnURIs)
 
 	// Get enabled modules.
-	allModules := []string{"screensharing", "youtube", "presentation"}
-	modules := allModules[:0]
-	for _, module := range allModules {
+	modulesTable := map[string]bool{
+		"screensharing": true,
+		"youtube":       true,
+		"presentation":  true,
+		"contacts":      true,
+	}
+	modules := []string{}
+	for module, _ := range modulesTable {
 		if container.GetBoolDefault("modules", module, true) {
 			modules = append(modules, module)
+		} else {
+			modulesTable[module] = false
 		}
 	}
 	log.Println("Enabled modules:", modules)
@@ -115,6 +123,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		AuthorizeRoomCreation:           container.GetBoolDefault("app", "authorizeRoomCreation", false),
 		AuthorizeRoomJoin:               container.GetBoolDefault("app", "authorizeRoomJoin", false),
 		Modules:                         modules,
+		modulesTable:                    modulesTable,
 		globalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
 		contentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
 		contentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
@@ -123,6 +132,15 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 
 func (config *Config) Get(request *http.Request) (int, interface{}, http.Header) {
 	return 200, config, http.Header{"Content-Type": {"application/json; charset=utf-8"}}
+}
+
+func (config *Config) WithModule(m string) bool {
+
+	if val, ok := config.modulesTable[m]; ok && val {
+		return true
+	}
+	return false
+
 }
 
 // Helper function to clean up string arrays.

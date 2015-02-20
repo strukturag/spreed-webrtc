@@ -123,11 +123,15 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 	};
 
 	// contacts
-	return ["appData", "contactData", "mediaStream", "$templateCache", function(appData, contactData, mediaStream, $templateCache) {
+	return ["appData", "contactData", "mediaStream", "$templateCache", "modules", function(appData, contactData, mediaStream, $templateCache, modules) {
 
-		// Inject our templates.
-		$templateCache.put('/contactsmanager/main.html', templateContactsManager);
-		$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
+		var withContacts = modules.withModule("contacts");
+
+		if (withContacts) {
+			// Inject our templates.
+			$templateCache.put('/contactsmanager/main.html', templateContactsManager);
+			$templateCache.put('/contactsmanager/edit.html', templateContactsManagerEdit);
+		}
 
 		var Contacts = function() {
 
@@ -135,6 +139,7 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 			this.userid = null;
 			this.key = null;
 			this.database = null;
+			this.enabled = withContacts;
 
 			appData.e.on("authenticationChanged", _.bind(function(event, userid, suserid) {
 				// TODO(longsleep): Avoid creating empty databases. Create db on store only.
@@ -160,13 +165,23 @@ define(['underscore', 'jquery', 'modernizr', 'sjcl', 'text!partials/contactsmana
 		};
 
 		Contacts.prototype.put = function(contact) {
+
+			if (!this.database) {
+				console.warn("Unable to put contact as no database is loaded.");
+				return;
+			}
 			this.database.put("contacts", {
 				id: this.id(contact.Userid),
 				contact: this.encrypt(contact)
 			});
-		}
+
+		};
 
 		Contacts.prototype.open = function(userid, suserid) {
+
+			if (!this.enabled) {
+				return null;
+			}
 
 			if (this.database && (!userid || this.userid !== userid)) {
 				// Unload existing contacts.

@@ -141,6 +141,9 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				}
 				scope.$apply();
 			});
+			if (contacts.enabled) {
+				iElement.addClass("with-contacts");
+			}
 
 		};
 
