@@ -1,3 +1,17 @@
+spreed-webrtc-server (0.23.6) precise; urgency=low
+
+  * Fixed Youtube module.
+  * Contacts is now a module and can be disabled in server configuration.
+  * Fixed stereo send support.
+  * Improved Firefox support and added support for Firefox 36 and later.
+  * Dropped support for Chrome < 34.
+  * Account button in settings now use button style.
+  * Added support for scss-lint validation.
+  * Text.js was updated.
+  * CPU overuse detection (Chrome) is no longe experimental and now enabled by default.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 20 Feb 2015 18:30:16 +0100
+
 spreed-webrtc-server (0.23.5) precise; urgency=low
 
   * No longer install config file in install target of Makefile. We leave it to the packaging.
