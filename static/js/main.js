@@ -114,9 +114,6 @@ require.config({
 			deps: ['jquery'],
 			exports: '$'
 		},
-		'sjcl': {
-			exports: 'sjcl'
-		},
 		'pdf': {
 			deps: ['pdf.compatibility'],
 			exports: 'PDFJS'
