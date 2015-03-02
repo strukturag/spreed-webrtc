@@ -26,17 +26,20 @@
 
 .animate-show {
   &.ng-hide-add {
-    opacity: 1;
     display: block !important;
-    transition: all linear 0.5s;
+    opacity: 1;
+    transition: all linear .5s;
+
     &.ng-hide-add-active {
       opacity: 0;
     }
   }
+
   &.ng-hide-remove {
-    opacity: 0;
     display: block !important;
-    transition: all linear 0.5s;
+    opacity: 0;
+    transition: all linear .5s;
+
     &.ng-hide-remove-active {
       opacity: 1;
     }
