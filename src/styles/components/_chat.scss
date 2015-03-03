@@ -19,7 +19,7 @@
  *
  */
 
-#chat {
+#chat { // scss-lint:disable IdSelector
   bottom: 0;
   min-width: $chat-width;
   opacity: 0;
@@ -32,6 +32,7 @@
 }
 
 .withChat {
+  // scss-lint:disable IdSelector
   #chat {
     opacity: 1;
   }

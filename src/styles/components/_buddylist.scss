@@ -19,7 +19,7 @@
  *
  */
 
-#buddylist {
+#buddylist { // scss-lint:disable IdSelector
   bottom: 0;
   position: absolute;
   right: 0;
@@ -28,7 +28,7 @@
   z-index: 50;
 }
 
-#buddylist:before {
+#buddylist:before { // scss-lint:disable IdSelector
   background: $buddylist-tab-background;
   border-bottom: 1px solid $bordercolor;
   border-bottom-left-radius: 6px;
@@ -55,12 +55,12 @@
   z-index: 1;
 }
 
-.withBuddylist #buddylist:before {
+.withBuddylist #buddylist:before { // scss-lint:disable IdSelector
   content: '\f101';
   padding-right: 0;
 }
 
-.withBuddylistAutoHide #buddylist:before {
+.withBuddylistAutoHide #buddylist:before { // scss-lint:disable IdSelector
   display: block;
 }
 
