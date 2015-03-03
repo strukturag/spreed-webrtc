@@ -543,9 +543,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		};
 
 		$scope.$on("room.joined", function(ev) {
-			// TODO(lcooper): Is it really needful to do this stuff?
-			$timeout.cancel(ttlTimeout);
-			connected = true;
 			$scope.updateStatus(true);
 		});
 
