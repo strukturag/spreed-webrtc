@@ -44,6 +44,11 @@ define(['jquery', 'underscore'], function($, _) {
 			return;
 		}
 
+		if (this.connecting !== null) {
+			console.warn("Refusing to connect while already connecting");
+			return;
+		}
+
 		this.error = false;
 		this.e.triggerHandler("connecting", [url]);
 		this.url = url;
@@ -51,11 +56,31 @@ define(['jquery', 'underscore'], function($, _) {
 			url += ("?t=" + this.token);
 			//console.log("Reusing existing token", this.token);
 		}
+
+		var that = this;
+
+		// Create connection.
 		var conn = this.conn = new WebSocket(url);
-		conn.onopen = _.bind(this.onopen, this);
-		conn.onerror = _.bind(this.onerror, this);
-		conn.onclose = _.bind(this.onclose, this);
-		conn.onmessage = _.bind(this.onmessage, this)
+		conn.onopen = function(event) {
+			if (event.target === that.conn) {
+				that.onopen(event);
+			}
+		};
+		conn.onerror = function(event) {
+			if (event.target === that.conn) {
+				that.onerror(event);
+			}
+		};
+		conn.onclose = function(event) {
+			if (event.target === that.conn) {
+				that.onclose(event);
+			}
+		};
+		conn.onmessage = function(event) {
+			if (event.target === that.conn) {
+				that.onmessage(event);
+			}
+		};
 
 		this.connecting = window.setTimeout(_.bind(function() {
 			console.warn("Connection timeout out after", this.connecting_timeout);
@@ -97,14 +122,14 @@ define(['jquery', 'underscore'], function($, _) {
 
 	Connector.prototype.close = function() {
 
+		window.clearTimeout(this.connecting);
+		this.connecting = null;
 		this.connected = false;
+
 		if (this.conn) {
 			var conn = this.conn;
 			this.conn = null;
-			if (!this.error) {
-				conn.close();
-			}
-			conn.onopen = conn.onerror = conn.onclose = conn.onmessage = null;
+			conn.close();
 		}
 
 	};
@@ -119,7 +144,9 @@ define(['jquery', 'underscore'], function($, _) {
 	};
 
 	Connector.prototype.onopen = function(event) {
+
 		window.clearTimeout(this.connecting);
+		this.connecting = null;
 		this.connecting_timeout = timeout;
 
 		// Connection successfully established.
@@ -133,11 +160,13 @@ define(['jquery', 'underscore'], function($, _) {
 			data = this.queue.shift();
 			this.send(data);
 		}
+
 	};
 
 	Connector.prototype.onerror = function(event) {
 
 		window.clearTimeout(this.connecting);
+		this.connecting = null;
 		this.connecting_timeout = timeout;
 
 		//console.log("onerror", event);
@@ -151,6 +180,7 @@ define(['jquery', 'underscore'], function($, _) {
 	Connector.prototype.onclose = function(event) {
 
 		window.clearTimeout(this.connecting);
+		this.connecting = null;
 		this.connecting_timeout = timeout;
 
 		//console.log("onclose", event);
@@ -159,6 +189,7 @@ define(['jquery', 'underscore'], function($, _) {
 		if (!this.error) {
 			this.e.triggerHandler("close", [null, event]);
 		}
+
 	};
 
 	Connector.prototype.onmessage = function(event) {
