@@ -113,7 +113,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				//videoRecvBitrate: ,
 				//videoRecvCodec
 			}
-		}
+		};
 
 		this.screensharingSettings = {
 
