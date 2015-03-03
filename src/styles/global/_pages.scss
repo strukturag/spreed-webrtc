@@ -113,12 +113,12 @@
     a {
       display: inline-block;
       margin-right: .5em;
-
-      &:hover {
-        text-decoration: none;
-      }
-
     }
+
+    a:hover {
+      text-decoration: none;
+    }
+
   }
 
 }

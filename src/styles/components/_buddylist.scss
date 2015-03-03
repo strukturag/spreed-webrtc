@@ -301,10 +301,8 @@
       visibility: hidden;
     }
 
-    &:hover {
-      .btn-group {
-        visibility: visible;
-      }
+    &:hover .btn-group {
+      visibility: visible;
     }
   }
 
