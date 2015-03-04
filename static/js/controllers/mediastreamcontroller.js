@@ -44,7 +44,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			mediaStream.webrtc.doHangup("unload");
 			if (mediaStream.api.connector) {
 				mediaStream.api.connector.disabled = true;
-				mediaStream.api.connector.close();
 			}
 		});
 
