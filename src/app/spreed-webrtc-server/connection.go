@@ -104,8 +104,12 @@ func (c *connection) Close() {
 		c.mutex.Unlock()
 		return
 	}
-	c.ws.Close()
 	c.isClosed = true
+	c.mutex.Unlock()
+	// Unlock while we close the websocket connection.
+	c.ws.Close()
+	// Lock again to clean up the queue and send out the signal.
+	c.mutex.Lock()
 	for {
 		head := c.queue.Front()
 		if head == nil {
