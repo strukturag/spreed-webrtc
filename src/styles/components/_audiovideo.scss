@@ -274,7 +274,7 @@
   width: 40px;
   z-index: 5;
 
-  button {
+  .btn {
     color: #ccc;
     cursor: pointer;
     display: block;
@@ -283,27 +283,6 @@
     width: 40px;
   }
 
-  button.renderer-auditorium {
-    position: relative;
-
-    span:before {
-      content: '\f183';
-      left: 50%;
-      margin-left: -.8em;
-      margin-top: -.5em;
-      position: absolute;
-      top: 50%;
-    }
-
-    span:after {
-      content: '\f183';
-      margin-right: -.9em;
-      margin-top: -.5em;
-      position: absolute;
-      right: 50%;
-      top: 50%;
-    }
-  }
 }
 
 .remoteVideo {
@@ -343,6 +322,28 @@
   }
 
   video {
+  }
+}
+
+.renderer-auditorium {
+  position: relative;
+
+  span:before {
+    content: '\f183';
+    left: 50%;
+    margin-left: -.8em;
+    margin-top: -.5em;
+    position: absolute;
+    top: 50%;
+  }
+
+  span:after {
+    content: '\f183';
+    margin-right: -.9em;
+    margin-top: -.5em;
+    position: absolute;
+    right: 50%;
+    top: 50%;
   }
 }
 

@@ -112,7 +112,7 @@
   max-width: 100%;
 }
 
-.presentation .overlaybar a.overlaybar-button {
+.presentation .overlaybar .overlaybar-button {
   font-size: 20px;
   line-height: 28px;
   padding: 4px 6px;
@@ -124,11 +124,11 @@
   height: 30px;
 }
 
-.presentation .overlaybar a.btn-prev {
+.presentation .overlaybar .btn-prev {
   left: 40px;
 }
 
-.presentation .overlaybar a.btn-next {
+.presentation .overlaybar .btn-next {
   left: auto;
   right: 0;
 }

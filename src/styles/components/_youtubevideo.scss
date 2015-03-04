@@ -145,7 +145,7 @@
   vertical-align: middle;
 }
 
-.volumebar input[type="range"] {
+.volumebar .bar {
   -webkit-appearance: none;
   background-color: #aaa;
   border: 1px solid #aaa;
@@ -154,26 +154,26 @@
   width: 100px;
 }
 
-.volumebar input[type="range"]::-webkit-slider-thumb {
+.volumebar .bar::-webkit-slider-thumb {
   -webkit-appearance: none;
   background-color: #fff;
   height: 20px;
   width: 6px;
 }
 
-.volumebar input[type="range"]::-moz-range-track {
+.volumebar .bar::-moz-range-track {
   background: #aaa;
   border: 0;
 }
 
-.volumebar input[type="range"]::-moz-range-thumb {
+.volumebar .bar::-moz-range-thumb {
   background-color: #fff;
   border-radius: 0;
   height: 20px;
   width: 6px;
 }
 
-.volumebar input[type="range"]::-moz-focusring {
+.volumebar .bar::-moz-focusring {
   outline: 1px solid #aaa;
   outline-offset: -1px;
 }
