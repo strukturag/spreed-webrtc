@@ -156,9 +156,9 @@ func (h *hub) OnConnect(client Client, session *Session) {
 	if ec, ok := h.clients[session.Id]; ok {
 		// Clean up old client at the end and make sure to run this in another go routine,
 		// to avoid blocking the new client if the old one hangs or whatever.
-		defer func() {
-			log.Printf("Closing obsolete client %d with id %s\n", ec.Index(), session.Id)
-			go ec.ReplaceAndClose()
+		go func() {
+			log.Printf("Closing obsolete client %d (replaced with %d) with id %s\n", ec.Index(), client.Index(), session.Id)
+			ec.ReplaceAndClose()
 		}()
 	}
 	h.clients[session.Id] = client
