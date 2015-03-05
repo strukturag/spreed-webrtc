@@ -21,7 +21,7 @@
             </div>
             <div class="inputbox">
                 <div>
-                    <textarea class="input nicescroll form-control" ng-disabled="!(enabled)" on-enter="submit()" ng-model="input" placeholder="{{_('Type here to chat...')}}"/>
+                    <textarea class="input nicescroll form-control" maxlength="{{maxMessageSize}}" ng-disabled="!(enabled)" on-enter="submit()" ng-model="input" placeholder="{{_('Type here to chat...')}}"/>
                 </div>
                 <a ng-disabled="!(enabled)" ng-click="submit()" title="{{_('Send')}}" class="btn btn-small btn-info fa fa-play"></a>
             </div>

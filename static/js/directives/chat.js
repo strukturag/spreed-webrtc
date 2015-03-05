@@ -26,6 +26,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 		var displayName = safeDisplayName;
 		var groupChatId = "";
+		var maxMessageSize = 200000;
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -42,6 +43,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 			$scope.currentRoom = null;
 			$scope.currentRoomActive = false;
+			$scope.maxMessageSize = maxMessageSize;
+
 			$scope.getVisibleRooms = function() {
 				var res = [];
 				for (var i = 0; i < ctrl.visibleRooms.length; i++) {
@@ -245,6 +248,10 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						};
 						subscope.sendChat = function(to, message, status, mid, noloop) {
 							//console.log("send chat", to, scope.peer);
+							if (message && message.length > maxMessageSize) {
+								console.log("XXXXXXX", message.length);
+								return mid;
+							}
 							var peercall = mediaStream.webrtc.findTargetCall(to);
 							if (peercall && peercall.peerconnection && peercall.peerconnection.datachannelReady) {
 								subscope.p2p(true);
@@ -254,7 +261,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								subscope.p2p(false);
 								return subscope.sendChatServer(to, message, status, mid, noloop);
 							}
-							return mid;
 						};
 						subscope.sendChatPeer2Peer = function(peercall, to, message, status, mid, noloop) {
 							if (message && !mid) {
