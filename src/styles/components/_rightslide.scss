@@ -28,14 +28,14 @@
   top: $minbarheight;
   transition: right 200ms ease-in-out;
   z-index: 5;
+
+  .rightslidepane {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
 }
 
 .withBuddylist #rightslide {
   right: 0;
-}
-
-#rightslide .rightslidepane {
-  height: 100%;
-  position: relative;
-  width: 100%;
 }

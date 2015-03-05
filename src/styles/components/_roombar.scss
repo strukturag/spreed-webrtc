@@ -26,12 +26,11 @@
   right: 0;
   top: $minbarheight;
   z-index: 4;
-}
 
-#roombar .roombar {
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
+  .roombar {
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
-

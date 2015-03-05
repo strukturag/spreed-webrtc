@@ -19,6 +19,16 @@
  *
  */
 
+.withChat #help,
+.withBuddylist #help {
+  right: 260px;
+}
+
+.withChat.withBuddylist #help,
+.withSettings #help {
+  right: 520px;
+}
+
 #help {
   bottom: 10px;
   color: #aaa;
@@ -32,19 +42,7 @@
   transition: right 200ms ease-in-out;
   user-select: none;
   width: 350px;
-}
 
-.withChat #help,
-.withBuddylist #help {
-  right: 260px;
-}
-
-.withChat.withBuddylist #help,
-.withSettings #help {
-  right: 520px;
-}
-
-#help {
   @include breakpt($breakpoint-useability-small, max-width, only screen) {
     display: none;
   }
