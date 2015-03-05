@@ -43,9 +43,11 @@ $ make
 
 ## Build seperately
 
-Get Go external dependencies first with ``make get``.
+There are several make targets available. Get Go external dependencies at
+least once with ``make get``, all the other targets depend on this.
 
 ```bash
+$ make get
 $ make assets
 $ make binary
 ```
@@ -121,8 +123,8 @@ Spreed WebRTC should be run through a SSL frontend proxy with
 support for Websockets. Example configuration for Nginx can be
 found in `doc/NGINX.txt`.
 
-In addion for real work use one also needs a STUN/TURN server
-configured with shared secret support.
+In addion for real world use, one also needs a STUN/TURN server
+configured (with shared secret support).
 
 See https://code.google.com/p/rfc5766-turn-server/ for a free
 open source TURN server implementation. Make sure to use a recent
