@@ -25,7 +25,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
 
 		var displayName = safeDisplayName;
-		var group_chat_id = "";
+		var groupChatId = "";
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -35,7 +35,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 			var ctrl = this;
 			var rooms = ctrl.rooms = {};
 			ctrl.visibleRooms = [];
-			ctrl.group = group_chat_id;
+			ctrl.group = groupChatId;
 			ctrl.get = function(id) {
 				return ctrl.rooms[id];
 			}
@@ -133,7 +133,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 			$scope.$parent.$on("startchat", function(event, id, options) {
 
 				//console.log("startchat requested", event, id);
-				if (id === group_chat_id) {
+				if (id === groupChatId) {
 					$scope.showGroupRoom(null, options);
 				} else {
 					$scope.showRoom(id, {
@@ -145,7 +145,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 			$scope.$parent.$on("requestcontact", function(event, id, options) {
 
-				if (id !== group_chat_id) {
+				if (id !== groupChatId) {
 					// Make sure the contact id is valid.
 					var ad = appData.get();
 					if (!ad.userid) {
