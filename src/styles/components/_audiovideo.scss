@@ -226,6 +226,7 @@
   }
 
   .peerActions {
+    // scss-lint:disable SelectorDepth
     bottom: 5%;
     left: 40px;
     opacity: 0;
@@ -350,6 +351,7 @@
 }
 
 .renderer-smally {
+  // scss-lint:disable SelectorDepth
   background: #000;
   border-right: 0;
   border-top: 0;
@@ -401,6 +403,7 @@
 }
 
 .renderer-conferencekiosk {
+  // scss-lint:disable SelectorDepth
   .remoteVideos {
     background: $video-background;
     bottom: 2px;

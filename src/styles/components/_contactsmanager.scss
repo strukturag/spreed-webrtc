@@ -68,22 +68,22 @@
 
   .table {
     margin-bottom: 0;
+  }
 
-    tr:first-child td {
-      border-top: 0;
-    }
+  tr:first-child td {
+    border-top: 0;
+  }
 
-    .name {
-      text-align: left;
-      vertical-align: middle;
-      width: 40%;
-    }
+  .name {
+    text-align: left;
+    vertical-align: middle;
+    width: 40%;
+  }
 
-    .action {
-      padding-right: 15px;
-      text-align: right;
-      vertical-align: middle;
-    }
+  .action {
+    padding-right: 15px;
+    text-align: right;
+    vertical-align: middle;
   }
 }
 

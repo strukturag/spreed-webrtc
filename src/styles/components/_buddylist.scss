@@ -276,7 +276,7 @@
   }
 }
 
-.buddy .buddysessions {
+.buddysessions {
   margin-bottom: 10px;
   margin-top: 56px;
   max-height: 0;
@@ -292,18 +292,18 @@
     padding-top: 10px;
   }
 
-  ul li {
+  li {
     list-style-type: none;
     margin-bottom: 2px;
     margin-left: 0;
 
-    .btn-group {
-      visibility: hidden;
-    }
-
     &:hover .btn-group {
       visibility: visible;
     }
+  }
+
+  .btn-group {
+    visibility: hidden;
   }
 
   .currentsession .buddy3 {
