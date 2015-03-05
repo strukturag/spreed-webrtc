@@ -33,6 +33,7 @@
 }
 
 .overlaybar {
+  // scss-lint:disable QualifyingElement
   &:hover {
     background: $componentfg2;
   }
