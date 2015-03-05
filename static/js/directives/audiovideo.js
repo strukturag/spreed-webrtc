@@ -216,8 +216,13 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.toggleFullscreen = function() {
 				//console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
 				if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
-					$scope.layoutparent.toggleClass("fullscreen");
-					BigScreen.toggle($scope.layoutparent[0]);
+					BigScreen.toggle($scope.layoutparent[0], function() {
+						// onEnter
+						$scope.layoutparent.addClass("fullscreen");
+					}, function() {
+						// onExit
+						$scope.layoutparent.removeClass("fullscreen");
+					});
 				}
 			};
 
