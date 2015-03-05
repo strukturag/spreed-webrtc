@@ -71,8 +71,7 @@ func (client *client) OnText(b Buffer) {
 	if incoming, err := client.DecodeIncoming(b); err == nil {
 		client.OnIncoming(client, client.session, incoming)
 	} else {
-		log.Println("OnText error while decoding JSON", err)
-		log.Printf("JSON:\n%s\n", b)
+		log.Println("OnText error while processing incoming message", err)
 	}
 }
 

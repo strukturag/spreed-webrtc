@@ -280,6 +280,9 @@ func runner(runtime phoenix.Runtime) error {
 		log.Printf("Loaded extra templates from: %s", extraFolder)
 	}
 
+	// Define incoming channeling API limit it byte. Larger messages will be discarded.
+	incomingCodecLimit := 1024 * 1024 // 1MB
+
 	// Create realm string from config.
 	computedRealm := fmt.Sprintf("%s.%s", serverRealm, config.Token)
 
@@ -336,7 +339,7 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Add handlers.
 	buddyImages := NewImageCache()
-	codec := NewCodec()
+	codec := NewCodec(incomingCodecLimit)
 	roomManager := NewRoomManager(config, codec)
 	hub := NewHub(config, sessionSecret, encryptionSecret, turnSecret, codec)
 	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)

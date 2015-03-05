@@ -24,6 +24,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 )
 
@@ -42,11 +43,12 @@ type Codec interface {
 }
 
 type incomingCodec struct {
-	buffers BufferCache
+	buffers       BufferCache
+	incomingLimit int
 }
 
-func NewCodec() Codec {
-	return &incomingCodec{NewBufferCache(1024, bytes.MinRead)}
+func NewCodec(incomingLimit int) Codec {
+	return &incomingCodec{NewBufferCache(1024, bytes.MinRead), incomingLimit}
 }
 
 func (codec incomingCodec) NewBuffer() Buffer {
@@ -54,6 +56,10 @@ func (codec incomingCodec) NewBuffer() Buffer {
 }
 
 func (codec incomingCodec) DecodeIncoming(b Buffer) (*DataIncoming, error) {
+	length := b.GetBuffer().Len()
+	if length > codec.incomingLimit {
+		return nil, errors.New("Incoming message size limit exceeded")
+	}
 	incoming := &DataIncoming{}
 	return incoming, json.Unmarshal(b.Bytes(), incoming)
 }
