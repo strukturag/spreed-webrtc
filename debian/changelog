@@ -1,3 +1,19 @@
+spreed-webrtc-server (0.23.7) precise; urgency=low
+
+  * Updated SCSS to match coding style.
+  * Updated sjcl.js to 1.0.2.
+  * Fixed possible reconnect loop.
+  * TURN Ttl refresh timer is no longer lost when a room was joined.
+  * Fixed a possible dead lock when a hanging connection was replaced.
+  * Fixed authentication id logging.
+  * Avoid broken local video aspect ratio when camera changes aspect ratio while capturing (Mac OS).
+  * 1080p and 720p now can fail back to lower resolution when the camera fails to provide the requested resolution.
+  * Chat messages are now limited to 200k characters in web client.
+  * Channeling API now discards all incoming messages larger than 1MB.
+  * Video component now corretly exits from full screen in all cases.
+
+ -- Simon Eisenmann <simon@struktur.de>  Thu, 05 Mar 2015 18:00:55 +0100
+
 spreed-webrtc-server (0.23.6) precise; urgency=low
 
   * Fixed Youtube module.
