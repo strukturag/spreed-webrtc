@@ -52,10 +52,10 @@
 
     &.imgData {
       background-color: #000;
+    }
 
-      .chooseUploadPicture {
-        display: none;
-      }
+    &.imgData .chooseUploadPicture {
+      display: none;
     }
 
     .chooseUploadPicture {
