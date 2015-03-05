@@ -21,35 +21,41 @@
 
 .overlaybar {
   background: $overlaybar-background;
+  border-bottom: 1px solid #222;
+  border-top: 1px solid #222;
   color: $overlaybar-color;
   min-height: 36px;
   padding: 3px 8px 0 30px;
   position: absolute;
-  text-shadow: 0 0 5px black;
+  text-shadow: 0 0 5px #000;
   user-select: none;
   vertical-align: middle;
-  border-bottom: 1px solid #222;
-  border-top: 1px solid #222;
 }
 
 .overlaybar {
+  // scss-lint:disable QualifyingElement
   &:hover {
     background: $componentfg2;
   }
+
   .btn {
     text-shadow: none;
   }
+
   .btn-link {
-    text-shadow: 0 0 5px black;
+    text-shadow: 0 0 5px #000;
   }
+
   .form-group > * {
     float: left;
     padding-top: 0;
   }
+
   input[type="radio"],
   input[type="checkbox"] {
     margin-top: 2px;
   }
+
   label {
     padding-top: 6px !important;
   }
@@ -58,44 +64,52 @@
 .overlaybar {
   &.notvisible {
     background: transparent;
-    pointer-events: none;
     border-bottom: 1px solid transparent;
     border-top: 1px solid transparent;
+    pointer-events: none;
+
     &:hover {
       background: transparent;
     }
+
     .overlaybar-content {
       display: none;
     }
+
     .overlaybar-overlay {
       display: block;
     }
   }
+
   .overlaybar-button {
     color: $overlaybar-btn;
     display: block;
     font-size: 20px;
-    top: 0px;
     left: 3px;
     opacity: .7;
     padding: 4px 6px;
-    position: absolute;
     pointer-events: auto;
+    position: absolute;
+    top: 0;
     vertical-align: middle;
     z-index: 15;
   }
+
   .overlaybar-content {
     display: inline-block;
-    margin-left: .5em;
     margin-bottom: 0;
+    margin-left: .5em;
     max-width: 60%;
+
     > * {
       padding-right: .5em;
     }
+
     .input-group {
       max-width: 160px;
     }
   }
+
   .overlaybar-overlay {
     display: none;
     margin-left: .5em;

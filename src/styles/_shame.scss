@@ -23,54 +23,60 @@
 
 // Remove boostrap 3 modal scroll bar.
 .modal {
-    overflow-y: auto;
+  overflow-y: auto;
 }
 
 // Toastr fontawesome support.
 #toast-container > .toast {
-    background-image: none !important;
+  background-image: none !important;
 }
+
 #toast-container > .toast:before {
-    position: fixed;
-    font-family: FontAwesome;
-    font-size: 20px;
-    line-height: 20px;
-    float: left;
-    color: #fff;
-    padding-right: 0.5em;
-    margin: auto 0.5em auto -1.5em;
+  color: #fff;
+  float: left;
+  font-family: FontAwesome;
+  font-size: 20px;
+  line-height: 20px;
+  margin: auto .5em auto -1.5em;
+  padding-right: .5em;
+  position: fixed;
 }
+
 #toast-container > .toast-warning:before {
-    content: "\f05a";
+  content: '\f05a';
 }
+
 #toast-container > .toast-error:before {
-    content: "\f05a";
+  content: '\f05a';
 }
+
 #toast-container > .toast-info:before {
-    content: "\f05a";
+  content: '\f05a';
 }
+
 #toast-container > .toast-success:before {
-    content: "\f05a";
+  content: '\f05a';
 }
 
 // No shadows for toastr.
-#toast-container > :hover, #toast-container > div {
-	box-shadow: none !important;
+#toast-container > :hover,
+#toast-container > div {
+  box-shadow: none !important;
 }
 
 // Update colors for toaster.
 .toast-info {
-	background-color: #5bc0de;
+  background-color: #5bc0de;
 }
 
 // Update position of toastr close icon.
 .toast-close-button {
-	top: -0.6em;
-	font-size: 1em;
+  font-size: 1em;
+  top: -.6em;
 }
 
 // No opacity for toastr.
 #toast-container > div {
-	opacity: 1;
-	filter: alpha(opacity=100);
+  filter: alpha(opacity=100);
+  opacity: 1;
 }

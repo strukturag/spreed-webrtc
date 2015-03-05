@@ -44,11 +44,11 @@
 }
 
 .presentationpane .welcome .progress .download-info {
-  position: absolute;
-  left: 0;
-  width: 100%;
   color: $text-color;
-  text-shadow: 1px 1px 1px white;
+  left: 0;
+  position: absolute;
+  text-shadow: 1px 1px 1px #fff;
+  width: 100%;
 }
 
 .mainPresentation #presentation {
@@ -66,29 +66,35 @@
 
 .presentationpane {
   .canvasContainer {
-    width: 100%;
     height: 100%;
+    width: 100%;
   }
+
   canvas {
-    position: relative;
     display: block;
     margin: 0 auto;
+    position: relative;
   }
+
   .odfcanvas {
-    user-select: none;
     cursor: default;
+    user-select: none;
+
     body {
       background-color: transparent;
     }
+
     document {
       display: block;
     }
   }
+
   .odfcontainer {
     display: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
   }
+
   .odfcontainer.showonepage {
     overflow: hidden;
     text-align: center;
@@ -106,25 +112,25 @@
   max-width: 100%;
 }
 
-.presentation .overlaybar a.overlaybar-button {
-  position: absolute;
+.presentation .overlaybar .overlaybar-button {
   font-size: 20px;
-  padding: 4px 6px;
-  top: 0px;
   line-height: 28px;
+  padding: 4px 6px;
+  position: absolute;
+  top: 0;
 }
 
 .overlaybar-content .pagecontrol {
   height: 30px;
 }
 
-.presentation .overlaybar a.btn-prev {
+.presentation .overlaybar .btn-prev {
   left: 40px;
 }
 
-.presentation .overlaybar a.btn-next {
-  right: 0px;
+.presentation .overlaybar .btn-next {
   left: auto;
+  right: 0;
 }
 
 .pageinfo input {
@@ -133,15 +139,15 @@
 }
 
 .presentation .thumbnail {
-  text-shadow: none;
   color: #333;
-  margin-top: 20px;
-  width: 160px;
-  height: 122px;
   display: inline-block;
+  height: 122px;
   margin-left: 20px;
+  margin-top: 20px;
   position: relative;
+  text-shadow: none;
   vertical-align: middle;
+  width: 160px;
 }
 
 .presentation .thumbnail.presentable {
@@ -153,9 +159,9 @@
 }
 
 .presentation .thumbnail .caption {
+  overflow: hidden;
   padding-bottom: 0;
   text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .presentation .thumbnail .caption .size {
@@ -167,39 +173,39 @@
 }
 
 .presentation .thumbnail .caption .download-info {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
   bottom: 0;
-  line-height: 20px;
-  text-shadow: 1px 1px 1px white;
   color: $text-color;
+  left: 0;
+  line-height: 20px;
+  position: absolute;
+  right: 0;
+  text-shadow: 1px 1px 1px #fff;
+  top: 0;
 }
 
 .presentation .thumbnail .active {
-  font-size: 10em;
-  color: #84b819;
-  opacity: 0.7;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
   bottom: 0;
+  color: #84b819;
+  font-size: 10em;
+  left: 0;
+  opacity: .7;
+  position: absolute;
+  right: 0;
   text-align: center;
+  top: 0;
 }
 
 .presentation .thumbnail .notavailable {
+  bottom: 0;
+  color: #d2322d;
   display: none;
   font-size: 10em;
-  color: #d2322d;
-  opacity: 0.25;
-  position: absolute;
   left: 0;
+  opacity: .25;
+  position: absolute;
   right: 0;
-  top: 0;
-  bottom: 0;
   text-align: center;
+  top: 0;
 }
 
 .presentation .thumbnail:hover .notavailable {
@@ -207,9 +213,9 @@
 }
 
 .presentation .thumbnail .presentation-action {
+  display: none;
   position: absolute;
   top: 1px;
-  display: none;
 }
 
 .presentation .thumbnail .download {
@@ -230,9 +236,9 @@
 
 .presentations {
   height: 156px;
+  margin-left: -25px;
+  margin-right: 10px;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  margin-right: 10px;
-  margin-left: -25px;
 }

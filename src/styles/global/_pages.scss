@@ -28,25 +28,26 @@
 }
 
 .welcome {
-
   color: $welcome;
   font-size: 1.1em;
   margin-top: 80px;
-  text-shadow: 0 0 5px black;
-  max-width:600px;
+  max-width: 600px;
   min-height: 160px;
-  padding-left:105px;
-  padding-right: 0px;
+  padding-left: 105px;
+  padding-right: 0;
   position: relative;
+  text-shadow: 0 0 5px #000;
+
   @include breakpt($breakpoint-medium) {
-    padding-left:10px;
-    padding-right:20px;
     margin: 0 auto;
+    padding-left: 10px;
+    padding-right: 20px;
   }
 
   h1 {
-    margin-top: 0px;
+    margin-top: 0;
     white-space: nowrap;
+
     @include breakpt($breakpoint-medium) {
       white-space: normal;
     }
@@ -57,46 +58,50 @@
   }
 
   .welcome-logo {
-    position: absolute;
-    left: 0px;
-    top: 1px;
-    bottom: 0px;
-    width: 90px;
     background: $scalable-logo no-repeat left top;
     background-size: contain;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 1px;
+    width: 90px;
+
     @include breakpt($breakpoint-medium) {
-      position: relative;
       height: 70px;
-      width: 70px;
-      margin-top: 30px;
       margin-bottom: 20px;
+      margin-top: 30px;
+      position: relative;
+      width: 70px;
     }
   }
 
   .welcome-input {
     position: relative;
+
     input {
       padding-right: 105px;
     }
   }
 
   .welcome-input-buttons {
-    text-shadow: none;
     position: absolute;
-    top: 6px;
     right: 8px;
+    text-shadow: none;
+    top: 6px;
+
     a {
+      color: #000;
       padding-right: .5em;
-      color: black;
       user-select: none;
     }
   }
 
   .room-link {
     margin-top: -10px;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+
     a {
       color: $welcome;
     }
@@ -104,13 +109,16 @@
 
   .rooms-history {
     margin-top: 3em;
+
     a {
-      &:hover {
-        text-decoration: none;
-      }
-      margin-right: .5em;
       display: inline-block;
+      margin-right: .5em;
     }
+
+    a:hover {
+      text-decoration: none;
+    }
+
   }
 
 }

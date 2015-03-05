@@ -523,25 +523,25 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 					}
 					console.log("Stored data at the resurrection shrine", resurrect);
 				}
-				reconnecting = false;
-				_.delay(function() {
-					if (autoreconnect && !reconnecting) {
-						reconnecting = true;
-						console.log("Requesting to reconnect ...");
-						mediaStream.reconnect();
-					}
-				}, 500);
-				$scope.setStatus("reconnecting");
+				if (!reconnecting) {
+					reconnecting = true;
+					_.delay(function() {
+						if (autoreconnect) {
+							console.log("Requesting to reconnect ...");
+							mediaStream.reconnect();
+						}
+						reconnecting = false;
+					}, 500);
+					$scope.setStatus("reconnecting");
+				} else {
+					console.warn("Already reconnecting ...");
+				}
 			} else {
 				$scope.setStatus("closed");
 			}
 		};
 
 		$scope.$on("room.joined", function(ev) {
-			// TODO(lcooper): Is it really needful to do this stuff?
-			$timeout.cancel(ttlTimeout);
-			connected = true;
-			reconnecting = false;
 			$scope.updateStatus(true);
 		});
 
@@ -551,13 +551,11 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			switch (event.type) {
 				case "open":
 					connected = true;
-					reconnecting = false;
 					$scope.updateStatus(true);
 					$scope.setStatus("waiting");
 					break;
 				case "error":
-					if (reconnecting || connected) {
-						reconnecting = false;
+					if (connected) {
 						reconnect();
 					} else {
 						$scope.setStatus(event.type);

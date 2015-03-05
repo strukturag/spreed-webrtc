@@ -24,34 +24,37 @@
   background-size: contain;
   bottom: 15%;
   left: 15%;
-  max-width: 200px;
-  max-height: 150px;
   margin: auto;
+  max-height: 150px;
+  max-width: 200px;
   opacity: 1;
   pointer-events: none;
   position: fixed;
   right: 15%;
   top: 15%;
-  z-index: 20000;
-  transition-property: opacity;
   transition-duration: .5s;
+  transition-property: opacity;
+  z-index: 20000;
+
   &.done {
     opacity: 0;
   }
+
   > div {
+    bottom: 0;
     color: $loading;
     display: block;
     font-size: 2em;
     left: 0;
     margin: 0 auto;
-    right: 0;
-    position: absolute;
-    bottom: 0px;
     margin-bottom: -40px;
+    position: absolute;
+    right: 0;
     text-align: center;
-    text-shadow: 0 0 5px black;
+    text-shadow: 0 0 5px #000;
   }
+
   .loader-message {
-    font-size: 0.5em;
+    font-size: .5em;
   }
 }

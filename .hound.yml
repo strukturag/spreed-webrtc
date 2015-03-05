@@ -5,4 +5,4 @@ java_script:
 
 scss:
   enabled: true
-  config_file: .scss.yml
+  config_file: src/styles/scss.yml

@@ -25,16 +25,19 @@
     border: solid transparent;
     height: 8px;
     width: 8px;
+
     &:hover {
       background-color: $background;
-      border-left: 1px solid rgba(0,0,0,.12);
-      border-right: 1px solid rgba(0,0,0,.12);
+      border-left: 1px solid rgba(0, 0, 0, .12);
+      border-right: 1px solid rgba(0, 0, 0, .12);
     }
   }
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, .2);
+
     &:active {
-      background: rgba(0,0,0,0.4);
+      background: rgba(0, 0, 0, .4);
     }
   }
 }

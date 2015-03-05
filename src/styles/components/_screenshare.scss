@@ -32,7 +32,7 @@
 }
 
 .screensharepane {
-  background: black;
+  background: #000;
   bottom: 0;
   left: 0;
   overflow: auto;
@@ -45,6 +45,7 @@
   .remotescreen {
     position: relative;
   }
+
   video {
     max-height: 99%;
     width: 100%;

@@ -42,10 +42,11 @@ a {
   background: $main-background;
   bottom: 0;
   left: 0;
-  position:fixed;
+  position: fixed;
   right: 0;
   top: 0;
   z-index: 0;
+
   @include hidpi {
     background-image: $main-background-retina;
     background-size: image-width($main-background-image-retina)/2 image-height($main-background-image-retina)/2;
@@ -62,5 +63,9 @@ a {
 }
 
 .desktopnotify-icon {
-  background-image: url("../img/logo-48x48.png");
+  background-image: url('../img/logo-48x48.png');
+}
+
+:fullscreen {
+  background: #000;
 }

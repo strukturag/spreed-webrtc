@@ -30,14 +30,14 @@
 
 #buddylist:before {
   background: $buddylist-tab-background;
+  border-bottom: 1px solid $bordercolor;
+  border-bottom-left-radius: 6px;
   border-left: 1px solid $bordercolor;
   border-top: 1px solid $bordercolor;
-  border-bottom: 1px solid $bordercolor;
   border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
   bottom: 0;
   color: $buddylist-tab-color;
-  content: "\f100";
+  content: '\f100';
   cursor: pointer;
   display: none;
   font-family: FontAwesome;
@@ -46,18 +46,18 @@
   left: 0;
   line-height: 55px;
   margin: auto;
+  padding-right: 4px;
   pointer-events: auto;
   position: absolute;
   text-align: center;
   top: 0;
   width: 26px;
   z-index: 1;
-  padding-right: 4px;
 }
 
 .withBuddylist #buddylist:before {
-  content: "\f101";
-  padding-right: 0px;
+  content: '\f101';
+  padding-right: 0;
 }
 
 .withBuddylistAutoHide #buddylist:before {
@@ -81,19 +81,22 @@
 .buddylist {
   &.loading {
     .buddylistloading {
-      display:block;
+      display: block;
     }
   }
+
   &.empty {
     .buddylistempty {
-      display:block;
+      display: block;
     }
   }
+
   .buddycontainer {
     pointer-events: auto;
     position: relative;
     user-select: none;
   }
+
   .buddylistempty {
     bottom: 0;
     color: $font-color-accent;
@@ -102,12 +105,13 @@
     height: 2em;
     left: 0;
     margin: auto;
-    padding:.4em;
+    padding: .4em;
     position: absolute;
     right: 0;
     text-align: center;
     top: 0;
   }
+
   .buddylistloading {
     bottom: 0;
     color: $font-color-accent;
@@ -115,7 +119,7 @@
     font-size: 1.4em;
     height: 2em;
     margin: auto;
-    padding:.4em;
+    padding: .4em;
     position: absolute;
     right: 0;
     text-align: center;
@@ -123,6 +127,8 @@
 }
 
 .buddy {
+  @include tap-highlight-color($tap-highlight);
+
   background: $sidepanebg;
   border-bottom: 1px solid $bordercolor;
   cursor: pointer;
@@ -133,7 +139,6 @@
   position: relative;
   text-align: left;
   width: 100%;
-  @include tap-highlight-color($tap-highlight);
 }
 
 .buddy:hover {
@@ -141,24 +146,32 @@
 }
 
 .buddy {
-  &.withSubline .buddy1, &.contact .buddy1 {
+  &.withSubline .buddy1,
+  &.contact .buddy1 {
     top: 15px;
   }
-  &.withSubline .buddy2, &.contact .buddy2 {
+
+  &.withSubline .buddy2,
+  &.contact .buddy2 {
     display: block;
   }
+
   &.hovered .buddyactions {
     right: 0;
   }
-  & .fa.contact:before {
-    content: "\f006";
+
+  .fa.contact:before {
+    content: '\f006';
   }
+
   &.contact .fa.contact:before {
-    content: "\f005";
+    content: '\f005';
   }
+
   &.isself .fa.contact:before {
-    content: "\f192";
+    content: '\f192';
   }
+
   .buddyPicture {
     background: $actioncolor1;
     border-radius: 2px;
@@ -169,65 +182,72 @@
     position: relative;
     text-align: center;
     width: 46px;
+
     .#{$fa-css-prefix} {
       color: $actioncolor2;
-      line-height: 46px;
       font-size: 3em;
+      line-height: 46px;
     }
+
     img {
       bottom: 0;
       display: block;
       left: 0;
+      max-height: 100%;
+      max-width: 100%;
       position: absolute;
       right: 0;
       top: 0;
-      max-height: 100%;
-      max-width: 100%;
     }
   }
+
   .buddyPictureSmall {
-    margin:0px;
-    margin-left:0px;
-    height:30px;
-    width:30px;
-    margin-right:0px;
+    height: 30px;
+    margin: 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 30px;
+
     .#{$fa-css-prefix} {
-      line-height: 30px;
       font-size: 2em;
+      line-height: 30px;
     }
   }
+
   .buddy1 {
     color: $buddylist-buddy1;
-    font-weight: bold;
     font-size: 14px;
+    font-weight: bold;
     height: 28px;
     left: 65px;
-    position: absolute;
     overflow: hidden;
+    position: absolute;
     right: 4px;
     text-overflow: ellipsis;
     top: 24px;
     white-space: nowrap;
   }
+
   .buddy2 {
     color: $buddylist-buddy2;
+    display: none;
     left: 65px;
     overflow: hidden;
     position: absolute;
-    right: 0px;
+    right: 0;
     top: 33px;
     white-space: nowrap;
-    display: none;
   }
+
   .buddy3 {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align:left;
-    vertical-align:middle;
     display: inline-block;
+    overflow: hidden;
+    padding: 0 6px;
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
     width: 120px;
-    padding: 0px 6px;
   }
 }
 
@@ -235,58 +255,62 @@
   background: $buddylist-action-background;
   height: 66px;
   line-height: 66px;
+  padding: 0 10px;
   position: absolute;
   right: -125px;
-  padding: 0 10px;
   text-align: right;
-  top: 0px;
-  transition-property: right;
+  top: 0;
   transition-duration: .3s;
+  transition-property: right;
   white-space: nowrap;
   z-index: 5;
+
   .btn {
-    width: 42px;
+    font-size: $buddylist-action-font-size;
     height: 40px;
-    padding: 0px;
+    line-height: 40px;
+    padding: 0;
     text-align: center;
     vertical-align: middle;
-    line-height: 40px;
-    font-size: $buddylist-action-font-size;
+    width: 42px;
   }
 }
 
 .buddy .buddysessions {
-  margin-top: 56px;
-  max-height:0px;
   margin-bottom: 10px;
-  transition-property: max-height;
-  transition-duration: .5s;
+  margin-top: 56px;
+  max-height: 0;
   transition-delay: .1s;
+  transition-duration: .5s;
+  transition-property: max-height;
+
   ul {
-    padding-top: 10px;
-    margin: 0 14px;
-    padding-left: 0px;
     border-left: 1px dotted $bordercolor;
     border-right: 1px dotted $bordercolor;
+    margin: 0 14px;
+    padding-left: 0;
+    padding-top: 10px;
   }
+
   ul li {
-    margin-bottom: 2px;
-    margin-left: 0px;
     list-style-type: none;
+    margin-bottom: 2px;
+    margin-left: 0;
+
     .btn-group {
       visibility: hidden;
     }
-    &:hover {
-      .btn-group {
-        visibility: visible;
-      }
+
+    &:hover .btn-group {
+      visibility: visible;
     }
   }
+
   .currentsession .buddy3 {
     font-weight: bold;
   }
 }
 
 .buddy.hovered .buddysessions {
-  max-height:999px;
+  max-height: 999px;
 }

@@ -113,7 +113,7 @@ func (api *channellingAPI) OnIncoming(c ResponseSender, session *Session, msg *D
 		}
 
 		if err := api.Authenticate(session, st, ""); err == nil {
-			log.Println("Authentication success", session.Userid)
+			log.Println("Authentication success", session.Userid())
 			api.SendSelf(c, session)
 			session.BroadcastStatus()
 		} else {

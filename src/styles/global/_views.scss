@@ -22,12 +22,14 @@
 .mainview {
   bottom: 0;
   display: none;
-  left: 0px;
+  left: 0;
   position: absolute;
   right: 0;
   top: $minbarheight;
+
   @include breakpt($breakpoint-medium) {
-    left: 0px;
+    left: 0;
+    left: 0;
   }
 }
 

@@ -24,76 +24,92 @@
     display: block;
     margin-bottom: 5px;
   }
+
   .videoPicture {
     margin-bottom: 4px;
+
     .videoPictureVideo {
-      background-color: black;
+      background-color: #000;
       overflow: hidden;
       position: relative;
     }
+
     video {
       object-fit: cover;
     }
   }
+
   .videoPictureVideo {
-    width: 200px;
     height: 200px;
-    .videoPrev, video, .preview {
-      width: 100%;
+    width: 200px;
+
+    .videoPrev,
+    video,
+    .preview {
       height: 100%;
+      width: 100%;
     }
   }
+
   .videoFlash {
-    position: absolute;
-    left:0px;
-    right:0px;
-    top:0px;
-    bottom:0px;
-    background-color:white;
+    background-color: #fff;
     border: 1px dotted $bordercolor;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
     visibility: hidden;
     z-index: 5;
   }
+
   .videoFlash.flash {
     visibility: visible;
   }
+
   .preview {
     left: 0;
     position: absolute;
     top: 0;
+
     &.previewPicture {
       position: relative;
     }
   }
+
   .showTakePicture {
     .btn {
     }
   }
+
   .btn-takePicture,
   .btn-retakePicture {
-    left: 0px;
-    right: 0px;
+    left: 0;
+    margin: 0 auto;
+    max-width: 40%;
     position: absolute;
+    right: 0;
     top: 50%;
-    margin:0 auto;
-    max-width:40%;
   }
+
   .btn-retakePicture {
-    visibility:hidden;
+    visibility: hidden;
   }
+
   .videoPictureVideo:hover .btn-retakePicture {
-    visibility:visible;
+    visibility: visible;
   }
+
   .countdownPicture {
     color: $componentbg;
     font-size: 45px;
-    left: 0px;
-    right: 0px;
+    left: 0;
+    margin: 0 auto;
+    opacity: .8;
     position: absolute;
-    top: 75px;
-    margin:0 auto;
+    right: 0;
     text-align: center;
-    text-shadow: 0 0 5px black;
-    opacity:0.8;
+    text-shadow: 0 0 5px #000;
+    top: 75px;
   }
 }
