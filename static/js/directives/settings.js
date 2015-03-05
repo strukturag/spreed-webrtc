@@ -37,11 +37,19 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 		},
 		hd: {
 			minWidth: 1280,
-			minHeight: 720
+			minHeight: 720,
+			mandatory: {
+				minWidth: 640,
+				minHeight: 360
+			}
 		},
 		fullhd: {
 			minWidth: 1920,
-			minHeight: 1080
+			minHeight: 1080,
+			mandatory: {
+				minWidth: 1080,
+				minHeight: 720
+			}
 		}
 	};
 
@@ -238,9 +246,17 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					// Set video quality.
 					var videoQuality = videoQualityMap[settings.videoQuality];
 					if (videoQuality) {
+						var mandatory = videoQuality.mandatory;
 						_.forEach(videoQuality, function(v, k) {
-							constraints.add("video", k, v, true);
+							if (k !== "mandatory") {
+								constraints.add("video", k, v, mandatory ? false : true);
+							}
 						});
+						if (mandatory) {
+							_.forEach(mandatory, function(v, k) {
+								constraints.add("video", k, v, true);
+							});
+						}
 					}
 
 					// Set max frame rate if any was selected.
