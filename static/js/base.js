@@ -32,4 +32,5 @@ define([ // Helper module to put non dependency base libraries together.
 	'rAF',
 	'humanize',
 	'sha',
-	'sjcl'], function() {});
+	'sjcl',
+	'text'], function() {});
