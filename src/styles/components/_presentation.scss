@@ -27,30 +27,6 @@
   top: 0;
 }
 
-.presentationpane .welcome {
-  padding: 0;
-}
-
-.presentationpane .welcome h1 {
-  white-space: normal;
-}
-
-.presentationpane .welcome button {
-  margin-top: 30px;
-}
-
-.presentationpane .welcome .progress span {
-  text-shadow: none;
-}
-
-.presentationpane .welcome .progress .download-info {
-  color: $text-color;
-  left: 0;
-  position: absolute;
-  text-shadow: 1px 1px 1px #fff;
-  width: 100%;
-}
-
 .mainPresentation #presentation {
   display: block;
 }
@@ -62,6 +38,26 @@
   position: absolute;
   right: 0;
   top: 0;
+
+  .welcome {
+    padding: 0;
+
+    .btn {
+      margin-top: 30px;
+    }
+  }
+
+  h1 {
+    white-space: normal;
+  }
+
+  .download-info {
+    color: $text-color;
+    left: 0;
+    position: absolute;
+    text-shadow: 1px 1px 1px #fff;
+    width: 100%;
+  }
 }
 
 .presentationpane {
@@ -165,14 +161,17 @@
 }
 
 .presentation .thumbnail .caption .size {
+  // scss-lint:disable SelectorDepth
   font-size: 10px;
 }
 
 .presentation .thumbnail .caption .progress {
+  // scss-lint:disable SelectorDepth
   position: relative;
 }
 
 .presentation .thumbnail .caption .download-info {
+  // scss-lint:disable SelectorDepth
   bottom: 0;
   color: $text-color;
   left: 0;
