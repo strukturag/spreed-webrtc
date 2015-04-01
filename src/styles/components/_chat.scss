@@ -484,6 +484,41 @@
   &.with_name {
     // none
   }
+  &.with_hoverimage {
+    .buddyPicture {
+      overflow: visible;
+      z-index: initial;
+      &:hover .buddyInfoActions {
+        height: 40px;
+        opacity: 1;
+      }
+    }
+    .buddyInfoActions {
+      cursor: default;
+      display: inline-block;
+      height: 0;
+      left: 0;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      top: 48px;
+      transition: opacity 0.1s .1s linear, height .4s .1s ease-out;
+      white-space: nowrap;
+      z-index: 1;
+      .btn-group {
+        display: block;
+        margin: 0 auto;
+        width: 55px;
+      }
+      .btn-primary {
+        padding: 2px 5px;
+      }
+      .fa {
+        color: #fff;
+        line-height: 24px;
+      }
+    }
+  }
 }
 
 .chat {
