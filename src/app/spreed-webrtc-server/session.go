@@ -56,6 +56,7 @@ type Session struct {
 	subscriptions map[string]*Session
 	subscribers   map[string]*Session
 	disconnected  bool
+	replaced      bool
 }
 
 func NewSession(manager SessionManager, unicaster Unicaster, broadcaster Broadcaster, rooms RoomStatusManager, buddyImages ImageCache, attestations *securecookie.SecureCookie, id, sid string) *Session {
@@ -209,39 +210,65 @@ func (s *Session) Close() {
 		return
 	}
 
-	outgoing := &DataOutgoing{
-		From: s.Id,
-		A:    s.attestation.Token(),
-		Data: &DataSession{
-			Type:   "Left",
-			Id:     s.Id,
-			Status: "hard",
-		},
-	}
+	// TODO(longsleep): Verify that it is ok to not do all this when replaced is true.
+	if !s.replaced {
 
-	if s.Hello {
-		// NOTE(lcooper): If we don't check for Hello here, we could deadlock
-		// when implicitly creating a room while a user is reconnecting.
-		s.Broadcaster.Broadcast(s.Id, s.Roomid, outgoing)
-		s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
-	}
+		outgoing := &DataOutgoing{
+			From: s.Id,
+			A:    s.attestation.Token(),
+			Data: &DataSession{
+				Type:   "Left",
+				Id:     s.Id,
+				Status: "hard",
+			},
+		}
 
-	for _, session := range s.subscribers {
-		s.Unicaster.Unicast(session.Id, outgoing)
-	}
+		if s.Hello {
+			// NOTE(lcooper): If we don't check for Hello here, we could deadlock
+			// when implicitly creating a room while a user is reconnecting.
+			s.Broadcaster.Broadcast(s.Id, s.Roomid, outgoing)
+			s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
+		}
 
-	for _, session := range s.subscriptions {
-		session.RemoveSubscriber(s.Id)
-	}
+		for _, session := range s.subscribers {
+			s.Unicaster.Unicast(session.Id, outgoing)
+		}
 
-	s.SessionManager.DestroySession(s.Id, s.userid)
-	s.buddyImages.Delete(s.Id)
+		for _, session := range s.subscriptions {
+			session.RemoveSubscriber(s.Id)
+		}
+
+		s.SessionManager.DestroySession(s.Id, s.userid)
+		s.buddyImages.Delete(s.Id)
+
+	}
 
 	s.subscriptions = make(map[string]*Session)
 	s.subscribers = make(map[string]*Session)
 	s.disconnected = true
 
 	s.mutex.Unlock()
+}
+
+func (s *Session) Replace(oldSession *Session) {
+
+	oldSession.mutex.Lock()
+	if oldSession.disconnected {
+		oldSession.mutex.Unlock()
+		return
+	}
+
+	s.mutex.Lock()
+
+	s.subscriptions = oldSession.subscriptions
+	s.subscribers = oldSession.subscribers
+
+	s.mutex.Unlock()
+
+	// Mark old session as replaced.
+	oldSession.replaced = true
+	oldSession.mutex.Unlock()
+
 }
 
 func (s *Session) Update(update *SessionUpdate) uint64 {
