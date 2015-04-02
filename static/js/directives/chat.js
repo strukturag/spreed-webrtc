@@ -249,7 +249,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.sendChat = function(to, message, status, mid, noloop) {
 							//console.log("send chat", to, scope.peer);
 							if (message && message.length > maxMessageSize) {
-								console.log("XXXXXXX", message.length);
 								return mid;
 							}
 							var peercall = mediaStream.webrtc.findTargetCall(to);
