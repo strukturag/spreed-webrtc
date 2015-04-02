@@ -78,7 +78,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					if (!with_message) {
 						return;
 					}
-					// No room with this id, get one with the from id
+					// No room with this id, get one with the from id.
 					$scope.$emit("startchat", from, {
 						restore: with_message
 					});
@@ -90,14 +90,19 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					room.peerIsTyping = "no";
 					room.p2p( !! p2p);
 					if (room.firstmessage) {
+						// Auto show when this is the first message.
 						$scope.showRoom(room.id, null, {
 							restore: with_message
 						});
 					}
+					if (!room.enabled) {
+						// Reenable chat room when receiving messages again.
+						room.enabled = true;
+					}
 				}
 
-				room.$broadcast("received", from, data);
 				safeApply(room);
+				room.$broadcast("received", from, data);
 
 			});
 
@@ -108,10 +113,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						case "Left":
 							if (data.Status !== "soft") {
 								room.enabled = false;
-								room.$broadcast("received", data.Id, {
-									Type: "LeftOrJoined",
-									"LeftOrJoined": "left"
-								});
 								safeApply(room);
 							}
 							break;
@@ -119,10 +120,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							if (!room.enabled) {
 								room.enabled = true;
 								_.delay(function() {
-									room.$broadcast("received", data.Id, {
-										Type: "LeftOrJoined",
-										"LeftOrJoined": "joined"
-									});
 									safeApply(room);
 								}, 1000);
 							}
@@ -398,6 +395,22 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								}
 							}
 						});
+						subscope.$watch("enabled", function(enabled, old) {
+							if (enabled === old) {
+								return;
+							}
+							//console.log("enabled", enabled, old);
+							var value;
+							if (enabled) {
+								value = "resumed";
+							} else {
+								value = "left";
+							}
+							subscope.$broadcast("received", subscope.id, {
+								Type: "LeftOrJoined",
+								"LeftOrJoined": value
+							});
+						});
 						chat(subscope, function(clonedElement, $scope) {
 
 							pane.append(clonedElement);
@@ -444,6 +457,9 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								controller.visibleRooms.push(id);
 								subscope.index = index;
 								subscope.visible = true;
+							}
+							if (!subscope.enabled) {
+								subscope.enabled = true;
 							}
 						}
 						if (options.autofocus && subscope.visible) {
