@@ -86,16 +86,13 @@ func (s *Session) authenticated() (authenticated bool) {
 }
 
 func (s *Session) Subscribe(session *Session) {
-
 	s.mutex.Lock()
 	s.subscriptions[session.Id] = session
 	s.mutex.Unlock()
 	session.AddSubscriber(s)
-
 }
 
 func (s *Session) Unsubscribe(id string) {
-
 	s.mutex.Lock()
 	if session, ok := s.subscriptions[id]; ok {
 		delete(s.subscriptions, id)
@@ -104,7 +101,6 @@ func (s *Session) Unsubscribe(id string) {
 	} else {
 		s.mutex.Unlock()
 	}
-
 }
 
 func (s *Session) AddSubscriber(session *Session) {
@@ -236,6 +232,7 @@ func (s *Session) Close() {
 
 		for _, session := range s.subscriptions {
 			session.RemoveSubscriber(s.Id)
+			s.Unicaster.Unicast(session.Id, outgoing)
 		}
 
 		s.SessionManager.DestroySession(s.Id, s.userid)
