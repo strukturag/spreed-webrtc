@@ -187,7 +187,23 @@
 			},
 			stun: function(stunData) {
 				service.stun = stunData;
-			}
+			},
+			supported: (function() {
+				var isChrome = $window.webrtcDetectedBrowser === "chrome";
+				var isFirefox = $window.webrtcDetectedBrowser === "firefox";
+				var version = $window.webrtcDetectedVersion;
+				// Constraints support table.
+				return {
+					// Chrome supports it. See https://wiki.mozilla.org/Media/getUserMedia for FF details.
+					audioVideo: isChrome || (isFirefox && version >= 38),
+					// Disable FF HD constraints for now (see https://bugzilla.mozilla.org/show_bug.cgi?id=1150539)
+					hdVideo: isChrome,
+					// Chrome supports this on Windows only.
+					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
+					chrome: isChrome,
+					firefox: isFirefox
+				};
+			})()
 		};
 
 	}];

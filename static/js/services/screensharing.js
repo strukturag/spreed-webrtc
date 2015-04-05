@@ -121,10 +121,27 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 
 				}
 
-			} else {
-				// Currently Chrome only - sorry.
-				// Firefox 33 might get screen sharing support.
+			} else if ($window.webrtcDetectedBrowser === "firefox") {
+
+				// Firefox 36 got screen sharing support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
+				if ($window.webrtcDetectedVersion >= 36) {
+					this.supported = true;
+					this.prepare = function(options) {
+						// To work, the current domain must be whitelisted in
+						// media.getusermedia.screensharing.allowed_domains (about:config).
+						// See https://wiki.mozilla.org/Screensharing for reference.
+						var d = $q.defer()
+						var opts = _.extend({
+							mediaSource: "screen"
+						}, options);
+						d.resolve(opts);
+						return d.promise;
+					};
+				}
+
+			} else {
+				// No support for screen sharing.
 			}
 
 			// Auto install support.
