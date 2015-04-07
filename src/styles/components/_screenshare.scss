@@ -19,16 +19,22 @@
  *
  */
 
+.mainScreenshare #screenshare {
+  display: block;
+}
+
 .screenshare {
   bottom: 0;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.mainScreenshare #screenshare {
-  display: block;
+  .overlaybar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
 .screensharepane {
@@ -39,9 +45,6 @@
   position: absolute;
   right: 0;
   top: 0;
-}
-
-.screensharepane {
   .remotescreen {
     position: relative;
   }
@@ -55,10 +58,4 @@
 .remotesize .screensharepane video {
   max-height: none;
   width: auto;
-}
-
-.screenshare .overlaybar {
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
