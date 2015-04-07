@@ -196,8 +196,8 @@
 				return {
 					// Chrome supports it. See https://wiki.mozilla.org/Media/getUserMedia for FF details.
 					audioVideo: isChrome || (isFirefox && version >= 38),
-					// Disable FF HD constraints for now (see https://bugzilla.mozilla.org/show_bug.cgi?id=1150539)
-					hdVideo: isChrome,
+					// HD constraints in Chrome no issue. In FF we just assume MJPEG is fixed with FF 38 (see https://bugzilla.mozilla.org/show_bug.cgi?id=1151628).
+					hdVideo: isChrome || (isFirefox && version >= 38),
 					// Chrome supports this on Windows only.
 					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
 					chrome: isChrome,
