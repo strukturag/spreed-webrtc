@@ -62,7 +62,7 @@ func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEnco
 
 func (api *channellingAPI) OnConnect(client Client, session *Session) (interface{}, error) {
 	api.Unicaster.OnConnect(client, session)
-	return api.MakeSelf(session)
+	return api.HandleSelf(session)
 }
 
 func (api *channellingAPI) OnDisconnect(client Client, session *Session) {
@@ -72,7 +72,7 @@ func (api *channellingAPI) OnDisconnect(client Client, session *Session) {
 func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *DataIncoming) (interface{}, error) {
 	switch msg.Type {
 	case "Self":
-		return api.MakeSelf(session)
+		return api.HandleSelf(session)
 	case "Hello":
 		if msg.Hello == nil {
 			return nil, NewDataError("bad_request", "message did not contain Hello")
@@ -162,7 +162,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 	return nil, nil
 }
 
-func (api *channellingAPI) MakeSelf(session *Session) (*DataSelf, error) {
+func (api *channellingAPI) HandleSelf(session *Session) (*DataSelf, error) {
 	token, err := api.EncodeSessionToken(session)
 	if err != nil {
 		log.Println("Error in OnRegister", err)
@@ -216,7 +216,7 @@ func (api *channellingAPI) HandleAuthentication(session *Session, st *SessionTok
 	}
 
 	log.Println("Authentication success", session.Userid())
-	self, err := api.MakeSelf(session)
+	self, err := api.HandleSelf(session)
 	if err == nil {
 		session.BroadcastStatus()
 	}
