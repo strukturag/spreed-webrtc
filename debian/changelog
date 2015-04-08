@@ -1,3 +1,11 @@
+spreed-webrtc-server (0.23.8) precise; urgency=low
+
+  * Session subscriptions now notify close both ways.
+  * Reenable chat rooms on certain conditions related to peer connectivity.
+  * Fixed an issue where replaced sessions cannot receive data from contacts in other rooms.
+
+ -- Simon Eisenmann <simon@struktur.de>  Wed, 08 Apr 2015 17:24:59 +0200
+
 spreed-webrtc-server (0.23.7) precise; urgency=low
 
   * Updated SCSS to match coding style.
