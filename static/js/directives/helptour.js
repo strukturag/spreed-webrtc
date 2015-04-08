@@ -19,12 +19,13 @@
  *
  */
 
-define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/helptour.html'], function($, angular, template, templatehelptour) {
+"use strict";
+define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/helptourstart.html', 'text!partials/helptourend.html'], function($, angular, template, templatehelptourstart, templatehelptourend) {
 
 	//helptour
 	return [function() {
 
-		var controller = ['$scope', '$timeout', '$modal', '$rootScope', 'mediaStream', function($scope, $timeout, $modal, $rootScope, mediaStream) {
+		var controller = ['$scope', '$timeout', '$modal', '$rootScope', function($scope, $timeout, $modal, $rootScope) {
 			var isToggled = false;
 			var displayTime = 12000;
 			var shown = localStorage.getItem('mediastream-helptour');
@@ -85,8 +86,8 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				screenshare: false,
 				settings: true
 			};
-			var tourLayoutShowMediaAccessPane = {
-				buddylist: true,
+			var tourLayoutShowOptionsPane = {
+				buddylist: false,
 				buddylistAutoHide: false,
 				chat: false,
 				chatMaximized: false,
@@ -107,14 +108,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				screenshare: false,
 				settings: false
 			};
-			menus.triggerMediaAccess = function() {
-				if (isToggled) {
-					mediaStream.webrtc.testMediaAccess(function() {});
-				} else {
-					mediaStream.webrtc.stop();
-				}
-			};
-			menus.initRoomLayout = function() {
+			var initRoomLayout = function() {
 				$scope.layout = angular.extend($scope.layout, tourLayout);
 			};
 			menus.toggleRoom = function() {
@@ -126,6 +120,9 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			menus.toggleSettings = function() {
 				$scope.layout = angular.extend($scope.layout, tourLayoutShowSettingsPane);
 			};
+			menus.toggleOptions = function() {
+				$scope.layout = angular.extend($scope.layout, tourLayoutShowOptionsPane);
+			};
 			menus.toggleCSS = function(css) {
 				$('body').toggleClass(css);
 			};
@@ -135,7 +132,7 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				if (menu) {
 					isToggled = !isToggled;
 					if(!isToggled) {
-						menus.initRoomLayout();
+						initRoomLayout();
 					} else {
 						menus[menu]();
 					}
@@ -153,17 +150,27 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 				toggleTargetMenu();
 				$($scope.steps[$scope.currentIndex]).addClass('in');
 			};
+			var startTour = function() {
+				if ($scope.currentIndex === $scope.steps.length - 1 && isToggled) {
+					outStep();
+					$scope.currentIndex = 0;
+				}
+				inStep(0);
+			};
 			var initTour = function() {
 				backupLayout = angular.extend({}, $scope.layout);
-				menus.initRoomLayout();
-				$scope.startTour();
+				initRoomLayout();
+				startTour();
 			};
 			var reset = function() {
-				outStep();
+				if (isToggled) {
+					outStep();
+				}
 				$scope.currentIndex = null;
 				$scope.layout = angular.extend($scope.layout, backupLayout);
+				isToggled = false;
 			};
-			var introTour = function() {
+			var introTourSlide = function() {
 				var controller = ['$scope', '$modalInstance', function(scope, $modalInstance) {
 					scope.goTour = function() {
 						$modalInstance.dismiss();
@@ -171,19 +178,30 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 					};
 				}];
 				$modal.open({
-					template: templatehelptour,
+					template: templatehelptourstart,
 					controller: controller,
-					size: 'sm'
+					size: 'md'
+				});
+			};
+			$scope.endTourSlide = function() {
+				outStep();
+				var controller = ['$scope', '$modalInstance', function(scope, $modalInstance) {
+					scope.goTour = function() {
+						$modalInstance.dismiss();
+						startTour();
+					};
+					scope.endTour = function() {
+						$modalInstance.dismiss();
+						reset();
+					};
+				}];
+				$modal.open({
+					template: templatehelptourend,
+					controller: controller,
+					size: 'md'
 				});
 			};
 			$scope.currentIndex = null;
-			$scope.startTour = function() {
-				if ($scope.currentIndex === $scope.steps.length - 1) {
-					outStep();
-					$scope.currentIndex = 0;
-				}
-				inStep(0);
-			};
 			$scope.stepBackward = function() {
 				outStep();
 				inStep($scope.currentIndex - 1);
@@ -195,12 +213,12 @@ define(['jquery', 'angular', 'text!partials/helpoverlay.html', 'text!partials/he
 			$scope.exitTour = function() {
 				reset();
 			};
-			$scope.$on('showHelpTour', function() {
-				introTour();
+			$scope.$on('showHelpTourStart', function() {
+				introTourSlide();
 			});
-			$rootScope.$on("room", function(event, room) {
+			$rootScope.$on("rooms.ready", function(event, room) {
 				if (!shown) {
-					introTour();
+					introTourSlide();
 					localStorage.setItem('mediastream-helptour', 1);
 				}
 			});

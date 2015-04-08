@@ -86,7 +86,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			});
 
 			$scope.takeTour = function() {
-				$rootScope.$broadcast('showHelpTour');
+				$rootScope.$broadcast('showHelpTourStart');
 			};
 
 			$scope.saveSettings = function() {

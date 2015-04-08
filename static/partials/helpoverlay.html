@@ -1,10 +1,22 @@
 <div class="helptour">
     <div class="tourSteps">
+        <div class="popover left settingsPane" data-menu="toggleSettings" data-css="helptourShowSettingsPane">
+            <div class="arrow"></div>
+            <h3 class="popover-title">{{_('Settings')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <div class="popover-content">
+                {{_('Complete your profile by adding your name and picture. You also can enter a status message. If you want, you can change further settings like your camera, video quality, or language. Confirm your settings with a click on “close”.')}}
+                <div class="tourControl">
+                    <hr>
+                    <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
+                    <button class="btn btn-primary" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1">Continue Tour</button>
+                </div>
+            </div>
+        </div>
         <div class="popover bottom roomPane" data-menu="toggleRoom" data-css="helptourShowRoomPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('A room')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</span></h3>
+            <h3 class="popover-title">{{_('Rooms')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</span></h3>
             <div class="popover-content">
-                {{_('Place to meet people(buddy). Change rooms here and easily send friends a room link with the social media links provided. Not all room names are available and certain characters are automatically removed.')}}
+                {{_('Create a new room or enter the name of an existing room and click on the icon to enter the room. You can share the room by email, Facebook, Twitter, Google+, and Xing. Your contacts can meet you without creating an account.')}}
                 <div class="tourControl">
                     <hr>
                     <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
@@ -14,9 +26,9 @@
         </div>
         <div class="popover left buddyListPane" data-css="helptourShowBuddyListPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Buddy List')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <h3 class="popover-title">{{_('Buddies')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
             <div class="popover-content">
-                {{_('List of all buddys in the same room and saved contacts.')}}
+                {{_('A buddy is a person in the same room. Want to call or chat with them? Simple hover over a buddy and start a conversation. You can add other other persons as well to create a group call. ')}}
                 <div class="tourControl">
                     <hr>
                     <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
@@ -26,9 +38,9 @@
         </div>
         <div class="popover left buddyListPane" data-css="helptourShowBuddyListPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('A buddy')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <h3 class="popover-title">{{_('Contacts')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
             <div class="popover-content">
-                {{_('An individual in the same room. If someone is in the same room, a buddy card will be shown. Simply hover over the card to callout chat/call actions. If a star appears next to a buddy comment, the buddy is logged in. When the star is filled the buddy is a contact. Click the star to add a buddy as a contact or remove a contact.')}}
+                {{_('When a buddy and you are logged in you can add him as a contact. Just click on the unfilled star to send a contact request. When the star is filled you are contacts. You can call or chat with a contact even when you are in different rooms.')}}
                 <div class="tourControl">
                     <hr>
                     <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
@@ -38,9 +50,9 @@
         </div>
         <div class="popover left chatPane" data-menu="toggleChat" data-css="helptourShowChatPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Chat sessions')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <h3 class="popover-title">{{_('Chat')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
             <div class="popover-content">
-                {{_('Group and individual chat sessions. Chat with everyone in a room or chat individually. In group chats you are able to share files and your current location. In individual chats you are also able to start a video call.')}}
+                {{_('You can chat with everyone in a room (room chat) or with a buddy. You also can share a file or your location within the chat. When chatting with a buddy, you can start a call from the chat window.')}}
                 <div class="tourControl">
                     <hr>
                     <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
@@ -48,37 +60,16 @@
                 </div>
             </div>
         </div>
-        <div class="popover left settingsPane" data-menu="toggleSettings" data-css="helptourShowSettingsPane">
+        <div class="popover bottom optionsPane" data-menu="toggleOptions" data-css="helptourShowOptionsPane">
             <div class="arrow"></div>
-            <h3 class="popover-title">{{_('Settings')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
+            <h3 class="popover-title">{{_('Options menu')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
             <div class="popover-content">
-                {{_('Choose a name, upload a picture, signin, and customize you experience.')}}
+                {{_('On the options menu you can activate different options like mute/unmute your microphone or activate/deactivate your camera. You also can open the chat view to open a group chat. During a call you have further options like sharing your screen, sharing a file as presentation, or even a YouTube Video.')}}
                 <div class="tourControl">
                     <hr>
                     <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
-                    <button class="btn btn-primary" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1">Continue Tour</button>
+                    <button class="btn btn-primary" ng-click="endTourSlide()">Continue Tour</button>
                 </div>
-            </div>
-        </div>
-        <div class="popover bottom mediaAccessPane" data-menu="triggerMediaAccess" data-css="helptourShowMediaAccessPane">
-            <div class="arrow"></div>
-            <div class="secondArrow right"></div>
-            <h3 class="popover-title">{{_('Media permission')}}<span class="slideInfo">{{_('Window %d of %d', currentIndex + 1, steps.length)}}</h3>
-            <div class="popover-content">
-                {{_('Everytime a call is made or recieved a permission window from the browser will show up like this. To make a call you must accept, otherwise the browser cannot use your wecam and video to make a call. This is a security and privacy precaution.')}}
-                <div class="tourControl">
-                    <hr>
-                    <button class="btn btn-default" ng-click="exitTour()">Cancel Tour</button>
-                    <button class="btn btn-primary" ng-click="stepForward()" ng-disabled="currentIndex === steps.length - 1">Continue Tour</button>
-                </div>
-            </div>
-        </div>
-        <div class="popover bottom welcomePane" data-css="helptourShowWelcomePane">
-            <h3 class="popover-title">{{_('Welcome')}}</h3>
-            <div class="popover-content">
-                {{_('Welcome to spreed-webrtc! Start calling and chatting now.')}}
-                <button class="btn btn-primary btn-block" ng-click="exitTour()">Exit Tour</button>
-                <button class="btn btn-default btn-block" ng-click="startTour()">Replay Tour</button>
             </div>
         </div>
     </div>
