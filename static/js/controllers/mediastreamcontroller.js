@@ -97,12 +97,14 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 
 		var displayName = safeDisplayName;
 
-		// Init STUN and TURN servers.
-		$scope.stun = mediaStream.config.StunURIs || [];
-		if (!$scope.stun.length) {
-			$scope.stun.push("stun:stun.l.google.com:19302")
-		}
-		$scope.turn = {}; // TURN servers are set on received.self.
+		// Init STUN.
+		(function() {
+			var stun = mediaStream.config.StunURIs || [];
+			if (!stun.length) {
+				stun.push("stun:stun.l.google.com:19302");
+			}
+			constraints.stun(stun);
+		})();
 
 		// Add browser details for easy access.
 		$scope.isChrome = $window.webrtcDetectedBrowser === "chrome";
@@ -201,34 +203,8 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		};
 
 		$scope.refreshWebrtcSettings = function() {
-
-			if (!$window.webrtcDetectedBrowser) {
-				console.warn("This is not a WebRTC capable browser.");
-				return;
-			}
-
-			var settings = $scope.master.settings;
-
-			// Create iceServers from scope.
-			var iceServers = [];
-			var iceServer;
-			if ($scope.stun.length) {
-				iceServer = $window.createIceServers($scope.stun);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer);
-				}
-			}
-			if ($scope.turn.urls && $scope.turn.urls.length) {
-				iceServer = $window.createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer);
-				}
-			}
-			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-
 			// Refresh constraints.
 			constraints.refresh($scope.master.settings);
-
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
@@ -341,10 +317,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				scope.id = scope.myid = data.Id;
 				scope.userid = scope.myuserid = data.Userid ? data.Userid : null;
 				scope.suserid = data.Suserid ? data.Suserid : null;
-				scope.turn = data.Turn;
-				scope.stun = data.Stun;
-				scope.refreshWebrtcSettings();
 			});
+
+			// Set TURN and STUN data and refresh webrtc settings.
+			constraints.turn(data.Turn);
+			constraints.stun(data.Stun);
+			$scope.refreshWebrtcSettings();
+
 			if (data.Version !== mediaStream.version) {
 				console.info("Server was upgraded. Reload required.");
 				if (!reloadDialog) {
