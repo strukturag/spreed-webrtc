@@ -97,12 +97,9 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 
 		var displayName = safeDisplayName;
 
-		// Init STUN.
+		// Init STUN from server config.
 		(function() {
 			var stun = mediaStream.config.StunURIs || [];
-			if (!stun.length) {
-				stun.push("stun:stun.l.google.com:19302");
-			}
 			constraints.stun(stun);
 		})();
 
