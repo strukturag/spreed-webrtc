@@ -46,6 +46,4 @@ styleshint:
 
 styleslint:
 	@if [ "$(SCSS_LINT)" = "" ]; then echo "Command 'scss-lint' not found, required when linting styles"; exit 1; fi
-	@echo "Please be patient, this takes a while..."
-	@files=`find . -not -path "*/libs/*" -name "*.scss"|sort -u`; \
-	for f in $$files; do $(SCSS_LINT) -c scss.yml $$f; done
+	$(FIND) ./ -not -path "./libs/*" -name "*.scss" -print0 | xargs -0 -n1 $(SCSS_LINT) -c scss.yml
