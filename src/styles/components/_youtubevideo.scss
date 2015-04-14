@@ -19,7 +19,7 @@
  *
  */
 
-.mainYoutubevideo #youtubevideo {
+.mainYoutubevideo #youtubevideo { // scss-lint:disable IdSelector
   display: block;
 }
 
@@ -90,11 +90,11 @@
   top: 0;
 }
 
-#youtubecontainer {
+#youtubecontainer { // scss-lint:disable IdSelector
   position: relative;
 }
 
-#youtubeplayerinfo {
+#youtubeplayerinfo { // scss-lint:disable IdSelector
   bottom: 10%;
   left: 0;
   opacity: 0;

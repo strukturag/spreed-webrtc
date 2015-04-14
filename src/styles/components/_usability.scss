@@ -19,17 +19,24 @@
  *
  */
 
-.withChat #help,
-.withBuddylist #help {
-  right: 260px;
+
+.withChat,
+.withBuddylist {
+  // scss-lint:disable IdSelector
+  #help {
+    right: 260px;
+  }
 }
 
-.withChat.withBuddylist #help,
-.withSettings #help {
-  right: 520px;
+.withChat.withBuddylist,
+.withSettings {
+  // scss-lint:disable IdSelector
+  #help {
+    right: 520px;
+  }
 }
 
-#help {
+#help { // scss-lint:disable IdSelector
   bottom: 10px;
   color: #aaa;
   font-size: 1.1em;
@@ -42,7 +49,9 @@
   transition: right 200ms ease-in-out;
   user-select: none;
   width: 350px;
+}
 
+.help {
   @include breakpt($breakpoint-useability-small, max-width, only screen) {
     display: none;
   }

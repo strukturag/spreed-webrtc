@@ -19,7 +19,29 @@
  *
  */
 
-#audiovideo {
+.mainScreenshare,
+.mainPresentation {
+  // scss-lint:disable IdSelector
+  #audiovideo {
+    @include breakpt($breakpoint-video-medium, max-width, only screen) {
+      display: none;
+    }
+  }
+}
+
+.withChat,
+.withBuddylist {
+  // scss-lint:disable IdSelector
+  #audiovideo {
+    right: 260px;
+  }
+}
+
+.withBuddylist.withChat #audiovideo { // scss-lint:disable IdSelector
+  right: 520px;
+}
+
+#audiovideo { // scss-lint:disable IdSelector
   bottom: 0;
   left: 0;
   position: absolute;
@@ -41,22 +63,6 @@
       display: none;
     }
   }
-}
-
-.mainScreenshare #audiovideo,
-.mainPresentation #audiovideo {
-  @include breakpt($breakpoint-video-medium, max-width, only screen) {
-    display: none;
-  }
-}
-
-.withChat #audiovideo,
-.withBuddylist #audiovideo {
-  right: 260px;
-}
-
-.withBuddylist.withChat #audiovideo {
-  right: 520px;
 }
 
 .audiovideo {

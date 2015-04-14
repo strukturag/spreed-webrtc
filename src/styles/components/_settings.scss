@@ -19,7 +19,7 @@
  *
  */
 
-#settings {
+#settings { // scss-lint:disable IdSelector
   // scss-lint:disable NestingDepth
   background: $settings-background;
   border-left: 1px solid $bordercolor;
