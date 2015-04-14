@@ -87,6 +87,22 @@ define([
 		var src;
 		if (data && data.locale_data) {
 			src = data.locale_data[domain];
+			// Support older po files built for older jed (see https://github.com/SlexAxton/Jed/issues/36).
+			var count = 0;
+			var v;
+			for (var k in src) {
+				if (src.hasOwnProperty(k)) {
+					v = src[k];
+					if (v.constructor === Array && v[0] === null) {
+						v.shift();
+					} else {
+						count++;
+					}
+					if (count > 1) {
+						break;
+					}
+				}
+			}
 		}
 		var dst = this.data.locale_data[domain];
 		if (!dst) {
