@@ -66,7 +66,7 @@
           </div>
         </div>
       </settings-account>
-      <settings-media ng-show="mediaSources.supported || isChrome">
+      <settings-media ng-show="mediaSources.supported || supported.constraints.audioVideo">
         <legend>{{_('Media')}}</legend>
         <div ng-show="mediaSources.supported">
           <div class="form-group">
@@ -82,14 +82,14 @@
             </div>
           </div>
         </div>
-        <div ng-show="isChrome" class="form-group">
+        <div ng-show="supported.constraints.audioVideo" class="form-group">
           <label class="col-xs-4 control-label">{{_('Video quality')}}</label>
           <div class="col-xs-8">
             <div class="btn-group">
               <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'low'">{{_('Low')}}</button>
               <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'high'">{{_('High')}}</button>
-              <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('HD')}}</button>
-              <button type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'fullhd'">{{_('Full HD')}}</button>
+              <button ng-if="supported.constraints.hdVideo" type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'hd'">{{_('HD')}}</button>
+              <button ng-if="supported.constraints.hdVideo" type="button" class="btn btn-default" ng-model="user.settings.videoQuality" btn-radio="'fullhd'">{{_('Full HD')}}</button>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@
 
         <div>
 
-          <div class="form-group" ng-show="isChrome && supported.renderToAssociatedSink">
+          <div class="form-group" ng-show="supported.constraints.renderToAssociatedSink">
             <label class="col-xs-4 control-label">{{_('Play audio on same device as selected microphone')}}</label>
             <div class="col-xs-8">
               <div class="checkbox">
@@ -143,7 +143,7 @@
 
           <div ng-show="user.settings.experimental.enabled">
 
-            <div class="form-group" ng-show="isChrome">
+            <div class="form-group" ng-show="supported.constraints.chrome">
               <label class="col-xs-4 control-label">{{_('Experimental AEC')}}</label>
               <div class="col-xs-8">
                 <div class="checkbox">
@@ -154,7 +154,7 @@
               </div>
             </div>
 
-            <div class="form-group" ng-show="isChrome">
+            <div class="form-group" ng-show="supported.constraints.chrome">
               <label class="col-xs-4 control-label">{{_('Experimental AGC')}}</label>
               <div class="col-xs-8">
                 <div class="checkbox">
@@ -165,7 +165,7 @@
               </div>
             </div>
 
-            <div class="form-group" ng-show="isChrome">
+            <div class="form-group" ng-show="supported.constraints.chrome">
               <label class="col-xs-4 control-label">{{_('Experimental noise suppression')}}</label>
               <div class="col-xs-8">
                 <div class="checkbox">
@@ -178,7 +178,7 @@
 
           </div>
 
-          <div class="form-group" ng-show="isChrome">
+          <div class="form-group" ng-show="supported.constraints.audioVideo">
             <label class="col-xs-4 control-label">{{_('Max video frame rate')}}</label>
             <div class="col-xs-8">
               <div class="btn-group">
@@ -191,7 +191,7 @@
             </div>
           </div>
 
-          <div class="form-group" ng-show="isChrome">
+          <div class="form-group" ng-show="supported.constraints.chrome">
             <label class="col-xs-4 control-label">{{_('Send stereo audio')}}</label>
             <div class="col-xs-8">
               <div class="checkbox">
@@ -203,7 +203,7 @@
             </div>
           </div>
 
-          <div class="form-group" ng-show="isChrome">
+          <div class="form-group" ng-show="supported.constraints.chrome">
             <label class="col-xs-4 control-label">{{_('Detect CPU over use')}}</label>
             <div class="col-xs-8">
               <div class="checkbox">
@@ -217,7 +217,7 @@
 
           <div ng-show="user.settings.experimental.enabled">
 
-            <div class="form-group" ng-show="isChrome">
+            <div class="form-group" ng-show="supported.constraints.chrome">
               <label class="col-xs-4 control-label">{{_('Optimize for high resolution video')}}</label>
               <div class="col-xs-8">
                 <div class="checkbox">
@@ -228,7 +228,7 @@
               </div>
             </div>
 
-            <div class="form-group" ng-show="isChrome">
+            <div class="form-group" ng-show="supported.constraints.chrome">
               <label class="col-xs-4 control-label">{{_('Reduce video noise')}}</label>
               <div class="col-xs-8">
                 <div class="checkbox">
@@ -241,7 +241,7 @@
 
           </div>
 
-          <div class="form-group" ng-show="isChrome">
+          <div class="form-group" ng-show="supported.constraints.chrome">
             <label class="col-xs-4 control-label">{{_('Enable experiments')}}</label>
             <div class="col-xs-8">
               <div class="checkbox">

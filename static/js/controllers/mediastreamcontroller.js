@@ -111,7 +111,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		// Add support status.
 		$scope.supported = {
 			screensharing: screensharing.supported,
-			renderToAssociatedSink: $window.navigator.platform.indexOf("Win") === 0
+			constraints: constraints.supported
 		}
 
 		// Default scope data.
