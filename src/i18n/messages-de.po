@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-03-31 18:11+0200\n"
-"PO-Revision-Date: 2015-02-18 14:49+0100\n"
+"POT-Creation-Date: 2015-04-14 13:55+0200\n"
+"PO-Revision-Date: 2015-04-14 13:59+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -245,6 +245,42 @@ msgstr "Optionen für Bildschirmfreigabe"
 
 msgid "Fit screen."
 msgstr "Bildschirm einpassen."
+
+msgid "Share screen"
+msgstr "Bildschirm teilen"
+
+msgid "Please select what to share."
+msgstr "Bitte wählen Sie aus, was geteilt werden soll."
+
+msgid "Screen"
+msgstr "Bildschirm"
+
+msgid "Window"
+msgstr "Fenster"
+
+msgid "Application"
+msgstr "Anwendung"
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr ""
+"Gesamten Bildschirm teilen. Klicken Sie auf Teilen um den Bildschirm "
+"auszuwählen."
+
+msgid "Share a single window. Click share to select the window."
+msgstr ""
+"Einzelnes Fenster teilen. Klicken Sie auf Teilen um das Fenster "
+"auszuwählen."
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+"Alle Fenster einer Anwendung teilen. Es wird u.U. Inhalt hinter Fenstern "
+"der Anwendung geteilt, wenn diese verschoben werden. Klicken Sie auf "
+"Teilen um die Anwendung auszuwählen."
+
+msgid "Share"
+msgstr "Teilen"
 
 msgid "Profile"
 msgstr "Profil"
@@ -518,9 +554,6 @@ msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."
 
 msgid "YouTube URL"
 msgstr "YouTube URL"
-
-msgid "Share"
-msgstr "Teilen"
 
 msgid ""
 "Could not load YouTube player API, please check your network / firewall "

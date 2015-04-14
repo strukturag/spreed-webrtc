@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-03-31 18:11+0200\n"
+"POT-Creation-Date: 2015-04-14 13:55+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -245,6 +245,38 @@ msgstr "화면 공유 옵션"
 
 msgid "Fit screen."
 msgstr "화면에 맟춤"
+
+#, fuzzy
+msgid "Share screen"
+msgstr "화면 공유하기"
+
+msgid "Please select what to share."
+msgstr ""
+
+#, fuzzy
+msgid "Screen"
+msgstr "화면에 맟춤"
+
+msgid "Window"
+msgstr ""
+
+msgid "Application"
+msgstr ""
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr ""
+
+msgid "Share a single window. Click share to select the window."
+msgstr ""
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+
+#, fuzzy
+msgid "Share"
+msgstr "비공유"
 
 msgid "Profile"
 msgstr ""
@@ -509,10 +541,6 @@ msgstr ""
 
 msgid "YouTube URL"
 msgstr ""
-
-#, fuzzy
-msgid "Share"
-msgstr "비공유"
 
 msgid ""
 "Could not load YouTube player API, please check your network / firewall "

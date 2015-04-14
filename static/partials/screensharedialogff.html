@@ -9,9 +9,9 @@
 				<label class="btn btn-default" ng-model="data.selection" btn-radio="'application'">{{_("Application")}}</label>
 			</div>
 			<div ng-switch="data.selection">
-				<span class="help-block" ng-switch-when="screen">Share the whole screen. Click share to select the screen.</span>
-				<span class="help-block" ng-switch-when="window">Share a single window. Click share to select the window.</span>
-				<span class="help-block" ng-switch-when="application">Share all windows of a application. This can leak content behind windows when windows get moved. Click share to select the application.</span>
+				<span class="help-block" ng-switch-when="screen">{{_("Share the whole screen. Click share to select the screen.")}}</span>
+				<span class="help-block" ng-switch-when="window">{{_("Share a single window. Click share to select the window.")}}</span>
+				<span class="help-block" ng-switch-when="application">{{_("Share all windows of a application. This can leak content behind windows when windows get moved. Click share to select the application.")}}</span>
 			</div>
 		</ng-form>
 	</div>
