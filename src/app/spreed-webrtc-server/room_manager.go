@@ -22,15 +22,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 )
 
 type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
-	JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
+	JoinRoom(roomID, roomName, roomType string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
 	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
+	MakeRoomID(roomName, roomType string) string
 }
 
 type Broadcaster interface {
@@ -51,16 +53,25 @@ type roomManager struct {
 	sync.RWMutex
 	*Config
 	OutgoingEncoder
-	roomTable map[string]RoomWorker
+	roomTable       map[string]RoomWorker
+	globalRoomID    string
+	defaultRoomID   string
+	roomTypeDefault string
 }
 
 func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
-	return &roomManager{
+	rm := &roomManager{
 		sync.RWMutex{},
 		config,
 		encoder,
 		make(map[string]RoomWorker),
+		"",
+		"",
+		"Room",
 	}
+	rm.globalRoomID = rm.MakeRoomID(config.globalRoomID, "")
+	rm.defaultRoomID = rm.MakeRoomID("", "")
+	return rm
 }
 
 func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
@@ -71,12 +82,12 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
-	if roomID == "" && !rooms.DefaultRoomEnabled {
+func (rooms *roomManager) JoinRoom(roomID, roomName, roomType string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
+	if roomID == rooms.defaultRoomID && !rooms.DefaultRoomEnabled {
 		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	roomWorker, err := rooms.GetOrCreate(roomID, credentials, sessionAuthenticated)
+	roomWorker, err := rooms.GetOrCreate(roomID, roomName, roomType, credentials, sessionAuthenticated)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +102,10 @@ func (rooms *roomManager) LeaveRoom(roomID, sessionID string) {
 }
 
 func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoom, error) {
-	if !session.Hello || session.Roomid != room.Name {
+	roomID := rooms.MakeRoomID(room.Name, room.Type)
+	if !session.Hello || session.Roomid != roomID {
 		return nil, NewDataError("not_in_room", "Cannot update other rooms")
 	}
-	// XXX(lcooper): We'll process and send documents without this field
-	// correctly, however clients cannot not handle it currently.
-	room.Type = "Room"
 	if roomWorker, ok := rooms.Get(session.Roomid); ok {
 		return room, roomWorker.Update(room)
 	}
@@ -145,7 +154,7 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
 	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
 		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
 	}
@@ -167,7 +176,7 @@ func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCreden
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}
 
-	room := NewRoomWorker(rooms, roomID, credentials)
+	room := NewRoomWorker(rooms, roomID, roomName, roomType, credentials)
 	rooms.roomTable[roomID] = room
 	rooms.Unlock()
 	go func() {
@@ -195,4 +204,11 @@ func (rooms *roomManager) GlobalUsers() []*roomUser {
 
 	rooms.RUnlock()
 	return make([]*roomUser, 0)
+}
+
+func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
+	if roomType == "" {
+		roomType = rooms.roomTypeDefault
+	}
+	return fmt.Sprintf("%s:%s", roomType, roomName)
 }

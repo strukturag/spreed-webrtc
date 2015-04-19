@@ -42,7 +42,9 @@ type DataRoomCredentials struct {
 type DataHello struct {
 	Version     string
 	Ua          string
-	Id          string
+	Id          string // Compatibility with old clients.
+	Name        string // Room name.
+	Type        string // Room type.
 	Credentials *DataRoomCredentials
 }
 
@@ -53,8 +55,8 @@ type DataWelcome struct {
 }
 
 type DataRoom struct {
-	Type        string
-	Name        string
+	Type        string // Room type.
+	Name        string // Room name.
 	Credentials *DataRoomCredentials
 }
 

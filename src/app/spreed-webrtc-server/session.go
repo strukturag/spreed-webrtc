@@ -116,7 +116,8 @@ func (s *Session) RemoveSubscriber(id string) {
 	s.mutex.Unlock()
 }
 
-func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, sender Sender) (*DataRoom, error) {
+func (s *Session) JoinRoom(roomName, roomType string, credentials *DataRoomCredentials, sender Sender) (*DataRoom, error) {
+	roomID := s.RoomStatusManager.MakeRoomID(roomName, roomType)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -133,7 +134,7 @@ func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, send
 		})
 	}
 
-	room, err := s.RoomStatusManager.JoinRoom(roomID, credentials, s, s.authenticated(), sender)
+	room, err := s.RoomStatusManager.JoinRoom(roomID, roomName, roomType, credentials, s, s.authenticated(), sender)
 	if err == nil {
 		s.Hello = true
 		s.Roomid = roomID

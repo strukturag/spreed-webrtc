@@ -189,7 +189,13 @@ func (api *channellingAPI) HandleHello(session *Session, hello *DataHello, sende
 	// TODO(longsleep): Filter room id and user agent.
 	session.Update(&SessionUpdate{Types: []string{"Ua"}, Ua: hello.Ua})
 
-	room, err := session.JoinRoom(hello.Id, hello.Credentials, sender)
+	// Compatibily for old clients.
+	roomName := hello.Name
+	if roomName == "" {
+		roomName = hello.Id
+	}
+
+	room, err := session.JoinRoom(roomName, hello.Type, hello.Credentials, sender)
 	if err != nil {
 		return nil, err
 	}
