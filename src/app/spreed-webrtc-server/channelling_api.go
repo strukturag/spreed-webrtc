@@ -133,7 +133,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 			break
 		}
 
-		api.HandleChat(session, msg.Chat.To, msg.Chat.Chat)
+		api.HandleChat(session, msg.Chat)
 	case "Conference":
 		if msg.Conference == nil {
 			log.Println("Received invalid conference message.", msg)
@@ -224,12 +224,15 @@ func (api *channellingAPI) HandleAuthentication(session *Session, st *SessionTok
 	return self, err
 }
 
-func (api *channellingAPI) HandleChat(session *Session, to string, chat *DataChatMessage) {
+func (api *channellingAPI) HandleChat(session *Session, chat *DataChat) {
 	// TODO(longsleep): Limit sent chat messages per incoming connection.
-	if !chat.NoEcho {
+	msg := chat.Chat
+	to := chat.To
+
+	if !msg.NoEcho {
 		session.Unicast(session.Id, chat)
 	}
-	chat.Time = time.Now().Format(time.RFC3339)
+	msg.Time = time.Now().Format(time.RFC3339)
 	if to == "" {
 		// TODO(longsleep): Check if chat broadcast is allowed.
 		if session.Hello {
@@ -237,25 +240,25 @@ func (api *channellingAPI) HandleChat(session *Session, to string, chat *DataCha
 			session.Broadcast(chat)
 		}
 	} else {
-		if chat.Status != nil {
-			if chat.Status.ContactRequest != nil {
+		if msg.Status != nil {
+			if msg.Status.ContactRequest != nil {
 				if !api.Config.WithModule("contacts") {
 					return
 				}
-				if err := api.contactrequestHandler(session, to, chat.Status.ContactRequest); err != nil {
+				if err := api.contactrequestHandler(session, to, msg.Status.ContactRequest); err != nil {
 					log.Println("Ignoring invalid contact request.", err)
 					return
 				}
-				chat.Status.ContactRequest.Userid = session.Userid()
+				msg.Status.ContactRequest.Userid = session.Userid()
 			}
 		} else {
 			api.CountUnicastChat()
 		}
 
 		session.Unicast(to, chat)
-		if chat.Mid != "" {
+		if msg.Mid != "" {
 			// Send out delivery confirmation status chat message.
-			session.Unicast(session.Id, &DataChat{To: to, Type: "Chat", Chat: &DataChatMessage{Mid: chat.Mid, Status: &DataChatStatus{State: "sent"}}})
+			session.Unicast(session.Id, &DataChat{To: to, Type: "Chat", Chat: &DataChatMessage{Mid: msg.Mid, Status: &DataChatStatus{State: "sent"}}})
 		}
 	}
 }
