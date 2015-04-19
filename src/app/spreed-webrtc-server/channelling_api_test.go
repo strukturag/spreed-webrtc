@@ -23,6 +23,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 )
 
@@ -48,9 +49,9 @@ func (fake *fakeRoomManager) RoomUsers(session *Session) []*DataSession {
 	return fake.roomUsers
 }
 
-func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
+func (fake *fakeRoomManager) JoinRoom(id, roomName, roomType string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
 	fake.joinedID = id
-	return &DataRoom{Name: id}, fake.joinError
+	return &DataRoom{Name: roomName, Type: roomType}, fake.joinError
 }
 
 func (fake *fakeRoomManager) LeaveRoom(roomID, sessionID string) {
@@ -65,6 +66,13 @@ func (fake *fakeRoomManager) UpdateRoom(_ *Session, _ *DataRoom) (*DataRoom, err
 	return fake.updatedRoom, fake.updateError
 }
 
+func (fake *fakeRoomManager) MakeRoomID(roomName, roomType string) string {
+	if roomType == "" {
+		roomType = "Room"
+	}
+	return fmt.Sprintf("%s:%s", roomType, roomName)
+}
+
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
 	client, roomManager := &fakeClient{}, &fakeRoomManager{}
 	session := &Session{
@@ -77,10 +85,10 @@ func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomMa
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {
-	roomID, ua := "foobar", "unit tests"
+	roomID, roomName, ua := "Room:foobar", "foobar", "unit tests"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomID, Ua: ua}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName, Ua: ua}})
 
 	if roomManager.joinedID != roomID {
 		t.Errorf("Expected to have joined room %v, but got %v", roomID, roomManager.joinedID)
@@ -101,10 +109,10 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_LeavesAnyPreviouslyJoinedRooms(t *testing.T) {
-	roomID := "foobar"
+	roomID, roomName := "Room:foobar", "foobar"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomID}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName}})
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: "baz"}})
 
 	if roomManager.leftID != roomID {

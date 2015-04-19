@@ -102,12 +102,18 @@ func (rooms *roomManager) LeaveRoom(roomID, sessionID string) {
 }
 
 func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoom, error) {
-	roomID := rooms.MakeRoomID(room.Name, room.Type)
+	var roomID string
+	if room != nil {
+		roomID = rooms.MakeRoomID(room.Name, room.Type)
+	}
 	if !session.Hello || session.Roomid != roomID {
 		return nil, NewDataError("not_in_room", "Cannot update other rooms")
 	}
 	if roomWorker, ok := rooms.Get(session.Roomid); ok {
 		return room, roomWorker.Update(room)
+	} else {
+		// Set default room type if not found.
+		room.Type = rooms.roomTypeDefault
 	}
 	// TODO(lcooper): We should almost certainly return an error in this case.
 	return room, nil
