@@ -162,9 +162,10 @@ Special purpose documents for channling
     {
         Type: "Hello",
         Hello: {
-            Version: "1.0.0",
-            Ua: "Test client 1.0",
-            Id: "",
+            "Version": "1.0.0",
+            "Ua": "Test client 1.0",
+            "Name": "",
+            "Type": "",
             "Credentials": {...}
         }
     }
@@ -179,7 +180,10 @@ Special purpose documents for channling
 
       Version     : Channel protocol version (string).
       Ua          : User agent description (string).
-      Id          : Room id. The default Room has the empty string Id ("") (string).
+      Name        : Room name. The default Room has the empty string name ("") (string).
+      Type        : Room type. Use empty string to let the server select the
+                    default type.
+      Id          : Same as 'Name' (kept for compatibility).
       Credentials : An optional RoomCredentials document containing room
                     authentication information. See the Room document for
                     information on how such credentials should be handled after
@@ -218,10 +222,10 @@ Special purpose documents for channling
 
     Keys under Welcome:
 
-      Room:  Contains the current state of the room, see the description of
-             the Room document for more details.
-      Users: Contains the user list for the room, see the description of
-             the Users document for more details.
+      Room  : Contains the current state of the room, see the description of
+              the Room document for more details.
+      Users : Contains the user list for the room, see the description of
+              the Users document for more details.
 
   RoomCredentials
 
@@ -241,7 +245,7 @@ Special purpose documents for channling
   Room
 
     {
-        "Type": "Room",
+        "Type": "room-type",
         "Name": "room-name-here"
         "Credentials": {...}
     }
@@ -256,8 +260,10 @@ Special purpose documents for channling
 
     Keys under Room:
 
-      Name :        The human readable ID of the room, currently must be globally
-                    unique.
+      Type        : The room type. This field should only be send to alter
+                    the room type. It will always contain the type of the room
+                    when returned by the server.
+      Name        : The human readable name of the room.
       Credentials : Optional authentication information for the room, see the
                     documentation of the RoomCredentials document for more
                     details. This field shall only be present when sending or
@@ -423,8 +429,8 @@ Additional types for session listing and notifications
 
     }
 
-    'buddyPicture' can be in next formats: 
-    1. Base64 encoded string of an image. 
+    'buddyPicture' can be in next formats:
+    1. Base64 encoded string of an image.
       Example: data:image/jpeg;base64,/9j/4...
     2. url subpath to query REST API. Please refer to REST API for more information
       Example: img:8nG33oDk8Yv8fvK6IphL/6vjI2NLigcET/picture.jpg
