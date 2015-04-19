@@ -1,0 +1,52 @@
+<div class="ui">
+	<page></page>
+	<div id="bar" class="navbar navbar-default navbar-fixed-top bar">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" ng-click="isCollapsed = !isCollapsed">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<div class="navbar-brand left">
+					<span ui-logo class="logo"><span class="desc"><a target="_blank" href="https://github.com/strukturag/spreed-webrtc">WebRTC</a></span></span>
+				</div>
+			</div>
+			<div class="navbar-collapse collapse" collapse="isCollapsed">
+				<ul class="nav navbar-nav navbar-right right">
+					<li class="ng-cloak">
+						<menu></menu>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="callbar middle">
+			<status-message></status-message>
+		</div>
+	</div>
+	<div id="roombar" class="ng-cloak">
+		<room-bar/>
+	</div>
+	<div id="audiolevel" class="ng-cloak">
+		<div class="audio-level" title="{{_('Your audio level')}}"></div>
+	</div>
+	<div id="audiovideo" class="ng-cloak" ng-show="peer">
+		<audio-video/>
+	</div>
+	<div id="screenshare" class="ng-cloak mainview">
+		<screenshare/>
+	</div>
+	<div id="presentation" class="ng-cloak mainview">
+		<presentation/>
+	</div>
+	<div id="youtubevideo" class="ng-cloak mainview">
+		<youtubevideo/>
+	</div>
+	<div class="ng-cloak" id="rightslide">
+		<div class="rightslidepane">
+			<div id="buddylist"><buddy-list/></div>
+			<div id="chat"><chat/></div>
+		</div>
+	</div>
+	<div class="ng-cloak" id="settings" ng-class="{show: layout.settings}"><settings/></div>
+</chat>

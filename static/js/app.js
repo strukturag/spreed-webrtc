@@ -190,7 +190,8 @@ define([
 		app.directive("spreedWebrtc", [function() {
 			return {
 				restrict: "A",
-				controller: "MediastreamController"
+				scope: false,
+				controller: "AppController"
 			}
 		}]);
 
