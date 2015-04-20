@@ -407,6 +407,9 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			alertify.dialog.alert(translation._("Oops") + "<br/>" + message);
 		});
 
+		appData.flags.autoreconnect = true;
+		appData.flags.autoreconnectDelay = 0;
+
 		var reconnect = function() {
 			if (appData.flags.connected && appData.flags.autoreconnect) {
 				if (appData.flags.resurrect === null) {
@@ -418,6 +421,10 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 					console.log("Stored data at the resurrection shrine", appData.flags.resurrect);
 				}
 				if (!appData.flags.reconnecting) {
+					var delay = appData.flags.autoreconnectDelay;
+					if (delay < 10000) {
+						appData.flags.autoreconnectDelay += 500;
+					}
 					appData.flags.reconnecting = true;
 					_.delay(function() {
 						if (appData.flags.autoreconnect) {
@@ -425,7 +432,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 							mediaStream.reconnect();
 						}
 						appData.flags.reconnecting = false;
-					}, 500);
+					}, delay);
 					$scope.setStatus("reconnecting");
 				} else {
 					console.warn("Already reconnecting ...");
@@ -445,6 +452,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			switch (event.type) {
 				case "open":
 					appData.flags.connected = true;
+					appData.flags.autoreconnectDelay = 0;
 					$scope.updateStatus(true);
 					$scope.setStatus("waiting");
 					break;
