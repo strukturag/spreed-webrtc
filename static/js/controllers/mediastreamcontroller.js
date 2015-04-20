@@ -25,9 +25,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
 
 		// Avoid accidential reloads or exits when in a call.
-		var manualUnload = false;
 		$($window).on("beforeunload", function(event) {
-			if (manualUnload || !$scope.peer) {
+			if (appData.flags.manualUnload || !$scope.peer) {
 				return;
 			}
 			return translation._("Close this window and disconnect?");
@@ -175,18 +174,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				return null;
 			}
 
-		};
-
-		$scope.manualReloadApp = function(url) {
-			manualUnload = true;
-			if (url) {
-				$window.location.href = url;
-				$timeout(function() {
-					manualUnload = false;
-				}, 0);
-			} else {
-				$window.location.reload(true);
-			}
 		};
 
 		$scope.toggleBuddylist = (function() {

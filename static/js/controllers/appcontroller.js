@@ -23,7 +23,7 @@
 define(["jquery", "angular", "underscore"], function($, angular, _) {
 
 	// AppController
-	return ["$scope", "$window", "appData", "userSettingsData", function($scope, $window, appData, userSettingsData) {
+	return ["$scope", "$window", "appData", "userSettingsData", "$timeout", function($scope, $window, appData, userSettingsData, $timeout) {
 
 		// Disable drag and drop.
 		$($window).on("dragover dragenter drop", function(event) {
@@ -85,6 +85,18 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 			$scope.roomsHistory = [];
 			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
 			$scope.reset();
+		};
+
+		$scope.manualReloadApp = function(url) {
+			appData.flags.manualUnload = true;
+			if (url) {
+				$window.location.href = url;
+				$timeout(function() {
+					appData.flags.manualUnload = false;
+				}, 0);
+			} else {
+				$window.location.reload(true);
+			}
 		};
 
 		$scope.$on("room.joined", function(event, roomName) {
