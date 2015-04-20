@@ -236,7 +236,8 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		var data = {
 			Version: this.version,
 			Ua: this.userAgent,
-			Id: name
+			Name: name,
+			Type: "" // Selects the default room type.
 		};
 
 		if (pin) {
