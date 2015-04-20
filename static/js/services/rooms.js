@@ -103,7 +103,7 @@ define([
 			currentRoom = room;
 			if (priorRoom) {
 				priorRoomName = priorRoom.Name;
-				console.log("Left room", priorRoom.Name);
+				console.log("Left room", [priorRoom.Name]);
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
 			if (currentRoom) {
@@ -212,13 +212,10 @@ define([
 				return canJoinRooms;
 			},
 			joinByName: function(name, replace) {
-				name = $window.encodeURIComponent(name);
-				name = name.replace(/^%40/, "@");
-				name = name.replace(/^%24/, "$");
-				name = name.replace(/^%2B/, "+");
-
+				var url = restURL.encodeRoomURL(name, "");
+				// Apply new URL.
 				safeApply($rootScope, function(scope) {
-					$location.path("/" + name);
+					$location.path(url);
 					if (replace) {
 						$location.replace();
 					}

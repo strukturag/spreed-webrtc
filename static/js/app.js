@@ -154,7 +154,7 @@ define([
 			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|filesystem|blob):/);
 			$compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem|blob):|data:image\//);
 			// Setup routing
-			$routeProvider.when("/:room", {});
+			$routeProvider.when("/:room*", {});
 			// Use HTML5 routing.
 			$locationProvider.html5Mode(true);
 		}]);
