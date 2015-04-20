@@ -195,6 +195,15 @@ define([
 			}
 		}]);
 
+		app.directive("uiLogo", ["globalContext", function(globalContext) {
+			return {
+				restrict: "A",
+				link: function($scope, $element, $attrs) {
+					$attrs.$set("title", globalContext.Cfg.Title || "");
+				}
+			}
+		}]);
+
 		return app;
 
 	};
