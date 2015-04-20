@@ -20,21 +20,13 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, angular, BigScreen, moment, sjcl, Modernizr) {
+define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms, constraints) {
-
-		/*console.log("route", $route, $routeParams, $location);*/
-
-		// Disable drag and drop.
-		$($window).on("dragover dragenter drop", function(event) {
-			event.preventDefault();
-		});
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
 
 		// Avoid accidential reloads or exits when in a call.
-		var manualUnload = false;
 		$($window).on("beforeunload", function(event) {
-			if (manualUnload || !$scope.peer) {
+			if (appData.flags.manualUnload || !$scope.peer) {
 				return;
 			}
 			return translation._("Close this window and disconnect?");
@@ -93,8 +85,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			"prompt": "question1"
 		});
 
-		appData.set($scope);
-
 		var displayName = safeDisplayName;
 
 		// Init STUN from server config.
@@ -112,7 +102,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		$scope.supported = {
 			screensharing: screensharing.supported,
 			constraints: constraints.supported
-		}
+		};
 
 		// Default scope data.
 		$scope.status = "initializing";
@@ -132,50 +122,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
-		$scope.roomsHistory = [];
-		$scope.defaults = {
-			displayName: null,
-			buddyPicture: null,
-			message: null,
-			settings: {
-				videoQuality: "high",
-				sendStereo: false,
-				maxFrameRate: 20,
-				defaultRoom: "",
-				language: "",
-				audioRenderToAssociatedSkin: true,
-				videoCpuOveruseDetection: true,
-				experimental: {
-					enabled: false,
-					audioEchoCancellation2: true,
-					audioAutoGainControl2: true,
-					audioNoiseSuppression2: true,
-					audioTypingNoiseDetection: true,
-					videoLeakyBucket: true,
-					videoNoiseReduction: false
-				}
-			}
-		};
-		$scope.master = angular.copy($scope.defaults);
-
-		// Data voids.
-		var resurrect = null;
-		var reconnecting = false;
-		var connected = false;
-		var autoreconnect = true;
-
-		$scope.update = function(user) {
-			$scope.master = angular.copy(user);
-			if (connected) {
-				$scope.updateStatus();
-			}
-			$scope.refreshWebrtcSettings();
-		};
-
-		$scope.reset = function() {
-			$scope.user = angular.copy($scope.master);
-		};
-		$scope.reset(); // Call once for bootstrap.
 
 		$scope.setStatus = function(status) {
 			// This is the connection status to signaling server.
@@ -228,34 +174,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				return null;
 			}
 
-		};
-
-		$scope.manualReloadApp = function(url) {
-			manualUnload = true;
-			if (url) {
-				$window.location.href = url;
-				$timeout(function() {
-					manualUnload = false;
-				}, 0);
-			} else {
-				$window.location.reload(true);
-			}
-		};
-
-		$scope.loadUserSettings = function() {
-			$scope.master = angular.copy($scope.defaults);
-			var storedUser = userSettingsData.load();
-			if (storedUser) {
-				$scope.user = $.extend(true, {}, $scope.master, storedUser);
-				$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
-				$scope.update($scope.user);
-				$scope.loadedUser = storedUser.displayName && true;
-			} else {
-				$scope.loadedUser = false;
-			}
-			$scope.roomsHistory = [];
-			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
-			$scope.reset();
 		};
 
 		$scope.toggleBuddylist = (function() {
@@ -364,9 +282,9 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			}
 
 			// Support resurrection shrine.
-			if (resurrect) {
-				var resurrection = resurrect;
-				resurrect = null;
+			if (appData.flags.resurrect) {
+				var resurrection = appData.flags.resurrect;
+				appData.flags.resurrect = null;
 				$timeout(function() {
 					if (resurrection.id === $scope.id) {
 						console.log("Using resurrection shrine", resurrection);
@@ -489,25 +407,32 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			alertify.dialog.alert(translation._("Oops") + "<br/>" + message);
 		});
 
+		appData.flags.autoreconnect = true;
+		appData.flags.autoreconnectDelay = 0;
+
 		var reconnect = function() {
-			if (connected && autoreconnect) {
-				if (resurrect === null) {
+			if (appData.flags.connected && appData.flags.autoreconnect) {
+				if (appData.flags.resurrect === null) {
 					// Storage data at the resurrection shrine.
-					resurrect = {
+					appData.flags.resurrect = {
 						status: $scope.getStatus(),
 						id: $scope.id
 					}
-					console.log("Stored data at the resurrection shrine", resurrect);
+					console.log("Stored data at the resurrection shrine", appData.flags.resurrect);
 				}
-				if (!reconnecting) {
-					reconnecting = true;
+				if (!appData.flags.reconnecting) {
+					var delay = appData.flags.autoreconnectDelay;
+					if (delay < 10000) {
+						appData.flags.autoreconnectDelay += 500;
+					}
+					appData.flags.reconnecting = true;
 					_.delay(function() {
-						if (autoreconnect) {
+						if (appData.flags.autoreconnect) {
 							console.log("Requesting to reconnect ...");
 							mediaStream.reconnect();
 						}
-						reconnecting = false;
-					}, 500);
+						appData.flags.reconnecting = false;
+					}, delay);
 					$scope.setStatus("reconnecting");
 				} else {
 					console.warn("Already reconnecting ...");
@@ -526,12 +451,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			$scope.userid = $scope.suserid = null;
 			switch (event.type) {
 				case "open":
-					connected = true;
+					appData.flags.connected = true;
+					appData.flags.autoreconnectDelay = 0;
 					$scope.updateStatus(true);
 					$scope.setStatus("waiting");
 					break;
 				case "error":
-					if (connected) {
+					if (appData.flags.connected) {
 						reconnect();
 					} else {
 						$scope.setStatus(event.type);
@@ -766,17 +692,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			var count = chatMessagesUnseen[id] || 0;
 			delete chatMessagesUnseen[id];
 			$scope.chatMessagesUnseen = $scope.chatMessagesUnseen - count;
-		});
-
-		$scope.$on("room.joined", function(event, roomName) {
-			if (roomName) {
-				_.pull($scope.roomsHistory, roomName);
-				$scope.roomsHistory.unshift(roomName);
-				if ($scope.roomsHistory.length > 15) {
-					// Limit the history.
-					$scope.roomsHistory = $scope.roomsHistory.splice(0, 15);
-				}
-			}
 		});
 
 		_.defer(function() {

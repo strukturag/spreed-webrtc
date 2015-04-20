@@ -190,7 +190,17 @@ define([
 		app.directive("spreedWebrtc", [function() {
 			return {
 				restrict: "A",
-				controller: "MediastreamController"
+				scope: false,
+				controller: "AppController"
+			}
+		}]);
+
+		app.directive("uiLogo", ["globalContext", function(globalContext) {
+			return {
+				restrict: "A",
+				link: function($scope, $element, $attrs) {
+					$attrs.$set("title", globalContext.Cfg.Title || "");
+				}
 			}
 		}]);
 
