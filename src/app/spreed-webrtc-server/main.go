@@ -352,6 +352,8 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
+
+	// Simple room handler.
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Add API end points.
@@ -381,6 +383,10 @@ func runner(runtime phoenix.Runtime) error {
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
+
+	// Map everything else to a room when it is a GET.
+	rooms := r.PathPrefix("/").Methods("GET").Subrouter()
+	rooms.HandleFunc("/{room:.*}", httputils.MakeGzipHandler(roomHandler))
 
 	return runtime.Start()
 }
