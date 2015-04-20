@@ -212,15 +212,16 @@ define([
 				return canJoinRooms;
 			},
 			joinByName: function(name, replace) {
-				var url = restURL.encodeRoomURL(name, "");
-				// Apply new URL.
-				safeApply($rootScope, function(scope) {
-					$location.path(url);
-					if (replace) {
-						$location.replace();
-					}
+				var nn = restURL.encodeRoomURL(name, "", function(url) {
+					// Apply new URL.
+					safeApply($rootScope, function(scope) {
+						$location.path(url);
+						if (replace) {
+							$location.replace();
+						}
+					});
 				});
-				return name;
+				return nn;
 			},
 			joinDefault: function(replace) {
 				return rooms.joinByName("", replace);

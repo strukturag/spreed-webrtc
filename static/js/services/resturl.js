@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(["underscore"], function(_) {
+define(["underscore", "jquery"], function(_, $) {
 
 	// restURL
 	return ["globalContext", "$window", function(context, $window) {
@@ -35,24 +35,34 @@ define(["underscore"], function(_) {
 		RestURL.prototype.api = function(path) {
 			return (context.Cfg.B || "/") + "api/v1/" + path;
 		};
-		RestURL.prototype.encodeRoomURL = function(name, prefix) {
+		RestURL.prototype.encodeRoomURL = function(name, prefix, cb) {
 			// Split parts so slashes are allowed.
 			var parts = name.split("/");
 			var url = [];
+			var nn = [];
 			if (typeof prefix !== "undefined") {
 				url.push(prefix);
 			}
-			// Allow some thing in room name parts.
+			// Allow some things in room name parts.
 			_.each(parts, function(p) {
+				if (p === "") {
+					// Skip empty parts, effectly stripping spurious slashes.
+					return;
+				}
+				// Trim parts. removing white space from start and end.
+				p = $.trim(p);
+				nn.push(p);
+				// URL encode.
 				p = $window.encodeURIComponent(p);
+				// Encode back certain stuff we allow.
 				p = p.replace(/^%40/, "@");
 				p = p.replace(/^%24/, "$");
 				p = p.replace(/^%2B/, "+");
 				url.push(p);
 			});
-			if (url.length > 1 && url[url.length-1] === "") {
-				// Remove trailing slash if any.
-				url.pop();
+			if (cb) {
+				cb(url.join("/"));
+				return nn.join("/");
 			}
 			return url.join("/");
 		};

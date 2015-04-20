@@ -32,15 +32,17 @@ define(['underscore', 'angular', 'text!partials/roombar.html'], function(_, angu
 				$scope.newRoomName = "";
 			};
 
-			//console.log("roomBar directive link", arguments);
-			//$scope.layout.roombar = true;
-
 			$scope.save = function() {
 				if ($scope.roombarform.$invalid) {
 					return;
 				}
 				var roomName = rooms.joinByName($scope.newRoomName);
 				if (roomName !== $scope.currentRoomName) {
+					// Room name accepted.
+					$scope.roombarform.$setPristine();
+				} else {
+					// Room name did not apply. Reset new name and form.
+					$scope.newRoomName = roomName;
 					$scope.roombarform.$setPristine();
 				}
 			};
