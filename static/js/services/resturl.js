@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(["underscore", "jquery"], function(_, $) {
+define(["underscore"], function(_) {
 
 	// restURL
 	return ["globalContext", "$window", function(context, $window) {
@@ -49,8 +49,6 @@ define(["underscore", "jquery"], function(_, $) {
 					// Skip empty parts, effectly stripping spurious slashes.
 					return;
 				}
-				// Trim parts. removing white space from start and end.
-				p = $.trim(p);
 				nn.push(p);
 				// URL encode.
 				p = $window.encodeURIComponent(p);
