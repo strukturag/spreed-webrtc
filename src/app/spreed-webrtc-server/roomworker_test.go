@@ -26,18 +26,20 @@ import (
 )
 
 const (
+	testRoomID   string = "Room:a-room-name"
 	testRoomName string = "a-room-name"
+	testRoomType string = "Room"
 )
 
 func NewTestRoomWorker() RoomWorker {
-	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomName, nil)
+	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomID, testRoomName, testRoomType, nil)
 	go worker.Start()
 	return worker
 }
 
 func NewTestRoomWorkerWithPIN(t *testing.T) (RoomWorker, string) {
 	pin := "asdf"
-	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomName, &DataRoomCredentials{PIN: pin})
+	worker := NewRoomWorker(&roomManager{Config: &Config{}}, testRoomID, testRoomName, testRoomType, &DataRoomCredentials{PIN: pin})
 	go worker.Start()
 	return worker, pin
 }

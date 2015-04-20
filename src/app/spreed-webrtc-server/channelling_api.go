@@ -28,6 +28,7 @@ import (
 
 const (
 	maxConferenceSize = 100
+	apiVersion        = 1.4 // Keep this in sync with CHANNELING-API docs.Hand
 )
 
 type ChannellingAPI interface {
@@ -171,15 +172,16 @@ func (api *channellingAPI) HandleSelf(session *Session) (*DataSelf, error) {
 
 	log.Println("Created new session token", len(token), token)
 	self := &DataSelf{
-		Type:    "Self",
-		Id:      session.Id,
-		Sid:     session.Sid,
-		Userid:  session.Userid(),
-		Suserid: api.EncodeSessionUserID(session),
-		Token:   token,
-		Version: api.Version,
-		Turn:    api.CreateTurnData(session),
-		Stun:    api.StunURIs,
+		Type:       "Self",
+		Id:         session.Id,
+		Sid:        session.Sid,
+		Userid:     session.Userid(),
+		Suserid:    api.EncodeSessionUserID(session),
+		Token:      token,
+		Version:    api.Version,
+		ApiVersion: apiVersion,
+		Turn:       api.CreateTurnData(session),
+		Stun:       api.StunURIs,
 	}
 
 	return self, nil
@@ -189,7 +191,13 @@ func (api *channellingAPI) HandleHello(session *Session, hello *DataHello, sende
 	// TODO(longsleep): Filter room id and user agent.
 	session.Update(&SessionUpdate{Types: []string{"Ua"}, Ua: hello.Ua})
 
-	room, err := session.JoinRoom(hello.Id, hello.Credentials, sender)
+	// Compatibily for old clients.
+	roomName := hello.Name
+	if roomName == "" {
+		roomName = hello.Id
+	}
+
+	room, err := session.JoinRoom(roomName, hello.Type, hello.Credentials, sender)
 	if err != nil {
 		return nil, err
 	}

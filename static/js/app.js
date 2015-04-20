@@ -208,7 +208,7 @@ define([
 
 	};
 
-	// Our API version as float. This value is incremented on
+	// Our client side API version as float. This value is incremented on
 	// breaking changes to plugins can check on it.
 	var apiversion = 1.1;
 
