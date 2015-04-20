@@ -79,15 +79,16 @@ type DataAnswer struct {
 }
 
 type DataSelf struct {
-	Type    string
-	Id      string
-	Sid     string
-	Userid  string
-	Suserid string
-	Token   string
-	Version string
-	Turn    *DataTurn
-	Stun    []string
+	Type       string
+	Id         string
+	Sid        string
+	Userid     string
+	Suserid    string
+	Token      string
+	Version    string  // Server version.
+	ApiVersion float64 // Server channelling API version.
+	Turn       *DataTurn
+	Stun       []string
 }
 
 type DataTurn struct {

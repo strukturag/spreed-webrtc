@@ -28,6 +28,7 @@ import (
 
 const (
 	maxConferenceSize = 100
+	apiVersion        = 1.4 // Keep this in sync with CHANNELING-API docs.Hand
 )
 
 type ChannellingAPI interface {
@@ -171,15 +172,16 @@ func (api *channellingAPI) HandleSelf(session *Session) (*DataSelf, error) {
 
 	log.Println("Created new session token", len(token), token)
 	self := &DataSelf{
-		Type:    "Self",
-		Id:      session.Id,
-		Sid:     session.Sid,
-		Userid:  session.Userid(),
-		Suserid: api.EncodeSessionUserID(session),
-		Token:   token,
-		Version: api.Version,
-		Turn:    api.CreateTurnData(session),
-		Stun:    api.StunURIs,
+		Type:       "Self",
+		Id:         session.Id,
+		Sid:        session.Sid,
+		Userid:     session.Userid(),
+		Suserid:    api.EncodeSessionUserID(session),
+		Token:      token,
+		Version:    api.Version,
+		ApiVersion: apiVersion,
+		Turn:       api.CreateTurnData(session),
+		Stun:       api.StunURIs,
 	}
 
 	return self, nil
