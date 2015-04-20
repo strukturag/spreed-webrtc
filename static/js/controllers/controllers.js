@@ -23,16 +23,16 @@
 define([
 	'underscore',
 
-	'controllers/mediastreamcontroller',
+	'controllers/uicontroller',
 	'controllers/statusmessagecontroller',
 	'controllers/chatroomcontroller',
 	'controllers/usersettingscontroller',
 	'controllers/contactsmanagercontroller',
 	'controllers/contactsmanagereditcontroller',
-	'controllers/appcontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController, AppController) {
+	'controllers/appcontroller'], function(_, UiController, StatusmessageController, ChatroomController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController, AppController) {
 
 	var controllers = {
-		MediastreamController: MediastreamController,
+		UiController: UiController,
 		StatusmessageController: StatusmessageController,
 		ChatroomController: ChatroomController,
 		UsersettingsController: UsersettingsController,

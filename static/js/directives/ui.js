@@ -29,7 +29,7 @@ define(['text!partials/ui.html'], function(template) {
 			restrict: 'E',
 			replace: true,
 			scope: false,
-			controller: 'MediastreamController',
+			controller: 'UiController',
 			template: template
 		}
 
