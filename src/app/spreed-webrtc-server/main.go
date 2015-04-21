@@ -22,7 +22,6 @@
 package main
 
 import (
-	"app/spreed-webrtc-server/sleepy"
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
@@ -32,6 +31,7 @@ import (
 	"github.com/strukturag/goacceptlanguageparser"
 	"github.com/strukturag/httputils"
 	"github.com/strukturag/phoenix"
+	"github.com/strukturag/sloth"
 	"html/template"
 	"log"
 	"net/http"
@@ -357,7 +357,7 @@ func runner(runtime phoenix.Runtime) error {
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Add API end points.
-	api := sleepy.NewAPI()
+	api := sloth.NewAPI()
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResource(config, "/config")
