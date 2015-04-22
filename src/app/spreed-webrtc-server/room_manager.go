@@ -53,21 +53,17 @@ type roomManager struct {
 	sync.RWMutex
 	*Config
 	OutgoingEncoder
-	roomTable       map[string]RoomWorker
-	globalRoomID    string
-	defaultRoomID   string
-	roomTypeDefault string
+	roomTable     map[string]RoomWorker
+	globalRoomID  string
+	defaultRoomID string
 }
 
 func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 	rm := &roomManager{
-		sync.RWMutex{},
-		config,
-		encoder,
-		make(map[string]RoomWorker),
-		"",
-		"",
-		"Room",
+		RWMutex:         sync.RWMutex{},
+		Config:          config,
+		OutgoingEncoder: encoder,
+		roomTable:       make(map[string]RoomWorker),
 	}
 	rm.globalRoomID = rm.MakeRoomID(config.globalRoomID, "")
 	rm.defaultRoomID = rm.MakeRoomID("", "")

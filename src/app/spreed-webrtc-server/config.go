@@ -52,6 +52,7 @@ type Config struct {
 	globalRoomID                    string          // Id of the global room (not exported to Javascript)
 	contentSecurityPolicy           string          // HTML content security policy
 	contentSecurityPolicyReportOnly string          // HTML content security policy in report only mode
+	roomTypeDefault                 string          // New rooms default to this type
 }
 
 func NewConfig(container phoenix.Container, tokens bool) *Config {
@@ -127,6 +128,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		globalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
 		contentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
 		contentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
+		roomTypeDefault:                 "Room",
 	}
 }
 
