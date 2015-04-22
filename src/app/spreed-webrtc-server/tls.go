@@ -1,7 +1,7 @@
 /*
  * TLS helpers for Go based on crypto/tls package.
  *
- * Copyright (C) 2014 struktur AG. All rights reserved.
+ * Copyright (C) 2015 struktur AG. All rights reserved.
  * Copyright 2011 The Go Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
