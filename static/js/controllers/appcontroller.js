@@ -33,6 +33,7 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 		appData.set($scope);
 
 		// User related scope data.
+		$scope.authorizing = false;
 		$scope.roomsHistory = [];
 		$scope.defaults = {
 			displayName: null,
@@ -108,6 +109,10 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					$scope.roomsHistory = $scope.roomsHistory.splice(0, 15);
 				}
 			}
+		});
+
+		appData.e.on("authorizing", function(event, authorizing) {
+			$scope.authorizing = !!authorizing;
 		});
 
 		$scope.reset(); // Call once for bootstrap.
