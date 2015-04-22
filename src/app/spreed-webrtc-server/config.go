@@ -96,7 +96,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		"contacts":      true,
 	}
 	modules := []string{}
-	for module, _ := range modulesTable {
+	for module := range modulesTable {
 		if container.GetBoolDefault("modules", module, true) {
 			modules = append(modules, module)
 		} else {

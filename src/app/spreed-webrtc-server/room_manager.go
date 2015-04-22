@@ -111,10 +111,9 @@ func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoo
 	}
 	if roomWorker, ok := rooms.Get(session.Roomid); ok {
 		return room, roomWorker.Update(room)
-	} else {
-		// Set default room type if not found.
-		room.Type = rooms.roomTypeDefault
 	}
+	// Set default room type if room was not found.
+	room.Type = rooms.roomTypeDefault
 	// TODO(lcooper): We should almost certainly return an error in this case.
 	return room, nil
 }

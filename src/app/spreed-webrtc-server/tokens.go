@@ -49,9 +49,8 @@ func (tokens Tokens) Post(request *http.Request) (int, interface{}, http.Header)
 	if valid != "" {
 		log.Printf("Good incoming token request: %s\n", auth)
 		return 200, &Token{Token: valid, Success: true}, http.Header{"Content-Type": {"application/json"}}
-	} else {
-		log.Printf("Wrong incoming token request: %s\n", auth)
-		return 403, NewApiError("invalid_token", "Invalid token"), http.Header{"Content-Type": {"application/json"}}
 	}
+	log.Printf("Wrong incoming token request: %s\n", auth)
+	return 403, NewApiError("invalid_token", "Invalid token"), http.Header{"Content-Type": {"application/json"}}
 
 }
