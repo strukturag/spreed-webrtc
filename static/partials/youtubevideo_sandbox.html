@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>YouTube Player Sandbox</title>
+		<style type="text/css">
+		html, body {
+			height:100%;
+		}
+		body {
+			margin:0;
+			padding:0;
+			max-width:100%;
+			max-height:100%;
+			overflow:hidden;
+		}
+		#youtubeplayer {
+			width:100%;
+			height:100%;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="youtubeplayer"></div>
+		<script>
+			(function () {
+
+				var YouTubeSandbox = function(window) {
+					this.head = document.getElementsByTagName('head')[0];
+					this.window = window;
+					this.addedIframeScript = false;
+					this.player = null;
+				};
+
+				YouTubeSandbox.prototype.postMessage = function(type, message) {
+					var msg = {"type": type};
+					msg[type] = message;
+					this.window.parent.postMessage(msg, "*");
+				};
+
+				YouTubeSandbox.prototype.onYouTubeIframeAPIReady = function() {
+					this.postMessage("youtube.apiReady", {"apiReady": true});
+				};
+
+				YouTubeSandbox.prototype.loadApi = function(url) {
+					if (!this.addedIframeScript) {
+						var that = this;
+						var script = document.createElement('script');
+						script.type = "text/javascript";
+						script.src = url;
+						script.onerror = function(evt) {
+							that.postMessage("youtube.error", {"msgid": "loadScriptFailed"});
+							that.head.removeChild(script);
+							that.addedIframeScript = false;
+						};
+						this.head.appendChild(script);
+						this.addedIframeScript = true;
+					}
+				};
+
+				YouTubeSandbox.prototype.loadPlayer = function(params) {
+					if (!this.player) {
+						var that = this;
+						var stateEvents = {
+							"-1": "youtube.unstarted",
+							"0": "youtube.ended",
+							"1": "youtube.playing",
+							"2": "youtube.paused",
+							"3": "youtube.buffering",
+							"5": "youtube.videocued"
+						};
+
+						var playerVars = params.playerVars || {};
+						delete playerVars["origin"];
+						this.player = new this.window.YT.Player("youtubeplayer", {
+							height: params.height || "390",
+							width: params.width || "640",
+							playerVars: playerVars,
+							events: {
+								"onReady": function(event) {
+									that.postMessage("youtube.volume", {"volume": that.player.getVolume()});
+									that.postMessage("youtube.playerReady", {"playerReady": true});
+								},
+								"onStateChange": function(event) {
+									var msg = stateEvents[event.data];
+									if (typeof msg === "undefined") {
+										console.warn("Unknown YouTube player state", event)
+										return;
+									}
+
+									that.postMessage("youtube.event", {"event": msg});
+								}
+							}
+						});
+					}
+				};
+
+				YouTubeSandbox.prototype.destroyPlayer = function() {
+					if (this.player) {
+						this.player.destroy();
+						this.player = null;
+					}
+				};
+
+				YouTubeSandbox.prototype.loadVideo = function(id, position) {
+					if (typeof(position) !== "undefined") {
+						this.player.loadVideoById(id, position);
+					} else {
+						this.player.loadVideoById(id);
+					}
+				};
+
+				YouTubeSandbox.prototype.playVideo = function() {
+					this.player.playVideo();
+				};
+
+				YouTubeSandbox.prototype.pauseVideo = function() {
+					this.player.pauseVideo();
+				};
+
+				YouTubeSandbox.prototype.stopVideo = function() {
+					this.player.stopVideo();
+				};
+
+				YouTubeSandbox.prototype.seekTo = function(position, allowSeekAhead) {
+					if (typeof(allowSeekAhead) !== "undefined") {
+						this.player.seekTo(position, allowSeekAhead);
+					} else {
+						this.player.seekTo(positio);
+					}
+				};
+
+				var sandbox = new YouTubeSandbox(window);
+
+				window.onYouTubeIframeAPIReady = function() {
+					sandbox.onYouTubeIframeAPIReady();
+				};
+
+				window.addEventListener("message", function(event) {
+					var msg = event.data;
+					var data = msg[msg.type] || {};
+					switch (msg.type) {
+					case "loadApi":
+						sandbox.loadApi(data.url);
+						break;
+					case "loadPlayer":
+						sandbox.loadPlayer(data);
+						break;
+					case "destroyPlayer":
+						sandbox.destroyPlayer();
+						break;
+					case "loadVideo":
+						sandbox.loadVideo(data.id, data.position);
+						break;
+					case "playVideo":
+						sandbox.playVideo();
+						break;
+					case "pauseVideo":
+						sandbox.pauseVideo();
+						break;
+					case "stopVideo":
+						sandbox.stopVideo();
+						break;
+					case "seekTo":
+						sandbox.seekTo(data.position, data.allowSeekAhead);
+						break;
+					default:
+						// ignore unknown messages (e.g. received from YT player)
+						break;
+					}
+				}, false);
+
+			})();
+        </script>
+    </body>
+</html>

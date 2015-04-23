@@ -20,20 +20,65 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'], function($, _, template, BigScreen) {
+define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function($, _, template, sandboxTemplate, BigScreen) {
 
 	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q) {
 
 		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
-		var isYouTubeIframeAPIReady = (function() {
-			var d = $q.defer();
-			$window.onYouTubeIframeAPIReady = function() {
-				console.log("YouTube IFrame ready");
-				d.resolve();
-			};
-			return d.promise;
-		})();
+		var Sandbox = function(iframe) {
+			this.iframe = iframe;
+			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(sandboxTemplate);
+			this.target = this.iframe.contentWindow;
+		};
+
+		Sandbox.prototype.postMessage = function(type, message) {
+			var msg = {"type": type}
+			msg[type] = message;
+			this.target.postMessage(msg, "*");
+		};
+
+		var SandboxPlayer = function(sandbox, params) {
+			this.sandbox = sandbox;
+			this.sandbox.postMessage("loadPlayer", params);
+		};
+
+		SandboxPlayer.prototype.destroy = function() {
+			this.sandbox.postMessage("destroyPlayer", {"destroy": true});
+		};
+
+		SandboxPlayer.prototype.loadVideoById = function(id, position) {
+			var msg = {"id": id};
+			if (typeof(position) !== "undefined") {
+				msg.position = position;
+			}
+			this.sandbox.postMessage("loadVideo", msg);
+		};
+
+		SandboxPlayer.prototype.playVideo = function() {
+			this.sandbox.postMessage("playVideo", {"play": true});
+		};
+
+		SandboxPlayer.prototype.pauseVideo = function() {
+			this.sandbox.postMessage("pauseVideo", {"pause": true});
+		};
+
+		SandboxPlayer.prototype.stopVideo = function() {
+			this.sandbox.postMessage("stopVideo", {"stop": true});
+		};
+
+		SandboxPlayer.prototype.seekTo = function(position, allowSeekAhead) {
+			var msg = {"position": position};
+			if (typeof(allowSeekAhead) !== "undefined") {
+				msg.allowSeekAhead = allowSeekAhead;
+			}
+			this.sandbox.postMessage("seekTo", msg);
+		};
+
+		SandboxPlayer.prototype.getCurrentTime = function() {
+			// TODO(fancycode): implement me
+			return 0;
+		};
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -47,14 +92,49 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			var prevNow = null;
 			var initialState = null;
 
-			var stateEvents = {
-				"-1": "youtube.unstarted",
-				"0": "youtube.ended",
-				"1": "youtube.playing",
-				"2": "youtube.paused",
-				"3": "youtube.buffering",
-				"5": "youtube.videocued"
+			var sandbox = new Sandbox($("#youtubeplayer", $element)[0]);
+
+			var isYouTubeIframeAPIReadyDefer = $q.defer();
+			var isYouTubeIframeAPIReady = isYouTubeIframeAPIReadyDefer.promise;
+
+			var onPostMessage = function(event) {
+				var msg = event.data;
+				var data = msg[msg.type] || {};
+				switch (msg.type) {
+				case "youtube.apiReady":
+					$scope.$apply(function() {
+						console.log("YouTube IFrame ready");
+						isYouTubeIframeAPIReadyDefer.resolve();
+					});
+					break;
+				case "youtube.playerReady":
+					$scope.$apply(function() {
+						playerReady.resolve();
+					});
+					break;
+				case "youtube.volume":
+					$scope.$apply(function(scope) {
+						scope.volume = data.volume;
+					});
+					break;
+				case "youtube.event":
+					$scope.$apply(function(scope) {
+						console.log("State change", data.event);
+						scope.$emit(data.event);
+					});
+					break;
+				default:
+					console.log("Unknown message received", event);
+					break;
+				}
 			};
+
+			$window.addEventListener("message", onPostMessage, false);
+
+			$scope.$on("$destroy", function() {
+				$window.removeEventListener("message", onPostMessage, false);
+			});
+
 			var errorIds = {
 				"2": "invalidParameter",
 				"5": "htmlPlayerError",
@@ -79,30 +159,10 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				});
 			});
 
-			var onPlayerReady = function(event) {
-				$scope.$apply(function(scope) {
-					scope.volume = player.getVolume();
-					playerReady.resolve();
-				});
-			};
-
 			var onPlayerError = function(event) {
 				var error = errorIds[event.data] || "unknownError";
 				$scope.$apply(function(scope) {
 					scope.$emit("youtube.error", error);
-				});
-			};
-
-			var onPlayerStateChange = function(event) {
-				var msg = stateEvents[event.data];
-				if (typeof msg === "undefined") {
-					console.warn("Unknown YouTube player state", event)
-					return;
-				}
-
-				$scope.$apply(function(scope) {
-					console.log("State change", msg, event.target);
-					scope.$emit(msg, event.target);
 				});
 			};
 
@@ -131,6 +191,8 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			}
 
 			var startDetectSeek = function() {
+				// TODO(fancycode): seek detection should be implemented in the sandbox
+				/*
 				var checkSeek = function() {
 					if (!player) {
 						return;
@@ -160,6 +222,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 					}, 1000);
 				}
 				checkSeek();
+				*/
 			};
 
 			var stopDetectSeek = function() {
@@ -278,7 +341,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 				isYouTubeIframeAPIReady.then(function() {
 					if (!player) {
 						var origin = $window.location.protocol + "//" + $window.location.host;
-						player = new $window.YT.Player("youtubeplayer", {
+						player = new SandboxPlayer(sandbox, {
 							height: "390",
 							width: "640",
 							playerVars: {
@@ -291,10 +354,6 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 								"controls": with_controls ? "2" : "0",
 								"disablekb": with_controls ? "0" : "1",
 								"origin": origin
-							},
-							events: {
-								"onReady": onPlayerReady,
-								"onStateChange": onPlayerStateChange
 							}
 						});
 						$("#youtubeplayer").show();
@@ -475,19 +534,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'bigscreen'],
 			};
 
 			$scope.loadYouTubeAPI = function() {
-				if (!addedIframeScript) {
-					var head = $document[0].getElementsByTagName('head')[0];
-					var script = $document[0].createElement('script');
-					script.type = "text/javascript";
-					script.src = YOUTUBE_IFRAME_API_URL;
-					script.onerror = function(event) {
-						alertify.dialog.alert(translation._("Could not load YouTube player API, please check your network / firewall settings."));
-						head.removeChild(script);
-						addedIframeScript = false;
-					};
-					head.appendChild(script);
-					addedIframeScript = true;
-				}
+				sandbox.postMessage("loadApi", {"url": $window.location.protocol + YOUTUBE_IFRAME_API_URL});
 			};
 
 			$scope.showYouTubeVideo = function() {
