@@ -108,7 +108,7 @@
 										break;
 									}
 
-									that.postMessage("youtube.event", {"event": msg, "position": that.player.getCurrentTime()});
+									that.postMessage("youtube.event", {"event": msg, "state": event.data, "position": that.player.getCurrentTime()});
 								}
 							}
 						});
@@ -165,6 +165,7 @@
 						}
 						var now = new Date();
 						var time = that.player.getCurrentTime();
+						that.postMessage("youtube.position", {"position": time});
 						if (that.prevTime === null) {
 							that.prevTime = time;
 						}

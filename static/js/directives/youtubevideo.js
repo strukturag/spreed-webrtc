@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function($, _, template, sandboxTemplate, BigScreen) {
+define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function($, _, moment, template, sandboxTemplate, BigScreen) {
 
 	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q) {
 
@@ -34,6 +34,9 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 			template = template.replace(/__PARENT__ORIGIN__/g, origin);
 			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(template);
 			this.target = this.iframe.contentWindow;
+			this.state = -1;
+			this.position = 0;
+			this.lastPositionUpdate = null;
 		};
 
 		Sandbox.prototype.postMessage = function(type, message) {
@@ -81,18 +84,30 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 
 		SandboxPlayer.prototype.setVolume = function(volume) {
 			this.sandbox.postMessage("setVolume", {"volume": volume});
+		};
 
+		SandboxPlayer.prototype.setCurrentTime = function(time) {
+			this.position = time;
+			this.lastPositionUpdate = moment();
 		};
 
 		SandboxPlayer.prototype.getCurrentTime = function() {
-			// TODO(fancycode): implement me
-			return 0;
+			if (!this.lastPositionUpdate) {
+				return this.position;
+			}
+
+			var now = moment();
+			var deltaTime = now.diff(this.lastPositionUpdate, 'seconds', true);
+			return this.position + deltaTime;
+		};
+
+		SandboxPlayer.prototype.setPlayerState = function(state) {
+			this.state = state;
 		};
 
 		SandboxPlayer.prototype.getPlayerState = function() {
-			// TODO(fancycode): implement me
-			return null;
-		}
+			return this.state;
+		};
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -135,8 +150,16 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 				case "youtube.event":
 					$scope.$apply(function(scope) {
 						console.log("State change", data);
+						if (player) {
+							player.setPlayerState(data.state);
+						}
 						scope.$emit(data.event, data.position);
 					});
+					break;
+				case "youtube.position":
+					if (player) {
+						player.setCurrentTime(data.position);
+					}
 					break;
 				default:
 					console.log("Unknown message received", event);
