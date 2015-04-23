@@ -64,6 +64,11 @@ define(["underscore"], function(_) {
 			}
 			return url.join("/");
 		};
+		RestURL.prototype.createAbsoluteUrl = function(url) {
+			var link = $window.document.createElement("a");
+			link.href = url;
+			return link.href;
+		};
 		return new RestURL();
 	}];
 });
