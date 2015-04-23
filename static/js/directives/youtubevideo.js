@@ -26,9 +26,13 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 
 		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
+		var origin = $window.location.protocol + "//" + $window.location.host;
+
 		var Sandbox = function(iframe) {
 			this.iframe = iframe;
-			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(sandboxTemplate);
+			var template = sandboxTemplate;
+			template = template.replace(/__PARENT__ORIGIN__/g, origin);
+			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(template);
 			this.target = this.iframe.contentWindow;
 		};
 
@@ -75,10 +79,20 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 			this.sandbox.postMessage("seekTo", msg);
 		};
 
+		SandboxPlayer.prototype.setVolume = function(volume) {
+			this.sandbox.postMessage("setVolume", {"volume": volume});
+
+		};
+
 		SandboxPlayer.prototype.getCurrentTime = function() {
 			// TODO(fancycode): implement me
 			return 0;
 		};
+
+		SandboxPlayer.prototype.getPlayerState = function() {
+			// TODO(fancycode): implement me
+			return null;
+		}
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
@@ -86,10 +100,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 			var player = null;
 			var playerReady = null;
 			var isPaused = null;
-			var seekDetector = null;
 			var playReceivedNow = null;
-			var prevTime = null;
-			var prevNow = null;
 			var initialState = null;
 
 			var sandbox = new Sandbox($("#youtubeplayer", $element)[0]);
@@ -98,6 +109,10 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 			var isYouTubeIframeAPIReady = isYouTubeIframeAPIReadyDefer.promise;
 
 			var onPostMessage = function(event) {
+				if (event.origin !== "null" || event.source !== sandbox.target) {
+					// the sandboxed data-url iframe has "null" as origin
+					return;
+				}
 				var msg = event.data;
 				var data = msg[msg.type] || {};
 				switch (msg.type) {
@@ -119,8 +134,8 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 					break;
 				case "youtube.event":
 					$scope.$apply(function(scope) {
-						console.log("State change", data.event);
-						scope.$emit(data.event);
+						console.log("State change", data);
+						scope.$emit(data.event, data.position);
 					});
 					break;
 				default:
@@ -190,82 +205,34 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 				return null;
 			}
 
-			var startDetectSeek = function() {
-				// TODO(fancycode): seek detection should be implemented in the sandbox
-				/*
-				var checkSeek = function() {
-					if (!player) {
-						return;
-					}
-					var now = new Date();
-					var time = player.getCurrentTime();
-					if (prevTime === null) {
-						prevTime = time;
-					}
-					if (prevNow === null) {
-						prevNow = now;
-					}
-					var deltaTime = Math.abs(time - prevTime);
-					var deltaNow = (now - prevNow) * 0.001;
-					if (deltaTime > deltaNow * 1.1) {
-						safeApply($scope, function(scope) {
-							scope.$emit("youtube.seeked", time);
-						});
-					}
-					prevNow = now;
-					prevTime = time;
-				};
-
-				if (!seekDetector) {
-					seekDetector = $window.setInterval(function() {
-						checkSeek();
-					}, 1000);
-				}
-				checkSeek();
-				*/
-			};
-
-			var stopDetectSeek = function() {
-				if (seekDetector) {
-					$window.clearInterval(seekDetector);
-					seekDetector = null;
-				}
-				prevNow = null;
-			};
-
-			$scope.$on("youtube.playing", function() {
+			$scope.$on("youtube.playing", function(event, position) {
 				if (initialState === 2) {
 					initialState = null;
 					player.pauseVideo();
 					return;
 				}
 
-				prevTime = null;
-				startDetectSeek();
 				if (isPaused) {
 					isPaused = false;
 					mediaStream.webrtc.callForEachCall(function(peercall) {
 						mediaStreamSendYouTubeVideo(peercall, currentToken, {
 							Type: "Resume",
 							Resume: {
-								position: player.getCurrentTime()
+								position: position
 							}
 						});
 					});
 				}
 			});
 
-			$scope.$on("youtube.buffering", function() {
+			$scope.$on("youtube.buffering", function(event, position) {
 				if (initialState === 2) {
 					initialState = null;
 					player.pauseVideo();
 				}
-
-				startDetectSeek();
 			});
 
-			$scope.$on("youtube.paused", function() {
-				stopDetectSeek();
+			$scope.$on("youtube.paused", function(event, position) {
 				if (!$scope.isPublisher || !currentToken) {
 					return;
 				}
@@ -276,7 +243,7 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 						mediaStreamSendYouTubeVideo(peercall, currentToken, {
 							Type: "Pause",
 							Pause: {
-								position: player.getCurrentTime()
+								position: position
 							}
 						});
 					});
@@ -284,7 +251,6 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 			});
 
 			$scope.$on("youtube.ended", function() {
-				stopDetectSeek();
 			});
 
 			$scope.$on("youtube.seeked", function($event, position) {
@@ -306,8 +272,6 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 				playerReady.done(function() {
 					$("#youtubeplayer").show();
 					$scope.playbackActive = true;
-					prevTime = null;
-					prevNow = null;
 					isPaused = null;
 					if (playReceivedNow) {
 						var delta = ((new Date()) - playReceivedNow) * 0.001;
@@ -585,7 +549,6 @@ define(['jquery', 'underscore', 'text!partials/youtubevideo.html', 'text!partial
 				$scope.currentVideoUrl = null;
 				$scope.currentVideoId = null;
 				peers = {};
-				stopDetectSeek();
 				playerReady = null;
 				initialState = null;
 				mediaStream.webrtc.e.off("statechange", updater);

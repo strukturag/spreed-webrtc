@@ -24,17 +24,22 @@
 		<script>
 			(function () {
 
+				var PARENT_ORIGIN = "__PARENT__ORIGIN__";  // will get replaced with real origin
+
 				var YouTubeSandbox = function(window) {
 					this.head = document.getElementsByTagName('head')[0];
 					this.window = window;
 					this.addedIframeScript = false;
 					this.player = null;
+					this.seekDetector = null;
+					this.prevTime = null;
+					this.prevNow = null;
 				};
 
 				YouTubeSandbox.prototype.postMessage = function(type, message) {
 					var msg = {"type": type};
 					msg[type] = message;
-					this.window.parent.postMessage(msg, "*");
+					this.window.parent.postMessage(msg, PARENT_ORIGIN);
 				};
 
 				YouTubeSandbox.prototype.onYouTubeIframeAPIReady = function() {
@@ -87,7 +92,23 @@
 										return;
 									}
 
-									that.postMessage("youtube.event", {"event": msg});
+									switch (msg) {
+									case "youtube.playing":
+										that.prevTime = null;
+										that.startDetectSeek();
+										break;
+									case "youtube.buffering":
+										that.startDetectSeek();
+										break;
+									case "youtube.paused":
+										that.stopDetectSeek();
+										break;
+									case "youtube.ended":
+										that.stopDetectSeek();
+										break;
+									}
+
+									that.postMessage("youtube.event", {"event": msg, "position": that.player.getCurrentTime()});
 								}
 							}
 						});
@@ -95,6 +116,7 @@
 				};
 
 				YouTubeSandbox.prototype.destroyPlayer = function() {
+					this.stopDetectSeek();
 					if (this.player) {
 						this.player.destroy();
 						this.player = null;
@@ -102,6 +124,8 @@
 				};
 
 				YouTubeSandbox.prototype.loadVideo = function(id, position) {
+					this.prevTime = null;
+					this.prevNow = null;
 					if (typeof(position) !== "undefined") {
 						this.player.loadVideoById(id, position);
 					} else {
@@ -125,8 +149,51 @@
 					if (typeof(allowSeekAhead) !== "undefined") {
 						this.player.seekTo(position, allowSeekAhead);
 					} else {
-						this.player.seekTo(positio);
+						this.player.seekTo(position);
 					}
+				};
+
+				YouTubeSandbox.prototype.setVolume = function(volume) {
+					this.player.setVolume(volume);
+				};
+
+				YouTubeSandbox.prototype.startDetectSeek = function() {
+					var that = this;
+					var checkSeek = function() {
+						if (!that.player) {
+							return;
+						}
+						var now = new Date();
+						var time = that.player.getCurrentTime();
+						if (that.prevTime === null) {
+							that.prevTime = time;
+						}
+						if (that.prevNow === null) {
+							that.prevNow = now;
+						}
+						var deltaTime = Math.abs(time - that.prevTime);
+						var deltaNow = (now - that.prevNow) * 0.001;
+						if (deltaTime > deltaNow * 1.1) {
+							that.postMessage("youtube.event", {"event": "youtube.seeked", "position": time});
+						}
+						that.prevNow = now;
+						that.prevTime = time;
+					};
+
+					if (!this.seekDetector) {
+						this.seekDetector = this.window.setInterval(function() {
+							checkSeek();
+						}, 1000);
+					}
+					checkSeek();
+				};
+
+				YouTubeSandbox.prototype.stopDetectSeek = function() {
+					if (this.seekDetector) {
+						this.window.clearInterval(this.seekDetector);
+						this.seekDetector = null;
+					}
+					this.prevNow = null;
 				};
 
 				var sandbox = new YouTubeSandbox(window);
@@ -136,6 +203,10 @@
 				};
 
 				window.addEventListener("message", function(event) {
+					if (event.origin !== PARENT_ORIGIN) {
+						// only accept messages from spreed-webrtc
+						return;
+					}
 					var msg = event.data;
 					var data = msg[msg.type] || {};
 					switch (msg.type) {
@@ -163,8 +234,11 @@
 					case "seekTo":
 						sandbox.seekTo(data.position, data.allowSeekAhead);
 						break;
+					case "setVolume":
+						sandbox.setVolume(data.volume);
+						break;
 					default:
-						// ignore unknown messages (e.g. received from YT player)
+						console.log("Unknown message received", event);
 						break;
 					}
 				}, false);
