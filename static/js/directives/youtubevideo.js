@@ -20,33 +20,20 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function($, _, moment, template, sandboxTemplate, BigScreen) {
+define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function(require, $, _, moment, template, sandboxTemplate, BigScreen) {
 
-	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q) {
+	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", "restURL", "sandbox", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q, restURL, sandbox) {
 
 		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
-		var origin = $window.location.protocol + "//" + $window.location.host;
-
-		var Sandbox = function(iframe) {
-			this.iframe = iframe;
-			var template = sandboxTemplate;
-			template = template.replace(/__PARENT__ORIGIN__/g, origin);
-			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(template);
-			this.target = this.iframe.contentWindow;
-			this.state = -1;
-			this.position = 0;
-			this.lastPositionUpdate = null;
-		};
-
-		Sandbox.prototype.postMessage = function(type, message) {
-			var msg = {"type": type}
-			msg[type] = message;
-			this.target.postMessage(msg, "*");
-		};
+		var isYouTubeIframeAPIReadyDefer = $q.defer();
+		var isYouTubeIframeAPIReady = isYouTubeIframeAPIReadyDefer.promise;
 
 		var SandboxPlayer = function(sandbox, params) {
 			this.sandbox = sandbox;
+			this.state = -1;
+			this.position = 0;
+			this.lastPositionUpdate = null;
 			this.sandbox.postMessage("loadPlayer", params);
 		};
 
@@ -117,18 +104,15 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 			var isPaused = null;
 			var playReceivedNow = null;
 			var initialState = null;
+			var sandboxFrame = $("#youtubeplayer", $element)[0];
 
-			var sandbox = new Sandbox($("#youtubeplayer", $element)[0]);
+			var template = sandboxTemplate;
+			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
+			template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
+			var sandboxApi = sandbox.createSandbox(sandboxFrame, template);
 
-			var isYouTubeIframeAPIReadyDefer = $q.defer();
-			var isYouTubeIframeAPIReady = isYouTubeIframeAPIReadyDefer.promise;
-
-			var onPostMessage = function(event) {
-				if (event.origin !== "null" || event.source !== sandbox.target) {
-					// the sandboxed data-url iframe has "null" as origin
-					return;
-				}
-				var msg = event.data;
+			sandboxApi.e.on("message", function(event, message) {
+				var msg = message.data;
 				var data = msg[msg.type] || {};
 				switch (msg.type) {
 				case "youtube.apiReady":
@@ -162,15 +146,17 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 					}
 					break;
 				default:
-					console.log("Unknown message received", event);
+					console.log("Unknown message received", message);
 					break;
 				}
-			};
-
-			$window.addEventListener("message", onPostMessage, false);
+			});
 
 			$scope.$on("$destroy", function() {
-				$window.removeEventListener("message", onPostMessage, false);
+				if (player) {
+					player.destroy();
+				}
+				sandboxApi.destroy();
+				sandboxApi = null;
 			});
 
 			var errorIds = {
@@ -293,7 +279,6 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 
 			var playVideo = function(id, position, state) {
 				playerReady.done(function() {
-					$("#youtubeplayer").show();
 					$scope.playbackActive = true;
 					isPaused = null;
 					if (playReceivedNow) {
@@ -328,7 +313,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 				isYouTubeIframeAPIReady.then(function() {
 					if (!player) {
 						var origin = $window.location.protocol + "//" + $window.location.host;
-						player = new SandboxPlayer(sandbox, {
+						player = new SandboxPlayer(sandboxApi, {
 							height: "390",
 							width: "640",
 							playerVars: {
@@ -343,7 +328,6 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 								"origin": origin
 							}
 						});
-						$("#youtubeplayer").show();
 						safeApply($scope, function(scope) {
 							// YT player events don't fire in Firefox if
 							// player is not visible, so show while loading
@@ -521,7 +505,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 			};
 
 			$scope.loadYouTubeAPI = function() {
-				sandbox.postMessage("loadApi", {"url": $window.location.protocol + YOUTUBE_IFRAME_API_URL});
+				sandboxApi.postMessage("loadApi", {"url": $window.location.protocol + YOUTUBE_IFRAME_API_URL});
 			};
 
 			$scope.showYouTubeVideo = function() {
@@ -601,7 +585,11 @@ define(['jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'te
 			$scope.toggleFullscreen = function(elem) {
 
 				if (BigScreen.enabled) {
-					BigScreen.toggle(elem);
+					BigScreen.toggle(elem, function() {
+						$(elem).addClass("fullscreen");
+					}, function() {
+						$(elem).removeClass("fullscreen");
+					});
 				}
 
 			};

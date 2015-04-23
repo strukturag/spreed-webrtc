@@ -94,6 +94,10 @@
   position: relative;
 }
 
+#youtubecontainer.fullscreen { // scss-lint:disable IdSelector
+  width: 100%;
+}
+
 #youtubeplayerinfo { // scss-lint:disable IdSelector
   bottom: 10%;
   left: 0;

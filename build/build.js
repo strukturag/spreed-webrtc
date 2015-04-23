@@ -76,6 +76,13 @@
 			override: {
 				skipModuleInsertion: true
 			}
+		},
+		{
+			name: 'sandboxes/youtube',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
 		}
 	]
 })

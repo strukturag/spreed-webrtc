@@ -67,7 +67,8 @@ define([
 	'services/roompin',
 	'services/constraints',
 	'services/modules',
-	'services/mediadevices'], function(_,
+	'services/mediadevices',
+	'services/sandbox'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -112,7 +113,8 @@ restURL,
 roompin,
 constraints,
 modules,
-mediaDevices) {
+mediaDevices,
+sandbox) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -159,7 +161,8 @@ mediaDevices) {
 		roompin: roompin,
 		constraints: constraints,
 		modules: modules,
-		mediaDevices: mediaDevices
+		mediaDevices: mediaDevices,
+		sandbox: sandbox
 	};
 
 	var initialize = function(angModule) {
