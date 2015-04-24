@@ -131,6 +131,7 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/translation
 	$(INSTALL) -d $(SHARE)/www/static/css
 	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -d $(SHARE)/www/static/js/sandboxes
 	$(INSTALL) bin/$(EXENAME) $(BIN)
 	$(INSTALL) html/* $(SHARE)/www/html
 	$(INSTALL) static/img/* $(SHARE)/www/static/img
@@ -142,6 +143,7 @@ install:
 	$(INSTALL) $(OUTPUT_JS)/*.js $(SHARE)/www/static/js
 	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
+	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(SHARE)/www/static/js/sandboxes
 
 clean:
 	$(GO) clean -i -r app/... 2>/dev/null || true

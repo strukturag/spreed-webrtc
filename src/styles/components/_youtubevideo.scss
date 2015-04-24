@@ -92,6 +92,10 @@
 
 #youtubecontainer { // scss-lint:disable IdSelector
   position: relative;
+
+  &.fullscreen {
+    width: 100%;
+  }
 }
 
 #youtubeplayerinfo { // scss-lint:disable IdSelector

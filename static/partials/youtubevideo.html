@@ -31,7 +31,7 @@
 			<div ng-show="playbackActive">
 				<div class="row" id="youtubecontainer">
 					<div class="embed-responsive embed-responsive-16by9">
-						<div id="youtubeplayer"></div>
+						<iframe sandbox="allow-scripts allow-same-origin" id="youtubeplayer"></iframe>
 					</div>
 					<div id="youtubeplayerinfo">
 						<div>{{_('Currently playing')}}<br><a href="{{ currentVideoUrl }}" rel="external" target="_blank">{{ currentVideoUrl }}</a></div>
