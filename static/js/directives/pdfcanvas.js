@@ -266,6 +266,7 @@ define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html
 			$scope.$on("$destroy", function() {
 				pdfCanvas.close();
 				pdfCanvas = null;
+				sandboxApi.destroy();
 			});
 
 			$scope.$watch("currentPageNumber", function(page, oldValue) {
