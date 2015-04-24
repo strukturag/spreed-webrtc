@@ -44,6 +44,8 @@ define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html
 				var msg = message.data;
 				var data = msg[msg.type] || {};
 				switch (msg.type) {
+				case "ready":
+					break;
 				case "pdfjs.loading":
 					$scope.$apply(function(scope) {
 						scope.$emit("presentationLoading", data.source);
