@@ -30,6 +30,8 @@ define(["jquery", "underscore"], function($, _) {
 			this.target = this.iframe.contentWindow;
 			this.e = $({});
 			this.handler = _.bind(this.onPostMessageReceived, this);
+			this.ready = false;
+			this.pending_messages = [];
 			$window.addEventListener("message", this.handler, false);
 		};
 
@@ -46,10 +48,28 @@ define(["jquery", "underscore"], function($, _) {
 				return;
 			}
 
+			if (event.data.type === "ready") {
+				this.ready = true;
+				this._sendPendingMessages();
+			}
+
 			this.e.triggerHandler("message", [event]);
 		};
 
+		Sandbox.prototype._sendPendingMessages = function() {
+			var i;
+			for (i=0; i<this.pending_messages.length; i++) {
+				var entry = this.pending_messages[i];
+				this.postMessage(entry[0], entry[1]);
+			}
+			this.pending_messages = [];
+		};
+
 		Sandbox.prototype.postMessage = function(type, message) {
+			if (!this.ready) {
+				this.pending_messages.push([type, message]);
+				return;
+			}
 			var msg = {"type": type}
 			msg[type] = message;
 			this.target.postMessage(msg, "*");
