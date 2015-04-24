@@ -90,6 +90,13 @@
 			override: {
 				skipModuleInsertion: true
 			}
+		},
+		{
+			name: 'sandboxes/webodf',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
 		}
 	]
 })

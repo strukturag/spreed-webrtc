@@ -205,30 +205,6 @@
       width: 100%;
     }
   }
-
-  .odfcanvas {
-    cursor: default;
-    user-select: none;
-
-    body {
-      background-color: transparent;
-    }
-
-    document {
-      display: block;
-    }
-  }
-
-  .odfcontainer {
-    display: none;
-    margin: 0;
-    padding: 0;
-
-    &.showonepage {
-      overflow: hidden;
-      text-align: center;
-    }
-  }
 }
 
 .pageinfo input {
