@@ -196,8 +196,8 @@
 				return {
 					// Chrome supports it. FF supports new spec starting 38. See https://wiki.mozilla.org/Media/getUserMedia for FF details.
 					audioVideo: isChrome || (isFirefox && version >= 38),
-					// HD constraints in Chrome no issue. In FF we MJPEG is fixed with 40 (see https://bugzilla.mozilla.org/show_bug.cgi?id=1151628).
-					hdVideo: isChrome || (isFirefox && version >= 40),
+					// HD constraints in Chrome no issue. In FF we MJPEG is fixed with 38 (see https://bugzilla.mozilla.org/show_bug.cgi?id=1151628).
+					hdVideo: isChrome || (isFirefox && version >= 38),
 					// Chrome supports this on Windows only.
 					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
 					chrome: isChrome,
