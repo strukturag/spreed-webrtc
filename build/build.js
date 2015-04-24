@@ -83,6 +83,13 @@
 			override: {
 				skipModuleInsertion: true
 			}
+		},
+		{
+			name: 'sandboxes/pdf',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
 		}
 	]
 })
