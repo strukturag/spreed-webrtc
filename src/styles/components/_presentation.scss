@@ -197,12 +197,13 @@
   .canvasContainer {
     height: 100%;
     width: 100%;
-  }
+    overflow: hidden;
 
-  canvas {
-    display: block;
-    margin: 0 auto;
-    position: relative;
+    iframe {
+      border: 0;
+      height: 100%;
+      width: 100%;
+    }
   }
 
   .odfcanvas {

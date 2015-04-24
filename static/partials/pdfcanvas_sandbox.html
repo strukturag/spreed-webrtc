@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>pdf.js Sandbox</title>
+		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src __PARENT_ORIGIN__ 'unsafe-eval'; img-src 'self'; style-src 'unsafe-inline'">
+		<style type="text/css">
+		html, body {
+			height:100%;
+		}
+		body {
+			margin:0;
+			padding:0;
+			max-width:100%;
+			max-height:100%;
+			overflow:hidden;
+		}
+		#container {
+			width:100%;
+			height:100%;
+		}
+		canvas {
+			margin:0 auto;
+			position:relative;
+			display:none;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<canvas id="canvas0"></canvas><canvas id="canvas1"></canvas>
+		</div>
+		<script src="__PDFJS_SANDBOX_JS_URL__" data-parent-origin="__PARENT_ORIGIN__" data-pdfjs-url="__PDFJS_URL__"  data-pdfjs-worker-url="__PDFJS_WORKER_URL__" data-pdfjs-compatibility-url="__PDFJS_COMPATIBILITY_URL__"></script>
+	</body>
+</html>

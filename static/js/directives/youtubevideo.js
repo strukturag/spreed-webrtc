@@ -115,6 +115,8 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 				var msg = message.data;
 				var data = msg[msg.type] || {};
 				switch (msg.type) {
+				case "ready":
+					break;
 				case "youtube.apiReady":
 					$scope.$apply(function() {
 						console.log("YouTube IFrame ready");

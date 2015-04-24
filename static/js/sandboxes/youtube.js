@@ -244,5 +244,6 @@
     }, false);
 
     console.log("YouTube sandbox ready.");
+    sandbox.postMessage("ready", {"ready": true});
 
 })();
