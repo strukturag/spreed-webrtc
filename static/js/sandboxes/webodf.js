@@ -63,7 +63,6 @@
 		}
 
 		// we're loading typed arrays in the sandbox
-		console.log("LoadXML", path);
 		var bb = new Blob([new Uint8Array(path)]);
 		var f = new FileReader();
 		f.onload = function(e) {
