@@ -26,7 +26,7 @@ define(["jquery", "underscore"], function($, _) {
 
 		var Sandbox = function(iframe, template) {
 			this.iframe = iframe;
-			this.iframe.src = "data:text/html;charset=utf-8," + encodeURI(template);
+			this.iframe.src = "data:text/html;charset=utf-8," + $window.encodeURI(template);
 			this.target = this.iframe.contentWindow;
 			this.e = $({});
 			this.handler = _.bind(this.onPostMessageReceived, this);
