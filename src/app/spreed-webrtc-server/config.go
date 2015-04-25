@@ -36,6 +36,7 @@ type Config struct {
 	S                               string          // Static URL prefix with version
 	B                               string          // Base URL
 	Token                           string          // Server token
+	Renegotiation                   bool            // Renegotiation flag
 	StunURIs                        []string        // STUN server URIs
 	TurnURIs                        []string        // TURN server URIs
 	Tokens                          bool            // True when we got a tokens file
@@ -112,6 +113,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		S:                               fmt.Sprintf("static/ver=%s", ver),
 		B:                               basePath,
 		Token:                           serverToken,
+		Renegotiation:                   container.GetBoolDefault("app", "renegotiation", false),
 		StunURIs:                        stunURIs,
 		TurnURIs:                        turnURIs,
 		Tokens:                          tokens,

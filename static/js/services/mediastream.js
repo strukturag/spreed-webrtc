@@ -44,7 +44,7 @@ define([
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
 
 		// Apply configuration details.
-		webrtc.settings.renegotiation = context.Cfg.WebRTC ? context.Cfg.WebRTC.Renegotiation : false;
+		webrtc.settings.renegotiation = context.Cfg.Renegotiation && true;
 
 		// mediaStream service API.
 		var mediaStream = {

@@ -133,6 +133,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		// If true, mute/unmute of audio/video creates a new stream which
 		// will trigger renegotiation on the peer connection.
 		this.renegotiation = options.renegotiation && true;
+		if (this.renegotiation) {
+			console.info("User media with renegotiation created ...");
+		}
 
 		this.audioMute = options.audioMute && true;
 		this.videoMute = options.videoMute && true;

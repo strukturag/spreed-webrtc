@@ -43,7 +43,10 @@ listen = 127.0.0.1:8080
 ; STUN server URIs in format host:port. You can provide multiple seperated by
 ; space. If you do not have one use a public one like stun.spreed.me:443. If
 ; you have a TURN server you do not need to set an STUN server as the TURN
+; Renegotiation support flag. Set to true to tell clients that they can
+; renegoiate peer connections when required. Defaults to false.
 ; server will provide STUN services.
+;renegotiation = false
 ;stunURIs = stun:stun.spreed.me:443
 ; TURN server URIs in format host:port?transport=udp|tcp. You can provide
 ; multiple seperated by space. If you do not have at least one TURN server then
