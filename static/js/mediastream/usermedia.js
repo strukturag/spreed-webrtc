@@ -126,7 +126,6 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		this.localStream = null;
 		this.started = false;
-		//this.delay = 0;
 
 		this.peerconnections = {};
 
@@ -253,7 +252,6 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		if (!mediaConstraints) {
 			mediaConstraints = currentcall.mediaConstraints;
 		}
-		this.mediaConstraints = mediaConstraints;
 
 		return this.doGetUserMediaWithConstraints(mediaConstraints);
 
@@ -263,6 +261,12 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		if (!mediaConstraints) {
 			mediaConstraints = this.mediaConstraints;
+		} else {
+			this.mediaConstraints = mediaConstraints;
+			if (this.localStream) {
+				// Release stream early if any to be able to apply new constraints.
+				this.replaceStream(null);
+			}
 		}
 
 		var constraints = $.extend(true, {}, mediaConstraints);
@@ -310,33 +314,47 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	};
 
-	UserMedia.prototype.onLocalStream = function(stream) {
+	UserMedia.prototype.replaceStream = function(stream) {
 
 		var oldStream = this.localStream;
-		if (oldStream) {
-			oldStream.onended = function() {};
+		if (oldStream && oldStream.active) {
+			// Let old stream silently end.
+			oldStream.onended = function() {
+				console.log("Silently ended replaced user media stream.");
+			};
 			oldStream.stop();
+		}
+
+		if (stream) {
+			// Get notified of end events.
+			stream.onended = _.bind(function(event) {
+				console.log("User media stream ended.");
+				if (this.started) {
+					this.stop();
+				}
+			}, this);
+			// Set new stream.
+			this.localStream = stream;
+			this.e.triggerHandler("localstream", [stream, oldStream, this]);
+		}
+
+		return oldStream && stream;
+
+	};
+
+	UserMedia.prototype.onLocalStream = function(stream) {
+
+		if (this.replaceStream(stream)) {
+			// We replaced a stream.
 			setTimeout(_.bind(function() {
 				this.e.triggerHandler("mediachanged", [this]);
 			}, this), 0);
 		} else {
-			// Let webrtc handle the rest.
+			// We are new.
 			setTimeout(_.bind(function() {
 				this.e.triggerHandler("mediasuccess", [this]);
 			}, this), 0);
 		}
-
-		// Get notified of end events.
-		stream.onended = _.bind(function(event) {
-			console.log("User media stream ended.");
-			if (this.started) {
-				this.stop();
-			}
-		}, this);
-
-		// Set new stream.
-		this.localStream = stream;
-		this.e.triggerHandler("localstream", [stream, oldStream, this]);
 
 	};
 
