@@ -40,6 +40,12 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 			this.id = id;
 		}
 
+		this.usermedia = null;
+		webrtc.e.on("usermedia", _.bind(function(event, um) {
+			console.log("Conference user media changed", um);
+			this.usermedia = um;
+		}, this));
+
 		console.log("Created conference", this.id);
 
 	};
@@ -97,8 +103,8 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 			call.e.on("negotiationNeeded", _.bind(function(event, extracall) {
 				this.webrtc.sendOfferWhenNegotiationNeeded(extracall);
 			}, this));
-			if (this.webrtc.usermedia) {
-				this.webrtc.usermedia.addToPeerConnection(peerconnection);
+			if (this.usermedia) {
+				this.usermedia.addToPeerConnection(peerconnection);
 			}
 			/*call.createOffer(_.bind(function(sessionDescription, extracall) {
 				console.log("Sending offer with sessionDescription", sessionDescription, extracall.id);
@@ -143,8 +149,8 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		call.createPeerConnection(_.bind(function(peerconnection) {
 			// Success call.
 			call.setRemoteDescription(rtcsdp, _.bind(function() {
-				if (this.webrtc.usermedia) {
-					this.webrtc.usermedia.addToPeerConnection(peerconnection);
+				if (this.usermedia) {
+					this.usermedia.addToPeerConnection(peerconnection);
 				}
 				call.createAnswer(_.bind(function(sessionDescription, extracall) {
 					console.log("Sending answer", sessionDescription, extracall.id);

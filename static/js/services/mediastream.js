@@ -43,6 +43,10 @@ define([
 		// Create encryption key from server token and browser name.
 		var secureKey = sjcl.codec.base64.fromBits(sjcl.hash.sha256.hash(context.Cfg.Token + uaparser().browser.name));
 
+		// Apply configuration details.
+		webrtc.settings.renegotiation = context.Cfg.WebRTC ? context.Cfg.WebRTC.Renegotiation : false;
+
+		// mediaStream service API.
 		var mediaStream = {
 			version: version,
 			ws: url,

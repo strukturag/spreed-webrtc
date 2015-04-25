@@ -24,11 +24,6 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	// Create AudioContext singleton, if supported.
 	var context = AudioContext ? new AudioContext() : null;
-	var peerconnections = {};
-
-	// Disabled for now until browser support matures. If enabled this totally breaks
-	// Firefox and Chrome with Firefox interop.
-	var enableRenegotiationSupport = false;
 
 	// Converter helpers to convert media constraints to new API.
 	var mergeConstraints = function(constraints, k, v, mandatory) {
@@ -131,15 +126,21 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		this.localStream = null;
 		this.started = false;
-		this.delay = 0;
+		//this.delay = 0;
 
-		this.audioMute = false;
-		this.videoMute = false;
+		this.peerconnections = {};
+
+		// If true, mute/unmute of audio/video creates a new stream which
+		// will trigger renegotiation on the peer connection.
+		this.renegotiation = options.renegotiation && true;
+
+		this.audioMute = options.audioMute && true;
+		this.videoMute = options.videoMute && true;
 		this.mediaConstraints = null;
 
 		// Audio level.
 		this.audioLevel = 0;
-		if (!this.options.noaudio && context && context.createScriptProcessor) {
+		if (!this.options.noAudio && context && context.createScriptProcessor) {
 
 			this.audioSource = null;
 			this.audioProcessor = context.createScriptProcessor(2048, 1, 1);
@@ -185,7 +186,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		this.e.on("localstream", _.bind(function(event, stream, oldstream) {
 			// Update stream support.
 			if (oldstream) {
-				_.each(peerconnections, function(pc) {
+				_.each(this.peerconnections, function(pc) {
 					pc.removeStream(oldstream);
 					pc.addStream(stream);
 					console.log("Updated usermedia stream at peer connection", pc, stream);
@@ -319,7 +320,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			// Let webrtc handle the rest.
 			setTimeout(_.bind(function() {
 				this.e.triggerHandler("mediasuccess", [this]);
-			}, this), this.delay);
+			}, this), 0);
 		}
 
 		// Get notified of end events.
@@ -357,11 +358,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		this.mediaConstraints = null;
 		console.log("Stopped user media.");
 		this.e.triggerHandler("stopped", [this]);
-
-		this.delay = 1500;
-		setTimeout(_.bind(function() {
-			this.delay = 0;
-		}, this), 2000);
+		this.e.off();
 
 	};
 
@@ -369,7 +366,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		var m = !!mute;
 
-		if (!enableRenegotiationSupport) {
+		if (!this.renegotiation) {
 
 			// Disable streams only - does not require renegotiation but keeps mic
 			// active and the stream will transmit silence.
@@ -418,7 +415,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		var m = !!mute;
 
-		if (!enableRenegotiationSupport) {
+		if (!this.renegotiation) {
 
 			// Disable streams only - does not require renegotiation but keeps camera
 			// active and the stream will transmit black.
@@ -443,7 +440,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			}
 		} else {
 
-			// Removevideo stream, by creating a new stream and doing renegotiation. This
+			// Remove video stream, by creating a new stream and doing renegotiation. This
 			// is the way to go to disable the camera when video is muted.
 
 			if (this.localStream) {
@@ -467,11 +464,11 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		if (this.localStream) {
 			pc.addStream(this.localStream);
 			var id = pc.id;
-			if (!peerconnections.hasOwnProperty(id)) {
-				peerconnections[id] = pc;
-				pc.currentcall.e.one("closed", function() {
-					delete peerconnections[id];
-				});
+			if (!this.peerconnections.hasOwnProperty(id)) {
+				this.peerconnections[id] = pc;
+				pc.currentcall.e.one("closed", _.bind(function() {
+					delete this.peerconnections[id];
+				}, this));
 			}
 		}
 
@@ -482,8 +479,8 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		console.log("Remove usermedia stream from peer connection", pc, this.localStream);
 		if (this.localStream) {
 			pc.removeStream(this.localStream);
-			if (peerconnections.hasOwnProperty(pc.id)) {
-				delete peerconnections[pc.id];
+			if (this.peerconnections.hasOwnProperty(pc.id)) {
+				delete this.peerconnections[pc.id];
 			}
 		}
 

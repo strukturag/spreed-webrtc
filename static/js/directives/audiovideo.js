@@ -243,6 +243,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
 
+				if (!usermedia || !usermedia.started) {
+					return;
+				}
+
 				//console.log("XXXX XXXXXXXXXXXXXXXXXXXXX usermedia event", usermedia);
 				if ($scope.haveStreams) {
 
