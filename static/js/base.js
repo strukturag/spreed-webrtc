@@ -33,4 +33,5 @@ define([ // Helper module to put non dependency base libraries together.
 	'humanize',
 	'sha',
 	'sjcl',
-	'text'], function() {});
+	'text',
+	'webfont'], function() {});

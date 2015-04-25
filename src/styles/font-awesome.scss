@@ -2,3 +2,8 @@
 @import 'compass';
 @import 'global/variables';
 @import 'libs/font-awesome/scss/font-awesome';
+
+/* Hide all which requires FA while still loading web font */
+.wf-loading .fa {
+	visibility: hidden !important;
+}
