@@ -167,6 +167,11 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 					if (this.audioSource) {
 						this.audioSource.disconnect();
 					}
+					var audioTracks = stream.getAudioTracks();
+					if (audioTracks.length < 1) {
+						this.audioSource = null;
+						return;
+					}
 					// Connect to audioProcessor.
 					this.audioSource = context.createMediaStreamSource(stream);
 					//console.log("got source", this.audioSource);
