@@ -33,7 +33,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			var getStreamId = function(stream, currentcall) {
 				var id = currentcall.id + "-" + stream.id;
-				console.log("Created stream ID", id);
+				//console.log("Created stream ID", id);
 				return id;
 			};
 
@@ -63,33 +63,42 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.addRemoteStream = function(stream, currentcall) {
 
 				var id = getStreamId(stream, currentcall);
+				console.log("New stream", id);
 
 				if (streams.hasOwnProperty(id)) {
-					console.warn("Cowardly refusing to add stream id twice", id, currentcall);
+					console.warn("Cowardly refusing to add stream id twice", id);
 					return;
 				}
 
-				var subscope;
-
-				// Dummy replacement support.
+				var callscope;
 				if (calls.hasOwnProperty(currentcall.id)) {
-					subscope = calls[currentcall.id];
+					//console.log("xxx has call", id, currentcall.id);
+					callscope = calls[currentcall.id];
 					if (stream === dummy) {
 						return;
 					}
-					if (subscope.dummy) {
-						subscope.$apply(function() {
-							subscope.attachStream(stream);
+					if (callscope.dummy) {
+						// Current call has a dummy target. Use it directly.
+						callscope.dummy.$apply(function() {
+							console.log("Replacing dummy with stream", id);
+							callscope.dummy.attachStream(stream);
 						});
+						callscope.dummy = null;
 						return;
 					}
 				} else {
+					//console.log("xxx create call scope", currentcall.id, id);
 					// Create scope.
-					subscope = $scope.$new();
-					calls[currentcall.id] = subscope;
+					callscope = $scope.$new();
+					calls[currentcall.id] = callscope;
+					callscope.streams = 0;
+					console.log("Created call scope", id);
 				}
 
-				//console.log("Add remote stream to scope", stream.id, stream, currentcall);
+				// Create scope for this stream.
+				var subscope;
+				subscope = callscope.$new();
+				callscope.streams++;
 				var peerid = subscope.peerid = currentcall.id;
 				buddyData.push(peerid);
 				subscope.unattached = true;
@@ -100,15 +109,26 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					console.log("Stream scope is now active", id, peerid);
 				});
 				subscope.$on("$destroy", function() {
+					if (subscope.destroyed) {
+						return;
+					}
 					console.log("Destroyed scope for stream", id, peerid);
 					subscope.destroyed = true;
+					callscope.streams--;
+					if (callscope.streams < 1) {
+						callscope.$destroy();
+						delete calls[peerid];
+						console.log("Destroyed scope for call", peerid, id);
+					}
 				});
-				console.log("Created stream scope", id, peerid);
+				console.log("Created stream scope", id);
+
+				// If stream is a dummy, mark us in callscope.
+				if (stream === dummy) {
+					callscope.dummy = subscope;
+				}
 
 				// Add created scope.
-				if (stream === dummy) {
-					subscope.dummy = true;
-				}
 				streams[id] = subscope;
 
 				// Render template.
@@ -165,20 +185,15 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.removeRemoteStream = function(stream, currentcall) {
 
-				//console.log("remove stream", stream, stream.id, currentcall);
 				var id = getStreamId(stream, currentcall);
+				console.log("Stream removed", id);
 
 				var subscope = streams[id];
 				if (subscope) {
 					buddyData.pop(currentcall.id);
 					delete streams[id];
-					//console.log("remove scope", subscope);
 					if (subscope.element) {
 						subscope.element.remove();
-					}
-					var callscope = calls[currentcall.id];
-					if (subscope === callscope) {
-						delete calls[currentcall.id];
 					}
 					subscope.$destroy();
 					$scope.redraw();
