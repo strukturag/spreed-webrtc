@@ -119,6 +119,17 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 		}
 	})();
 
+	// Create a dummy stream.
+	var DummyStream = function() {};
+	DummyStream.prototype.stop = function() {};
+	DummyStream.prototype.getAudioTracks = function() { return [] };
+	DummyStream.prototype.getVideoTracks = function() { return [] };
+	DummyStream.not = function(stream) {
+		// Helper to test if stream is a dummy.
+		return !stream || stream.stop !== DummyStream.prototype.stop;
+	};
+
+	// UserMedia.
 	var UserMedia = function(options) {
 
 		this.options = $.extend({}, options);
@@ -189,8 +200,12 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			// Update stream support.
 			if (oldstream) {
 				_.each(this.peerconnections, function(pc) {
-					pc.removeStream(oldstream);
-					pc.addStream(stream);
+					if (DummyStream.not(oldstream)) {
+						pc.removeStream(oldstream);
+					}
+					if (DummyStream.not(stream)) {
+						pc.addStream(stream);
+					}
 					console.log("Updated usermedia stream at peer connection", pc, stream);
 				});
 			}
@@ -267,6 +282,15 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 				// Release stream early if any to be able to apply new constraints.
 				this.replaceStream(null);
 			}
+		}
+
+		if (this.renegotiation && this.audioMute && this.videoMute) {
+			// Fast path as nothing should be shared.
+			_.defer(_.bind(function() {
+				this.onUserMediaSuccess(new DummyStream());
+			}, this));
+			this.started = true;
+			return true
 		}
 
 		var constraints = $.extend(true, {}, mediaConstraints);
@@ -417,7 +441,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			// Remove audio stream, by creating a new stream and doing renegotiation. This
 			// is the way to go to disable the mic when audio is muted.
 
-			if (this.localStream) {
+			if (this.started) {
 				if (this.audioMute !== m) {
 					this.audioMute = m;
 					this.doGetUserMediaWithConstraints();
@@ -464,7 +488,7 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			// Remove video stream, by creating a new stream and doing renegotiation. This
 			// is the way to go to disable the camera when video is muted.
 
-			if (this.localStream) {
+			if (this.started) {
 				if (this.videoMute !== m) {
 					this.videoMute = m;
 					this.doGetUserMediaWithConstraints();
@@ -483,7 +507,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		console.log("Add usermedia stream to peer connection", pc, this.localStream);
 		if (this.localStream) {
-			pc.addStream(this.localStream);
+			if (DummyStream.not(this.localStream)) {
+				pc.addStream(this.localStream);
+			}
 			var id = pc.id;
 			if (!this.peerconnections.hasOwnProperty(id)) {
 				this.peerconnections[id] = pc;
@@ -499,7 +525,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 		console.log("Remove usermedia stream from peer connection", pc, this.localStream);
 		if (this.localStream) {
-			pc.removeStream(this.localStream);
+			if (DummyStream.not(this.localStream)) {
+				pc.removeStream(this.localStream);
+			}
 			if (this.peerconnections.hasOwnProperty(pc.id)) {
 				delete this.peerconnections[pc.id];
 			}
@@ -509,7 +537,9 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 
 	UserMedia.prototype.attachMediaStream = function(video) {
 
-		window.attachMediaStream(video, this.localStream);
+		if (this.localStream && DummyStream.not(this.localStream)) {
+			window.attachMediaStream(video, this.localStream);
+		}
 
 	};
 
