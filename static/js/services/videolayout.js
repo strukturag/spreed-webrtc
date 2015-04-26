@@ -86,7 +86,6 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 				if (scope.localVideo.style.opacity === '1') {
 					videoWidth = scope.localVideo.videoWidth;
 					videoHeight = scope.localVideo.videoHeight;
-					console.log("Local video size: ", videoWidth, videoHeight);
 					videos = [null];
 				}
 			}

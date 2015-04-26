@@ -46,6 +46,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			$scope.layoutparent = $element.parent();
 
 			$scope.remoteVideos = $element.find(".remoteVideos")[0];
+			$scope.localVideos = $element.find(".localVideos")[0];
 			$scope.localVideo = $element.find(".localVideo")[0];
 			$scope.miniVideo = $element.find(".miniVideo")[0];
 			$scope.mini = $element.find(".miniContainer")[0];
@@ -217,6 +218,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					$element.addClass("active");
 					//console.log("active 3");
 					_.delay(function() {
+						$scope.localVideos.style.opacity = 0;
 						$scope.localVideo.style.opacity = 0;
 						$scope.localVideo.src = "";
 					}, 500);
@@ -263,6 +265,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 							return;
 						}
 						if ($scope.localVideo.videoWidth > 0) {
+							console.log("Local video size: ", $scope.localVideo.videoWidth, $scope.localVideo.videoHeight);
 							$scope.localVideo.style.opacity = 1;
 							$scope.redraw();
 						} else {
@@ -298,6 +301,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						$($scope.remoteVideos).children(".remoteVideo").remove();
 					}, 1500);
 					$($scope.mini).removeClass("visible");
+					$scope.localVideos.style.opacity = 1;
 					$scope.localVideo.style.opacity = 0;
 					$scope.remoteVideos.style.opacity = 0;
 					$element.removeClass('active');

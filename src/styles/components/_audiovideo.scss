@@ -117,15 +117,28 @@
   .onlyaudio {
     color: $video-onlyaudio;
     display: none;
-    font-size: 80px;
+    font-size: 1em;
     left: 0;
-    margin-top: -40px;
     pointer-events: auto;
     position: absolute;
     right: 0;
     text-align: center;
-    top: 45%;
+    top: 0;
+    bottom: 0;
+
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+    }
+
+    > * {
+      font-size: 6em;
+      vertical-align: middle;
+    }
   }
+
 
   .remoteContainer {
     bottom: 0;
@@ -158,7 +171,8 @@
   }
 
   &.cameraMute .miniContainer,
-  &.cameraMute .localContainer {
+  &.cameraMute .localVideos {
+    background: $video-onlyaudio-background;
     .onlyaudio {
       display: block;
     }
@@ -180,10 +194,20 @@
     background: $video-background;
     display: block;
     max-height: 100%;
+    width: 100%;
     opacity: 0;
     transition-duration: 2s;
     transition-property: opacity;
-    width: 100%;
+  }
+
+  .localVideos {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition-duration: 2s;
+    transition-property: opacity;
   }
 
   .remoteVideos {
@@ -241,7 +265,7 @@
       //visibility: visible;
     }
 
-    &.onlyaudio {
+    &.onlyaudioVideo {
       background: $video-onlyaudio-background;
       //visibility: visible;
 
@@ -250,7 +274,7 @@
       }
     }
 
-    &.onlyaudio video,
+    &.onlyaudioVideo video,
     &.dummy video {
       visibility: hidden;
     }
@@ -371,10 +395,12 @@
 }
 
 .renderer-onepeople {
+  .miniContainer .onlyaudio {
+    font-size: 0.4em;
+  }
 }
 
 .renderer-democrazy {
-
   .remoteVideos .miniContainer {
     bottom: auto;
     display: inline-block;
@@ -388,7 +414,6 @@
   .active .miniContainer {
     opacity: 1;
   }
-
 }
 
 .renderer-conferencekiosk {
@@ -520,7 +545,7 @@
     height: 180px;
     width: 320px;
 
-    video {
+    .remoteVideo, .video {
       height: 100%;
       width: 100%;
     }
