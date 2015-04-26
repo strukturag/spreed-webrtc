@@ -401,7 +401,14 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						width: scope.layoutparent.width(),
 						height: scope.layoutparent.height()
 					}
-					var again = videoLayout.update(getRendererName(), size, scope, controller);
+					var name;
+					if (size.width < 1 || size.height < 1) {
+						// Use invisible renderer when no size available.
+						name = "invisible";
+					} else {
+						name = getRendererName();
+					}
+					var again = videoLayout.update(name, size, scope, controller);
 					if (again) {
 						// Layout needs a redraw.
 						needsRedraw = true;
