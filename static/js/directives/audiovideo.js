@@ -38,8 +38,11 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			};
 
 			// Dummy stream.
-			var dummy = {
-				id: "defaultDummyStream"
+			var DummyStream = function() {};
+			DummyStream.prototype.id = "defaultDummyStream";
+			DummyStream.prototype.stop = function() {};
+			DummyStream.is = function(stream) {
+				return stream && stream.stop === DummyStream.prototype.stop;
 			};
 
 			$scope.container = $element[0];
@@ -72,19 +75,28 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				}
 
 				var callscope;
+				var subscope;
 				if (calls.hasOwnProperty(currentcall.id)) {
 					//console.log("xxx has call", id, currentcall.id);
-					callscope = calls[currentcall.id];
-					if (stream === dummy) {
+					if (DummyStream.is(stream)) {
 						return;
 					}
+					callscope = calls[currentcall.id];
 					if (callscope.dummy) {
-						// Current call has a dummy target. Use it directly.
-						callscope.dummy.$apply(function() {
-							console.log("Replacing dummy with stream", id);
-							callscope.dummy.attachStream(stream);
-						});
-						callscope.dummy = null;
+						// Current call is marked as dummy. Use it directly.
+						var dummyId = getStreamId(callscope.dummy, currentcall);
+						subscope = streams[dummyId];
+						if (subscope) {
+							subscope.dummy = null;
+							delete streams[dummyId];
+							streams[id] = subscope;
+							safeApply(subscope, function(scope) {
+								console.log("Replacing dummy with stream", id);
+								scope.attachStream(stream);
+							});
+						} else {
+							console.warn("Scope marked as dummy but target stream not found", dummyId);
+						}
 						return;
 					}
 				} else {
@@ -97,7 +109,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				}
 
 				// Create scope for this stream.
-				var subscope;
 				subscope = callscope.$new();
 				callscope.streams++;
 				var peerid = subscope.peerid = currentcall.id;
@@ -125,8 +136,8 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				console.log("Created stream scope", id);
 
 				// If stream is a dummy, mark us in callscope.
-				if (stream === dummy) {
-					callscope.dummy = subscope;
+				if (DummyStream.is(stream)) {
+					callscope.dummy = stream;
 				}
 
 				// Add created scope.
@@ -138,40 +149,49 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					clonedElement.data("peerid", scope.peerid);
 					scope.element = clonedElement;
 					scope.attachStream = function(stream) {
-						if (stream === dummy) {
+						if (DummyStream.is(stream)) {
+							scope.withvideo = false;
+							scope.onlyaudio = true;
+							_.defer(function() {
+								scope.$emit("active", currentcall);
+								$scope.redraw();
+							});
 							return;
+						} else {
+							var video = clonedElement.find("video")[0];
+							$window.attachMediaStream(video, stream);
+							// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
+							videoWaiter.wait(video, stream, function(withvideo) {
+								if (scope.destroyed) {
+									console.log("Abort wait for video on destroyed scope.");
+									return;
+								}
+								if (withvideo) {
+									scope.$apply(function($scope) {
+										$scope.withvideo = true;
+										$scope.onlyaudio = false;
+									});
+								} else {
+									console.info("Incoming stream has no video tracks.");
+									scope.$apply(function($scope) {
+										$scope.withvideo = false;
+										$scope.onlyaudio = true;
+									});
+								}
+								scope.$emit("active", currentcall);
+								$scope.redraw();
+							}, function() {
+								if (scope.destroyed) {
+									console.log("No longer wait for video on destroyed scope.");
+									return;
+								}
+								console.warn("We did not receive video data for remote stream", currentcall, stream, video);
+								scope.$emit("active", currentcall);
+								$scope.redraw();
+							});
+							scope.dummy = null;
 						}
-						var video = clonedElement.find("video")[0];
-						$window.attachMediaStream(video, stream);
-						// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
-						videoWaiter.wait(video, stream, function(withvideo) {
-							if (scope.destroyed) {
-								console.log("Abort wait for video on destroyed scope.");
-								return;
-							}
-							if (withvideo) {
-								scope.$apply(function($scope) {
-									$scope.withvideo = true;
-								});
-							} else {
-								console.info("Incoming stream has no video tracks.");
-								scope.$apply(function($scope) {
-									$scope.onlyaudio = true;
-								});
-							}
-							scope.$emit("active", currentcall);
-							$scope.redraw();
-						}, function() {
-							if (scope.destroyed) {
-								console.log("No longer wait for video on destroyed scope.");
-								return;
-							}
-							console.warn("We did not receive video data for remote stream", currentcall, stream, video);
-							scope.$emit("active", currentcall);
-							$scope.redraw();
-						});
 						scope.unattached = false;
-						scope.dummy = false;
 					};
 					scope.doChat = function() {
 						$scope.$emit("startchat", currentcall.id, {
@@ -323,6 +343,10 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					$window.reattachMediaStream($scope.miniVideo, $scope.localVideo);
 					$scope.haveStreams = true;
 				}
+				if (stream === null) {
+					// Inject dummy stream.
+					stream = new DummyStream();
+				}
 				$scope.addRemoteStream(stream, currentcall);
 
 			});
@@ -346,7 +370,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				case "connected":
 				case "completed":
 				case "failed":
-					$scope.addRemoteStream(dummy, currentcall);
+					$scope.addRemoteStream(new DummyStream(), currentcall);
 					break;
 				}
 

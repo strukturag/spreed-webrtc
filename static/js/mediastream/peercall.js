@@ -142,13 +142,18 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// reason we always trigger onRemoteStream added for all streams which are available
 			// after the remote SDP was set successfully.
 			_.defer(_.bind(function() {
+				var streams = 0;
 				_.each(peerconnection.getRemoteStreams(), _.bind(function(stream) {
 					if (!this.streams.hasOwnProperty(stream.id) && (stream.getAudioTracks().length > 0 || stream.getVideoTracks().length > 0)) {
 						// NOTE(longsleep): Add stream here when it has at least one audio or video track, to avoid FF >= 33 to add it multiple times.
 						console.log("Adding stream after remote SDP success.", stream);
 						this.onRemoteStreamAdded(stream);
+						streams++;
 					}
 				}, this));
+				if (streams === 0 && this.sdpConstraints.mandatory && (this.sdpConstraints.mandatory.OfferToReceiveAudio || this.sdpConstraints.mandatory.OfferToReceiveVideo)) {
+					this.e.triggerHandler("remoteStreamAdded", [null, this]);
+				}
 			}, this));
 		}, this), _.bind(function(err) {
 			console.error("Set remote session description failed", err);
