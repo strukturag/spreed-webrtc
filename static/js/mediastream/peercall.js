@@ -152,6 +152,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 					}
 				}, this));
 				if (streams === 0 && this.sdpConstraints.mandatory && (this.sdpConstraints.mandatory.OfferToReceiveAudio || this.sdpConstraints.mandatory.OfferToReceiveVideo)) {
+					// We assume that we will eventually receive a stream, so we trigger the event to let the UI prepare for it.
 					this.e.triggerHandler("remoteStreamAdded", [null, this]);
 				}
 			}, this));
