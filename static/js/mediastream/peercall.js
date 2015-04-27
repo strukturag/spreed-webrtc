@@ -171,6 +171,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		sessionDescription.sdp = utils.maybePreferVideoReceiveCodec(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetAudioReceiveBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoReceiveBitRate(sessionDescription.sdp, params);
+		// Apply workarounds.
+		sessionDescription.sdp = utils.fixLocal(sessionDescription.sdp, params);
 
 	};
 
@@ -183,6 +185,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		sessionDescription.sdp = utils.maybeSetAudioSendBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoSendBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoSendInitialBitRate(sessionDescription.sdp, params);
+		// Apply workarounds.
+		sessionDescription.sdp = utils.fixRemote(sessionDescription.sdp, params);
 
 	};
 
