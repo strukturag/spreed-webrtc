@@ -128,6 +128,12 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 								isYouTubeIframeAPIReadyDefer.resolve();
 							});
 							break;
+						case "youtube.error":
+							$scope.$apply(function(scope) {
+								console.log("YouTube error", data);
+								scope.$emit("youtube.error", data.msgid);
+							});
+							break;
 						case "youtube.playerReady":
 							$scope.$apply(function() {
 								playerReady.resolve();
@@ -163,20 +169,13 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			$scope.$on("$destroy", function() {
 				if (player) {
 					player.destroy();
+					player = null;
 				}
 				if (sandboxApi) {
 					sandboxApi.destroy();
 					sandboxApi = null;
 				}
 			});
-
-			var errorIds = {
-				"2": "invalidParameter",
-				"5": "htmlPlayerError",
-				"100": "videoNotFound",
-				"101": "notAllowedEmbedded",
-				"150": "notAllowedEmbedded"
-			};
 
 			$scope.isPublisher = null;
 			$scope.playbackActive = false;
@@ -193,13 +192,6 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 					scope.youtubeAPIReady = true;
 				});
 			});
-
-			var onPlayerError = function(event) {
-				var error = errorIds[event.data] || "unknownError";
-				$scope.$apply(function(scope) {
-					scope.$emit("youtube.error", error);
-				});
-			};
 
 			var getYouTubeId = function(url) {
 				/*
@@ -287,6 +279,40 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 					});
 				});
 			});
+
+			$scope.$on("youtube.error", function($event, msgid) {
+				var message;
+				switch (msgid) {
+				case "loadScriptFailed":
+					message = translation._("Could not load YouTube player API, please check your network / firewall settings.");
+					break;
+				case "invalidParameter":
+					message = translation._("The request contains an invalid parameter value. Please check the URL of the video you want to share and try again.");
+					break;
+				case "htmlPlayerError":
+					message = translation._("The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred. Please try again later.");
+					break;
+				case "videoNotFound":
+					message = translation._("The video requested was not found. Please check the URL of the video you want to share and try again.");
+					break;
+				case "notAllowedEmbedded":
+					message = translation._("The owner of the requested video does not allow it to be played in embedded players.");
+					break;
+				default:
+					if (msgid) {
+						message = translation._("An unknown error occurred while playing back the video (%s). Please try again later.", msgid);
+					} else {
+						message = translation._("An unknown error occurred while playing back the video. Please try again later.");
+					}
+					break;
+				}
+				if (player) {
+					player.destroy();
+					player = null;
+				}
+				alertify.dialog.alert(message);
+			});
+
 
 			var playVideo = function(id, position, state) {
 				playerReady.done(function() {

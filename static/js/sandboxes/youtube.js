@@ -73,6 +73,14 @@
                 "5": "youtube.videocued"
             };
 
+            var errorIds = {
+                "2": "invalidParameter",
+                "5": "htmlPlayerError",
+                "100": "videoNotFound",
+                "101": "notAllowedEmbedded",
+                "150": "notAllowedEmbedded"
+            };
+
             var playerVars = params.playerVars || {};
             delete playerVars.origin;
             this.player = new this.window.YT.Player("youtubeplayer", {
@@ -108,6 +116,10 @@
                         }
 
                         that.postMessage("youtube.event", {"event": msg, "state": event.data, "position": that.player.getCurrentTime()});
+                    },
+                    "onError": function(event) {
+                        var error = errorIds[event.data] || "unknownError";
+                        that.postMessage("youtube.error", {"msgid": error, "code": event.data});
                     }
                 }
             });
