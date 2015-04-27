@@ -104,61 +104,70 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			var isPaused = null;
 			var playReceivedNow = null;
 			var initialState = null;
-			var sandboxFrame = $("#youtubeplayer", $element)[0];
+			var sandboxApi = null;
 
-			var template = sandboxTemplate;
-			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
-			template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
-			var sandboxApi = sandbox.createSandbox(sandboxFrame, template);
+			var createSandboxApi = function() {
+				if (!sandboxApi) {
+					var sandboxFrame = $("#youtubeplayer", $element)[0];
 
-			sandboxApi.e.on("message", function(event, message) {
-				var msg = message.data;
-				var data = msg[msg.type] || {};
-				switch (msg.type) {
-				case "ready":
-					break;
-				case "youtube.apiReady":
-					$scope.$apply(function() {
-						console.log("YouTube IFrame ready");
-						isYouTubeIframeAPIReadyDefer.resolve();
-					});
-					break;
-				case "youtube.playerReady":
-					$scope.$apply(function() {
-						playerReady.resolve();
-					});
-					break;
-				case "youtube.volume":
-					$scope.$apply(function(scope) {
-						scope.volume = data.volume;
-					});
-					break;
-				case "youtube.event":
-					$scope.$apply(function(scope) {
-						console.log("State change", data);
-						if (player) {
-							player.setPlayerState(data.state);
+					var template = sandboxTemplate;
+					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
+					template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
+					sandboxApi = sandbox.createSandbox(sandboxFrame, template);
+
+					sandboxApi.e.on("message", function(event, message) {
+						var msg = message.data;
+						var data = msg[msg.type] || {};
+						switch (msg.type) {
+						case "ready":
+							sandboxApi.postMessage("loadApi", {"url": $window.location.protocol + YOUTUBE_IFRAME_API_URL});
+							break;
+						case "youtube.apiReady":
+							$scope.$apply(function() {
+								console.log("YouTube IFrame ready");
+								isYouTubeIframeAPIReadyDefer.resolve();
+							});
+							break;
+						case "youtube.playerReady":
+							$scope.$apply(function() {
+								playerReady.resolve();
+							});
+							break;
+						case "youtube.volume":
+							$scope.$apply(function(scope) {
+								scope.volume = data.volume;
+							});
+							break;
+						case "youtube.event":
+							$scope.$apply(function(scope) {
+								console.log("State change", data);
+								if (player) {
+									player.setPlayerState(data.state);
+								}
+								scope.$emit(data.event, data.position);
+							});
+							break;
+						case "youtube.position":
+							if (player) {
+								player.setCurrentTime(data.position);
+							}
+							break;
+						default:
+							console.log("Unknown message received", message);
+							break;
 						}
-						scope.$emit(data.event, data.position);
 					});
-					break;
-				case "youtube.position":
-					if (player) {
-						player.setCurrentTime(data.position);
-					}
-					break;
-				default:
-					console.log("Unknown message received", message);
-					break;
 				}
-			});
+			}
 
 			$scope.$on("$destroy", function() {
 				if (player) {
 					player.destroy();
 				}
-				sandboxApi.destroy();
-				sandboxApi = null;
+				if (sandboxApi) {
+					sandboxApi.destroy();
+					sandboxApi = null;
+				}
 			});
 
 			var errorIds = {
@@ -506,12 +515,8 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 				}
 			};
 
-			$scope.loadYouTubeAPI = function() {
-				sandboxApi.postMessage("loadApi", {"url": $window.location.protocol + YOUTUBE_IFRAME_API_URL});
-			};
-
 			$scope.showYouTubeVideo = function() {
-				$scope.loadYouTubeAPI();
+				createSandboxApi();
 				$scope.layout.youtubevideo = true;
 				$scope.$emit("mainview", "youtubevideo", true);
 				if (currentToken) {
