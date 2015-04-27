@@ -718,10 +718,12 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				return;
 			}
 			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
-				// FF38 has renegotiation support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=1017888
 				// and https://bugzilla.mozilla.org/show_bug.cgi?id=840728
-				alertify.dialog.alert(translation._("Your Firefox version is too old. Please update to Firefox 38 or later."));
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=842455
+				// XXX(longsleep): It seems that firefox has implemented new API which
+				// supports addTrack, removeTrack see http://w3c.github.io/mediacapture-main/#dom-mediastream-removetrack
+				console.warn("Renegotiation enabled -> currently not compatible with Firefox.");
 				return;
 			}
 		});
