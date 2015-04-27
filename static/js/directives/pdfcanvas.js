@@ -289,7 +289,7 @@ define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html
 		return {
 			restrict: 'E',
 			replace: true,
-			template: '<div class="canvasContainer"><iframe allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" sandbox="allow-scripts allow-same-origin"></iframe></div>',
+			template: '<div class="canvasContainer"><iframe allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" sandbox="allow-scripts"></iframe></div>',
 			controller: controller
 		};
 
