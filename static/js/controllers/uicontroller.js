@@ -717,6 +717,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
 				return;
 			}
+			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
+				// FF38 has renegotiation support.
+				// See https://bugzilla.mozilla.org/show_bug.cgi?id=1017888
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=840728
+				alertify.dialog.alert(translation._("Your Firefox version is too old. Please update to Firefox 38 or later."));
+				return;
+			}
 		});
 
 	}];
