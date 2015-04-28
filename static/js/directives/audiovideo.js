@@ -137,7 +137,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 				// Render template.
 				peerTemplate(subscope, function(clonedElement, scope) {
-					$($scope.remoteVideos).append(clonedElement);
 					clonedElement.data("peerid", scope.peerid);
 					scope.element = clonedElement;
 					scope.attachStream = function(stream) {
@@ -192,6 +191,9 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						});
 					};
 					scope.attachStream(stream);
+					$timeout(function() {
+						$($scope.remoteVideos).append(clonedElement);
+					});
 				});
 
 			};
