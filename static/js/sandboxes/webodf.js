@@ -73,6 +73,30 @@
 		f.readAsText(bb);
 	};
 
+	var EmptyFakeStyle = function() {
+	};
+
+	EmptyFakeStyle.prototype.getPropertyValue = function(property) {
+		return null;
+	}
+
+	var ODFCanvas_getWindow = function() {
+		var result = runtime.orig_getWindow.apply(runtime, arguments);
+		var orig_getComputedStyle = result.getComputedStyle
+
+		// Firefox doesn't allow access to some styles, so return a
+		// fake style for WebODF to use in that case.
+		result.getComputedStyle = function() {
+			var style = orig_getComputedStyle.apply(result, arguments);
+			if (!style) {
+				style = new EmptyFakeStyle();
+			}
+			return style;
+		}
+
+		return result;
+	};
+
 	var WebODFSandbox = function(window) {
 		this.head = document.getElementsByTagName('head')[0];
 		this.canvasDom = document.getElementById("odfcanvas");
@@ -108,6 +132,8 @@
 				runtime.readFile = ODFCanvas_readFile;
 				runtime.orig_loadXML = runtime.loadXML;
 				runtime.loadXML = ODFCanvas_loadXML;
+				runtime.orig_getWindow = runtime.getWindow;
+				runtime.getWindow = ODFCanvas_getWindow;
 
 				that._doOpenFile(source);
 			};
