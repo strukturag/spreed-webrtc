@@ -26,12 +26,15 @@ define(["jquery", "underscore"], function($, _) {
 
 		var Sandbox = function(iframe, template) {
 			this.iframe = iframe;
-			this.iframe.src = "data:text/html;charset=utf-8," + $window.encodeURI(template);
+			var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
+			this.url = $window.URL.createObjectURL(blob);
+			this.iframe.src = this.url;
 			this.target = this.iframe.contentWindow;
 			this.e = $({});
 			this.handler = _.bind(this.onPostMessageReceived, this);
 			this.ready = false;
 			this.pending_messages = [];
+			this.origin = $window.location.protocol + "//" + $window.location.host;
 			$window.addEventListener("message", this.handler, false);
 		};
 
@@ -40,10 +43,14 @@ define(["jquery", "underscore"], function($, _) {
 				$window.removeEventListener("message", this.handler, false);
 				this.handler = null;
 			}
+			if (this.url) {
+				$window.URL.revokeObjectURL(this.url);
+				this.url = null;
+			}
 		};
 
 		Sandbox.prototype.onPostMessageReceived = function(event) {
-			if (event.origin !== "null" || event.source !== this.target) {
+			if ((event.origin !== "null" && event.origin !== this.origin) || event.source !== this.target) {
 				// the sandboxed data-url iframe has "null" as origin
 				return;
 			}
