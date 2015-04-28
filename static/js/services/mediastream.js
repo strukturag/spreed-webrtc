@@ -26,7 +26,8 @@ define([
 	'ua-parser',
 	'sjcl',
 	'modernizr',
-	'mediastream/tokens'
+	'mediastream/tokens',
+	'webrtc.adapter'
 
 ], function($, _, uaparser, sjcl, Modernizr, tokens) {
 
@@ -45,6 +46,10 @@ define([
 
 		// Apply configuration details.
 		webrtc.settings.renegotiation = context.Cfg.Renegotiation && true;
+		if (webrtc.settings.renegotiation && $window.webrtcDetectedBrowser === "firefox") {
+			console.warn("Disable renegotiation in Firefox for now.");
+			webrtc.settings.renegotiation = false;
+		}
 
 		// mediaStream service API.
 		var mediaStream = {
