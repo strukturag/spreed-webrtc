@@ -115,6 +115,7 @@
   }
 
   .onlyaudio {
+    bottom: 0;
     color: $video-onlyaudio;
     display: none;
     font-size: 1em;
@@ -124,13 +125,12 @@
     right: 0;
     text-align: center;
     top: 0;
-    bottom: 0;
 
     &:before {
-      content: "";
+      content: '';
       display: inline-block;
-      vertical-align: middle;
       height: 100%;
+      vertical-align: middle;
     }
 
     > * {
@@ -173,6 +173,7 @@
   &.cameraMute .miniContainer,
   &.cameraMute .localVideos {
     background: $video-onlyaudio-background;
+
     .onlyaudio {
       display: block;
     }
@@ -194,10 +195,10 @@
     background: $video-background;
     display: block;
     max-height: 100%;
-    width: 100%;
     opacity: 0;
     transition-duration: 2s;
     transition-property: opacity;
+    width: 100%;
   }
 
   .localVideos {
@@ -396,7 +397,7 @@
 
 .renderer-onepeople {
   .miniContainer .onlyaudio {
-    font-size: 0.4em;
+    font-size: .4em;
   }
 }
 
@@ -545,7 +546,8 @@
     height: 180px;
     width: 320px;
 
-    .remoteVideo, .video {
+    .remoteVideo,
+    .video {
       height: 100%;
       width: 100%;
     }
