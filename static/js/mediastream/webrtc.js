@@ -397,7 +397,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			videoMute: this.videoMute
 		});
 		usermedia.e.on("mediasuccess mediaerror", _.bind(function(event, um) {
-			this.e.triggerHandler("usermedia", [usermedia]);
+			this.e.triggerHandler("usermedia", [um]);
 			// Start always, no matter what.
 			this.maybeStart(um);
 		}, this));
