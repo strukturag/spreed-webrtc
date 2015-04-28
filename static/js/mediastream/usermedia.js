@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _, AudioContext) {
+define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webrtc.adapter'], function($, _, AudioContext, DummyStream) {
 
 	// Create AudioContext singleton, if supported.
 	var context = AudioContext ? new AudioContext() : null;
@@ -118,16 +118,6 @@ define(['jquery', 'underscore', 'audiocontext', 'webrtc.adapter'], function($, _
 			return window.getUserMedia;
 		}
 	})();
-
-	// Create a dummy stream.
-	var DummyStream = function() {};
-	DummyStream.prototype.stop = function() {};
-	DummyStream.prototype.getAudioTracks = function() { return [] };
-	DummyStream.prototype.getVideoTracks = function() { return [] };
-	DummyStream.not = function(stream) {
-		// Helper to test if stream is a dummy.
-		return !stream || stream.stop !== DummyStream.prototype.stop;
-	};
 
 	// UserMedia.
 	var UserMedia = function(options) {

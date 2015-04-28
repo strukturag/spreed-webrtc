@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", "animationFrame", "$timeout", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout, animationFrame, $timeout) {
+	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", "animationFrame", "$timeout", "dummyStream", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout, animationFrame, $timeout, DummyStream) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -35,14 +35,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				var id = currentcall.id + "-" + stream.id;
 				//console.log("Created stream ID", id);
 				return id;
-			};
-
-			// Dummy stream.
-			var DummyStream = function() {};
-			DummyStream.prototype.id = "defaultDummyStream";
-			DummyStream.prototype.stop = function() {};
-			DummyStream.is = function(stream) {
-				return stream && stream.stop === DummyStream.prototype.stop;
 			};
 
 			$scope.container = $element[0];
