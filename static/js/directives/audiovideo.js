@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/audiovideopeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", "animationFrame", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout, animationFrame) {
+	return ["$window", "$compile", "$filter", "mediaStream", "safeApply", "desktopNotify", "buddyData", "videoWaiter", "videoLayout", "animationFrame", "$timeout", function($window, $compile, $filter, mediaStream, safeApply, desktopNotify, buddyData, videoWaiter, videoLayout, animationFrame, $timeout) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -152,7 +152,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						if (DummyStream.is(stream)) {
 							scope.withvideo = false;
 							scope.onlyaudio = true;
-							_.defer(function() {
+							$timeout(function() {
 								scope.$emit("active", currentcall);
 								$scope.redraw();
 							});
