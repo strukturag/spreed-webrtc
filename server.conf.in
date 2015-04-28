@@ -58,7 +58,7 @@ listen = 127.0.0.1:8080
 ; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
 ;turnSecret = the-default-turn-shared-secret-do-not-keep
 ; Renegotiation support flag. Set to true to tell clients that they can
-; renegoiate peer connections when required. Defaults to false.
+; renegotiate peer connections when required. Defaults to false.
 ;renegotiation = false
 ; Session secret to use for session id generator. 32 or 64 bytes of random data
 ; are recommented (hex encoded). A warning will be logged if hex decode fails.
