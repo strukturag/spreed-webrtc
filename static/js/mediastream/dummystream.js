@@ -34,7 +34,7 @@ define([], function() {
 		return !stream || stream.stop !== DummyStream.prototype.stop;
 	};
 	DummyStream.is = function(stream) {
-		return !this.not(stream);
+		return stream && stream.stop === DummyStream.prototype.stop;
 	};
 
 	return DummyStream;
