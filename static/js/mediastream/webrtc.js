@@ -237,6 +237,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				console.log("Offer process.");
 				targetcall = this.findTargetCall(from);
 				if (targetcall) {
+					if (!this.settings.renegotiation && targetcall.peerconnection && targetcall.peerconnection.pc && targetcall.peerconnection.pc.remoteDescription) {
+						// Call replace support without renegotiation.
+						this.doHangup("unsupported", from);
+						console.error("Processing new offers is not implemented without renegotiation.");
+						return;
+					}
 					// Hey we know this call.
 					targetcall.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
 						if (currentcall === this.currentcall) {
