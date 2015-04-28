@@ -191,9 +191,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 						});
 					};
 					scope.attachStream(stream);
-					$timeout(function() {
-						$($scope.remoteVideos).append(clonedElement);
-					});
+					$($scope.remoteVideos).append(clonedElement);
 				});
 
 			};
