@@ -314,12 +314,18 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	PeerConnection.prototype.getRemoteStreams = function() {
 
+		if (!this.pc) {
+			return [];
+		}
 		return this.pc.getRemoteStreams.apply(this.pc, arguments);
 
 	};
 
 	PeerConnection.prototype.getLocalStreams = function() {
 
+		if (!this.pc) {
+			return [];
+		}
 		return this.pc.getRemoteStreams.apply(this.pc, arguments);
 
 	};
