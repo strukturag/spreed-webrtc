@@ -114,6 +114,32 @@
     object-fit: cover;
   }
 
+  .onlyaudio {
+    bottom: 0;
+    color: $video-onlyaudio;
+    display: none;
+    font-size: 1em;
+    left: 0;
+    pointer-events: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
+
+    > * {
+      font-size: 6em;
+      vertical-align: middle;
+    }
+  }
+
+
   .remoteContainer {
     bottom: 0;
     left: 0;
@@ -144,6 +170,19 @@
     }
   }
 
+  &.cameraMute .miniContainer,
+  &.cameraMute .localVideos {
+    background: $video-onlyaudio-background;
+
+    .onlyaudio {
+      display: block;
+    }
+
+    video {
+      visibility: hidden;
+    }
+  }
+
   .miniVideo {
     display: block;
     height: 100%;
@@ -160,6 +199,16 @@
     transition-duration: 2s;
     transition-property: opacity;
     width: 100%;
+  }
+
+  .localVideos {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition-duration: 2s;
+    transition-property: opacity;
   }
 
   .remoteVideos {
@@ -217,7 +266,7 @@
       //visibility: visible;
     }
 
-    &.onlyaudio {
+    &.onlyaudioVideo {
       background: $video-onlyaudio-background;
       //visibility: visible;
 
@@ -226,20 +275,7 @@
       }
     }
 
-    .onlyaudio {
-      color: $video-onlyaudio;
-      display: none;
-      font-size: 80px;
-      left: 0;
-      margin-top: -40px;
-      pointer-events: auto;
-      position: absolute;
-      right: 0;
-      text-align: center;
-      top: 45%;
-    }
-
-    &.onlyaudio video,
+    &.onlyaudioVideo video,
     &.dummy video {
       visibility: hidden;
     }
@@ -360,10 +396,12 @@
 }
 
 .renderer-onepeople {
+  .miniContainer .onlyaudio {
+    font-size: .4em;
+  }
 }
 
 .renderer-democrazy {
-
   .remoteVideos .miniContainer {
     bottom: auto;
     display: inline-block;
@@ -377,7 +415,6 @@
   .active .miniContainer {
     opacity: 1;
   }
-
 }
 
 .renderer-conferencekiosk {
@@ -509,7 +546,8 @@
     height: 180px;
     width: 320px;
 
-    video {
+    .remoteVideo,
+    .video {
       height: 100%;
       width: 100%;
     }

@@ -122,6 +122,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
+		$scope.usermedia = null;
 
 		$scope.setStatus = function(status) {
 			// This is the connection status to signaling server.
@@ -147,7 +148,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		$scope.refreshWebrtcSettings = function() {
 			// Refresh constraints.
-			constraints.refresh($scope.master.settings);
+			constraints.refresh($scope.master.settings).then(function() {
+				var um = $scope.usermedia;
+				if (um && um.renegotiation && um.started) {
+					// Trigger renegotiation if supported and started.
+					um.doGetUserMediaWithConstraints(mediaStream.webrtc.settings.mediaConstraints);
+				}
+			});
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
@@ -405,6 +412,12 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				message = translation._("We are sorry but something went wrong. Boo boo.");
 			}
 			alertify.dialog.alert(translation._("Oops") + "<br/>" + message);
+		});
+
+		mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
+			safeApply($scope, function(scope) {
+				scope.usermedia = usermedia;
+			});
 		});
 
 		appData.flags.autoreconnect = true;
@@ -702,6 +715,15 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 			if (!$window.webrtcDetectedVersion) {
 				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
+				return;
+			}
+			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
+				// See https://bugzilla.mozilla.org/show_bug.cgi?id=1017888
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=840728
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=842455
+				// XXX(longsleep): It seems that firefox has implemented new API which
+				// supports addTrack, removeTrack see http://w3c.github.io/mediacapture-main/#dom-mediastream-removetrack
+				console.warn("Renegotiation enabled -> currently not compatible with Firefox.");
 				return;
 			}
 		});
