@@ -106,7 +106,11 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			var initialState = null;
 			var sandboxApi = null;
 
-			var createSandboxApi = function() {
+			var createSandboxApi = function(force) {
+				if (sandboxApi && force) {
+					sandboxApi.destroy();
+					sandboxApi = null;
+				}
 				if (!sandboxApi) {
 					var sandboxFrame = $(".youtubeplayer", $element)[0];
 
@@ -539,6 +543,10 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 						}
 						break;
 				}
+			};
+
+			$scope.loadYouTubeAPI = function() {
+				createSandboxApi(true);
 			};
 
 			$scope.showYouTubeVideo = function() {
