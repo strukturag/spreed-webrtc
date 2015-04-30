@@ -108,7 +108,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 
 			var createSandboxApi = function() {
 				if (!sandboxApi) {
-					var sandboxFrame = $("#youtubeplayer", $element)[0];
+					var sandboxFrame = $(".youtubeplayer", $element)[0];
 
 					var template = sandboxTemplate;
 					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
@@ -631,7 +631,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 
 		var compile = function(tElement, tAttr) {
 			return function(scope, iElement, iAttrs, controller) {
-				$(iElement).find("#youtubecontainer").on("dblclick", _.debounce(function(event) {
+				$(iElement).find(".youtubecontainer").on("dblclick", _.debounce(function(event) {
 					scope.toggleFullscreen(event.delegateTarget);
 				}, 100, true));
 			}
