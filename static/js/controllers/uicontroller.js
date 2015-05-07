@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", "$document", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints, $document) {
 
 		// Avoid accidential reloads or exits when in a call.
 		$($window).on("beforeunload", function(event) {
@@ -39,12 +39,26 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		});
 
-		// Enable app full screen listener.
-		$("#bar .logo").on("doubletap dblclick", _.debounce(function() {
-			if (BigScreen.enabled) {
-				BigScreen.toggle($("body").get(0));
-			}
-		}, 100, true));
+		var isNodeWebkitApp = !!$window.nwDispatcher
+		if (isNodeWebkitApp) {
+			// Enable app full screen listener.
+			$("#bar .logo").on("doubletap dblclick", _.debounce(function() {
+				if (BigScreen.enabled) {
+					BigScreen.toggle($("body").get(0));
+				}
+			}, 100, true));
+
+			// App full screen exit escape key listener.
+			var escapeKeyCode = 27;
+			$document.on('keydown', function(event) {
+				if ($(event.target).is("input,textarea,select")) {
+					return;
+				}
+				if (event.keyCode === escapeKeyCode && BigScreen.element) {
+					BigScreen.toggle($("body").get(0));
+				}
+			});
+		}
 
 		// Load default sounds.
 		playSound.initialize({
