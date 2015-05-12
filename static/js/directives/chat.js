@@ -345,7 +345,12 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							contacts.remove(buddy.contact.Userid);
 						};
 						subscope.updateContactStatus = function(event, data) {
+							var userid = buddy && buddy.session && buddy.session.Userid;
+							if (userid !== data.Userid) {
+								return;
+							}
 							subscope.isContact = event.type === "contactadded";
+							safeApply(subscope);
 						};
 						contacts.e.on("contactadded", subscope.updateContactStatus);
 						contacts.e.on("contactremoved", subscope.updateContactStatus);
