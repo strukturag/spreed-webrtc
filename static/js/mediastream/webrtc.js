@@ -237,7 +237,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				console.log("Offer process.");
 				targetcall = this.findTargetCall(from);
 				if (targetcall) {
-					if (!this.settings.renegotiation && targetcall.peerconnection && targetcall.peerconnection.pc && targetcall.peerconnection.pc.remoteDescription) {
+					if (!this.settings.renegotiation && targetcall.peerconnection && targetcall.peerconnection.hasRemoteDescription()) {
 						// Call replace support without renegotiation.
 						this.doHangup("unsupported", from);
 						console.error("Processing new offers is not implemented without renegotiation.");
