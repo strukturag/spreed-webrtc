@@ -79,8 +79,9 @@ define(["angular"], function(angular) {
 			defaultMessages: defaultMessages
 		};
 
-		var setupModal = function(data, type) {
+		var setupModal = function(data, type, classes) {
 			return $modal.open({
+				windowClass: classes ? classes : '',
 				templateUrl: '/dialogs/' + type +'.html',
 				controller: modalController,
 				resolve: {
@@ -90,7 +91,7 @@ define(["angular"], function(angular) {
 		};
 
 		var dialog = {
-			exec: function(n, title, message, ok_cb, err_cb) {
+			exec: function(n, title, message, ok_cb, err_cb, classes) {
 				if (!message && title) {
 					message = title;
 					title = null;
@@ -98,25 +99,25 @@ define(["angular"], function(angular) {
 				if (!title) {
 					title = api.defaultMessages[n] || n;
 				}
-				var dlg = setupModal({'header': title, 'message': message}, n);
+				var dlg = setupModal({'header': title, 'message': message}, n, classes);
 				if (ok_cb) {
 					dlg.result.then(ok_cb, err_cb);
 				}
 				return dlg;
 			},
-			error: function(title, message, ok_cb, err_cb) {
-				return dialog.exec("error", title, message, ok_cb, err_cb);
+			error: function(title, message, ok_cb, err_cb, classes) {
+				return dialog.exec("error", title, message, ok_cb, err_cb, classes);
 			},
-			notify: function(title, message, ok_cb, err_cb) {
-				return dialog.exec("notify", title, message, ok_cb, err_cb);
+			notify: function(title, message, ok_cb, err_cb, classes) {
+				return dialog.exec("notify", title, message, ok_cb, err_cb, classes);
 			},
-			alert: function(message, ok_cb, title) {
+			alert: function(message, ok_cb, title, classes) {
 				// Legacy function for compatibility with alertify.
-				return dialog.notify(title, message, ok_cb);
+				return dialog.notify(title, message, ok_cb, null, classes);
 			},
-			confirm: function(message, ok_cb, err_cb, title) {
+			confirm: function(message, ok_cb, err_cb, title, classes) {
 				// Legacy function for compatibility with alertify.
-				return dialog.exec("confirm", null, message, ok_cb, err_cb);
+				return dialog.exec("confirm", null, message, ok_cb, err_cb, classes);
 			},
 			prompt: function(title, ok_cb, err_cb) {
 				var id = "allertifyPrompt" + (promptIdx++);
