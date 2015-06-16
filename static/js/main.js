@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -56,6 +56,7 @@ require.config({
 		'pdf.compatibility': 'libs/pdf/compatibility',
 		'webodf': 'libs/webodf',
 		'bootstrap-file-input': 'libs/bootstrap.file-input',
+		'webfont': 'libs/webfont',
 
 		'partials': '../partials',
 		'sounds': '../sounds',
@@ -132,6 +133,9 @@ require.config({
 			deps: ['jquery'],
 			exports: '$'
 		},
+		'webfont': {
+			exports: 'WebFont'
+		}
 	}
 });
 
@@ -187,7 +191,24 @@ if (Object.create) {
 		'underscore',
 		'angular',
 		'require',
-		'base'], function($, _, angular, require) {
+		'webfont',
+		'base'], function($, _, angular, require, webfont) {
+
+		// Load web fonts.
+		webfont.load({
+			custom: {
+				families: ["FontAwesome"],
+				testStrings: {
+     				"FontAwesome": '\uf004\uf005'
+    			}
+			},
+			active: function() {
+				console.log("Web fonts loaded.");
+			},
+			inactive: function() {
+				console.warn("Web font not available.");
+			}
+		});
 
 		var launcherApp = angular.module('launcherApp', []);
 		launcherApp.run(["$q", "$window", "$http", function($q, $window, $http) {

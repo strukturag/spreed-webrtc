@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -32,4 +32,6 @@ define([ // Helper module to put non dependency base libraries together.
 	'rAF',
 	'humanize',
 	'sha',
-	'sjcl'], function() {});
+	'sjcl',
+	'text',
+	'webfont'], function() {});

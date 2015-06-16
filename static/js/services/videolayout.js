@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -61,6 +61,13 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 	// videoLayout
 	return ["$window", function($window) {
 
+		// Invisible layout (essentially shows nothing).
+		var Invisible = function(container, scope, controller) {};
+		Invisible.prototype.name = "invisible";
+		Invisible.prototype.render = function() {};
+		Invisible.prototype.close = function() {};
+
+
 		// Video layout with all videos rendered the same size.
 		var OnePeople = function(container, scope, controller) {};
 
@@ -86,7 +93,6 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 				if (scope.localVideo.style.opacity === '1') {
 					videoWidth = scope.localVideo.videoWidth;
 					videoHeight = scope.localVideo.videoHeight;
-					console.log("Local video size: ", videoWidth, videoHeight);
 					videos = [null];
 				}
 			}
@@ -327,27 +333,29 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 		};
 
 		// Register renderers.
+		renderers[Invisible.prototype.name] = Invisible;
 		renderers[OnePeople.prototype.name] = OnePeople;
 		renderers[Smally.prototype.name] = Smally;
 		renderers[Democrazy.prototype.name] = Democrazy;
 		renderers[ConferenceKiosk.prototype.name] = ConferenceKiosk;
 		renderers[Auditorium.prototype.name] = Auditorium;
 
+		// Helper for class name generation.
+		var makeName = function(prefix, n, camel) {
+			var r = prefix;
+			if (camel) {
+				r = r + n.charAt(0).toUpperCase() + n.slice(1);
+			} else {
+				r = r + "-" + n;
+			}
+			return r;
+		};
+
 		// Public api.
 		var current = null;
 		var body = $("body");
 		return {
 			update: function(name, size, scope, controller) {
-
-				var makeName = function(prefix, n, camel) {
-					var r = prefix;
-					if (camel) {
-						r = r + n.charAt(0).toUpperCase() + n.slice(1);
-					} else {
-						r = r + "-" + n;
-					}
-					return r;
-				};
 
 				var videos = _.keys(controller.streams);
 				var streams = controller.streams;
@@ -356,22 +364,20 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 
 				if (!current) {
 					current = new renderers[name](container, scope, controller)
-					//console.log("Created new video layout renderer", name, current);
+					console.log("Created new video layout renderer", name, current);
 					$(layoutparent).addClass(makeName("renderer", name));
-					$(body).addClass(makeName("videolayout", name, true));
+					body.addClass(makeName("videolayout", name, true));
 					return true;
-				} else {
-					if (current.name !== name) {
-						current.close(container, scope, controller);
-						$(container).removeAttr("style");
-						$(layoutparent).removeClass(makeName("renderer", current.name));
-						$(body).removeClass(makeName("videolayout", current.name, true));
-						current = new renderers[name](container, scope, controller)
-						$(layoutparent).addClass(makeName("renderer", name));
-						$(body).addClass(makeName("videolayout", name, true));
-						//console.log("Switched to new video layout renderer", name, current);
-						return true;
-					}
+				} else if (current && current.name !== name) {
+					current.close(container, scope, controller);
+					$(container).removeAttr("style");
+					$(layoutparent).removeClass(makeName("renderer", current.name));
+					body.removeClass(makeName("videolayout", current.name, true));
+					current = new renderers[name](container, scope, controller)
+					$(layoutparent).addClass(makeName("renderer", name));
+					body.addClass(makeName("videolayout", name, true));
+					console.log("Switched to new video layout renderer", name, current);
+					return true;
 				}
 
 				return current.render(container, size, scope, videos, streams);

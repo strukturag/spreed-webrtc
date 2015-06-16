@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -103,7 +103,7 @@ define([
 			currentRoom = room;
 			if (priorRoom) {
 				priorRoomName = priorRoom.Name;
-				console.log("Left room", priorRoom.Name);
+				console.log("Left room", [priorRoom.Name]);
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
 			if (currentRoom) {
@@ -212,18 +212,16 @@ define([
 				return canJoinRooms;
 			},
 			joinByName: function(name, replace) {
-				name = $window.encodeURIComponent(name);
-				name = name.replace(/^%40/, "@");
-				name = name.replace(/^%24/, "$");
-				name = name.replace(/^%2B/, "+");
-
-				safeApply($rootScope, function(scope) {
-					$location.path("/" + name);
-					if (replace) {
-						$location.replace();
-					}
+				var nn = restURL.encodeRoomURL(name, "", function(url) {
+					// Apply new URL.
+					safeApply($rootScope, function(scope) {
+						$location.path(url);
+						if (replace) {
+							$location.replace();
+						}
+					});
 				});
-				return name;
+				return nn;
 			},
 			joinDefault: function(replace) {
 				return rooms.joinByName("", replace);

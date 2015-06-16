@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -171,29 +171,29 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$timeout($scope.maybeShowSettings);
 			});
 
-			constraints.e.on("refresh", function(event, constraints) {
+			constraints.e.on("refresh", function(event, c) {
 
 				var settings = $scope.master.settings;
 
 				// Assert that selected devices are there.
 				(function() {
-					var deferred = constraints.defer();
+					var deferred = c.defer();
 					mediaSources.refresh(function() {
 						$scope.checkDefaultMediaSources();
 						// Select microphone device by id.
 						if (settings.microphoneId) {
-							constraints.add("audio", "sourceId", settings.microphoneId);
+							c.add("audio", "sourceId", settings.microphoneId);
 						}
 						// Select camera by device id.
 						if (settings.cameraId) {
-							constraints.add("video", "sourceId", settings.cameraId);
+							c.add("video", "sourceId", settings.cameraId);
 						}
 						if (!mediaSources.hasAudio()) {
-							constraints.disable('audio');
+							c.disable('audio');
 							console.info("Disabled audio input as no audio source was found.");
 						}
 						if (!mediaSources.hasVideo()) {
-							constraints.disable('video');
+							c.disable('video');
 							console.info("Disabled video input as no video source was found.");
 						}
 						deferred.resolve("complete");
@@ -201,7 +201,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				})();
 
 				// Chrome only constraints.
-				if ($scope.isChrome) {
+				if (constraints.supported.chrome) {
 
 					// Chrome specific constraints overview:
 					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/mediaconstraintsinterface.cc
@@ -211,24 +211,24 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 					// Experimental audio settings.
 					if (settings.experimental.enabled) {
-						constraints.add("audio", "googEchoCancellation", true); // defaults to true
-						constraints.add("audio", "googEchoCancellation2", settings.experimental.audioEchoCancellation2 && true); // defaults to false in Chrome
-						constraints.add("audio", "googAutoGainControl", true); // defaults to true
-						constraints.add("audio", "googAutoGainControl2", settings.experimental.audioAutoGainControl2 && true); // defaults to false in Chrome
-						constraints.add("audio", "googNoiseSuppression", true); // defaults to true
-						constraints.add("audio", "googgNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
-						constraints.add("audio", "googHighpassFilter", true); // defaults to true
-						constraints.add("audio", "googTypingNoiseDetection", settings.experimental.audioTypingNoiseDetection && true); // defaults to true in Chrome
+						c.add("audio", "googEchoCancellation", true); // defaults to true
+						c.add("audio", "googEchoCancellation2", settings.experimental.audioEchoCancellation2 && true); // defaults to false in Chrome
+						c.add("audio", "googAutoGainControl", true); // defaults to true
+						c.add("audio", "googAutoGainControl2", settings.experimental.audioAutoGainControl2 && true); // defaults to false in Chrome
+						c.add("audio", "googNoiseSuppression", true); // defaults to true
+						c.add("audio", "googgNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
+						c.add("audio", "googHighpassFilter", true); // defaults to true
+						c.add("audio", "googTypingNoiseDetection", settings.experimental.audioTypingNoiseDetection && true); // defaults to true in Chrome
 					}
 
-					if ($scope.supported.renderToAssociatedSink) {
+					if (constraints.supported.renderToAssociatedSink) {
 						// When true uses the default communications device on Windows.
 						// https://codereview.chromium.org/155863003
-						constraints.add("audio", "googDucking", true); // defaults to true on Windows.
+						c.add("audio", "googDucking", true); // defaults to true on Windows.
 						// Chrome will start rendering mediastream output to an output device that's associated with
 						// the input stream that was opened via getUserMedia.
 						// https://chromiumcodereview.appspot.com/23558010
-						constraints.add("audio", "chromeRenderToAssociatedSink", settings.audioRenderToAssociatedSkin && true); // defaults to false in Chrome
+						c.add("audio", "chromeRenderToAssociatedSink", settings.audioRenderToAssociatedSkin && true); // defaults to false in Chrome
 					}
 
 					// Experimental video settings.
@@ -236,12 +236,16 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 						// Changes the way the video encoding adapts to the available bandwidth.
 						// https://code.google.com/p/webrtc/issues/detail?id=3351
-						constraints.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
+						c.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
 						// Removes the noise in the captured video stream at the expense of CPU.
-						constraints.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
-						constraints.add("pc", "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true); // defaults to true in Chrome
+						c.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
+						c.add("pc", "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true); // defaults to true in Chrome
 
 					}
+
+				}
+
+				if (constraints.supported.audioVideo) {
 
 					// Set video quality.
 					var videoQuality = videoQualityMap[settings.videoQuality];
@@ -249,30 +253,26 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						var mandatory = videoQuality.mandatory;
 						_.forEach(videoQuality, function(v, k) {
 							if (k !== "mandatory") {
-								constraints.add("video", k, v, mandatory ? false : true);
+								c.add("video", k, v, mandatory ? false : true);
 							}
 						});
 						if (mandatory) {
 							_.forEach(mandatory, function(v, k) {
-								constraints.add("video", k, v, true);
+								c.add("video", k, v, true);
 							});
 						}
 					}
 
 					// Set max frame rate if any was selected.
 					if (settings.maxFrameRate && settings.maxFrameRate != "auto") {
-						constraints.add("video", "maxFrameRate", parseInt(settings.maxFrameRate, 10), true);
+						c.add("video", "maxFrameRate", parseInt(settings.maxFrameRate, 10), true);
 					}
 
 					// Disable AEC if stereo.
 					// https://github.com/webrtc/apprtc/issues/23
 					if (settings.sendStereo) {
-						constraints.add("audio", "echoCancellation", false);
+						c.add("audio", "echoCancellation", false);
 					}
-
-				} else {
-
-					// Other browsers constraints (there are none as of now.);
 
 				}
 

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,16 +19,36 @@
  *
  */
 
-#audiovideo {
+.mainScreenshare,
+.mainPresentation {
+  // scss-lint:disable IdSelector
+  #audiovideo {
+    @include breakpt($breakpoint-video-medium, max-width, only screen) {
+      display: none;
+    }
+  }
+}
+
+.withChat,
+.withBuddylist {
+  // scss-lint:disable IdSelector
+  #audiovideo {
+    right: 260px;
+  }
+}
+
+.withBuddylist.withChat #audiovideo { // scss-lint:disable IdSelector
+  right: 520px;
+}
+
+#audiovideo { // scss-lint:disable IdSelector
   bottom: 0;
   left: 0;
   position: absolute;
   right: 0;
   top: $minbarheight;
   user-select: none;
-}
 
-#audiovideo {
   @include breakpt($breakpoint-video-small, max-width, only screen) {
     right: 0;
   }
@@ -43,22 +63,6 @@
       display: none;
     }
   }
-}
-
-.mainScreenshare #audiovideo,
-.mainPresentation #audiovideo {
-  @include breakpt($breakpoint-video-medium, max-width, only screen) {
-    display: none;
-  }
-}
-
-.withChat #audiovideo,
-.withBuddylist #audiovideo {
-  right: 260px;
-}
-
-.withBuddylist.withChat #audiovideo {
-  right: 520px;
 }
 
 .audiovideo {
@@ -109,9 +113,33 @@
   video {
     object-fit: cover;
   }
-}
 
-.audiovideo {
+  .onlyaudio {
+    bottom: 0;
+    color: $video-onlyaudio;
+    display: none;
+    font-size: 1em;
+    left: 0;
+    pointer-events: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+
+    &:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
+
+    > * {
+      font-size: 6em;
+      vertical-align: middle;
+    }
+  }
+
+
   .remoteContainer {
     bottom: 0;
     left: 0;
@@ -142,6 +170,19 @@
     }
   }
 
+  &.cameraMute .miniContainer,
+  &.cameraMute .localVideos {
+    background: $video-onlyaudio-background;
+
+    .onlyaudio {
+      display: block;
+    }
+
+    video {
+      visibility: hidden;
+    }
+  }
+
   .miniVideo {
     display: block;
     height: 100%;
@@ -159,131 +200,128 @@
     transition-property: opacity;
     width: 100%;
   }
-}
 
-.audiovideo .remoteVideos {
-  bottom: 0;
-  left: 0;
-  opacity: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition-duration: 2s;
-  transition-property: opacity;
-
-  video {
-    display: block;
-    height: 100%;
-    width: 100%;
-  }
-}
-
-.audiovideo .remoteVideo {
-  background: $video-background;
-  display: inline-block;
-  max-height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  position: relative;
-  vertical-align: bottom;
-  //visibility: hidden;
-  width: 100%;
-
-  &.withvideo {
-    //visibility: visible;
-  }
-
-  &.onlyaudio {
-    background: $video-onlyaudio-background;
-    //visibility: visible;
-  }
-
-  .onlyaudio {
-    color: $video-onlyaudio;
-    display: none;
-    font-size: 80px;
+  .localVideos {
+    bottom: 0;
     left: 0;
-    margin-top: -40px;
-    pointer-events: auto;
     position: absolute;
     right: 0;
-    text-align: center;
-    top: 45%;
-  }
-
-  &.onlyaudio video,
-  &.dummy video {
-    visibility: hidden;
-  }
-
-  &.onlyaudio .onlyaudio {
-    display: block;
-  }
-
-  &.dummy .onlyaudio {
-    display: block;
-  }
-
-  .peerActions {
-    bottom: 5%;
-    left: 40px;
-    opacity: 0;
-    pointer-events: auto;
-    position: absolute;
-    right: 40px;
-    text-align: center;
-    transition-duration: .2s;
+    top: 0;
+    transition-duration: 2s;
     transition-property: opacity;
-    z-index: 10;
-
-    &:hover {
-      opacity: .5;
-    }
-
-    i {
-      font-size: 3vw;
-    }
   }
 
-  .peerLabel {
-    bottom: 4%;
-    color: #fff;
-    font-size: 2.5vw;
-    left: 4%;
-    max-width: 30%;
-    opacity: .7;
-    overflow: hidden;
-    padding: 4px;
+  .remoteVideos {
+    bottom: 0;
+    left: 0;
+    opacity: 0;
     position: absolute;
-    text-overflow: ellipsis;
-    text-shadow: 0 0 4px #000;
-    white-space: nowrap;
-    z-index: 8;
+    right: 0;
+    top: 0;
+    transition-duration: 2s;
+    transition-property: opacity;
+
+    video {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
   }
-}
 
-.audiovideo .overlayActions {
-  background: $video-overlayactions;
-  bottom: 0;
-  height: 140px;
-  left: 0;
-  margin: auto 0;
-  opacity: 0;
-  padding: 3px 0;
-  position: absolute;
-  top: 0;
-  width: 40px;
-  z-index: 5;
-
-  .btn {
-    color: #ccc;
-    cursor: pointer;
-    display: block;
-    outline: 0;
-    text-shadow: 0 0 5px #000;
+  .overlayActions {
+    background: $video-overlayactions;
+    bottom: 0;
+    height: 140px;
+    left: 0;
+    margin: auto 0;
+    opacity: 0;
+    padding: 3px 0;
+    position: absolute;
+    top: 0;
     width: 40px;
+    z-index: 5;
+
+    .btn {
+      color: #ccc;
+      cursor: pointer;
+      display: block;
+      outline: 0;
+      text-shadow: 0 0 5px #000;
+      width: 40px;
+    }
   }
 
+  .remoteVideo {
+    background: $video-background;
+    display: inline-block;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    vertical-align: bottom;
+    //visibility: hidden;
+    width: 100%;
+
+    &.withvideo {
+      //visibility: visible;
+    }
+
+    &.onlyaudioVideo {
+      background: $video-onlyaudio-background;
+      //visibility: visible;
+
+      .onlyaudio {
+        display: block;
+      }
+    }
+
+    &.onlyaudioVideo video,
+    &.dummy video {
+      visibility: hidden;
+    }
+
+    &.dummy .onlyaudio {
+      display: block;
+    }
+
+    .peerActions {
+      // scss:lint:disable NestingDepth, SelectorDepth
+      bottom: 5%;
+      left: 40px;
+      opacity: 0;
+      pointer-events: auto;
+      position: absolute;
+      right: 40px;
+      text-align: center;
+      transition-duration: .2s;
+      transition-property: opacity;
+      z-index: 10;
+
+      &:hover {
+        opacity: .5;
+      }
+
+      i {
+        font-size: 3vw;
+      }
+    }
+
+    .peerLabel {
+      bottom: 4%;
+      color: #fff;
+      font-size: 2.5vw;
+      left: 4%;
+      max-width: 30%;
+      opacity: .7;
+      overflow: hidden;
+      padding: 4px;
+      position: absolute;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 4px #000;
+      white-space: nowrap;
+      z-index: 8;
+    }
+  }
 }
 
 .remoteVideo {
@@ -326,29 +364,8 @@
   }
 }
 
-.renderer-auditorium {
-  position: relative;
-
-  span:before {
-    content: '\f183';
-    left: 50%;
-    margin-left: -.8em;
-    margin-top: -.5em;
-    position: absolute;
-    top: 50%;
-  }
-
-  span:after {
-    content: '\f183';
-    margin-right: -.9em;
-    margin-top: -.5em;
-    position: absolute;
-    right: 50%;
-    top: 50%;
-  }
-}
-
 .renderer-smally {
+  // scss-lint:disable SelectorDepth
   background: #000;
   border-right: 0;
   border-top: 0;
@@ -379,10 +396,12 @@
 }
 
 .renderer-onepeople {
+  .miniContainer .onlyaudio {
+    font-size: .4em;
+  }
 }
 
 .renderer-democrazy {
-
   .remoteVideos .miniContainer {
     bottom: auto;
     display: inline-block;
@@ -396,10 +415,10 @@
   .active .miniContainer {
     opacity: 1;
   }
-
 }
 
 .renderer-conferencekiosk {
+  // scss-lint:disable SelectorDepth
   .remoteVideos {
     background: $video-background;
     bottom: 2px;
@@ -454,6 +473,26 @@
 }
 
 .renderer-auditorium {
+  position: relative;
+
+  span:before {
+    content: '\f183';
+    left: 50%;
+    margin-left: -.8em;
+    margin-top: -.5em;
+    position: absolute;
+    top: 50%;
+  }
+
+  span:after {
+    content: '\f183';
+    margin-right: -.9em;
+    margin-top: -.5em;
+    position: absolute;
+    right: 50%;
+    top: 50%;
+  }
+
   .remoteContainer {
     border-left: 40px solid #000;
   }
@@ -463,10 +502,6 @@
     pointer-events: auto;
     top: 180px;
     width: 320px;
-
-    .overlayLogo {
-      display: none;
-    }
 
     video {
       height: 100%;
@@ -511,7 +546,8 @@
     height: 180px;
     width: 320px;
 
-    video {
+    .remoteVideo,
+    .video {
       height: 100%;
       width: 100%;
     }

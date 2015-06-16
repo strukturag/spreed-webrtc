@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -142,13 +142,19 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// reason we always trigger onRemoteStream added for all streams which are available
 			// after the remote SDP was set successfully.
 			_.defer(_.bind(function() {
+				var streams = 0;
 				_.each(peerconnection.getRemoteStreams(), _.bind(function(stream) {
 					if (!this.streams.hasOwnProperty(stream.id) && (stream.getAudioTracks().length > 0 || stream.getVideoTracks().length > 0)) {
 						// NOTE(longsleep): Add stream here when it has at least one audio or video track, to avoid FF >= 33 to add it multiple times.
 						console.log("Adding stream after remote SDP success.", stream);
 						this.onRemoteStreamAdded(stream);
+						streams++;
 					}
 				}, this));
+				if (streams === 0 && this.sdpConstraints.mandatory && (this.sdpConstraints.mandatory.OfferToReceiveAudio || this.sdpConstraints.mandatory.OfferToReceiveVideo)) {
+					// We assume that we will eventually receive a stream, so we trigger the event to let the UI prepare for it.
+					this.e.triggerHandler("remoteStreamAdded", [null, this]);
+				}
 			}, this));
 		}, this), _.bind(function(err) {
 			console.error("Set remote session description failed", err);
@@ -165,6 +171,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		sessionDescription.sdp = utils.maybePreferVideoReceiveCodec(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetAudioReceiveBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoReceiveBitRate(sessionDescription.sdp, params);
+		// Apply workarounds.
+		sessionDescription.sdp = utils.fixLocal(sessionDescription.sdp, params);
 
 	};
 
@@ -177,6 +185,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		sessionDescription.sdp = utils.maybeSetAudioSendBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoSendBitRate(sessionDescription.sdp, params);
 		sessionDescription.sdp = utils.maybeSetVideoSendInitialBitRate(sessionDescription.sdp, params);
+		// Apply workarounds.
+		sessionDescription.sdp = utils.fixRemote(sessionDescription.sdp, params);
 
 	};
 

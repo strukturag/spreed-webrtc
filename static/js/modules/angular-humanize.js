@@ -1,6 +1,6 @@
 /*
  * @license angular-humanize
- * Copyright 2013-2014 struktur AG, http://www.struktur.de
+ * Copyright 2013-2015 struktur AG, http://www.struktur.de
  * License: MIT
  */
 (function(window, angular, humanize, undefined) {

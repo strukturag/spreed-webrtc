@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -43,7 +43,8 @@ func NewUser(id string) *User {
 
 }
 
-// Return true if first session.
+// AddSession adds a session to the session table and returns true if
+// s is the first session.
 func (u *User) AddSession(s *Session) bool {
 	first := false
 	u.mutex.Lock()
@@ -56,7 +57,8 @@ func (u *User) AddSession(s *Session) bool {
 	return first
 }
 
-// Return true if no session left.
+// RemoveSession removes a session from the session table abd returns
+// true if no session is left left.
 func (u *User) RemoveSession(sessionID string) bool {
 	last := false
 	u.mutex.Lock()

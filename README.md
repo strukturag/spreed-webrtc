@@ -95,7 +95,7 @@ locally by running `npm install` from the project root. Consult the
 `package.json` file for more details.
 
   - [autoprefixer](https://www.npmjs.org/package/autoprefixer) >= 1.1
-  - [po2json](https://github.com/mikeedwards/po2json)
+  - [po2json](https://github.com/mikeedwards/po2json) >= 0.4.1
   - [JSHint](http://www.jshint.com/) >= 2.0.0
   - [scss-lint](https://github.com/causes/scss-lint) >= 0.33.0
 

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -46,7 +46,7 @@ import (
 )
 
 var (
-	serialNumberLimit *big.Int = new(big.Int).Lsh(big.NewInt(1), 128)
+	serialNumberLimit = new(big.Int).Lsh(big.NewInt(1), 128)
 )
 
 type UsersHandler interface {
@@ -229,12 +229,12 @@ func (uh *UsersCertificateHandler) Create(un *UserNonce, request *http.Request) 
 	}
 	spkacDerBytes, err := base64.StdEncoding.DecodeString(spkac)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("spkac invalid: %s", err))
+		return nil, fmt.Errorf("spkac invalid: %s", err)
 	}
 
 	publicKey, err := pkac.ParseSPKAC(spkacDerBytes)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("unable to parse spkac: %s", err))
+		return nil, fmt.Errorf("unable to parse spkac: %s", err)
 	}
 
 	template, err := uh.makeTemplate(un.Userid)
@@ -244,7 +244,7 @@ func (uh *UsersCertificateHandler) Create(un *UserNonce, request *http.Request) 
 
 	certDerBytes, err := x509.CreateCertificate(rand.Reader, template, uh.certificate, publicKey, uh.privateKey)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("failed to create certificate: %s", err))
+		return nil, fmt.Errorf("failed to create certificate: %s", err)
 	}
 
 	log.Println("Generated new certificate", un.Userid)
@@ -284,10 +284,9 @@ func (un *UserNonce) Response() (int, interface{}, http.Header) {
 	if un.contentType != "" {
 		header.Set("Content-Type", un.contentType)
 		return 200, un.raw, header
-	} else {
-		header.Set("Content-Type", "application/json")
-		return 200, un, header
 	}
+	header.Set("Content-Type", "application/json")
+	return 200, un, header
 }
 
 type Users struct {

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -56,7 +56,9 @@ type roomWorker struct {
 	mutex   sync.RWMutex
 
 	// Metadata.
-	Id          string
+	id          string
+	Name        string
+	Type        string
 	credentials *DataRoomCredentials
 }
 
@@ -65,13 +67,15 @@ type roomUser struct {
 	Sender
 }
 
-func NewRoomWorker(manager *roomManager, id string, credentials *DataRoomCredentials) RoomWorker {
+func NewRoomWorker(manager *roomManager, roomID, roomName, roomType string, credentials *DataRoomCredentials) RoomWorker {
 
-	log.Printf("Creating worker for room '%s'\n", id)
+	log.Printf("Creating worker for room '%s'\n", roomID)
 
 	r := &roomWorker{
 		manager: manager,
-		Id:      id,
+		id:      roomID,
+		Name:    roomName,
+		Type:    roomType,
 		workers: make(chan func(), roomMaxWorkers),
 		expired: make(chan bool),
 		users:   make(map[string]*roomUser),
@@ -107,7 +111,7 @@ L:
 			if len(r.users) == 0 {
 				// Cleanup room when it is empty.
 				r.mutex.RUnlock()
-				log.Printf("Room worker not in use - cleaning up '%s'\n", r.Id)
+				log.Printf("Room worker not in use - cleaning up '%s'\n", r.id)
 				break L
 			} else {
 				r.mutex.RUnlock()
@@ -149,7 +153,7 @@ func (r *roomWorker) Run(f func()) bool {
 	case r.workers <- f:
 		return true
 	default:
-		log.Printf("Room worker channel full or closed '%s'\n", r.Id)
+		log.Printf("Room worker channel full or closed '%s'\n", r.id)
 		return false
 	}
 
@@ -159,6 +163,10 @@ func (r *roomWorker) Update(room *DataRoom) error {
 	fault := make(chan error, 1)
 	worker := func() {
 		r.mutex.Lock()
+		// Enforce room type and name.
+		room.Type = r.Type
+		room.Name = r.Name
+		// Update credentials.
 		if room.Credentials != nil {
 			if len(room.Credentials.PIN) > 0 {
 				r.credentials = room.Credentials
@@ -184,7 +192,7 @@ func (r *roomWorker) GetUsers() []*DataSession {
 				session.Type = "Online"
 				sl = append(sl, session)
 				if len(sl) > maxUsersLength {
-					log.Println("Limiting users response length in channel", r.Id)
+					log.Println("Limiting users response length in channel", r.id)
 					return false
 				}
 			}
@@ -264,7 +272,7 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 		r.users[session.Id] = &roomUser{session, sender}
 		// NOTE(lcooper): Needs to be a copy, else we risk races with
 		// a subsequent modification of room properties.
-		result := joinResult{&DataRoom{Name: r.Id}, nil}
+		result := joinResult{&DataRoom{Name: r.Name, Type: r.Type}, nil}
 		r.mutex.Unlock()
 		results <- result
 	}

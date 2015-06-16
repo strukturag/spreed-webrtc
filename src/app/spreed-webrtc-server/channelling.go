@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -42,7 +42,9 @@ type DataRoomCredentials struct {
 type DataHello struct {
 	Version     string
 	Ua          string
-	Id          string
+	Id          string // Compatibility with old clients.
+	Name        string // Room name.
+	Type        string // Room type.
 	Credentials *DataRoomCredentials
 }
 
@@ -53,8 +55,8 @@ type DataWelcome struct {
 }
 
 type DataRoom struct {
-	Type        string
-	Name        string
+	Type        string // Room type.
+	Name        string // Room name.
 	Credentials *DataRoomCredentials
 }
 
@@ -77,15 +79,16 @@ type DataAnswer struct {
 }
 
 type DataSelf struct {
-	Type    string
-	Id      string
-	Sid     string
-	Userid  string
-	Suserid string
-	Token   string
-	Version string
-	Turn    *DataTurn
-	Stun    []string
+	Type       string
+	Id         string
+	Sid        string
+	Userid     string
+	Suserid    string
+	Token      string
+	Version    string  // Server version.
+	ApiVersion float64 // Server channelling API version.
+	Turn       *DataTurn
+	Stun       []string
 }
 
 type DataTurn struct {

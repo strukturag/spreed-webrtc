@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -39,6 +39,7 @@
   }
 
   .showUploadPicture {
+    // scss-lint:disable NestingDepth
     background-color: $componentbg;
     border: 1px solid $bordercolor;
     height: 200px;
@@ -52,10 +53,14 @@
 
     &.imgData {
       background-color: #000;
-    }
 
-    &.imgData .chooseUploadPicture {
-      display: none;
+      .chooseUploadPicture {
+        display: none;
+      }
+
+      &:hover .imageUtilites {
+        visibility: visible;
+      }
     }
 
     .chooseUploadPicture {
@@ -93,10 +98,6 @@
       height: 50px;
       width: 50px;
     }
-  }
-
-  .showUploadPicture.imgData:hover .imageUtilites {
-    visibility: visible;
   }
 
   .moveHorizontal {

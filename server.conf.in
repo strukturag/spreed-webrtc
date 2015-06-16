@@ -57,6 +57,10 @@ listen = 127.0.0.1:8080
 ; See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00 for details.
 ; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
 ;turnSecret = the-default-turn-shared-secret-do-not-keep
+; Enable renegotiation support. Set to true to tell clients that they can
+; renegotiate peer connections when required. Firefox support is not complete,
+; so do not enable if you want compatibility with Firefox clients.
+;renegotiation = false
 ; Session secret to use for session id generator. 32 or 64 bytes of random data
 ; are recommented (hex encoded). A warning will be logged if hex decode fails.
 ; You can generate a secret easily with "xxd -ps -l 32 -c 32 /dev/random".
@@ -109,6 +113,7 @@ serverRealm = local
 ; data: URL for images.
 ; The currently recommended CSP is:
 ;   default-src 'self';
+;   frame-src 'self' blob:;
 ;   style-src 'self' 'unsafe-inline';
 ;   img-src 'self' data: blob:;
 ;   connect-src 'self' wss://server:port/ws blob:;

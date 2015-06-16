@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -675,18 +675,8 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 					// Find session with help of contact.
 					if (contact && contact.Token) {
 						mediaStream.api.sendSessions(contact.Token, "contact", function(event, type, data) {
-							//console.log("oooooooooooooooo", type, data);
 							var tmpSessionData = null;
 							if (data.Users && data.Users.length > 0) {
-								/*
-								_.each(data.Users, function(s) {
-									buddyData.set(s.Id, scope);
-									// NOTE(longsleep): Not sure if its a good idea to add the retrieved sessions here.
-									session.add(s.Id, s);
-								});
-								sessionData = session.get();
-								deferred.resolve(sessionData.Id);
-								*/
 								tmpSessionData = data.Users[0];
 							}
 							// Check if we got a session in the meantime.

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -54,6 +54,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		this.started = false;
 		this.initiator = null;
+
+		this.usermedia = null;
 		this.audioMute = false;
 		this.videoMute = false;
 
@@ -112,7 +114,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				videoSendCodec: "VP8/90000"
 				//videoRecvBitrate: ,
 				//videoRecvCodec
-			}
+			},
+			renegotiation: true
 		};
 
 		this.screensharingSettings = {
@@ -120,17 +123,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		};
 
 		this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
-
-		// Create default media (audio/video).
-		this.usermedia = new UserMedia();
-		this.usermedia.e.on("mediasuccess mediaerror", _.bind(function() {
-			// Start always, no matter what.
-			this.maybeStart();
-		}, this));
-		this.usermedia.e.on("mediachanged", _.bind(function() {
-			// Propagate media change events.
-			this.e.triggerHandler("usermedia", [this.usermedia]);
-		}, this));
 
 	};
 
@@ -245,6 +237,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				console.log("Offer process.");
 				targetcall = this.findTargetCall(from);
 				if (targetcall) {
+					if (!this.settings.renegotiation && targetcall.peerconnection && targetcall.peerconnection.hasRemoteDescription()) {
+						// Call replace support without renegotiation.
+						this.doHangup("unsupported", from);
+						console.error("Processing new offers is not implemented without renegotiation.");
+						return;
+					}
 					// Hey we know this call.
 					targetcall.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
 						if (currentcall === this.currentcall) {
@@ -396,6 +394,39 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	};
 
+	WebRTC.prototype.doUserMedia = function(currentcall) {
+
+		// Create default media (audio/video).
+		var usermedia = new UserMedia({
+			renegotiation: this.settings.renegotiation,
+			audioMute: this.audioMute,
+			videoMute: this.videoMute
+		});
+		usermedia.e.on("mediasuccess mediaerror", _.bind(function(event, um) {
+			this.e.triggerHandler("usermedia", [um]);
+			// Start always, no matter what.
+			this.maybeStart(um);
+		}, this));
+		usermedia.e.on("mediachanged", _.bind(function(event, um) {
+			// Propagate media change events.
+			this.e.triggerHandler("usermedia", [um]);
+		}, this));
+		usermedia.e.on("stopped", _.bind(function(event, um) {
+			if (um === this.usermedia) {
+				this.e.triggerHandler("usermedia", [null]);
+				this.usermedia = null;
+			}
+		}, this));
+		this.e.one("stop", function() {
+			usermedia.stop();
+		});
+		this.usermedia = usermedia;
+		this.e.triggerHandler("usermedia", [usermedia]);
+
+		return usermedia.doGetUserMedia(currentcall);
+
+	};
+
 	WebRTC.prototype.doCall = function(id) {
 
 		if (this.currentcall) {
@@ -413,7 +444,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		} else {
 			var currentcall = this.currentcall = this.createCall(id, null, id);
 			this.e.triggerHandler("peercall", [currentcall]);
-			var ok = this.usermedia.doGetUserMedia(currentcall);
+			var ok = this.doUserMedia(currentcall);
 			if (ok) {
 				this.e.triggerHandler("waitforusermedia", [currentcall]);
 			} else {
@@ -432,7 +463,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			console.warn("Trying to accept without a call.", currentcall);
 			return;
 		}
-		var ok = this.usermedia.doGetUserMedia(currentcall);
+		var ok = this.doUserMedia(currentcall);
 		if (ok) {
 			this.e.triggerHandler("waitforusermedia", [currentcall]);
 		} else {
@@ -501,7 +532,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 	WebRTC.prototype.doScreenshare = function(options) {
 
 		var usermedia = new UserMedia({
-			noaudio: true
+			noAudio: true
 		});
 		var ok = usermedia.doGetUserMedia(null, PeerScreenshare.getCaptureMediaConstraints(this, options));
 		if (ok) {
@@ -579,11 +610,9 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			this.currentcall.close();
 			this.currentcall = null;
 		}
-		if (this.usermedia) {
-			this.usermedia.stop();
-		}
 		this.e.triggerHandler("peerconference", [null]);
 		this.e.triggerHandler("peercall", [null]);
+		this.e.triggerHandler("stop");
 		this.msgQueue.length = 0;
 		this.initiator = null;
 		this.started = false;
@@ -629,7 +658,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	}
 
-	WebRTC.prototype.maybeStart = function() {
+	WebRTC.prototype.maybeStart = function(usermedia) {
 
 		//console.log("maybeStart", this.started);
 		if (!this.started) {
@@ -640,14 +669,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			console.log('Creating PeerConnection.', currentcall);
 			currentcall.createPeerConnection(_.bind(function(peerconnection) {
 				// Success call.
-				if (this.usermedia) {
-					this.usermedia.applyVideoMute(this.videoMute);
-					this.usermedia.applyAudioMute(this.audioMute);
-					this.e.triggerHandler("usermedia", [this.usermedia]);
-					this.usermedia.addToPeerConnection(peerconnection);
-				} else {
-					_.defer(peerconnection.negotiationNeeded);
-				}
+				usermedia.addToPeerConnection(peerconnection);
 				this.started = true;
 				if (!this.initiator) {
 					this.calleeStart();

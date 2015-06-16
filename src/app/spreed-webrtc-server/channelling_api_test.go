@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -23,22 +23,14 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 )
 
 type fakeClient struct {
-	replies map[string]interface{}
 }
 
 func (fake *fakeClient) Send(_ Buffer) {
-}
-
-func (fake *fakeClient) Reply(iid string, msg interface{}) {
-	if fake.replies == nil {
-		fake.replies = make(map[string]interface{})
-	}
-
-	fake.replies[iid] = msg
 }
 
 type fakeRoomManager struct {
@@ -57,9 +49,9 @@ func (fake *fakeRoomManager) RoomUsers(session *Session) []*DataSession {
 	return fake.roomUsers
 }
 
-func (fake *fakeRoomManager) JoinRoom(id string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
+func (fake *fakeRoomManager) JoinRoom(id, roomName, roomType string, _ *DataRoomCredentials, session *Session, sessionAuthenticated bool, _ Sender) (*DataRoom, error) {
 	fake.joinedID = id
-	return &DataRoom{Name: id}, fake.joinError
+	return &DataRoom{Name: roomName, Type: roomType}, fake.joinError
 }
 
 func (fake *fakeRoomManager) LeaveRoom(roomID, sessionID string) {
@@ -74,27 +66,11 @@ func (fake *fakeRoomManager) UpdateRoom(_ *Session, _ *DataRoom) (*DataRoom, err
 	return fake.updatedRoom, fake.updateError
 }
 
-func assertReply(t *testing.T, client *fakeClient, iid string) interface{} {
-	msg, ok := client.replies[iid]
-	if !ok {
-		t.Fatalf("No response received for Iid %v", iid)
+func (fake *fakeRoomManager) MakeRoomID(roomName, roomType string) string {
+	if roomType == "" {
+		roomType = "Room"
 	}
-	return msg
-}
-
-func assertErrorReply(t *testing.T, client *fakeClient, iid, code string) {
-	err, ok := assertReply(t, client, iid).(*DataError)
-	if !ok {
-		t.Fatalf("Expected response message to be an Error")
-	}
-
-	if err.Type != "Error" {
-		t.Error("Message did not have the correct type")
-	}
-
-	if err.Code != code {
-		t.Errorf("Expected error code to be %v, but was %v", code, err.Code)
-	}
+	return fmt.Sprintf("%s:%s", roomType, roomName)
 }
 
 func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomManager) {
@@ -109,10 +85,10 @@ func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomMa
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {
-	roomID, ua := "foobar", "unit tests"
+	roomID, roomName, ua := "Room:foobar", "foobar", "unit tests"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomID, Ua: ua}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName, Ua: ua}})
 
 	if roomManager.joinedID != roomID {
 		t.Errorf("Expected to have joined room %v, but got %v", roomID, roomManager.joinedID)
@@ -133,10 +109,10 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_LeavesAnyPreviouslyJoinedRooms(t *testing.T) {
-	roomID := "foobar"
+	roomID, roomName := "Room:foobar", "foobar"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomID}})
+	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName}})
 	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: "baz"}})
 
 	if roomManager.leftID != roomID {
@@ -168,21 +144,19 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_DoesNotJoinIfNotPermitted(t *te
 	}
 }
 
-func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t *testing.T) {
-	iid, roomID := "foo", "a-room"
+func Test_ChannellingAPI_OnIncoming_HelloMessage_RespondsWithAWelcome(t *testing.T) {
+	roomID := "a-room"
 	api, client, session, roomManager := NewTestChannellingAPI()
 	roomManager.roomUsers = []*DataSession{&DataSession{}}
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{Id: roomID}})
-
-	msg, ok := client.replies[iid]
-	if !ok {
-		t.Fatalf("No response received for Iid %v", iid)
+	reply, err := api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomID}})
+	if err != nil {
+		t.Fatalf("Unexpected error %v", err)
 	}
 
-	welcome, ok := msg.(*DataWelcome)
+	welcome, ok := reply.(*DataWelcome)
 	if !ok {
-		t.Fatalf("Expected response message %#v to be a Welcome", msg)
+		t.Fatalf("Expected response %#v to be a Welcome", reply)
 	}
 
 	if welcome.Type != "Welcome" {
@@ -198,25 +172,31 @@ func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAWelcome(t
 	}
 }
 
-func Test_ChannellingAPI_OnIncoming_HelloMessageWithAnIid_RespondsWithAnErrorIfTheRoomCannotBeJoined(t *testing.T) {
-	iid := "foo"
+func Test_ChannellingAPI_OnIncoming_HelloMessage_RespondsWithAnErrorIfTheRoomCannotBeJoined(t *testing.T) {
 	api, client, session, roomManager := NewTestChannellingAPI()
 	roomManager.joinError = NewDataError("bad_join", "")
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: iid, Hello: &DataHello{}})
+	_, err := api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{}})
 
-	assertErrorReply(t, client, iid, "bad_join")
+	assertDataError(t, err, "bad_join")
 }
 
 func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpdatedRoom(t *testing.T) {
-	iid, roomName := "123", "foo"
+	roomName := "foo"
 	api, client, session, roomManager := NewTestChannellingAPI()
 	roomManager.updatedRoom = &DataRoom{Name: "FOO"}
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: "0", Hello: &DataHello{Id: roomName}})
-	api.OnIncoming(client, session, &DataIncoming{Type: "Room", Iid: iid, Room: &DataRoom{Name: roomName}})
+	_, err := api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName}})
+	if err != nil {
+		t.Fatalf("Unexpected error %v", err)
+	}
 
-	room, ok := assertReply(t, client, iid).(*DataRoom)
+	reply, err := api.OnIncoming(client, session, &DataIncoming{Type: "Room", Room: &DataRoom{Name: roomName}})
+	if err != nil {
+		t.Fatalf("Unexpected error %v", err)
+	}
+
+	room, ok := reply.(*DataRoom)
 	if !ok {
 		t.Fatalf("Expected response message to be a Room")
 	}
@@ -235,12 +215,15 @@ func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpda
 }
 
 func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAnErrorIfUpdatingTheRoomFails(t *testing.T) {
-	iid, roomName := "123", "foo"
+	roomName := "foo"
 	api, client, session, roomManager := NewTestChannellingAPI()
 	roomManager.updateError = NewDataError("a_room_error", "")
 
-	api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Iid: "0", Hello: &DataHello{Id: roomName}})
-	api.OnIncoming(client, session, &DataIncoming{Type: "Room", Iid: iid, Room: &DataRoom{Name: roomName}})
+	_, err := api.OnIncoming(client, session, &DataIncoming{Type: "Hello", Hello: &DataHello{Id: roomName}})
+	if err != nil {
+		t.Fatalf("Unexpected error %v", err)
+	}
+	_, err = api.OnIncoming(client, session, &DataIncoming{Type: "Room", Room: &DataRoom{Name: roomName}})
 
-	assertErrorReply(t, client, iid, "a_room_error")
+	assertDataError(t, err, "a_room_error")
 }

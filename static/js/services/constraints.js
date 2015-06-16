@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -20,7 +20,7 @@
  */
 
 "use strict";
- define(["jquery", "underscore"], function($, _) {
+ define(["jquery", "underscore", "webrtc.adapter"], function($, _) {
 
 	// constraints
 	return ["webrtc", "$window", "$q", function(webrtc, $window, $q) {
@@ -99,6 +99,8 @@
 
 		// Define our service helpers
 		service.e = $({}); // events
+		service.stun = [];
+		service.turn = {};
 
 		// Create as WebRTC data structure.
 		service.mediaConstraints = function(constraints) {
@@ -123,6 +125,26 @@
 		// Create as WebRTC data structure.
 		service.pcConstraints = function(constraints) {
 			webrtc.settings.pcConstraints.optional = constraints.pc;
+		};
+
+		service.iceServers = function(constraints) {
+
+			var iceServers = [];
+			var iceServer;
+			if (service.stun && service.stun.length) {
+				iceServer = $window.createIceServers(service.stun);
+				if (iceServer.length) {
+					iceServers.push.apply(iceServers, iceServer)
+				}
+			}
+			if (service.turn && service.turn.urls && service.turn.urls.length) {
+				iceServer = $window.createIceServers(service.turn.urls, service.turn.username, service.turn.password);
+				if (iceServer.length) {
+					iceServers.push.apply(iceServers, iceServer)
+				}
+			}
+			webrtc.settings.pcConfig.iceServers = iceServers;
+
 		};
 
 		// Some default constraints.
@@ -156,15 +178,32 @@
 				return $q.all(constraints.promises).then(function() {
 					service.mediaConstraints(constraints);
 					service.pcConstraints(constraints);
+					service.iceServers(constraints);
 				});
 			},
+			// Setters for TURN and STUN data.
 			turn: function(turnData) {
-				// Set TURN server details.
 				service.turn = turnData;
 			},
 			stun: function(stunData) {
 				service.stun = stunData;
-			}
+			},
+			supported: (function() {
+				var isChrome = $window.webrtcDetectedBrowser === "chrome";
+				var isFirefox = $window.webrtcDetectedBrowser === "firefox";
+				var version = $window.webrtcDetectedVersion;
+				// Constraints support table.
+				return {
+					// Chrome supports it. FF supports new spec starting 38. See https://wiki.mozilla.org/Media/getUserMedia for FF details.
+					audioVideo: isChrome || (isFirefox && version >= 38),
+					// HD constraints in Chrome no issue. In FF we MJPEG is fixed with 38 (see https://bugzilla.mozilla.org/show_bug.cgi?id=1151628).
+					hdVideo: isChrome || (isFirefox && version >= 38),
+					// Chrome supports this on Windows only.
+					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
+					chrome: isChrome,
+					firefox: isFirefox
+				};
+			})()
 		};
 
 	}];

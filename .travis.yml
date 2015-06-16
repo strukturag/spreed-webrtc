@@ -6,6 +6,7 @@ go:
   - 1.1
   - 1.2
   - 1.3
+  - 1.4
   - tip
 
 env:
@@ -25,7 +26,11 @@ script:
   - ./autogen.sh
   - ./configure
   - make get
+  - make styleshint
+  # TODO(fancycode): enable styleslint once all styles have been fixed
+  # - make styleslint
   - make styles
+  - make jshint
   - make javascript
   - make binary
   - make build-i18n

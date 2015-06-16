@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -22,9 +22,7 @@
 "use strict";
 define(['jquery', 'underscore'], function($, _) {
 
-	return ["$window", "mediaStream", "safeApply", "animationFrame", function($window, mediaStream, safeApply, animationFrame) {
-
-		var webrtc = mediaStream.webrtc;
+	return ["$window", "webrtc", "safeApply", "animationFrame", function($window, webrtc, safeApply, animationFrame) {
 
 		// Consider anyting lower than this % as no audio.
 		var threshhold = 5;
@@ -37,6 +35,13 @@ define(['jquery', 'underscore'], function($, _) {
 		// Talking status history map.
 		var talkingStatus = {};
 
+		// Usermedia reference.
+		var usermedia = null;
+		webrtc.e.on("usermedia", function(event, um) {
+			console.log("Audio level user media changed", um);
+			usermedia = um;
+		});
+
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			$scope.talking = false;
@@ -47,8 +52,8 @@ define(['jquery', 'underscore'], function($, _) {
 			var width = 0;
 			this.update = _.bind(function() {
 				if (this.active || width > 0) {
-					if (webrtc.usermedia.audioLevel) {
-						width = Math.round(100 * webrtc.usermedia.audioLevel);
+					if (usermedia && usermedia.audioLevel) {
+						width = Math.round(100 * usermedia.audioLevel);
 						// Hide low volumes.
 						if (width < threshhold) {
 							width = 0;
@@ -68,8 +73,8 @@ define(['jquery', 'underscore'], function($, _) {
 			this.meter = _.bind(function() {
 
 				var talking;
-				if (this.active) {
-					var level = Math.round(100 * webrtc.usermedia.audioLevel);
+				if (this.active && usermedia) {
+					var level = Math.round(100 * usermedia.audioLevel);
 					if (level < threshhold) {
 						level = 0;
 					} else {

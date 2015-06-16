@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,7 +19,8 @@
  *
  */
 
-#settings {
+#settings { // scss-lint:disable IdSelector
+  // scss-lint:disable NestingDepth
   background: $settings-background;
   border-left: 1px solid $bordercolor;
   bottom: 0;
@@ -30,27 +31,27 @@
   transition: right 200ms ease-in-out;
   width: 520px;
   z-index: 50;
-}
 
-#settings.show {
-  right: 0;
-
-  @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-    background: $settings-background;
-    left: 0;
-    width: auto;
-  }
-
-  .form-actions {
+  &.show {
+    right: 0;
 
     @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-      bottom: 0;
-      height: 60px;
+      background: $settings-background;
       left: 0;
-      margin-bottom: 0;
-      padding: 6px 0 6px 120px;
-      position: fixed;
-      right: 0;
+      width: auto;
+    }
+
+    .form-actions {
+
+      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
+        bottom: 0;
+        height: 60px;
+        left: 0;
+        margin-bottom: 0;
+        padding: 6px 0 6px 120px;
+        position: fixed;
+        right: 0;
+      }
     }
   }
 }
@@ -65,9 +66,7 @@
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.settings {
   @include breakpt($breakpoint-settings-medium, max-width, only screen) {
     padding-bottom: 10px;
   }

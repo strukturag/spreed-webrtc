@@ -1,0 +1,22 @@
+<div>
+	<div class="modal-header"><button type="button" class="close" ng-click="$close()">×</button><h3 class="modal-title">{{_("Share screen")}}</h3></div>
+	<div class="modal-body">
+		<ng-form name="promptDialog" novalidate role="form">
+			<h4>{{_("Please select what to share.")}}</h4>
+			<div class="btn-group">
+				<label class="btn btn-default" ng-model="data.selection" btn-radio="'screen'">{{_("Screen")}}</label>
+				<label class="btn btn-default" ng-model="data.selection" btn-radio="'window'">{{_("Window")}}</label>
+				<label class="btn btn-default" ng-model="data.selection" btn-radio="'application'">{{_("Application")}}</label>
+			</div>
+			<div ng-switch="data.selection">
+				<span class="help-block" ng-switch-when="screen">{{_("Share the whole screen. Click share to select the screen.")}}</span>
+				<span class="help-block" ng-switch-when="window">{{_("Share a single window. Click share to select the window.")}}</span>
+				<span class="help-block" ng-switch-when="application">{{_("Share all windows of a application. This can leak content behind windows when windows get moved. Click share to select the application.")}}</span>
+			</div>
+		</ng-form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="cancel()">{{_("Cancel")}}</button>
+		<button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="(promptDialog.$dirty && promptDialog.$invalid) || !data.selection">{{_("Share")}}</button>
+	</div>
+</div>

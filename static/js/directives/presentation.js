@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -715,6 +715,21 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				});
 			});
 
+			$scope.$on("keyUp", function(event, keyCode) {
+				switch (keyCode) {
+				case 37:
+					// left arrow
+					$scope.prevPage();
+					break;
+				case 39:
+					// right arrow
+				case 32:
+					// space
+					$scope.nextPage();
+					break;
+				}
+			})
+
 			$(document).on("keyup", function(event) {
 				if (!$scope.layout.presentation) {
 					return;
@@ -722,22 +737,10 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 				if ($(event.target).is("input,textarea,select")) {
 					return;
 				}
-				$scope.$apply(function() {
-					switch (event.keyCode) {
-					case 37:
-						// left arrow
-						$scope.prevPage();
-						event.preventDefault();
-						break;
-					case 39:
-						// right arrow
-					case 32:
-						// space
-						$scope.nextPage();
-						event.preventDefault();
-						break;
-					}
+				$scope.$apply(function(scope) {
+					scope.$emit("keyUp", event.keyCode);
 				});
+				event.preventDefault();
 			});
 
 			$scope.$watch("layout.presentation", function(newval, oldval) {

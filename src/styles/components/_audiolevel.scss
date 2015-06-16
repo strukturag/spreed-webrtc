@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-#audiolevel {
+#audiolevel { // scss-lint:disable IdSelector
   left: 0;
   margin: 0 auto;
   position: fixed;

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -68,22 +68,22 @@
 
   .table {
     margin-bottom: 0;
+  }
 
-    tr:first-child td {
-      border-top: 0;
-    }
+  tr:first-child td {
+    border-top: 0;
+  }
 
-    .name {
-      text-align: left;
-      vertical-align: middle;
-      width: 40%;
-    }
+  .name {
+    text-align: left;
+    vertical-align: middle;
+    width: 40%;
+  }
 
-    .action {
-      padding-right: 15px;
-      text-align: right;
-      vertical-align: middle;
-    }
+  .action {
+    padding-right: 15px;
+    text-align: right;
+    vertical-align: middle;
   }
 }
 

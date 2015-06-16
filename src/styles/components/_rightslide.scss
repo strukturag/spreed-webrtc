@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,7 +19,12 @@
  *
  */
 
-#rightslide {
+
+.withBuddylist #rightslide { // scss-lint:disable IdSelector
+  right: 0;
+}
+
+#rightslide { // scss-lint:disable IdSelector
   bottom: 0;
   left: 0;
   pointer-events: none;
@@ -28,14 +33,10 @@
   top: $minbarheight;
   transition: right 200ms ease-in-out;
   z-index: 5;
-}
 
-.withBuddylist #rightslide {
-  right: 0;
-}
-
-#rightslide .rightslidepane {
-  height: 100%;
-  position: relative;
-  width: 100%;
+  .rightslidepane {
+    height: 100%;
+    position: relative;
+    width: 100%;
+  }
 }

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -20,21 +20,13 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, angular, BigScreen, moment, sjcl, Modernizr) {
+define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "userSettingsData", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, userSettingsData, localStatus, dialogs, rooms, constraints) {
-
-		/*console.log("route", $route, $routeParams, $location);*/
-
-		// Disable drag and drop.
-		$($window).on("dragover dragenter drop", function(event) {
-			event.preventDefault();
-		});
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
 
 		// Avoid accidential reloads or exits when in a call.
-		var manualUnload = false;
 		$($window).on("beforeunload", function(event) {
-			if (manualUnload || !$scope.peer) {
+			if (appData.flags.manualUnload || !$scope.peer) {
 				return;
 			}
 			return translation._("Close this window and disconnect?");
@@ -93,16 +85,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			"prompt": "question1"
 		});
 
-		appData.set($scope);
-
 		var displayName = safeDisplayName;
 
-		// Init STUN and TURN servers.
-		$scope.stun = mediaStream.config.StunURIs || [];
-		if (!$scope.stun.length) {
-			$scope.stun.push("stun:stun.l.google.com:19302")
-		}
-		$scope.turn = {}; // TURN servers are set on received.self.
+		// Init STUN from server config.
+		(function() {
+			var stun = mediaStream.config.StunURIs || [];
+			constraints.stun(stun);
+		})();
 
 		// Add browser details for easy access.
 		$scope.isChrome = $window.webrtcDetectedBrowser === "chrome";
@@ -112,8 +101,8 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		// Add support status.
 		$scope.supported = {
 			screensharing: screensharing.supported,
-			renderToAssociatedSink: $window.navigator.platform.indexOf("Win") === 0
-		}
+			constraints: constraints.supported
+		};
 
 		// Default scope data.
 		$scope.status = "initializing";
@@ -133,50 +122,7 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		$scope.chatMessagesUnseen = 0;
 		$scope.autoAccept = null;
 		$scope.isCollapsed = true;
-		$scope.roomsHistory = [];
-		$scope.defaults = {
-			displayName: null,
-			buddyPicture: null,
-			message: null,
-			settings: {
-				videoQuality: "high",
-				sendStereo: false,
-				maxFrameRate: 20,
-				defaultRoom: "",
-				language: "",
-				audioRenderToAssociatedSkin: true,
-				videoCpuOveruseDetection: true,
-				experimental: {
-					enabled: false,
-					audioEchoCancellation2: true,
-					audioAutoGainControl2: true,
-					audioNoiseSuppression2: true,
-					audioTypingNoiseDetection: true,
-					videoLeakyBucket: true,
-					videoNoiseReduction: false
-				}
-			}
-		};
-		$scope.master = angular.copy($scope.defaults);
-
-		// Data voids.
-		var resurrect = null;
-		var reconnecting = false;
-		var connected = false;
-		var autoreconnect = true;
-
-		$scope.update = function(user) {
-			$scope.master = angular.copy(user);
-			if (connected) {
-				$scope.updateStatus();
-			}
-			$scope.refreshWebrtcSettings();
-		};
-
-		$scope.reset = function() {
-			$scope.user = angular.copy($scope.master);
-		};
-		$scope.reset(); // Call once for bootstrap.
+		$scope.usermedia = null;
 
 		$scope.setStatus = function(status) {
 			// This is the connection status to signaling server.
@@ -201,34 +147,14 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 		};
 
 		$scope.refreshWebrtcSettings = function() {
-
-			if (!$window.webrtcDetectedBrowser) {
-				console.warn("This is not a WebRTC capable browser.");
-				return;
-			}
-
-			var settings = $scope.master.settings;
-
-			// Create iceServers from scope.
-			var iceServers = [];
-			var iceServer;
-			if ($scope.stun.length) {
-				iceServer = $window.createIceServers($scope.stun);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer);
-				}
-			}
-			if ($scope.turn.urls && $scope.turn.urls.length) {
-				iceServer = $window.createIceServers($scope.turn.urls, $scope.turn.username, $scope.turn.password);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer);
-				}
-			}
-			mediaStream.webrtc.settings.pcConfig.iceServers = iceServers;
-
 			// Refresh constraints.
-			constraints.refresh($scope.master.settings);
-
+			constraints.refresh($scope.master.settings).then(function() {
+				var um = $scope.usermedia;
+				if (um && um.renegotiation && um.started) {
+					// Trigger renegotiation if supported and started.
+					um.doGetUserMediaWithConstraints(mediaStream.webrtc.settings.mediaConstraints);
+				}
+			});
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
@@ -255,34 +181,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				return null;
 			}
 
-		};
-
-		$scope.manualReloadApp = function(url) {
-			manualUnload = true;
-			if (url) {
-				$window.location.href = url;
-				$timeout(function() {
-					manualUnload = false;
-				}, 0);
-			} else {
-				$window.location.reload(true);
-			}
-		};
-
-		$scope.loadUserSettings = function() {
-			$scope.master = angular.copy($scope.defaults);
-			var storedUser = userSettingsData.load();
-			if (storedUser) {
-				$scope.user = $.extend(true, {}, $scope.master, storedUser);
-				$scope.user.settings = $.extend(true, {}, $scope.user.settings, $scope.master.settings, $scope.user.settings);
-				$scope.update($scope.user);
-				$scope.loadedUser = storedUser.displayName && true;
-			} else {
-				$scope.loadedUser = false;
-			}
-			$scope.roomsHistory = [];
-			appData.e.triggerHandler("userSettingsLoaded", [$scope.loadedUser, $scope.user]);
-			$scope.reset();
 		};
 
 		$scope.toggleBuddylist = (function() {
@@ -341,10 +239,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 				scope.id = scope.myid = data.Id;
 				scope.userid = scope.myuserid = data.Userid ? data.Userid : null;
 				scope.suserid = data.Suserid ? data.Suserid : null;
-				scope.turn = data.Turn;
-				scope.stun = data.Stun;
-				scope.refreshWebrtcSettings();
 			});
+
+			// Set TURN and STUN data and refresh webrtc settings.
+			constraints.turn(data.Turn);
+			constraints.stun(data.Stun);
+			$scope.refreshWebrtcSettings();
+
 			if (data.Version !== mediaStream.version) {
 				console.info("Server was upgraded. Reload required.");
 				if (!reloadDialog) {
@@ -388,9 +289,9 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			}
 
 			// Support resurrection shrine.
-			if (resurrect) {
-				var resurrection = resurrect;
-				resurrect = null;
+			if (appData.flags.resurrect) {
+				var resurrection = appData.flags.resurrect;
+				appData.flags.resurrect = null;
 				$timeout(function() {
 					if (resurrection.id === $scope.id) {
 						console.log("Using resurrection shrine", resurrection);
@@ -513,25 +414,38 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			alertify.dialog.alert(translation._("Oops") + "<br/>" + message);
 		});
 
+		mediaStream.webrtc.e.on("usermedia", function(event, usermedia) {
+			safeApply($scope, function(scope) {
+				scope.usermedia = usermedia;
+			});
+		});
+
+		appData.flags.autoreconnect = true;
+		appData.flags.autoreconnectDelay = 0;
+
 		var reconnect = function() {
-			if (connected && autoreconnect) {
-				if (resurrect === null) {
+			if (appData.flags.connected && appData.flags.autoreconnect) {
+				if (appData.flags.resurrect === null) {
 					// Storage data at the resurrection shrine.
-					resurrect = {
+					appData.flags.resurrect = {
 						status: $scope.getStatus(),
 						id: $scope.id
 					}
-					console.log("Stored data at the resurrection shrine", resurrect);
+					console.log("Stored data at the resurrection shrine", appData.flags.resurrect);
 				}
-				if (!reconnecting) {
-					reconnecting = true;
+				if (!appData.flags.reconnecting) {
+					var delay = appData.flags.autoreconnectDelay;
+					if (delay < 10000) {
+						appData.flags.autoreconnectDelay += 500;
+					}
+					appData.flags.reconnecting = true;
 					_.delay(function() {
-						if (autoreconnect) {
+						if (appData.flags.autoreconnect) {
 							console.log("Requesting to reconnect ...");
 							mediaStream.reconnect();
 						}
-						reconnecting = false;
-					}, 500);
+						appData.flags.reconnecting = false;
+					}, delay);
 					$scope.setStatus("reconnecting");
 				} else {
 					console.warn("Already reconnecting ...");
@@ -550,12 +464,13 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			$scope.userid = $scope.suserid = null;
 			switch (event.type) {
 				case "open":
-					connected = true;
+					appData.flags.connected = true;
+					appData.flags.autoreconnectDelay = 0;
 					$scope.updateStatus(true);
 					$scope.setStatus("waiting");
 					break;
 				case "error":
-					if (connected) {
+					if (appData.flags.connected) {
 						reconnect();
 					} else {
 						$scope.setStatus(event.type);
@@ -792,17 +707,6 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			$scope.chatMessagesUnseen = $scope.chatMessagesUnseen - count;
 		});
 
-		$scope.$on("room.joined", function(event, roomName) {
-			if (roomName) {
-				_.pull($scope.roomsHistory, roomName);
-				$scope.roomsHistory.unshift(roomName);
-				if ($scope.roomsHistory.length > 15) {
-					// Limit the history.
-					$scope.roomsHistory = $scope.roomsHistory.splice(0, 15);
-				}
-			}
-		});
-
 		_.defer(function() {
 			if (!Modernizr.websockets) {
 				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
@@ -811,6 +715,15 @@ define(['jquery', 'underscore', 'angular', 'bigscreen', 'moment', 'sjcl', 'moder
 			}
 			if (!$window.webrtcDetectedVersion) {
 				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
+				return;
+			}
+			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
+				// See https://bugzilla.mozilla.org/show_bug.cgi?id=1017888
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=840728
+				// and https://bugzilla.mozilla.org/show_bug.cgi?id=842455
+				// XXX(longsleep): It seems that firefox has implemented new API which
+				// supports addTrack, removeTrack see http://w3c.github.io/mediacapture-main/#dom-mediastream-removetrack
+				console.warn("Renegotiation enabled -> currently not compatible with Firefox.");
 				return;
 			}
 		});

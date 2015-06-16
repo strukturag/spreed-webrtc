@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -27,9 +27,23 @@
   padding: 1em;
   position: relative;
   text-align: center;
-}
 
-.file-info {
+  &.downloader {
+    .anim {
+      margin-left: -40px;
+    }
+
+    .file-info-size {
+      margin-bottom: 10px;
+    }
+  }
+
+  &.downloading {
+    .file-info-size {
+      border-color: $fileinfo-downloading-size-border;
+    }
+  }
+
   > div {
     position: relative;
     z-index: 3;
@@ -37,17 +51,14 @@
 
   .file-info-bg {
     bottom: 0;
+    color: $fileinfo-icon-background-color;
+    font-size: 20em;
     left: 41px;
     overflow: hidden;
     position: absolute;
     right: 0;
-    top: -17px;
+    top: -82px;
     z-index: 2;
-
-    .#{$fa-css-prefix} {
-      color: $fileinfo-icon-background-color;
-      font-size: 20em;
-    }
   }
 
   .actions {
@@ -57,6 +68,37 @@
     text-align: left;
     top: 14px;
   }
+
+  .uploader {
+    // scss-lint:disable NestingDepth
+    .file-info-speed {
+      bottom: 6px;
+    }
+
+    .actions {
+      margin-left: 30px;
+      opacity: 0;
+    }
+
+    .anim {
+      margin-left: 0;
+    }
+
+    .hovercontrol {
+      &:hover .anim {
+        margin-left: -50px;
+      }
+
+      &:hover .actions {
+        margin-left: 0;
+        opacity: 1;
+      }
+
+      > div {
+        transition: all .2s ease-in-out;
+      }
+    }
+  }
 }
 
 .is_remote .file-info {
@@ -64,10 +106,8 @@
   border: 1px solid $fileinfo-border-remote;
 
   .file-info-bg {
-    .#{$fa-css-prefix} {
-      color: $fileinfo-icon-background-color-remote;
-      font-size: 20em;
-    }
+    color: $fileinfo-icon-background-color-remote;
+    font-size: 20em;
   }
 }
 
@@ -96,6 +136,7 @@
   }
 
   > div {
+    //scss-lint:disable NestingDepth
     bottom: 0;
     box-shadow: none !important;
     left: 0;
@@ -106,12 +147,13 @@
 
     &.progress-bar {
       opacity: .5;
+
+      &.download {
+        opacity: 1;
+        z-index: 1;
+      }
     }
 
-    &.progress-bar.download {
-      opacity: 1;
-      z-index: 1;
-    }
   }
 }
 
@@ -122,50 +164,4 @@
   position: absolute;
   right: 0;
   text-align: center;
-}
-
-.file-info.uploader {
-  .file-info-speed {
-    bottom: 6px;
-  }
-
-  .actions {
-    margin-left: 30px;
-    opacity: 0;
-  }
-
-  .anim {
-    margin-left: 0;
-  }
-
-  .hovercontrol {
-    &:hover .anim {
-      margin-left: -50px;
-    }
-
-    &:hover .actions {
-      margin-left: 0;
-      opacity: 1;
-    }
-
-    > div {
-      transition: all .2s ease-in-out;
-    }
-  }
-}
-
-.file-info.downloader {
-  .anim {
-    margin-left: -40px;
-  }
-
-  .file-info-size {
-    margin-bottom: 10px;
-  }
-}
-
-.file-info.downloading {
-  .file-info-size {
-    border-color: $fileinfo-downloading-size-border;
-  }
 }

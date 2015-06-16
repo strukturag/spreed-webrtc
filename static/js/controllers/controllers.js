@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -23,20 +23,22 @@
 define([
 	'underscore',
 
-	'controllers/mediastreamcontroller',
+	'controllers/uicontroller',
 	'controllers/statusmessagecontroller',
 	'controllers/chatroomcontroller',
 	'controllers/usersettingscontroller',
 	'controllers/contactsmanagercontroller',
-	'controllers/contactsmanagereditcontroller'], function(_, MediastreamController, StatusmessageController, ChatroomController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController) {
+	'controllers/contactsmanagereditcontroller',
+	'controllers/appcontroller'], function(_, UiController, StatusmessageController, ChatroomController, UsersettingsController, ContactsmanagerController, ContactsmanagereditController, AppController) {
 
 	var controllers = {
-		MediastreamController: MediastreamController,
+		UiController: UiController,
 		StatusmessageController: StatusmessageController,
 		ChatroomController: ChatroomController,
 		UsersettingsController: UsersettingsController,
 		ContactsmanagerController: ContactsmanagerController,
-		ContactsmanagereditController: ContactsmanagereditController
+		ContactsmanagereditController: ContactsmanagereditController,
+		AppController: AppController
 	};
 
 	var initialize = function(angModule) {

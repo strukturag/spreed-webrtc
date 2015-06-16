@@ -1,8 +1,7 @@
+/**
+ * @preserve jed.js 1.1.0 https://github.com/SlexAxton/Jed
+ */
 /*
-jed.js
-v0.5.4
-
-https://github.com/SlexAxton/Jed
 -----------
 A gettext compatible i18n library for modern JavaScript Applications
 
@@ -91,7 +90,9 @@ in order to offer easy upgrades -- jsgettext.berlios.de
         }
       },
       // The default domain if one is missing
-      "domain" : "messages"
+      "domain" : "messages",
+      // enable debug mode to log untranslated strings to the console
+      "debug" : false
     };
 
     // Mix in the sent options with the default options
@@ -136,7 +137,7 @@ in order to offer easy upgrades -- jsgettext.berlios.de
     },
     fetch : function ( sArr ) {
       if ( {}.toString.call( sArr ) != '[object Array]' ) {
-        sArr = [].slice.call(arguments);
+        sArr = [].slice.call(arguments, 0);
       }
       return ( sArr && sArr.length ? Jed.sprintf : function(x){ return x; } )(
         this._i18n.dcnpgettext(this._domain, this._context, this._key, this._pkey, this._val),
@@ -221,9 +222,6 @@ in order to offer easy upgrades -- jsgettext.berlios.de
       // isn't explicitly passed in
       domain = domain || this._textdomain;
 
-      // Default the value to the singular case
-      val = typeof val == 'undefined' ? 1 : val;
-
       var fallback;
 
       // Handle special cases
@@ -257,22 +255,33 @@ in order to offer easy upgrades -- jsgettext.berlios.de
         throw new Error('No translation key found.');
       }
 
-      // Handle invalid numbers, but try casting strings for good measure
-      if ( typeof val != 'number' ) {
-        val = parseInt( val, 10 );
-
-        if ( isNaN( val ) ) {
-          throw new Error('The number that was passed in is not a number.');
-        }
-      }
-
       var key  = context ? context + Jed.context_delimiter + singular_key : singular_key,
           locale_data = this.options.locale_data,
           dict = locale_data[ domain ],
-          pluralForms = dict[""].plural_forms || (locale_data.messages || this.defaults.locale_data.messages)[""].plural_forms,
-          val_idx = getPluralFormFunc(pluralForms)(val) + 1,
+          defaultConf = (locale_data.messages || this.defaults.locale_data.messages)[""],
+          pluralForms = dict[""].plural_forms || dict[""]["Plural-Forms"] || dict[""]["plural-forms"] || defaultConf.plural_forms || defaultConf["Plural-Forms"] || defaultConf["plural-forms"],
           val_list,
           res;
+
+      var val_idx;
+      if (val === undefined) {
+        // No value passed in; assume singular key lookup.
+        val_idx = 0;
+
+      } else {
+        // Value has been passed in; use plural-forms calculations.
+
+        // Handle invalid numbers, but try casting strings for good measure
+        if ( typeof val != 'number' ) {
+          val = parseInt( val, 10 );
+
+          if ( isNaN( val ) ) {
+            throw new Error('The number that was passed in is not a number.');
+          }
+        }
+
+        val_idx = getPluralFormFunc(pluralForms)(val);
+      }
 
       // Throw an error if a domain isn't found
       if ( ! dict ) {
@@ -283,20 +292,25 @@ in order to offer easy upgrades -- jsgettext.berlios.de
 
       // If there is no match, then revert back to
       // english style singular/plural with the keys passed in.
-      if ( ! val_list || val_idx >= val_list.length ) {
+      if ( ! val_list || val_idx > val_list.length ) {
         if (this.options.missing_key_callback) {
-          this.options.missing_key_callback(key);
+          this.options.missing_key_callback(key, domain);
         }
-        res = [ null, singular_key, plural_key ];
-        return res[ getPluralFormFunc(pluralForms)( val ) + 1 ];
+        res = [ singular_key, plural_key ];
+
+        // collect untranslated strings
+        if (this.options.debug===true) {
+          console.log(res[ getPluralFormFunc(pluralForms)( val ) ]);
+        }
+        return res[ getPluralFormFunc()( val ) ];
       }
 
       res = val_list[ val_idx ];
 
       // This includes empty strings on purpose
       if ( ! res  ) {
-        res = [ null, singular_key, plural_key ];
-        return res[ getPluralFormFunc(pluralForms)( val ) + 1 ];
+        res = [ singular_key, plural_key ];
+        return res[ getPluralFormFunc()( val ) ];
       }
       return res;
     }
@@ -600,15 +614,15 @@ performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return { type : 'GROUP', expr: $$[$0-1] }; 
+case 1: return { type : 'GROUP', expr: $$[$0-1] };
 break;
-case 2:this.$ = { type: 'TERNARY', expr: $$[$0-4], truthy : $$[$0-2], falsey: $$[$0] }; 
+case 2:this.$ = { type: 'TERNARY', expr: $$[$0-4], truthy : $$[$0-2], falsey: $$[$0] };
 break;
 case 3:this.$ = { type: "OR", left: $$[$0-2], right: $$[$0] };
 break;
 case 4:this.$ = { type: "AND", left: $$[$0-2], right: $$[$0] };
 break;
-case 5:this.$ = { type: 'LT', left: $$[$0-2], right: $$[$0] }; 
+case 5:this.$ = { type: 'LT', left: $$[$0-2], right: $$[$0] };
 break;
 case 6:this.$ = { type: 'LTE', left: $$[$0-2], right: $$[$0] };
 break;
@@ -622,11 +636,11 @@ case 10:this.$ = { type: 'EQ', left: $$[$0-2], right: $$[$0] };
 break;
 case 11:this.$ = { type: 'MOD', left: $$[$0-2], right: $$[$0] };
 break;
-case 12:this.$ = { type: 'GROUP', expr: $$[$0-1] }; 
+case 12:this.$ = { type: 'GROUP', expr: $$[$0-1] };
 break;
-case 13:this.$ = { type: 'VAR' }; 
+case 13:this.$ = { type: 'VAR' };
 break;
-case 14:this.$ = { type: 'NUM', val: Number(yytext) }; 
+case 14:this.$ = { type: 'NUM', val: Number(yytext) };
 break;
 }
 },
@@ -912,7 +926,7 @@ next:function () {
         if (this._input === "") {
             return this.EOF;
         } else {
-            this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(), 
+            this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(),
                     {text: "", token: null, line: this.yylineno});
         }
     },

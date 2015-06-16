@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -37,42 +37,43 @@
     padding: 2px 5px 0 11px;
     padding: 2px 5px 0 11px;
   }
+}
 
-  .logo {
-    background: $logo no-repeat;
-    background-size: 100%;
-    color: #000;
-    display: inline-block;
-    font: normal 11px/11px $font-sans-serif;
-    height: 32px;
-    text-align: left;
-    vertical-align: middle;
-    width: 90px;
+.logo {
+  background: $logo no-repeat;
+  background-size: 100%;
+  color: #000;
+  display: inline-block;
+  font: normal 11px/11px $font-sans-serif;
+  height: 32px;
+  text-align: left;
+  vertical-align: middle;
+  width: 90px;
 
-    @include breakpt($breakpoint-medium) {
-      background: $scalable-logo no-repeat center;
-      height: 46px;
-      width: 46px;
+  @include breakpt($breakpoint-medium) {
+    background: $scalable-logo no-repeat center;
+    height: 46px;
+    width: 46px;
 
-      span {
-        display: none;
-      }
+    .desc {
+      display: none;
     }
+  }
 
-    span {
-      font-style: italic;
-      left: 38px;
-      position: relative;
-      top: 26px;
-    }
+  .desc {
+    font-style: italic;
+    left: 38px;
+    position: relative;
+    top: 26px;
 
-    span a {
+    a {
       color: $bar-logo-text-desc;
     }
   }
 }
 
 .bar .middle {
+  // scss-lint:disable SelectorDepth
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -178,23 +179,22 @@
       color: #fff;
     }
   }
+}
 
-  .btn-mutemicrophone i:before {
-    content: '\f130';
-  }
+.btn-mutemicrophone i:before {
+  content: '\f130';
+}
 
-  .btn-mutemicrophone.active i:before {
-    content: '\f131';
-  }
+.btn-mutemicrophone.active i:before {
+  content: '\f131';
+}
 
-  .btn-mutecamera i:before {
-    content: '\f06e';
-  }
+.btn-mutecamera i:before {
+  content: '\f06e';
+}
 
-  .btn-mutecamera.active i:before {
-    content: '\f070';
-  }
-
+.btn-mutecamera.active i:before {
+  content: '\f070';
 }
 
 @keyframes shakeityeah {

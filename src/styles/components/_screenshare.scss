@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,16 +19,23 @@
  *
  */
 
+
+.mainScreenshare #screenshare { // scss-lint:disable IdSelector
+  display: block;
+}
+
 .screenshare {
   bottom: 0;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.mainScreenshare #screenshare {
-  display: block;
+  .overlaybar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
 .screensharepane {
@@ -39,9 +46,6 @@
   position: absolute;
   right: 0;
   top: 0;
-}
-
-.screensharepane {
   .remotescreen {
     position: relative;
   }
@@ -55,10 +59,4 @@
 .remotesize .screensharepane video {
   max-height: none;
   width: auto;
-}
-
-.screenshare .overlaybar {
-  bottom: 0;
-  left: 0;
-  right: 0;
 }

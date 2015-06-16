@@ -1,7 +1,7 @@
 
-                 Spreed WebRTC Channeling API v1.3.0
+                 Spreed WebRTC Channeling API v1.4.0
             =================================================
-                          (c)2014 struktur AG
+                          (c)2015 struktur AG
 
 The server provides a Websocket connection end point as channeling API to
 share peer information for peer to peer connectivity.
@@ -98,6 +98,13 @@ Error returns
         "Message": "A description of the error condition"
     }
 
+  The following predefined error codes may implicitly be returned by any call
+  which returns an error document:
+
+    unknown: An internal server error, the message may provide more information.
+    bad_request: The structure or content of the client's request was invalid,
+                 the message may contain specifics.
+
 Special purpose documents for channling
 
   Self
@@ -110,6 +117,7 @@ Special purpose documents for channling
         "Suserid": "",
         "Token": "some-very-long-string",
         "Version": "server-version-number",
+        "ApiVersion": 1.4,
         "Turn": {
           "username": "turn-username",
           "password": "turn-password",
@@ -129,21 +137,26 @@ Special purpose documents for channling
 
     Keys:
 
-        Type    : Self (string)
-        Id      : Public Session id for this connection (string).
-        Sid     : Secure (non public) id for this session (string).
-        Userid  : User id if this session belongs to an authenticated user. Else empty.
-        Suserid : Secure (non public) user id if session has an user id. Else empty.
-        Token   : Security token (string), to restablish connection with the same
-                 session. Pass the value as URL query parameter t, to the websocket URL.
-        Version : Server version number. Use this to detect server upgrades.
-        Turn    : Mapping (interface{}) to contain TURN server details, like
-                  urls, password and username. See
-                  http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
-                  and TURN REST API section in
-                  https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
-                  for details.
-        Stun    : Array with STUN server URLs.
+        Type       : Self (string)
+        Id         : Public Session id for this connection (string).
+        Sid        : Secure (non public) id for this session (string).
+        Userid     : User id if this session belongs to an authenticated user.
+                     Else empty.
+        Suserid    : Secure (non public) user id if session has an user id.
+                     Else empty.
+        Token      : Security token (string), to restablish connection with the
+                     same session. Pass the value as URL query parameter t, to
+                     the websocket URL.
+        Version    : Server version number. Use this to detect server upgrades.
+        ApiVersion : Server channeling API base version. Use this version to select
+                     client side compatibility with the connected server.
+        Turn       : Mapping (interface{}) to contain TURN server details, like
+                     urls, password and username. See
+                     http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+                     and TURN REST API section in
+                     https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
+                     for details.
+        Stun       : Array with STUN server URLs.
 
     You can also send an empty Self document to the server to make the server
     transmit a fresh Self document (eg. to refresh when ttl was reached). Please
@@ -155,9 +168,10 @@ Special purpose documents for channling
     {
         Type: "Hello",
         Hello: {
-            Version: "1.0.0",
-            Ua: "Test client 1.0",
-            Id: "",
+            "Version": "1.0.0",
+            "Ua": "Test client 1.0",
+            "Name": "",
+            "Type": "",
             "Credentials": {...}
         }
     }
@@ -172,7 +186,10 @@ Special purpose documents for channling
 
       Version     : Channel protocol version (string).
       Ua          : User agent description (string).
-      Id          : Room id. The default Room has the empty string Id ("") (string).
+      Name        : Room name. The default Room has the empty string name ("") (string).
+      Type        : Room type. Use empty string to let the server select the
+                    default type.
+      Id          : Same as 'Name' (kept for compatibility).
       Credentials : An optional RoomCredentials document containing room
                     authentication information. See the Room document for
                     information on how such credentials should be handled after
@@ -211,10 +228,10 @@ Special purpose documents for channling
 
     Keys under Welcome:
 
-      Room:  Contains the current state of the room, see the description of
-             the Room document for more details.
-      Users: Contains the user list for the room, see the description of
-             the Users document for more details.
+      Room  : Contains the current state of the room, see the description of
+              the Room document for more details.
+      Users : Contains the user list for the room, see the description of
+              the Users document for more details.
 
   RoomCredentials
 
@@ -234,7 +251,7 @@ Special purpose documents for channling
   Room
 
     {
-        "Type": "Room",
+        "Type": "room-type",
         "Name": "room-name-here"
         "Credentials": {...}
     }
@@ -249,8 +266,10 @@ Special purpose documents for channling
 
     Keys under Room:
 
-      Name :        The human readable ID of the room, currently must be globally
-                    unique.
+      Type        : The room type. This field should only be send to alter
+                    the room type. It will always contain the type of the room
+                    when returned by the server.
+      Name        : The human readable name of the room.
       Credentials : Optional authentication information for the room, see the
                     documentation of the RoomCredentials document for more
                     details. This field shall only be present when sending or
@@ -416,8 +435,8 @@ Additional types for session listing and notifications
 
     }
 
-    'buddyPicture' can be in next formats: 
-    1. Base64 encoded string of an image. 
+    'buddyPicture' can be in next formats:
+    1. Base64 encoded string of an image.
       Example: data:image/jpeg;base64,/9j/4...
     2. url subpath to query REST API. Please refer to REST API for more information
       Example: img:8nG33oDk8Yv8fvK6IphL/6vjI2NLigcET/picture.jpg
@@ -427,9 +446,10 @@ Additional types for session listing and notifications
     Rev is the status update sequence for this status update entry. It
     is a positive integer. Higher numbers are later status updates.
 
-  When the current session is in a room (means sent Hello), a Users request
-  can be sent, to receive a list of sessions in that particular room. This
-  always returns the sessions in the same room as the calling session.
+  When the current session has successfully joined a room (see Hello for more
+  details), a Users request will return a Users document containing session
+  details for the current room. An Error document will be returned if no room
+  has been joined or session information cannot be retrieved.
 
   Users (Request uses empty data)
 
@@ -470,6 +490,10 @@ Additional types for session listing and notifications
 
     Note: The Userid field is only present, if that session belongs to a known user.
 
+    Error codes:
+
+      not_in_room: Clients must join a room before requesting users.
+
   Alive
 
     {
@@ -506,12 +530,19 @@ User authorization and session authentication
 
     The Authentication document binds a userid to the current session. The
     Nonce and Userid need to be validateable by the server. If Authentication
-    was successfull, a new Self document will be sent. The Nonce value can
-    be generated by using the REST API (sessions end point).
+    was successful, a new Self document will be sent. Otherwise an Error
+    document will be returned describing why authentication failed. Note that
+    the Nonce value can be generated by using the REST API (sessions end point).
 
     There is no way to undo authentication for a session. For log out, close
     the session (disconnect) and forget the token.
 
+    Error codes:
+
+      already_authenticated: This session has already authenticated, follow
+                             the reauthentication procedure above.
+      invalid_session_token: The provided session token information is invalid,
+                             the error message may contain more information.
 
 Information retrieval
 
@@ -531,6 +562,9 @@ Information retrieval
       session:
         Token data retrieved on incoming messages as A field (attestation
         token).
+
+  If session information retrieval fails, an Error document with one of the
+  listed codes will be returned.
 
   Sessions (Response with Id, Token and Type from request and
   populated Session list).
@@ -558,6 +592,11 @@ Information retrieval
         ]
     }
 
+  Error codes:
+
+    contacts_not_enabled: Requests with subtype `contact` are not enabled.
+    bad_attestation: The requested session attestation is invalid.
+    no_such_session: The requested session could not be found.
 
 Chat messages and status information
 

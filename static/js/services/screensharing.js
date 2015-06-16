@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -20,10 +20,22 @@
  */
 
 "use strict";
-define(['underscore', 'webrtc.adapter'], function(_) {
+define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'], function(_, screenshareDialogFF) {
+
+	var screenshareDialogFFController = ["$scope", "$modalInstance", "data", function($scope, $modalInstance, data) {
+		$scope.data = data;
+		$scope.cancel = function() {
+			$modalInstance.close(null);
+		};
+		$scope.ok = function() {
+			$modalInstance.close($scope.data.selection);
+		};
+	}];
 
 	// screensharing
-	return ["$window", "$q", "$timeout", "chromeExtension", function($window, $q, $timeout, chromeExtension) {
+	return ["$window", "$q", "$timeout", "chromeExtension", "dialogs", "$templateCache", function($window, $q, $timeout, chromeExtension, dialogs, $templateCache) {
+
+		$templateCache.put('/dialogs/screensharedialogff.html', screenshareDialogFF);
 
 		var Screensharing = function() {
 			this.autoinstall = false;
@@ -121,10 +133,36 @@ define(['underscore', 'webrtc.adapter'], function(_) {
 
 				}
 
-			} else {
-				// Currently Chrome only - sorry.
-				// Firefox 33 might get screen sharing support.
+			} else if ($window.webrtcDetectedBrowser === "firefox") {
+
+				// Firefox 36 got screen sharing support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
+				if ($window.webrtcDetectedVersion >= 36) {
+					this.supported = true;
+					this.prepare = function(options) {
+						// To work, the current domain must be whitelisted in
+						// media.getusermedia.screensharing.allowed_domains (about:config).
+						// See https://wiki.mozilla.org/Screensharing for reference.
+						var d = $q.defer();
+						var dlg = dialogs.create('/dialogs/screensharedialogff.html', screenshareDialogFFController, {selection: "screen"}, {});
+						dlg.result.then(function(source) {
+							if (source) {
+								var opts = _.extend({
+									mediaSource: source
+								}, options);
+								d.resolve(opts);
+							} else {
+								d.resolve(null);
+							}
+						}, function(err) {
+							d.resolve(null);
+						});
+						return d.promise;
+					};
+				}
+
+			} else {
+				// No support for screen sharing.
 			}
 
 			// Auto install support.

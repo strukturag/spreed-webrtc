@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -25,7 +25,7 @@ define(["modernizr"], function(Modernizr) {
 	// localStorage
 	return ["$window", function($window) {
 
-		// PersistentStorage (c)2014 struktur AG. MIT license.
+		// PersistentStorage (c)2015 struktur AG. MIT license.
 		var PersistentStorage = function(prefix) {
 			this.prefix = prefix ? prefix : "ps";
 			this.isPersistentStorage = true;

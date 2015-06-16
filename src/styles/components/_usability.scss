@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,7 +19,24 @@
  *
  */
 
-#help {
+
+.withChat,
+.withBuddylist {
+  // scss-lint:disable IdSelector
+  #help {
+    right: 260px;
+  }
+}
+
+.withChat.withBuddylist,
+.withSettings {
+  // scss-lint:disable IdSelector
+  #help {
+    right: 520px;
+  }
+}
+
+#help { // scss-lint:disable IdSelector
   bottom: 10px;
   color: #aaa;
   font-size: 1.1em;
@@ -34,17 +51,7 @@
   width: 350px;
 }
 
-.withChat #help,
-.withBuddylist #help {
-  right: 260px;
-}
-
-.withChat.withBuddylist #help,
-.withSettings #help {
-  right: 520px;
-}
-
-#help {
+.help {
   @include breakpt($breakpoint-useability-small, max-width, only screen) {
     display: none;
   }

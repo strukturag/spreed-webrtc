@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -39,6 +39,12 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		} else {
 			this.id = id;
 		}
+
+		this.usermedia = webrtc.usermedia;
+		webrtc.e.on("usermedia", _.bind(function(event, um) {
+			console.log("Conference user media changed", um);
+			this.usermedia = um;
+		}, this));
 
 		console.log("Created conference", this.id);
 
@@ -94,16 +100,12 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		console.log("Creating PeerConnection", call);
 		call.createPeerConnection(_.bind(function(peerconnection) {
 			// Success call.
+			if (this.usermedia) {
+				this.usermedia.addToPeerConnection(peerconnection);
+			}
 			call.e.on("negotiationNeeded", _.bind(function(event, extracall) {
 				this.webrtc.sendOfferWhenNegotiationNeeded(extracall);
 			}, this));
-			if (this.webrtc.usermedia) {
-				this.webrtc.usermedia.addToPeerConnection(peerconnection);
-			}
-			/*call.createOffer(_.bind(function(sessionDescription, extracall) {
-				console.log("Sending offer with sessionDescription", sessionDescription, extracall.id);
-				this.webrtc.api.sendOffer(extracall.id, sessionDescription);
-			}, this));*/
 		}, this), _.bind(function() {
 			// Error call.
 			console.error("Failed to create peer connection for conference call.");
@@ -143,9 +145,12 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		call.createPeerConnection(_.bind(function(peerconnection) {
 			// Success call.
 			call.setRemoteDescription(rtcsdp, _.bind(function() {
-				if (this.webrtc.usermedia) {
-					this.webrtc.usermedia.addToPeerConnection(peerconnection);
+				if (this.usermedia) {
+					this.usermedia.addToPeerConnection(peerconnection);
 				}
+				call.e.on("negotiationNeeded", _.bind(function(event, extracall) {
+					this.webrtc.sendOfferWhenNegotiationNeeded(extracall);
+				}, this));
 				call.createAnswer(_.bind(function(sessionDescription, extracall) {
 					console.log("Sending answer", sessionDescription, extracall.id);
 					this.webrtc.api.sendAnswer(extracall.id, sessionDescription);

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -25,7 +25,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 	// buddyPictureCapture
 	return ["$compile", "$window", function($compile, $window) {
 
-		var controller = ['$scope', 'safeApply', '$timeout', '$q', function($scope, safeApply, $timeout, $q) {
+		var controller = ['$scope', 'safeApply', '$timeout', '$q', "mediaDevices", function($scope, safeApply, $timeout, $q, mediaDevices) {
 
 			// Buddy picutre capture size.
 			$scope.captureSize = {
@@ -126,16 +126,16 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 						}]
 					};
 				}
-				$window.getUserMedia({
+				mediaDevices.getUserMedia({
 					video: videoConstraints
-				}, function(stream) {
+				}).then(function(stream) {
 					$scope.showTakePicture = true;
 					localStream = stream;
 					$scope.waitingForPermission = false;
 					$window.attachMediaStream($scope.video, stream);
 					safeApply($scope);
 					videoAllowed.resolve(true);
-				}, function(error) {
+				}).catch(function(error) {
 					console.error('Failed to get access to local media. Error code was ' + error.code);
 					$scope.waitingForPermission = false;
 					safeApply($scope);

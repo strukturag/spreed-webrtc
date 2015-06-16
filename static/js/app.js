@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -87,6 +87,22 @@ define([
 		var src;
 		if (data && data.locale_data) {
 			src = data.locale_data[domain];
+			// Support older po files built for older jed (see https://github.com/SlexAxton/Jed/issues/36).
+			var count = 0;
+			var v;
+			for (var k in src) {
+				if (src.hasOwnProperty(k)) {
+					v = src[k];
+					if (v.constructor === Array && v[0] === null) {
+						v.shift();
+					} else {
+						count++;
+					}
+					if (count > 1) {
+						break;
+					}
+				}
+			}
 		}
 		var dst = this.data.locale_data[domain];
 		if (!dst) {
@@ -138,7 +154,7 @@ define([
 			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|filesystem|blob):/);
 			$compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|filesystem|blob):|data:image\//);
 			// Setup routing
-			$routeProvider.when("/:room", {});
+			$routeProvider.when("/:room*", {});
 			// Use HTML5 routing.
 			$locationProvider.html5Mode(true);
 		}]);
@@ -174,7 +190,17 @@ define([
 		app.directive("spreedWebrtc", [function() {
 			return {
 				restrict: "A",
-				controller: "MediastreamController"
+				scope: false,
+				controller: "AppController"
+			}
+		}]);
+
+		app.directive("uiLogo", ["globalContext", function(globalContext) {
+			return {
+				restrict: "A",
+				link: function($scope, $element, $attrs) {
+					$attrs.$set("title", globalContext.Cfg.Title || "");
+				}
 			}
 		}]);
 
@@ -182,7 +208,7 @@ define([
 
 	};
 
-	// Our API version as float. This value is incremented on
+	// Our client side API version as float. This value is incremented on
 	// breaking changes to plugins can check on it.
 	var apiversion = 1.1;
 

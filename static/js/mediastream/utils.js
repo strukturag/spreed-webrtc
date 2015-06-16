@@ -81,6 +81,14 @@ define([], function() {
       sdp = removeCodecParam(sdp, 'opus/48000', 'useinbandfec');
     }
 
+    // Set Opus DTX, if opusdtx is true, unset it, if opusdtx is false, and
+    // do nothing if otherwise.
+    if (params.opusDtx === 'true') {
+      sdp = setCodecParam(sdp, 'opus/48000', 'usedtx', '1');
+    } else if (params.opusDtx === 'false') {
+      sdp = removeCodecParam(sdp, 'opus/48000', 'usedtx');
+    }
+
     // Set Opus maxplaybackrate, if requested.
     if (params.opusMaxPbr) {
       sdp = setCodecParam(
@@ -417,7 +425,21 @@ define([], function() {
     maybePreferAudioSendCodec: maybePreferAudioSendCodec,
     maybePreferAudioReceiveCodec: maybePreferAudioReceiveCodec,
     maybePreferVideoSendCodec: maybePreferVideoSendCodec,
-    maybePreferVideoReceiveCodec: maybePreferVideoReceiveCodec
+    maybePreferVideoReceiveCodec: maybePreferVideoReceiveCodec,
+    fixLocal: function(sdp) {
+      if (window.webrtcDetectedBrowser === "chrome") {
+        // Remove all rtx support from locally generated sdp. Chrome
+        // does create this sometimes wrong.
+        // TODO(longsleep): Limit to Chrome version, once it is fixed upstream.
+        // See https://code.google.com/p/webrtc/issues/detail?id=3962
+        sdp = sdp.replace(/a=rtpmap:\d+ rtx\/\d+\r\n/i, "");
+        sdp = sdp.replace(/a=fmtp:\d+ apt=\d+\r\n/i, "");
+      }
+      return sdp;
+    },
+    fixRemote: function(sdp) {
+      return sdp;
+    }
   }
 
 });

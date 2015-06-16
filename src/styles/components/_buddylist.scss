@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,7 +19,7 @@
  *
  */
 
-#buddylist {
+#buddylist { // scss-lint:disable IdSelector
   bottom: 0;
   position: absolute;
   right: 0;
@@ -28,7 +28,7 @@
   z-index: 50;
 }
 
-#buddylist:before {
+#buddylist:before { // scss-lint:disable IdSelector
   background: $buddylist-tab-background;
   border-bottom: 1px solid $bordercolor;
   border-bottom-left-radius: 6px;
@@ -55,12 +55,12 @@
   z-index: 1;
 }
 
-.withBuddylist #buddylist:before {
+.withBuddylist #buddylist:before { // scss-lint:disable IdSelector
   content: '\f101';
   padding-right: 0;
 }
 
-.withBuddylistAutoHide #buddylist:before {
+.withBuddylistAutoHide #buddylist:before { // scss-lint:disable IdSelector
   display: block;
 }
 
@@ -76,9 +76,7 @@
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.buddylist {
   &.loading {
     .buddylistloading {
       display: block;
@@ -139,13 +137,11 @@
   position: relative;
   text-align: left;
   width: 100%;
-}
 
-.buddy:hover {
-  background: $buddylist-action-background;
-}
+  &:hover {
+    background: $buddylist-action-background;
+  }
 
-.buddy {
   &.withSubline .buddy1,
   &.contact .buddy1 {
     top: 15px;
@@ -156,8 +152,15 @@
     display: block;
   }
 
-  &.hovered .buddyactions {
-    right: 0;
+  &.hovered {
+
+    .buddyactions {
+      right: 0;
+    }
+
+    .buddysessions {
+      max-height: 999px;
+    }
   }
 
   .fa.contact:before {
@@ -249,68 +252,65 @@
     white-space: nowrap;
     width: 120px;
   }
-}
 
-.buddy .buddyactions {
-  background: $buddylist-action-background;
-  height: 66px;
-  line-height: 66px;
-  padding: 0 10px;
-  position: absolute;
-  right: -125px;
-  text-align: right;
-  top: 0;
-  transition-duration: .3s;
-  transition-property: right;
-  white-space: nowrap;
-  z-index: 5;
+  .buddyactions {
+    background: $buddylist-action-background;
+    height: 66px;
+    line-height: 66px;
+    padding: 0 10px;
+    position: absolute;
+    right: -125px;
+    text-align: right;
+    top: 0;
+    transition-duration: .3s;
+    transition-property: right;
+    white-space: nowrap;
+    z-index: 5;
 
-  .btn {
-    font-size: $buddylist-action-font-size;
-    height: 40px;
-    line-height: 40px;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-    width: 42px;
-  }
-}
-
-.buddy .buddysessions {
-  margin-bottom: 10px;
-  margin-top: 56px;
-  max-height: 0;
-  transition-delay: .1s;
-  transition-duration: .5s;
-  transition-property: max-height;
-
-  ul {
-    border-left: 1px dotted $bordercolor;
-    border-right: 1px dotted $bordercolor;
-    margin: 0 14px;
-    padding-left: 0;
-    padding-top: 10px;
-  }
-
-  ul li {
-    list-style-type: none;
-    margin-bottom: 2px;
-    margin-left: 0;
-
-    .btn-group {
-      visibility: hidden;
-    }
-
-    &:hover .btn-group {
-      visibility: visible;
+    .btn {
+      font-size: $buddylist-action-font-size;
+      height: 40px;
+      line-height: 40px;
+      padding: 0;
+      text-align: center;
+      vertical-align: middle;
+      width: 42px;
     }
   }
 
-  .currentsession .buddy3 {
-    font-weight: bold;
-  }
-}
+  .buddysessions {
+    margin-bottom: 10px;
+    margin-top: 56px;
+    max-height: 0;
+    transition-delay: .1s;
+    transition-duration: .5s;
+    transition-property: max-height;
 
-.buddy.hovered .buddysessions {
-  max-height: 999px;
+    ul {
+      border-left: 1px dotted $bordercolor;
+      border-right: 1px dotted $bordercolor;
+      margin: 0 14px;
+      padding-left: 0;
+      padding-top: 10px;
+    }
+
+    ul li {
+      // scss-lint:disable NestingDepth
+      list-style-type: none;
+      margin-bottom: 2px;
+      margin-left: 0;
+
+      .btn-group {
+        visibility: hidden;
+      }
+
+      &:hover .btn-group {
+        visibility: visible;
+      }
+    }
+
+    .currentsession .buddy3 {
+      font-weight: bold;
+    }
+  }
 }

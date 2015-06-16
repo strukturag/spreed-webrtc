@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-02-18 14:46+0100\n"
+"POT-Creation-Date: 2015-04-30 19:22+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -17,9 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Your audio level"
-msgstr "あなたの音量"
 
 msgid "Standard view"
 msgstr ""
@@ -246,6 +243,38 @@ msgstr "画面共有オプション"
 msgid "Fit screen."
 msgstr "画面に合わせる"
 
+#, fuzzy
+msgid "Share screen"
+msgstr "画面を共有する."
+
+msgid "Please select what to share."
+msgstr ""
+
+#, fuzzy
+msgid "Screen"
+msgstr "画面に合わせる"
+
+msgid "Window"
+msgstr ""
+
+msgid "Application"
+msgstr ""
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr ""
+
+msgid "Share a single window. Click share to select the window."
+msgstr ""
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+
+#, fuzzy
+msgid "Share"
+msgstr "共有取り消し"
+
 msgid "Profile"
 msgstr ""
 
@@ -460,6 +489,9 @@ msgstr "通話"
 msgid "Waiting for camera/microphone access"
 msgstr "カメラ・マイクの接続待ち."
 
+msgid "Your audio level"
+msgstr "あなたの音量"
+
 msgid "Checking camera and microphone access."
 msgstr "カメラ・マイクの接続確認中."
 
@@ -509,10 +541,6 @@ msgstr ""
 
 msgid "YouTube URL"
 msgstr ""
-
-#, fuzzy
-msgid "Share"
-msgstr "共有取り消し"
 
 msgid ""
 "Could not load YouTube player API, please check your network / firewall "
@@ -693,6 +721,37 @@ msgstr "ここで私と会う:"
 #, fuzzy
 msgid "Room name"
 msgstr "あなたの名前"
+
+msgid ""
+"The request contains an invalid parameter value. Please check the URL of "
+"the video you want to share and try again."
+msgstr ""
+
+msgid ""
+"The requested content cannot be played in an HTML5 player or another "
+"error related to the HTML5 player has occurred. Please try again later."
+msgstr ""
+
+msgid ""
+"The video requested was not found. Please check the URL of the video you "
+"want to share and try again."
+msgstr ""
+
+msgid ""
+"The owner of the requested video does not allow it to be played in "
+"embedded players."
+msgstr ""
+
+#, python-format
+msgid ""
+"An unknown error occurred while playing back the video (%s). Please try "
+"again later."
+msgstr ""
+
+msgid ""
+"An unknown error occurred while playing back the video. Please try again "
+"later."
+msgstr ""
 
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""

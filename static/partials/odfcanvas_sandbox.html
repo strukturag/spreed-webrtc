@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WebODF Sandbox</title>
+		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src __PARENT_ORIGIN__; img-src data:; style-src 'unsafe-inline'">
+		<style type="text/css">
+		html, body {
+			height:100%;
+		}
+		body {
+			margin:0;
+			padding:0;
+			max-width:100%;
+			max-height:100%;
+		}
+		#container {
+			height:100%;
+			width:100%;
+			overflow-x:hidden;
+			overflow-y:auto;
+		}
+		#container.showonepage {
+			overflow:hidden;
+			text-align:center;
+		}
+		#odfcanvas {
+			cursor:default;
+			user-select:none;
+			-webkit-user-select:none;
+			-moz-user-select:none;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="odfcanvas"></div>
+		</div>
+		<script src="__WEBODF_SANDBOX_JS_URL__" data-parent-origin="__PARENT_ORIGIN__" data-webodf-url="__WEBODF_URL__"></script>
+	</body>
+</html>

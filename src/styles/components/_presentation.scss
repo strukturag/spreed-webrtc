@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,40 +19,147 @@
  *
  */
 
+
+.mainPresentation #presentation { // scss-lint:disable IdSelector
+  display: block;
+}
+
 .presentation {
   bottom: 0;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.presentationpane .welcome {
-  padding: 0;
-}
+  .overlaybar {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
 
-.presentationpane .welcome h1 {
-  white-space: normal;
-}
+    .overlaybar-content {
+      // scss-lint:disable NestingDepth
+      max-width: 100%;
 
-.presentationpane .welcome button {
-  margin-top: 30px;
-}
+      .pagecontrol {
+        height: 30px;
+      }
+    }
 
-.presentationpane .welcome .progress span {
-  text-shadow: none;
-}
+    .btn-prev {
+      left: 40px;
+    }
 
-.presentationpane .welcome .progress .download-info {
-  color: $text-color;
-  left: 0;
-  position: absolute;
-  text-shadow: 1px 1px 1px #fff;
-  width: 100%;
-}
+    .btn-next {
+      left: auto;
+      right: 0;
+    }
 
-.mainPresentation #presentation {
-  display: block;
+    .overlaybar-button {
+      font-size: 20px;
+      line-height: 28px;
+      padding: 4px 6px;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  .thumbnail {
+    color: #333;
+    display: inline-block;
+    height: 122px;
+    margin-left: 20px;
+    margin-top: 20px;
+    position: relative;
+    text-shadow: none;
+    vertical-align: middle;
+    width: 160px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &.presentable {
+      cursor: pointer;
+    }
+
+    &:hover .presentation-action {
+      display: block;
+    }
+
+    &:hover .notavailable {
+      display: block;
+    }
+
+    .caption {
+      // scss-lint:disable NestingDepth
+      overflow: hidden;
+      padding-bottom: 0;
+      text-overflow: ellipsis;
+
+      .size {
+        font-size: 10px;
+      }
+
+      .progress {
+        position: relative;
+      }
+
+      .download-info {
+        bottom: 0;
+        color: $text-color;
+        left: 0;
+        line-height: 20px;
+        position: absolute;
+        right: 0;
+        text-shadow: 1px 1px 1px #fff;
+        top: 0;
+      }
+    }
+
+    .active {
+      bottom: 0;
+      color: #84b819;
+      font-size: 10em;
+      left: 0;
+      opacity: .7;
+      position: absolute;
+      right: 0;
+      text-align: center;
+      top: 0;
+    }
+
+    .notavailable {
+      bottom: 0;
+      color: #d2322d;
+      display: none;
+      font-size: 10em;
+      left: 0;
+      opacity: .25;
+      position: absolute;
+      right: 0;
+      text-align: center;
+      top: 0;
+    }
+
+    .presentation-action {
+      display: none;
+      position: absolute;
+      top: 1px;
+    }
+
+    .download {
+      left: 1px;
+    }
+
+    .delete {
+      right: 1px;
+    }
+
+    .filetype {
+      font-size: 5em;
+    }
+  }
 }
 
 .presentationpane {
@@ -62,176 +169,47 @@
   position: absolute;
   right: 0;
   top: 0;
-}
 
-.presentationpane {
+  .welcome {
+    padding: 0;
+
+    h1 {
+      white-space: normal;
+    }
+
+    .btn {
+      margin-top: 30px;
+    }
+
+    .progress span {
+      text-shadow: none;
+    }
+
+    .progress .download-info {
+      color: $text-color;
+      left: 0;
+      position: absolute;
+      text-shadow: 1px 1px 1px #fff;
+      width: 100%;
+    }
+  }
+
   .canvasContainer {
     height: 100%;
     width: 100%;
-  }
-
-  canvas {
-    display: block;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .odfcanvas {
-    cursor: default;
-    user-select: none;
-
-    body {
-      background-color: transparent;
-    }
-
-    document {
-      display: block;
-    }
-  }
-
-  .odfcontainer {
-    display: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .odfcontainer.showonepage {
     overflow: hidden;
-    text-align: center;
+
+    iframe {
+      border: 0;
+      height: 100%;
+      width: 100%;
+    }
   }
-}
-
-.presentation .overlaybar {
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-}
-
-.presentation .overlaybar .overlaybar-content {
-  max-width: 100%;
-}
-
-.presentation .overlaybar .overlaybar-button {
-  font-size: 20px;
-  line-height: 28px;
-  padding: 4px 6px;
-  position: absolute;
-  top: 0;
-}
-
-.overlaybar-content .pagecontrol {
-  height: 30px;
-}
-
-.presentation .overlaybar .btn-prev {
-  left: 40px;
-}
-
-.presentation .overlaybar .btn-next {
-  left: auto;
-  right: 0;
 }
 
 .pageinfo input {
   display: inline;
   width: 70px;
-}
-
-.presentation .thumbnail {
-  color: #333;
-  display: inline-block;
-  height: 122px;
-  margin-left: 20px;
-  margin-top: 20px;
-  position: relative;
-  text-shadow: none;
-  vertical-align: middle;
-  width: 160px;
-}
-
-.presentation .thumbnail.presentable {
-  cursor: pointer;
-}
-
-.presentation .thumbnail:first-child {
-  margin-left: 0;
-}
-
-.presentation .thumbnail .caption {
-  overflow: hidden;
-  padding-bottom: 0;
-  text-overflow: ellipsis;
-}
-
-.presentation .thumbnail .caption .size {
-  font-size: 10px;
-}
-
-.presentation .thumbnail .caption .progress {
-  position: relative;
-}
-
-.presentation .thumbnail .caption .download-info {
-  bottom: 0;
-  color: $text-color;
-  left: 0;
-  line-height: 20px;
-  position: absolute;
-  right: 0;
-  text-shadow: 1px 1px 1px #fff;
-  top: 0;
-}
-
-.presentation .thumbnail .active {
-  bottom: 0;
-  color: #84b819;
-  font-size: 10em;
-  left: 0;
-  opacity: .7;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  top: 0;
-}
-
-.presentation .thumbnail .notavailable {
-  bottom: 0;
-  color: #d2322d;
-  display: none;
-  font-size: 10em;
-  left: 0;
-  opacity: .25;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  top: 0;
-}
-
-.presentation .thumbnail:hover .notavailable {
-  display: block;
-}
-
-.presentation .thumbnail .presentation-action {
-  display: none;
-  position: absolute;
-  top: 1px;
-}
-
-.presentation .thumbnail .download {
-  left: 1px;
-}
-
-.presentation .thumbnail .delete {
-  right: 1px;
-}
-
-.presentation .thumbnail:hover .presentation-action {
-  display: block;
-}
-
-.presentation .thumbnail .filetype {
-  font-size: 5em;
 }
 
 .presentations {

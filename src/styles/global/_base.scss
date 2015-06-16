@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -38,7 +38,7 @@ a {
   cursor: pointer;
 }
 
-#background {
+#background { // scss-lint:disable IdSelector
   background: $main-background;
   bottom: 0;
   left: 0;

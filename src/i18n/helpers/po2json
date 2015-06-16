@@ -7,7 +7,7 @@ var po2json = require('po2json'),
 
 assert.equal(argv.length, 4, 'Usage: po2json <input_file.po> <output_file.json>');
 
-var result = po2json.parseFileSync(argv[2], { stringify: true, format: 'jed', pretty: false }),
+var result = po2json.parseFileSync(argv[2], { stringify: true, format: 'jed1.x', pretty: false }),
     stream = fs.createWriteStream(argv[3], {});
 
 stream.write(result);

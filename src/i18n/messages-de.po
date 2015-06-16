@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-02-18 14:46+0100\n"
-"PO-Revision-Date: 2015-02-18 14:49+0100\n"
+"POT-Creation-Date: 2015-04-30 19:22+0200\n"
+"PO-Revision-Date: 2015-04-30 19:27+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,9 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-
-msgid "Your audio level"
-msgstr "Ihr Audio-Pegel"
 
 msgid "Standard view"
 msgstr "Standardansicht"
@@ -246,6 +243,42 @@ msgstr "Optionen für Bildschirmfreigabe"
 msgid "Fit screen."
 msgstr "Bildschirm einpassen."
 
+msgid "Share screen"
+msgstr "Bildschirm teilen"
+
+msgid "Please select what to share."
+msgstr "Bitte wählen Sie aus, was geteilt werden soll."
+
+msgid "Screen"
+msgstr "Bildschirm"
+
+msgid "Window"
+msgstr "Fenster"
+
+msgid "Application"
+msgstr "Anwendung"
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr ""
+"Gesamten Bildschirm teilen. Klicken Sie auf Teilen um den Bildschirm "
+"auszuwählen."
+
+msgid "Share a single window. Click share to select the window."
+msgstr ""
+"Einzelnes Fenster teilen. Klicken Sie auf Teilen um das Fenster "
+"auszuwählen."
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+"Alle Fenster einer Anwendung teilen. Es wird u.U. Inhalt hinter Fenstern "
+"der Anwendung geteilt, wenn diese verschoben werden. Klicken Sie auf "
+"Teilen um die Anwendung auszuwählen."
+
+msgid "Share"
+msgstr "Teilen"
+
 msgid "Profile"
 msgstr "Profil"
 
@@ -466,6 +499,9 @@ msgstr "Anruf annehmen"
 msgid "Waiting for camera/microphone access"
 msgstr "Warte auf Kamera/Mikrofon Freigabe"
 
+msgid "Your audio level"
+msgstr "Ihr Audio-Pegel"
+
 msgid "Checking camera and microphone access."
 msgstr "Prüfe Zugriff auf Kamera und Mikrofon."
 
@@ -518,9 +554,6 @@ msgstr "Das Video wird bei allen Gesprächsteilnehmern angezeigt."
 
 msgid "YouTube URL"
 msgstr "YouTube URL"
-
-msgid "Share"
-msgstr "Teilen"
 
 msgid ""
 "Could not load YouTube player API, please check your network / firewall "
@@ -710,6 +743,48 @@ msgstr "Meeting:"
 
 msgid "Room name"
 msgstr "Raum-Name"
+
+msgid ""
+"The request contains an invalid parameter value. Please check the URL of "
+"the video you want to share and try again."
+msgstr ""
+"Die Anfrage enthält falsche Parameter. Bitte prüfen Sie die URL des "
+"Videos."
+
+msgid ""
+"The requested content cannot be played in an HTML5 player or another "
+"error related to the HTML5 player has occurred. Please try again later."
+msgstr ""
+"Dieser Inhalt kann nicht im HTML5-Player abgespielt werden oder ein "
+"anderer HTML5-Player-Fehler ist aufgetreten. Bitte versuchen Sie es "
+"später wieder."
+
+msgid ""
+"The video requested was not found. Please check the URL of the video you "
+"want to share and try again."
+msgstr "Das Video wurde nicht gefunden. Bitte prüfen Sie die URL des Videos."
+
+msgid ""
+"The owner of the requested video does not allow it to be played in "
+"embedded players."
+msgstr ""
+"Der Eigentümer des Videos hat das Video nicht für eingebettete Anzeige "
+"freigegeben."
+
+#, python-format
+msgid ""
+"An unknown error occurred while playing back the video (%s). Please try "
+"again later."
+msgstr ""
+"Beim Abspielen des Videos ist ein unbekannter Fehler aufgetreten (%s). "
+"Bitte versuchen Sie es später wieder."
+
+msgid ""
+"An unknown error occurred while playing back the video. Please try again "
+"later."
+msgstr ""
+"Beim Abspielen des Videos ist ein unbekannter Fehler aufgetreten. Bitte "
+"versuchen Sie es später wieder."
 
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr "Unbekanntes URL-Format. Bitte geben Sie eine gültige YouTube URL ein."

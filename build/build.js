@@ -76,6 +76,27 @@
 			override: {
 				skipModuleInsertion: true
 			}
+		},
+		{
+			name: 'sandboxes/youtube',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
+		},
+		{
+			name: 'sandboxes/pdf',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
+		},
+		{
+			name: 'sandboxes/webodf',
+			dir: './out/sandboxes',
+			override: {
+				skipModuleInsertion: true
+			}
 		}
 	]
 })

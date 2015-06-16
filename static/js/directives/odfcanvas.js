@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -20,109 +20,101 @@
  */
 
 "use strict";
-define(['require', 'underscore', 'jquery'], function(require, _, $) {
+define(['require', 'underscore', 'jquery', 'text!partials/odfcanvas_sandbox.html'], function(require, _, $, sandboxTemplate) {
 
-	return ["$window", "$compile", "translation", "safeApply", function($window, $compile, translation, safeApply) {
-
-		var webodf = null;
+	return ["$window", "$compile", "$http", "translation", "safeApply", "restURL", "sandbox", function($window, $compile, $http, translation, safeApply, restURL, sandbox) {
 
 		var DOCUMENT_TYPE_PRESENTATION = "presentation";
 		var DOCUMENT_TYPE_SPREADSHEET = "spreadsheet";
 		var DOCUMENT_TYPE_TEXT = "text";
 
-		var nsResolver = function(prefix) {
-			var ns = {
-				'draw': "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0",
-				'presentation': "urn:oasis:names:tc:opendocument:xmlns:presentation:1.0",
-				'text': "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
-				'office': "urn:oasis:names:tc:opendocument:xmlns:office:1.0"
-			};
-			return ns[prefix] || console.log('prefix [' + prefix + '] unknown.');
-		}
-
-		var ODFCanvas_readFile = function(path, encoding, callback) {
-			if (typeof path === "string") {
-				webodf.runtime.orig_readFile.call(webodf.runtime, path, encoding, callback);
-				return;
-			}
-
-			var fp = path.file || path;
-			if (typeof URL !== "undefined" && URL.createObjectURL) {
-				var url = URL.createObjectURL(fp);
-				webodf.runtime.orig_readFile.call(webodf.runtime, url, encoding, function() {
-					URL.revokeObjectURL(url);
-					callback.apply(callback, arguments);
-				});
-				return;
-			}
-
-			console.error("TODO(fancycode): implement readFile for", path);
-		};
-
-		var ODFCanvas_loadXML = function(path, callback) {
-			if (typeof path === "string") {
-				webodf.runtime.orig_loadXML.call(webodf.runtime, path, callback);
-				return;
-			}
-
-			var fp = path.file || path;
-			if (typeof URL !== "undefined" && URL.createObjectURL) {
-				var url = URL.createObjectURL(fp);
-				webodf.runtime.orig_loadXML.call(webodf.runtime, url, function() {
-					URL.revokeObjectURL(url);
-					callback.apply(callback, arguments);
-				});
-				return;
-			}
-
-			console.error("TODO(fancycode): implement loadXML for", path);
-		};
-
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var ODFCanvas = function(scope, container, canvasDom) {
+			var container = $($element);
+
+			var odfCanvas;
+
+			var template = sandboxTemplate;
+			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
+			template = template.replace(/__WEBODF_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/webodf') + ".js"));
+			template = template.replace(/__WEBODF_URL__/g, restURL.createAbsoluteUrl(require.toUrl('webodf') + ".js"));
+			var sandboxApi = sandbox.createSandbox($("iframe", container)[0], template);
+
+			sandboxApi.e.on("message", function(event, message) {
+				var msg = message.data;
+				var data = msg[msg.type] || {};
+				switch (msg.type) {
+				case "ready":
+					break;
+				case "webodf.loading":
+					$scope.$apply(function(scope) {
+						scope.$emit("presentationLoading", data.source);
+						container.hide();
+					});
+					break;
+				case "webodf.loaded":
+					odfCanvas._odfLoaded(data.url, data.type, data.numPages);
+					break;
+				case "webodf.keyUp":
+					$scope.$apply(function(scope) {
+						scope.$emit("keyUp", data.key);
+					});
+					break;
+				default:
+					console.log("Unknown message received", message);
+					break;
+				}
+			});
+
+			var ODFCanvas = function(scope, container) {
 				this.scope = scope;
 				this.container = container;
-				this.canvasDom = canvasDom;
-				this.canvas = null;
-				this.maxPageNumber = -1;
-				this.currentPageNumber = -1;
-				this.pendingPageNumber = null;
-			};
-
-			ODFCanvas.prototype._close = function() {
-				if (this.canvas) {
-					this.canvas.destroy(function() {
-						// ignore callback
-					});
-					this.canvas = null;
-				}
+				this.doc = null;
 				this.maxPageNumber = -1;
 				this.currentPageNumber = -1;
 				this.pendingPageNumber = null;
 			};
 
 			ODFCanvas.prototype.close = function() {
-				this._close();
+				sandboxApi.postMessage("closeFile", {"close": true});
+				this.maxPageNumber = -1;
+				this.currentPageNumber = -1;
+				this.pendingPageNumber = null;
+				this.doc = null;
 			};
 
 			ODFCanvas.prototype.open = function(presentation) {
 				this.scope.$emit("presentationOpening", presentation);
 				presentation.open(_.bind(function(source) {
 					console.log("Loading ODF from", source);
-					this._openFile(source);
+					this.close();
+					if (typeof source === "string") {
+						// got a url
+						this._openFile(source);
+						return;
+					}
+
+					var fp = source.file || source;
+					if (typeof URL !== "undefined" && URL.createObjectURL) {
+						this.url = URL.createObjectURL(fp);
+						this._openFile(this.url);
+					} else {
+						var fileReader = new FileReader();
+						fileReader.onload = _.bind(function(evt) {
+							var buffer = evt.target.result;
+							var uint8Array = new Uint8Array(buffer);
+							this._openFile(uint8Array);
+						}, this);
+						fileReader.readAsArrayBuffer(fp);
+					}
 				}, this));
 			};
 
-			ODFCanvas.prototype._odfLoaded = function() {
+			ODFCanvas.prototype._odfLoaded = function(url, document_type, numPages) {
 				this.scope.$apply(_.bind(function(scope) {
-					var odfcontainer = this.canvas.odfContainer();
-					this.document_type = odfcontainer.getDocumentType();
-					// pages only supported for presentations
-					var pages = [];
-					switch (this.document_type) {
+					this.document_type = document_type;
+					switch (document_type) {
 					case DOCUMENT_TYPE_PRESENTATION:
-						pages = odfcontainer.rootElement.getElementsByTagNameNS(nsResolver('draw'), 'page');
 						this.container.addClass("showonepage");
 						break;
 
@@ -131,13 +123,12 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 						break;
 					}
 
-					this.maxPageNumber = Math.max(1, pages.length);
+					this.maxPageNumber = numPages;
 					this.currentPageNumber = -1;
-					console.log("ODF loaded", odfcontainer);
-					var odfDoc = {
+					this.doc = {
 						numPages: this.maxPageNumber
 					};
-					scope.$emit("presentationLoaded", odfcontainer.getUrl(), odfDoc);
+					scope.$emit("presentationLoaded", url, this.doc);
 					if (this.pendingPageNumber !== null) {
 						this._showPage(this.pendingPageNumber);
 						this.pendingPageNumber = null;
@@ -145,41 +136,19 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				}, this));
 			};
 
-			ODFCanvas.prototype._doOpenFile = function(source) {
-				this.scope.$emit("presentationLoading", source);
-				this.container.hide();
-				if (!this.canvas) {
-					this.canvas = new webodf.odf.OdfCanvas(this.canvasDom[0]);
-					this.canvas.addListener("statereadychange", _.bind(function() {
-						this._odfLoaded();
-					}, this));
-				}
-
-				this.canvas.setZoomLevel(1);
-				this.canvas.load(source);
-			};
-
 			ODFCanvas.prototype._openFile = function(source) {
-				if (webodf === null) {
-					// load webodf.js lazily
-					require(['webodf'], _.bind(function(webodf_) {
-						console.log("Using webodf.js " + webodf_.webodf.Version);
-
-						webodf = webodf_;
-
-						// monkey-patch IO functions
-						webodf.runtime.orig_readFile = webodf.runtime.readFile;
-						webodf.runtime.readFile = ODFCanvas_readFile;
-						webodf.runtime.orig_loadXML = webodf.runtime.loadXML;
-						webodf.runtime.loadXML = ODFCanvas_loadXML;
-
-						this.scope.$apply(_.bind(function(scope) {
-							this._doOpenFile(source);
-						}, this));
+				if (typeof(source) === "string") {
+					// we can't load urls from inside the sandbox, do so here and transmit the contents
+					$http.get(source, {
+						responseType: "arraybuffer"
+					}).then(_.bind(function(response) {
+						this._openFile(response.data);
 					}, this));
-				} else {
-					this._doOpenFile(source);
+					return;
 				}
+
+				console.log("Opening file", source);
+				sandboxApi.postMessage("openFile", {"source": source});
 			};
 
 			ODFCanvas.prototype._showPage = function(page) {
@@ -200,7 +169,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 							this.redrawPage();
 						}
 						this.currentPageNumber = page;
-						this.canvas.showPage(page);
+						sandboxApi.postMessage("showPage", {"page": page});
 						this.scope.$emit("presentationPageRendering", page);
 						this.scope.$emit("presentationPageRendered", page, this.maxPageNumber);
 					}, this));
@@ -208,22 +177,12 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			};
 
 			ODFCanvas.prototype.redrawPage = function() {
-				if (this.canvas) {
-					switch (this.document_type) {
-					case DOCUMENT_TYPE_PRESENTATION:
-						this.canvas.fitToContainingElement(this.container.width(), this.container.height());
-						break;
-
-					default:
-						this.canvas.fitToWidth(this.container.width());
-						break;
-					}
-				}
+				sandboxApi.postMessage("redrawPage", {"redraw": true});
 			};
 
 			ODFCanvas.prototype.showPage = function(page) {
 				if (page >= 1 && page <= this.maxPageNumber) {
-					if (!this.canvas) {
+					if (!this.doc) {
 						this.pendingPageNumber = page;
 					} else {
 						this._showPage(page);
@@ -231,9 +190,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 				}
 			};
 
-			var container = $($element);
-			var canvas = $($element).find(".odfcanvas");
-			var odfCanvas = new ODFCanvas($scope, container, canvas);
+			odfCanvas = new ODFCanvas($scope, container);
 
 			$scope.$watch("currentPresentation", function(presentation, previousPresentation) {
 				if (presentation) {
@@ -251,6 +208,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 			$scope.$on("$destroy", function() {
 				odfCanvas.close();
 				odfCanvas = null;
+				sandboxApi.destroy();
 			});
 
 			$scope.$watch("currentPageNumber", function(page, oldValue) {
@@ -273,7 +231,7 @@ define(['require', 'underscore', 'jquery'], function(require, _, $) {
 		return {
 			restrict: 'E',
 			replace: true,
-			template: '<div class="canvasContainer odfcontainer"><div class="odfcanvas"></div></div>',
+			template: '<div class="canvasContainer odfcontainer"><iframe allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" sandbox="allow-scripts"></iframe></div>',
 			controller: controller
 		};
 

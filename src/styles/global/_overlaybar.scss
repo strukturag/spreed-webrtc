@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -20,6 +20,7 @@
  */
 
 .overlaybar {
+  // scss-lint:disable QualifyingElement
   background: $overlaybar-background;
   border-bottom: 1px solid #222;
   border-top: 1px solid #222;
@@ -30,12 +31,28 @@
   text-shadow: 0 0 5px #000;
   user-select: none;
   vertical-align: middle;
-}
 
-.overlaybar {
-  // scss-lint:disable QualifyingElement
   &:hover {
     background: $componentfg2;
+  }
+
+  &.notvisible {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+    pointer-events: none;
+
+    &:hover {
+      background: transparent;
+    }
+
+    .overlaybar-content {
+      display: none;
+    }
+
+    .overlaybar-overlay {
+      display: block;
+    }
   }
 
   .btn {
@@ -58,27 +75,6 @@
 
   label {
     padding-top: 6px !important;
-  }
-}
-
-.overlaybar {
-  &.notvisible {
-    background: transparent;
-    border-bottom: 1px solid transparent;
-    border-top: 1px solid transparent;
-    pointer-events: none;
-
-    &:hover {
-      background: transparent;
-    }
-
-    .overlaybar-content {
-      display: none;
-    }
-
-    .overlaybar-overlay {
-      display: block;
-    }
   }
 
   .overlaybar-button {

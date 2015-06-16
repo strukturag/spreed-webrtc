@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -22,7 +22,6 @@
 package main
 
 import (
-	"app/spreed-webrtc-server/sleepy"
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
@@ -32,6 +31,7 @@ import (
 	"github.com/strukturag/goacceptlanguageparser"
 	"github.com/strukturag/httputils"
 	"github.com/strukturag/phoenix"
+	"github.com/strukturag/sloth"
 	"html/template"
 	"log"
 	"net/http"
@@ -196,15 +196,14 @@ func runner(runtime phoenix.Runtime) error {
 	sessionSecretString, err := runtime.GetString("app", "sessionSecret")
 	if err != nil {
 		return fmt.Errorf("No sessionSecret in config file.")
-	} else {
-		sessionSecret, err = hex.DecodeString(sessionSecretString)
-		if err != nil {
-			log.Println("Warning: sessionSecret value is not a hex encoded", err)
-			sessionSecret = []byte(sessionSecretString)
-		}
-		if len(sessionSecret) < 32 {
-			return fmt.Errorf("Length of sessionSecret must be at least 32 bytes.")
-		}
+	}
+	sessionSecret, err = hex.DecodeString(sessionSecretString)
+	if err != nil {
+		log.Println("Warning: sessionSecret value is not a hex encoded", err)
+		sessionSecret = []byte(sessionSecretString)
+	}
+	if len(sessionSecret) < 32 {
+		return fmt.Errorf("Length of sessionSecret must be at least 32 bytes.")
 	}
 
 	if len(sessionSecret) < 32 {
@@ -215,19 +214,18 @@ func runner(runtime phoenix.Runtime) error {
 	encryptionSecretString, err := runtime.GetString("app", "encryptionSecret")
 	if err != nil {
 		return fmt.Errorf("No encryptionSecret in config file.")
-	} else {
-		encryptionSecret, err = hex.DecodeString(encryptionSecretString)
-		if err != nil {
-			log.Println("Warning: encryptionSecret value is not a hex encoded", err)
-			encryptionSecret = []byte(encryptionSecretString)
-		}
-		switch l := len(encryptionSecret); {
-		case l == 16:
-		case l == 24:
-		case l == 32:
-		default:
-			return fmt.Errorf("Length of encryptionSecret must be exactly 16, 24 or 32 bytes to select AES-128, AES-192 or AES-256.")
-		}
+	}
+	encryptionSecret, err = hex.DecodeString(encryptionSecretString)
+	if err != nil {
+		log.Println("Warning: encryptionSecret value is not a hex encoded", err)
+		encryptionSecret = []byte(encryptionSecretString)
+	}
+	switch l := len(encryptionSecret); {
+	case l == 16:
+	case l == 24:
+	case l == 32:
+	default:
+		return fmt.Errorf("Length of encryptionSecret must be exactly 16, 24 or 32 bytes to select AES-128, AES-192 or AES-256.")
 	}
 
 	var turnSecret []byte
@@ -352,10 +350,12 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
+
+	// Simple room handler.
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Add API end points.
-	api := sleepy.NewAPI()
+	api := sloth.NewAPI()
 	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
 	api.AddResource(&Rooms{}, "/rooms")
 	api.AddResource(config, "/config")
@@ -381,6 +381,10 @@ func runner(runtime phoenix.Runtime) error {
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
+
+	// Map everything else to a room when it is a GET.
+	rooms := r.PathPrefix("/").Methods("GET").Subrouter()
+	rooms.HandleFunc("/{room:.*}", httputils.MakeGzipHandler(roomHandler))
 
 	return runtime.Start()
 }

@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -22,7 +22,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gorilla/securecookie"
 	"strings"
@@ -117,7 +116,8 @@ func (s *Session) RemoveSubscriber(id string) {
 	s.mutex.Unlock()
 }
 
-func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, sender Sender) (*DataRoom, error) {
+func (s *Session) JoinRoom(roomName, roomType string, credentials *DataRoomCredentials, sender Sender) (*DataRoom, error) {
+	roomID := s.RoomStatusManager.MakeRoomID(roomName, roomType)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -134,7 +134,7 @@ func (s *Session) JoinRoom(roomID string, credentials *DataRoomCredentials, send
 		})
 	}
 
-	room, err := s.RoomStatusManager.JoinRoom(roomID, credentials, s, s.authenticated(), sender)
+	room, err := s.RoomStatusManager.JoinRoom(roomID, roomName, roomType, credentials, s, s.authenticated(), sender)
 	if err == nil {
 		s.Hello = true
 		s.Roomid = roomID
@@ -310,15 +310,18 @@ func (s *Session) Authorize(realm string, st *SessionToken) (string, error) {
 	defer s.mutex.Unlock()
 
 	if s.Id != st.Id || s.Sid != st.Sid {
-		return "", errors.New("session id mismatch")
+		return "", NewDataError("invalid_session_token", "session id mismatch")
 	}
 	if s.userid != "" {
-		return "", errors.New("session already authenticated")
+		return "", NewDataError("already_authenticated", "session already authenticated")
 	}
 
 	// Create authentication nonce.
 	var err error
 	s.Nonce, err = sessionNonces.Encode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Userid)
+	if err != nil {
+		err = NewDataError("unknown", err.Error())
+	}
 
 	return s.Nonce, err
 
@@ -330,18 +333,18 @@ func (s *Session) Authenticate(realm string, st *SessionToken, userid string) er
 	defer s.mutex.Unlock()
 
 	if s.userid != "" {
-		return errors.New("session already authenticated")
+		return NewDataError("already_authenticated", "session already authenticated")
 	}
 	if userid == "" {
 		if s.Nonce == "" || s.Nonce != st.Nonce {
-			return errors.New("nonce validation failed")
+			return NewDataError("invalid_session_token", "nonce validation failed")
 		}
 		err := sessionNonces.Decode(fmt.Sprintf("%s@%s", s.Sid, realm), st.Nonce, &userid)
 		if err != nil {
-			return err
+			return NewDataError("invalid_session_token", err.Error())
 		}
 		if st.Userid != userid {
-			return errors.New("user id mismatch")
+			return NewDataError("invalid_session_token", "user id mismatch")
 		}
 		s.Nonce = ""
 	}

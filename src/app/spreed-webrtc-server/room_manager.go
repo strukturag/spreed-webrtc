@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2014 struktur AG
+ * Copyright (C) 2013-2015 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -22,15 +22,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 )
 
 type RoomStatusManager interface {
 	RoomUsers(*Session) []*DataSession
-	JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
+	JoinRoom(roomID, roomName, roomType string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error)
 	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
+	MakeRoomID(roomName, roomType string) string
 }
 
 type Broadcaster interface {
@@ -51,16 +53,21 @@ type roomManager struct {
 	sync.RWMutex
 	*Config
 	OutgoingEncoder
-	roomTable map[string]RoomWorker
+	roomTable     map[string]RoomWorker
+	globalRoomID  string
+	defaultRoomID string
 }
 
 func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
-	return &roomManager{
-		sync.RWMutex{},
-		config,
-		encoder,
-		make(map[string]RoomWorker),
+	rm := &roomManager{
+		RWMutex:         sync.RWMutex{},
+		Config:          config,
+		OutgoingEncoder: encoder,
+		roomTable:       make(map[string]RoomWorker),
 	}
+	rm.globalRoomID = rm.MakeRoomID(config.globalRoomID, "")
+	rm.defaultRoomID = rm.MakeRoomID("", "")
+	return rm
 }
 
 func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
@@ -71,12 +78,12 @@ func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
 	return []*DataSession{}
 }
 
-func (rooms *roomManager) JoinRoom(roomID string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
-	if roomID == "" && !rooms.DefaultRoomEnabled {
+func (rooms *roomManager) JoinRoom(roomID, roomName, roomType string, credentials *DataRoomCredentials, session *Session, sessionAuthenticated bool, sender Sender) (*DataRoom, error) {
+	if roomID == rooms.defaultRoomID && !rooms.DefaultRoomEnabled {
 		return nil, NewDataError("default_room_disabled", "The default room is not enabled")
 	}
 
-	roomWorker, err := rooms.GetOrCreate(roomID, credentials, sessionAuthenticated)
+	roomWorker, err := rooms.GetOrCreate(roomID, roomName, roomType, credentials, sessionAuthenticated)
 	if err != nil {
 		return nil, err
 	}
@@ -91,15 +98,18 @@ func (rooms *roomManager) LeaveRoom(roomID, sessionID string) {
 }
 
 func (rooms *roomManager) UpdateRoom(session *Session, room *DataRoom) (*DataRoom, error) {
-	if !session.Hello || session.Roomid != room.Name {
+	var roomID string
+	if room != nil {
+		roomID = rooms.MakeRoomID(room.Name, room.Type)
+	}
+	if !session.Hello || session.Roomid != roomID {
 		return nil, NewDataError("not_in_room", "Cannot update other rooms")
 	}
-	// XXX(lcooper): We'll process and send documents without this field
-	// correctly, however clients cannot not handle it currently.
-	room.Type = "Room"
 	if roomWorker, ok := rooms.Get(session.Roomid); ok {
 		return room, roomWorker.Update(room)
 	}
+	// Set default room type if room was not found.
+	room.Type = rooms.roomTypeDefault
 	// TODO(lcooper): We should almost certainly return an error in this case.
 	return room, nil
 }
@@ -145,7 +155,7 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	return
 }
 
-func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
 	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
 		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
 	}
@@ -167,7 +177,7 @@ func (rooms *roomManager) GetOrCreate(roomID string, credentials *DataRoomCreden
 		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
 	}
 
-	room := NewRoomWorker(rooms, roomID, credentials)
+	room := NewRoomWorker(rooms, roomID, roomName, roomType, credentials)
 	rooms.roomTable[roomID] = room
 	rooms.Unlock()
 	go func() {
@@ -195,4 +205,11 @@ func (rooms *roomManager) GlobalUsers() []*roomUser {
 
 	rooms.RUnlock()
 	return make([]*roomUser, 0)
+}
+
+func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
+	if roomType == "" {
+		roomType = rooms.roomTypeDefault
+	}
+	return fmt.Sprintf("%s:%s", roomType, roomName)
 }

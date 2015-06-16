@@ -29,11 +29,11 @@
 			</div>
 
 			<div ng-show="playbackActive">
-				<div class="row" id="youtubecontainer">
+				<div class="row youtubecontainer">
 					<div class="embed-responsive embed-responsive-16by9">
-						<div id="youtubeplayer"></div>
+						<iframe sandbox="allow-scripts allow-same-origin" class="youtubeplayer"></iframe>
 					</div>
-					<div id="youtubeplayerinfo">
+					<div class="youtubeplayerinfo">
 						<div>{{_('Currently playing')}}<br><a href="{{ currentVideoUrl }}" rel="external" target="_blank">{{ currentVideoUrl }}</a></div>
 					</div>
 					<div class="click-container" ng-show="!isPublisher">
@@ -54,9 +54,9 @@
 		<div class="overlaybar-content">
 			<form class="container-fluid" role="form">
 				<div class="form-group">
-					<label for="youtubeurl">{{_('YouTube video to share')}}</label>
+					<label>{{_('YouTube video to share')}}</label>
 					<div class="overlaybar-input">
-						<input type="text" class="form-control input-lg" ng-disabled="!youtubeAPIReady" id="youtubeurl" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
+						<input type="text" class="form-control input-lg" ng-disabled="!youtubeAPIReady" ng-model="youtubeurl" required placeholder="{{_('YouTube URL')}}">
 						<div class="overlaybar-buttons">
 							<button type="button" class="btn btn-primary" ng-click="shareVideo(youtubeurl)" ng-disabled="youtubeurl === ''">{{_('Share')}}</button>
 						</div>
