@@ -1,3 +1,44 @@
+spreed-webrtc-server (0.24.0) precise; urgency=low
+
+  * Added hover actions on buddy picture in group chat.
+  * Jed.js was updated to 1.1.0 including API update for translations.
+  * Fixed replaced session data receive problem.
+  * Chat rooms are now reenabled on certain conditions.
+  * Session close notification is now always sent both directions.
+  * Reorganized scss.
+  * Improved null pointer handling in server code.
+  * Improved server API names to follow general rules.
+  * TURN and STUN data is now created in constraints service.
+  * Added screen sharing support for Firefox >= 38.
+  * Added video resolution selection for Firefox >= 38.
+  * Split up mediastreamcontroller in multiple parts.
+  * Reconnect delay is now gradually increased.
+  * Added basic romm type support.
+  * Server API was bumped to 1.2.
+  * Added room name support (Server API 1.2).
+  * Slashes are now allowed unquoted in room names.
+  * Spaces are no longer stripped in room path parts.
+  * Sleepy was replaced by external library Sloth.
+  * Authorizing flag is now available in scope to avoid flash of sign-in button.
+  * Copyright was bumped to 2015.
+  * Youtube player now runs in sandboxed iframe.
+  * Allow HD video constraints for Firefox >= 38.
+  * Presentaion (WebODF) now runs in sandboxed iframe.
+  * Example CSP was updated to work with sandboxed iframe of Youtube and WebODF.
+  * Load of web fonts is now detected to avoid fouf.
+  * Added support to enable Opus DTX constraint.
+  * Fixed problem where a stream without audio was added to audio processor.
+  * Added support for renegotiation to web client.
+  * Added audio only styles in web client.
+  * Receiver can now receive a connection without a stream.
+  * Youtube playback now has error handling.
+  * Avoid some fout.
+  * Firefox will now hang up on renegotiation (if enabled).
+  * Styles were split up, so they can be built seperately.
+  * Fixed a problem, where Chrome thought it already had an offer.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 16 Jun 2015 22:50:46 +0200
+
 spreed-webrtc-server (0.23.8) precise; urgency=low
 
   * Session subscriptions now notify close both ways.
