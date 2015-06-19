@@ -28,7 +28,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var streams = {};
+			var streams = this.streams = {};
 			var calls = {};
 
 			var getStreamId = function(stream, currentcall) {
@@ -367,10 +367,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				}
 
 			});
-
-			return {
-				streams: streams
-			};
 
 		}];
 
