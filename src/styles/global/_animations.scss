@@ -28,20 +28,22 @@
   &.ng-hide-add {
     display: block !important;
     opacity: 1;
-    transition: all linear .5s;
+    transition: all linear 0s;
 
     &.ng-hide-add-active {
       opacity: 0;
+      transition: all linear .5s;
     }
   }
 
   &.ng-hide-remove {
     display: block !important;
     opacity: 0;
-    transition: all linear .5s;
+    transition: all linear 0s;
 
     &.ng-hide-remove-active {
       opacity: 1;
+      transition: all linear .5s;
     }
   }
 }
