@@ -31,14 +31,16 @@ define(['require', 'underscore', 'jquery', 'text!partials/odfcanvas_sandbox.html
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
 			var container = $($element);
-
 			var odfCanvas;
-
 			var template = sandboxTemplate;
 			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
 			template = template.replace(/__WEBODF_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/webodf') + ".js"));
 			template = template.replace(/__WEBODF_URL__/g, restURL.createAbsoluteUrl(require.toUrl('webodf') + ".js"));
-			var sandboxApi = sandbox.createSandbox($("iframe", container)[0], template);
+			var sandboxApi = sandbox.createSandbox(container, template, "allow-scripts", null, {
+				allowfullscreen: true,
+				mozallowfullscreen: true,
+				webkitallowfullscreen: true
+			});
 
 			sandboxApi.e.on("message", function(event, message) {
 				var msg = message.data;
@@ -231,7 +233,7 @@ define(['require', 'underscore', 'jquery', 'text!partials/odfcanvas_sandbox.html
 		return {
 			restrict: 'E',
 			replace: true,
-			template: '<div class="canvasContainer odfcontainer"><iframe allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" sandbox="allow-scripts"></iframe></div>',
+			template: '<div class="canvasContainer odfcontainer"></div>',
 			controller: controller
 		};
 

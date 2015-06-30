@@ -112,12 +112,11 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 					sandboxApi = null;
 				}
 				if (!sandboxApi) {
-					var sandboxFrame = $(".youtubeplayer", $element)[0];
 
 					var template = sandboxTemplate;
 					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
 					template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
-					sandboxApi = sandbox.createSandbox(sandboxFrame, template);
+					sandboxApi = sandbox.createSandbox($(".youtubeplayercontainer", $element)[0], template, "allow-scripts allow-same-origin", "youtubeplayer");
 
 					sandboxApi.e.on("message", function(event, message) {
 						var msg = message.data;

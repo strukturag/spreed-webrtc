@@ -24,11 +24,37 @@ define(["jquery", "underscore"], function($, _) {
 
 	return ["$window", function($window) {
 
-		var Sandbox = function(iframe, template) {
-			this.iframe = iframe;
+		var Sandbox = function(container, template, sandbox, className, attrs) {
 			var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
 			this.url = $window.URL.createObjectURL(blob);
-			this.iframe.src = this.url;
+			var iframe;
+			var $container = $(container);
+			if ($container.is("iframe")) {
+				// Container is iframe.
+				if (className) {
+					$container.addClass(className);
+				}
+				if (attrs) {
+					$container.attr(attrs);
+				}
+				iframe = $container[0];
+				iframe.src = this.url;
+				this.created = false;
+			} else {
+				// Create iframe.
+				iframe = $window.document.createElement("iframe");
+				iframe.sandbox = sandbox;
+				if (className) {
+					iframe.className = className;
+				}
+				if (attrs) {
+					$(iframe).attr(attrs);
+				}
+				iframe.src = this.url;
+				$container.append(iframe);
+				this.created = true;
+			}
+			this.iframe = iframe;
 			this.target = this.iframe.contentWindow;
 			this.e = $({});
 			this.handler = _.bind(this.onPostMessageReceived, this);
@@ -46,6 +72,9 @@ define(["jquery", "underscore"], function($, _) {
 			if (this.url) {
 				$window.URL.revokeObjectURL(this.url);
 				this.url = null;
+			}
+			if (this.created) {
+				$(this.iframe).remove();
 			}
 		};
 
@@ -83,8 +112,11 @@ define(["jquery", "underscore"], function($, _) {
 		};
 
 		return {
-			createSandbox: function(iframe, template) {
-				return new Sandbox(iframe, template);
+			createSandbox: function(iframe, template, sandbox, className, attrs) {
+				if (!sandbox) {
+					sandbox = "";
+				}
+				return new Sandbox(iframe, template, sandbox, className, attrs);
 			}
 		};
 
