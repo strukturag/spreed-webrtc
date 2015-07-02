@@ -36,7 +36,7 @@ define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html
 			template = template.replace(/__PDFJS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('pdf') + ".js"));
 			template = template.replace(/__PDFJS_WORKER_URL__/g, restURL.createAbsoluteUrl(require.toUrl('pdf.worker') + ".js"));
 			template = template.replace(/__PDFJS_COMPATIBILITY_URL__/g, restURL.createAbsoluteUrl(require.toUrl('libs/pdf/compatibility') + ".js"));
-			var sandboxApi = sandbox.createSandbox(container, template, "allow-scripts", null, {
+			var sandboxApi = sandbox.createSandbox(container, template, null, "allow-scripts", null, {
 				allowfullscreen: true,
 				mozallowfullscreen: true,
 				webkitallowfullscreen: true

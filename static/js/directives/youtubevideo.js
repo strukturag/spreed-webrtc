@@ -116,7 +116,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 					var template = sandboxTemplate;
 					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
 					template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
-					sandboxApi = sandbox.createSandbox($(".youtubeplayercontainer", $element)[0], template, "allow-scripts allow-same-origin", "youtubeplayer");
+					sandboxApi = sandbox.createSandbox($(".youtubeplayercontainer", $element)[0], template, null, "allow-scripts allow-same-origin", "youtubeplayer");
 
 					sandboxApi.e.on("message", function(event, message) {
 						var msg = message.data;

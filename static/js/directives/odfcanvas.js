@@ -36,7 +36,7 @@ define(['require', 'underscore', 'jquery', 'text!partials/odfcanvas_sandbox.html
 			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
 			template = template.replace(/__WEBODF_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/webodf') + ".js"));
 			template = template.replace(/__WEBODF_URL__/g, restURL.createAbsoluteUrl(require.toUrl('webodf') + ".js"));
-			var sandboxApi = sandbox.createSandbox(container, template, "allow-scripts", null, {
+			var sandboxApi = sandbox.createSandbox(container, template, null, "allow-scripts", null, {
 				allowfullscreen: true,
 				mozallowfullscreen: true,
 				webkitallowfullscreen: true

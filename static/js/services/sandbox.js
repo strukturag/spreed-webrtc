@@ -24,18 +24,35 @@ define(["jquery", "underscore"], function($, _) {
 
 	return ["$window", function($window) {
 
-		var Sandbox = function(container, template, sandbox, className, attrs) {
-			var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
-			this.url = $window.URL.createObjectURL(blob);
+		var Sandbox = function(container, template, url, sandbox, className, attrs) {
+			this.container = container;
+			this.sandbox = sandbox ? sandbox : "";
+			this.className = className;
+			this.attrs = attrs;
+			if (template) {
+				var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
+				this.url = this.blobUrl = $window.URL.createObjectURL(blob);
+			} else if (url) {
+				this.url = url;
+			}
+			if (this.url) {
+				this.create();
+			}
+		};
+
+		Sandbox.prototype.create = function() {
+			if (!this.url) {
+				return;
+			}
 			var iframe;
-			var $container = $(container);
+			var $container = $(this.container);
 			if ($container.is("iframe")) {
 				// Container is iframe.
-				if (className) {
-					$container.addClass(className);
+				if (this.className) {
+					$container.addClass(this.className);
 				}
-				if (attrs) {
-					$container.attr(attrs);
+				if (this.attrs) {
+					$container.attr(this.attrs);
 				}
 				iframe = $container[0];
 				iframe.src = this.url;
@@ -43,12 +60,12 @@ define(["jquery", "underscore"], function($, _) {
 			} else {
 				// Create iframe.
 				iframe = $window.document.createElement("iframe");
-				iframe.sandbox = sandbox;
-				if (className) {
-					iframe.className = className;
+				iframe.sandbox = this.sandbox;
+				if (this.className) {
+					iframe.className = this.className;
 				}
-				if (attrs) {
-					$(iframe).attr(attrs);
+				if (this.attrs) {
+					$(iframe).attr(this.attrs);
 				}
 				iframe.src = this.url;
 				$container.append(iframe);
@@ -69,10 +86,13 @@ define(["jquery", "underscore"], function($, _) {
 				$window.removeEventListener("message", this.handler, false);
 				this.handler = null;
 			}
-			if (this.url) {
-				$window.URL.revokeObjectURL(this.url);
-				this.url = null;
+			if (this.blobUrl) {
+				$window.URL.revokeObjectURL(this.blobUrl);
+				this.blobUrl = null;
 			}
+			this.url = null;
+			this.container = null;
+			this.attrs = null;
 			if (this.created) {
 				$(this.iframe).remove();
 			}
