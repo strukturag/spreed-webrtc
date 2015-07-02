@@ -335,7 +335,7 @@ func runner(runtime phoenix.Runtime) error {
 		runtime.DefaultHTTPSHandler(r)
 	}
 
-	// Add handlers.
+	// Prepare services.
 	buddyImages := NewImageCache()
 	codec := NewCodec(incomingCodecLimit)
 	roomManager := NewRoomManager(config, codec)
@@ -344,6 +344,8 @@ func runner(runtime phoenix.Runtime) error {
 	sessionManager := NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := NewStatsManager(hub, roomManager, sessionManager)
 	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub)
+
+	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
 	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(config.B, makeImageHandler(buddyImages, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
