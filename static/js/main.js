@@ -51,10 +51,6 @@ require.config({
 		'humanize': 'libs/humanize',
 		'sha': 'libs/sha',
 		'sjcl': 'libs/sjcl',
-		'pdf': 'libs/pdf/pdf',
-		'pdf.worker': 'libs/pdf/pdf.worker',
-		'pdf.compatibility': 'libs/pdf/compatibility',
-		'webodf': 'libs/webodf',
 		'bootstrap-file-input': 'libs/bootstrap.file-input',
 		'webfont': 'libs/webfont',
 
@@ -114,20 +110,6 @@ require.config({
 		'mobile-events': {
 			deps: ['jquery'],
 			exports: '$'
-		},
-		'pdf': {
-			deps: ['pdf.compatibility'],
-			exports: 'PDFJS'
-		},
-		'webodf': {
-			exports: 'odf',
-			init: function() {
-				return {
-					webodf: this.webodf,
-					odf: this.odf,
-					runtime: this.runtime
-				};
-			}
 		},
 		'bootstrap-file-input': {
 			deps: ['jquery'],

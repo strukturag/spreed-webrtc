@@ -30,4 +30,5 @@ type Context struct {
 	Languages []string
 	Room      string `json:"-"`
 	Scheme    string `json:"-"`
+	Origin    string `json:",omitempty"`
 }

@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<title>pdf.js Sandbox</title>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src __PARENT_ORIGIN__ 'unsafe-eval'; img-src 'self'; style-src 'unsafe-inline'">
+		<base href="<%.Cfg.B%>">
 		<style type="text/css">
 		html, body {
 			height:100%;
@@ -29,6 +29,6 @@
 		<div id="container">
 			<canvas id="canvas0"></canvas><canvas id="canvas1"></canvas>
 		</div>
-		<script src="__PDFJS_SANDBOX_JS_URL__" data-parent-origin="__PARENT_ORIGIN__" data-pdfjs-url="__PDFJS_URL__"  data-pdfjs-worker-url="__PDFJS_WORKER_URL__" data-pdfjs-compatibility-url="__PDFJS_COMPATIBILITY_URL__"></script>
+		<script src="<%.Cfg.S%>/js/sandboxes/pdf.js" data-parent-origin="<%.Origin%>" data-pdfjs-url="<%.Cfg.S%>/js/libs/pdf/pdf.js" data-pdfjs-worker-url="<%.Cfg.S%>/js/libs/pdf/pdf.worker.js" data-pdfjs-compatibility-url="<%.Cfg.S%>/js/libs/pdf/compatibility.js"></script>
 	</body>
 </html>
