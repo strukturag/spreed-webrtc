@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html'], function(require, _, $, sandboxTemplate) {
+define(['require', 'underscore', 'jquery'], function(require, _, $) {
 
 	return ["$window", "$compile", "$http", "translation", "safeApply", 'restURL', 'sandbox', function($window, $compile, $http, translation, safeApply, restURL, sandbox) {
 
@@ -30,13 +30,8 @@ define(['require', 'underscore', 'jquery', 'text!partials/pdfcanvas_sandbox.html
 
 			var container = $($element);
 			var pdfCanvas;
-			var template = sandboxTemplate;
-			template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
-			template = template.replace(/__PDFJS_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/pdf') + ".js"));
-			template = template.replace(/__PDFJS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('pdf') + ".js"));
-			template = template.replace(/__PDFJS_WORKER_URL__/g, restURL.createAbsoluteUrl(require.toUrl('pdf.worker') + ".js"));
-			template = template.replace(/__PDFJS_COMPATIBILITY_URL__/g, restURL.createAbsoluteUrl(require.toUrl('libs/pdf/compatibility') + ".js"));
-			var sandboxApi = sandbox.createSandbox(container, template, null, "allow-scripts", null, {
+			var url = restURL.sandbox("pdfcanvas");
+			var sandboxApi = sandbox.createSandbox(container, null, url, "allow-scripts", null, {
 				allowfullscreen: true,
 				mozallowfullscreen: true,
 				webkitallowfullscreen: true

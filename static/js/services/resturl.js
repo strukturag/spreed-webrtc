@@ -35,6 +35,9 @@ define(["underscore"], function(_) {
 		RestURL.prototype.api = function(path) {
 			return (context.Cfg.B || "/") + "api/v1/" + path;
 		};
+		RestURL.prototype.sandbox = function(sandbox) {
+			return (context.Cfg.B || "/") + "sandbox/" + $window.location.protocol + "/" + $window.location.host + "/" + sandbox + ".html";
+		};
 		RestURL.prototype.encodeRoomURL = function(name, prefix, cb) {
 			// Split parts so slashes are allowed.
 			var parts = name.split("/");

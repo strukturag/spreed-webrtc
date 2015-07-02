@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<title>WebODF Sandbox</title>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src __PARENT_ORIGIN__; img-src data:; style-src 'unsafe-inline'">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src <%.Origin%>; img-src data:; style-src 'unsafe-inline'">
+		<base href="<%.Cfg.B%>">
 		<style type="text/css">
 		html, body {
 			height:100%;
@@ -35,6 +36,6 @@
 		<div id="container">
 			<div id="odfcanvas"></div>
 		</div>
-		<script src="__WEBODF_SANDBOX_JS_URL__" data-parent-origin="__PARENT_ORIGIN__" data-webodf-url="__WEBODF_URL__"></script>
+		<script src="<%.Cfg.S%>/js/sandboxes/webodf.js" data-parent-origin="<%.Origin%>" data-webodf-url="<%.Cfg.S%>/js/libs/webodf.js"></script>
 	</body>
 </html>
