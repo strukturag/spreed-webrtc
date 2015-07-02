@@ -50,10 +50,7 @@
 			]
 		},
 		{
-			name: 'base',
-			include: [
-				'pdf.compatibility'
-			]
+			name: 'base'
 		},
 		{
 			name: 'app',
@@ -64,14 +61,21 @@
 			inlineText: true,
 		},
 		{
-			name: 'pdf',
+			name: 'libs/pdf/pdf',
 			dir: './out/libs/pdf',
-			exclude: [
-				'base'
-			]
+			override: {
+				skipModuleInsertion: true
+			}
 		},
 		{
-			name: 'pdf.worker',
+			name: 'libs/pdf/compatibility',
+			dir: './out/libs/compatibility',
+			override: {
+				skipModuleInsertion: true
+			}
+		},
+		{
+			name: 'libs/pdf/pdf.worker',
 			dir: './out/libs/pdf',
 			override: {
 				skipModuleInsertion: true
