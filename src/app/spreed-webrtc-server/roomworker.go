@@ -207,10 +207,12 @@ func (r *roomWorker) GetUsers() []*DataSession {
 			}
 		}
 		r.mutex.RUnlock()
-		// Include connections to global room.
-		for _, ec := range r.manager.GlobalUsers() {
-			if !appender(ec) {
-				break
+		if r.id != r.manager.globalRoomID {
+			// Include connections to global room.
+			for _, ec := range r.manager.GlobalUsers() {
+				if !appender(ec) {
+					break
+				}
 			}
 		}
 
