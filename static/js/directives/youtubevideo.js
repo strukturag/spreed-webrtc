@@ -116,6 +116,13 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 					var template = sandboxTemplate;
 					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
 					template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
+					// NOTE(longsleep): Youtube needs to have allow-same-origin
+					// on the sandbox to function. For this reason, the sandbox
+					// frame is loaded from a blob: URL. Bottom line is that the
+					// CSP in the meta tag then does get ignored by Firefox and
+					// the global CSP is used instead. Means if a secure CSP is
+					// set, Youtube player does not work in Firefox. See
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=663570 for details.
 					sandboxApi = sandbox.createSandbox($(".youtubeplayercontainer", $element)[0], template, null, "allow-scripts allow-same-origin", "youtubeplayer");
 
 					sandboxApi.e.on("message", function(event, message) {
