@@ -36,10 +36,13 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	goruntime "runtime"
 	"strconv"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -72,6 +75,20 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	handleRoomView(vars["room"], w, r)
+
+}
+
+func sandboxHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	// NOTE(longsleep): origin_scheme is window.location.protocol (eg. https:, http:).
+	originURL, err := url.Parse(fmt.Sprintf("%s//%s", vars["origin_scheme"], vars["origin_host"]))
+	if err != nil || originURL.Scheme == "" || originURL.Host == "" {
+		http.Error(w, "Invalid origin path", http.StatusBadRequest)
+		return
+	}
+	origin := fmt.Sprintf("%s://%s", originURL.Scheme, originURL.Host)
+	handleSandboxView(vars["sandbox"], origin, w, r)
 
 }
 
@@ -154,6 +171,42 @@ func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+}
+
+func handleSandboxView(sandbox string, origin string, w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+	w.Header().Set("Expires", "-1")
+	w.Header().Set("Cache-Control", "private, max-age=0")
+
+	sandboxTemplateName := fmt.Sprintf("%s_sandbox.html", sandbox)
+
+	// Prepare context to deliver to HTML..
+	if t := templates.Lookup(sandboxTemplateName); t != nil {
+
+		// CSP support for sandboxes.
+		var csp string
+		switch sandbox {
+		case "odfcanvas":
+			csp = fmt.Sprintf("default-src 'none'; script-src %s; img-src data: blob:; style-src 'unsafe-inline'", origin)
+		case "pdfcanvas":
+			csp = fmt.Sprintf("default-src 'none'; script-src %s 'unsafe-eval'; img-src 'self' data: blob:; style-src 'unsafe-inline'", origin)
+		default:
+			csp = "default-src 'none'"
+		}
+		w.Header().Set("Content-Security-Policy", csp)
+
+		// Prepare context to deliver to HTML..
+		context := &Context{Cfg: config, Origin: origin, Csp: true}
+		err := t.Execute(w, &context)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+	} else {
+		http.Error(w, "404 Unknown Sandbox", http.StatusNotFound)
 	}
 
 }
@@ -257,10 +310,21 @@ func runner(runtime phoenix.Runtime) error {
 	config = NewConfig(runtime, tokenProvider != nil)
 
 	// Load templates.
-	tt := template.New("")
-	tt.Delims("<%", "%>")
+	templates = template.New("")
+	templates.Delims("<%", "%>")
 
-	templates, err = tt.ParseGlob(path.Join(rootFolder, "html", "*.html"))
+	// Load html templates folder
+	err = filepath.Walk(path.Join(rootFolder, "html"), func(path string, info os.FileInfo, err error) error {
+		if err == nil {
+			if strings.HasSuffix(path, ".html") {
+				_, err = templates.ParseFiles(path)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return fmt.Errorf("Failed to load templates: %s", err)
 	}
@@ -335,7 +399,7 @@ func runner(runtime phoenix.Runtime) error {
 		runtime.DefaultHTTPSHandler(r)
 	}
 
-	// Add handlers.
+	// Prepare services.
 	buddyImages := NewImageCache()
 	codec := NewCodec(incomingCodecLimit)
 	roomManager := NewRoomManager(config, codec)
@@ -344,6 +408,8 @@ func runner(runtime phoenix.Runtime) error {
 	sessionManager := NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := NewStatsManager(hub, roomManager, sessionManager)
 	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub)
+
+	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
 	r.Handle("/static/img/buddy/{flags}/{imageid}/{idx:.*}", http.StripPrefix(config.B, makeImageHandler(buddyImages, time.Duration(24)*time.Hour)))
 	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
@@ -353,6 +419,9 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Simple room handler.
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
+
+	// Sandbox handler.
+	r.HandleFunc("/sandbox/{origin_scheme}/{origin_host}/{sandbox}.html", httputils.MakeGzipHandler(sandboxHandler))
 
 	// Add API end points.
 	api := sloth.NewAPI()

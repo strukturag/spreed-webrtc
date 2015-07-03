@@ -124,6 +124,7 @@ install:
 	@echo "Installing static resources to: $(SHARE)"
 	$(INSTALL) -d $(BIN)
 	$(INSTALL) -d $(SHARE)/www/html
+	$(INSTALL) -d $(SHARE)/www/html/sandboxes
 	$(INSTALL) -d $(SHARE)/www/static
 	$(INSTALL) -d $(SHARE)/www/static/img
 	$(INSTALL) -d $(SHARE)/www/static/sounds
@@ -133,7 +134,8 @@ install:
 	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) -d $(SHARE)/www/static/js/sandboxes
 	$(INSTALL) bin/$(EXENAME) $(BIN)
-	$(INSTALL) html/* $(SHARE)/www/html
+	$(INSTALL) html/*.html $(SHARE)/www/html
+	$(INSTALL) html/sandboxes/*.html $(SHARE)/www/html/sandboxes
 	$(INSTALL) static/img/* $(SHARE)/www/static/img
 	$(INSTALL) static/sounds/* $(SHARE)/www/static/sounds
 	$(INSTALL) static/fonts/* $(SHARE)/www/static/fonts

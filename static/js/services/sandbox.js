@@ -24,11 +24,54 @@ define(["jquery", "underscore"], function($, _) {
 
 	return ["$window", function($window) {
 
-		var Sandbox = function(iframe, template) {
+		var Sandbox = function(container, template, url, sandbox, className, attrs) {
+			this.container = container;
+			this.sandbox = sandbox ? sandbox : "";
+			this.className = className;
+			this.attrs = attrs;
+			if (template) {
+				var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
+				this.url = this.blobUrl = $window.URL.createObjectURL(blob);
+			} else if (url) {
+				this.url = url;
+			}
+			if (this.url) {
+				this.create();
+			}
+		};
+
+		Sandbox.prototype.create = function() {
+			if (!this.url) {
+				return;
+			}
+			var iframe;
+			var $container = $(this.container);
+			if ($container.is("iframe")) {
+				// Container is iframe.
+				if (this.className) {
+					$container.addClass(this.className);
+				}
+				if (this.attrs) {
+					$container.attr(this.attrs);
+				}
+				iframe = $container[0];
+				iframe.src = this.url;
+				this.created = false;
+			} else {
+				// Create iframe.
+				iframe = $window.document.createElement("iframe");
+				iframe.sandbox = this.sandbox;
+				if (this.className) {
+					iframe.className = this.className;
+				}
+				if (this.attrs) {
+					$(iframe).attr(this.attrs);
+				}
+				iframe.src = this.url;
+				$container.append(iframe);
+				this.created = true;
+			}
 			this.iframe = iframe;
-			var blob = new $window.Blob([template], {type: "text/html;charset=utf-8"});
-			this.url = $window.URL.createObjectURL(blob);
-			this.iframe.src = this.url;
 			this.target = this.iframe.contentWindow;
 			this.e = $({});
 			this.handler = _.bind(this.onPostMessageReceived, this);
@@ -43,9 +86,15 @@ define(["jquery", "underscore"], function($, _) {
 				$window.removeEventListener("message", this.handler, false);
 				this.handler = null;
 			}
-			if (this.url) {
-				$window.URL.revokeObjectURL(this.url);
-				this.url = null;
+			if (this.blobUrl) {
+				$window.URL.revokeObjectURL(this.blobUrl);
+				this.blobUrl = null;
+			}
+			this.url = null;
+			this.container = null;
+			this.attrs = null;
+			if (this.created) {
+				$(this.iframe).remove();
 			}
 		};
 
@@ -83,8 +132,11 @@ define(["jquery", "underscore"], function($, _) {
 		};
 
 		return {
-			createSandbox: function(iframe, template) {
-				return new Sandbox(iframe, template);
+			createSandbox: function(iframe, template, sandbox, className, attrs) {
+				if (!sandbox) {
+					sandbox = "";
+				}
+				return new Sandbox(iframe, template, sandbox, className, attrs);
 			}
 		};
 

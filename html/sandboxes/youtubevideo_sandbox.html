@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<title>YouTube Player Sandbox</title>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src __PARENT_ORIGIN__ https://www.youtube.com https://s.ytimg.com 'unsafe-eval'; frame-src https://www.youtube.com; style-src 'unsafe-inline'">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src <%.Origin%> https://www.youtube.com https://s.ytimg.com 'unsafe-eval'; frame-src https://www.youtube.com; style-src 'unsafe-inline'">
+		<base href="<%.Cfg.B%>">
 		<style type="text/css">
 		html, body {
 			height:100%;
@@ -22,6 +23,6 @@
 	</head>
 	<body>
 		<div id="youtubeplayer"></div>
-		<script src="__YOUTUBE_SANDBOX_JS_URL__" data-parent-origin="__PARENT_ORIGIN__"></script>
+		<script src="<%.Cfg.S%>/js/sandboxes/youtube.js" data-parent-origin="<%.Origin%>"></script>
 	</body>
 </html>

@@ -20,9 +20,9 @@
  */
 
 "use strict";
-define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'text!partials/youtubevideo_sandbox.html', 'bigscreen'], function(require, $, _, moment, template, sandboxTemplate, BigScreen) {
+define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo.html', 'bigscreen'], function(require, $, _, moment, template, BigScreen) {
 
-	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", "restURL", "sandbox", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q, restURL, sandbox) {
+	return ["$window", "$document", "mediaStream", "alertify", "translation", "safeApply", "appData", "$q", "restURL", "sandbox", "$http", function($window, $document, mediaStream, alertify, translation, safeApply, appData, $q, restURL, sandbox, $http) {
 
 		var YOUTUBE_IFRAME_API_URL = "//www.youtube.com/iframe_api";
 
@@ -106,19 +106,14 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			var initialState = null;
 			var sandboxApi = null;
 
-			var createSandboxApi = function(force) {
+			var createSandboxApi = function(force, template) {
 				if (sandboxApi && force) {
 					sandboxApi.destroy();
 					sandboxApi = null;
 				}
 				if (!sandboxApi) {
-					var sandboxFrame = $(".youtubeplayer", $element)[0];
 
-					var template = sandboxTemplate;
-					template = template.replace(/__PARENT_ORIGIN__/g, $window.location.protocol + "//" + $window.location.host);
-					template = template.replace(/__YOUTUBE_SANDBOX_JS_URL__/g, restURL.createAbsoluteUrl(require.toUrl('sandboxes/youtube') + ".js"));
-					sandboxApi = sandbox.createSandbox(sandboxFrame, template);
-
+					sandboxApi = sandbox.createSandbox($(".youtubeplayercontainer", $element)[0], template, null, "allow-scripts allow-same-origin", "youtubeplayer");
 					sandboxApi.e.on("message", function(event, message) {
 						var msg = message.data;
 						var data = msg[msg.type] || {};
@@ -545,12 +540,25 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 				}
 			};
 
-			$scope.loadYouTubeAPI = function() {
-				createSandboxApi(true);
+			$scope.loadYouTubeAPI = function(soft) {
+				var url = restURL.sandbox("youtubevideo");
+				var baseRegex = /<base href=.*>/i;
+				// NOTE(longsleep): Youtube needs to have allow-same-origin
+				// on the sandbox to function. For this reason, the sandbox
+				// frame is loaded from a blob: URL. Bottom line is that the
+				// CSP in the meta tag then does get ignored by Firefox and
+				// the global CSP is used instead. Means if a secure CSP is
+				// set, Youtube player does not work in Firefox. See
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=663570 for details.
+				$http.get(url).success(function(data) {
+					var base = '<base href="'+restURL.createAbsoluteUrl("")+'">';
+					data = data.replace(baseRegex, base);
+					createSandboxApi(!soft, data);
+				});
 			};
 
 			$scope.showYouTubeVideo = function() {
-				createSandboxApi();
+				$scope.loadYouTubeAPI(true);
 				$scope.layout.youtubevideo = true;
 				$scope.$emit("mainview", "youtubevideo", true);
 				if (currentToken) {
