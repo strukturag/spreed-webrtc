@@ -22,141 +22,148 @@
 "use strict";
 define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
-	var SoundInterval = function(sound, id, time) {
-		this.sound = sound;
-		this.id = id;
-		this.interval = null;
-		this.time = time;
-	};
-	SoundInterval.prototype.start = function() {
-		if (this.interval !== null) {
-			return;
-		}
-		var id = this.id;
-		var player = _.bind(function() {
-			return this.sound.play(id);
-		}, this);
-		player();
-		this.interval = setInterval(player, this.time);
-	};
-	SoundInterval.prototype.stop = function() {
-		clearInterval(this.interval);
-		this.interval = null;
-		delete this.sound.intervals[this.id];
-	};
+	// playSound
+	return ["appData", function(appData) {
 
-	var Sound = function(options, aliases) {
-
-		this.sound = null;
-		this.intervals = {};
-		if (options) {
-			this.initialize(options, aliases);
-		}
-
-	};
-
-	Sound.prototype.initialize = function(options, aliases) {
-
-		// Kill all the existing stuff if any.
-		if (this.sound) {
-			this.sound.stop();
-		}
-		_.each(this.intervals, function(i) {
-			i.stop();
-		});
-		this.intervals = {};
-
-		// Add error handler.
-		var onloaderror = options.onloaderror;
-		options.onloaderror = function(event) {
-			console.error("Failed to load sounds", event);
-			if (onloaderror) {
-				onloaderror.apply(this, arguments);
+		var SoundInterval = function(sound, id, time) {
+			this.sound = sound;
+			this.id = id;
+			this.interval = null;
+			this.time = time;
+		};
+		SoundInterval.prototype.start = function() {
+			if (this.interval !== null) {
+				return;
 			}
+			var id = this.id;
+			var player = _.bind(function() {
+				return this.sound.play(id);
+			}, this);
+			player();
+			this.interval = setInterval(player, this.time);
+		};
+		SoundInterval.prototype.stop = function() {
+			clearInterval(this.interval);
+			this.interval = null;
+			delete this.sound.intervals[this.id];
 		};
 
-		// Replace urls with their require generated URLs.
-		var urls = options.urls;
-		if (urls) {
-			var new_urls = [];
-			_.each(urls, function(u) {
-				u = require.toUrl(u);
-				new_urls.push(u);
+		var Sound = function(options, aliases) {
+
+			this.sound = null;
+			this.intervals = {};
+			if (options) {
+				this.initialize(options, aliases);
+			}
+
+		};
+
+		Sound.prototype.initialize = function(options, aliases) {
+
+			// Kill all the existing stuff if any.
+			if (this.sound) {
+				this.sound.stop();
+			}
+			_.each(this.intervals, function(i) {
+				i.stop();
 			});
-			options.urls = new_urls;
-		}
+			this.intervals = {};
 
-		// Create the new shit.
-		this.players = {};
-		this.aliases = _.extend({}, aliases);
-		this.sound = new Howler.Howl(options);
+			// Add error handler.
+			var onloaderror = options.onloaderror;
+			options.onloaderror = function(event) {
+				console.error("Failed to load sounds", event);
+				if (onloaderror) {
+					onloaderror.apply(this, arguments);
+				}
+			};
 
-		return this;
-
-	};
-
-	Sound.prototype.getId = function(id) {
-
-		if (this.aliases.hasOwnProperty(id)) {
-			return this.aliases[id];
-		}
-		return id;
-
-	};
-
-
-	Sound.prototype.play = function(id, interval, autostart) {
-
-		if (!this.sound) {
-			console.log("Play sound but not initialized.", id);
-			return null;
-		}
-
-		id = this.getId(id);
-
-		if (interval) {
-
-			if (this.intervals.hasOwnProperty(id)) {
-				return this.intervals[id];
+			// Replace urls with their require generated URLs.
+			var urls = options.urls;
+			if (urls) {
+				var new_urls = [];
+				_.each(urls, function(u) {
+					u = require.toUrl(u);
+					new_urls.push(u);
+				});
+				options.urls = new_urls;
 			}
-			var i = this.intervals[id] = new SoundInterval(this, id, interval);
-			if (autostart) {
-				i.start();
+
+			// Create the new shit.
+			this.players = {};
+			this.aliases = _.extend({}, aliases);
+			this.sound = new Howler.Howl(options);
+
+			return this;
+
+		};
+
+		Sound.prototype.getId = function(id) {
+
+			if (this.aliases.hasOwnProperty(id)) {
+				return this.aliases[id];
 			}
-			return i;
+			return id;
 
-		} else {
+		};
 
-			var player = this.players[id];
-			var sound = this.sound;
-			if (!player) {
-				player = this.players[id] = (function(id) {
-					var data = {};
-					var cb = function(soundId) {
-						data.soundId = soundId;
-					};
-					var play = _.debounce(function() {
-						if (data.soundId) {
-							sound.stop(data.soundId);
-							data.soundId = null;
-						}
-						sound.play(id, cb);
-					}, 10);
-					return play;
-				}(id));
+		Sound.prototype.play = function(id, interval, autostart) {
+
+			if (!this.sound) {
+				console.log("Play sound but not initialized.", id);
+				return null;
 			}
-			player()
+			if (!this.shouldPlaySound(id)) {
+				return;
+			}
 
-		}
+			id = this.getId(id);
 
-	};
+			if (interval) {
 
-	// Active initialized sound instances are kept here.
-	var registry = {};
-	window.PLAYSOUND = registry; // make available for debug.
+				if (this.intervals.hasOwnProperty(id)) {
+					return this.intervals[id];
+				}
+				var i = this.intervals[id] = new SoundInterval(this, id, interval);
+				if (autostart) {
+					i.start();
+				}
+				return i;
 
-	// playSound
-	return [function() {
+			} else {
+
+				var player = this.players[id];
+				var sound = this.sound;
+				if (!player) {
+					player = this.players[id] = (function(id) {
+						var data = {};
+						var cb = function(soundId) {
+							data.soundId = soundId;
+						};
+						var play = _.debounce(function() {
+							if (data.soundId) {
+								sound.stop(data.soundId);
+								data.soundId = null;
+							}
+							sound.play(id, cb);
+						}, 10);
+						return play;
+					}(id));
+				}
+				player()
+
+			}
+
+		};
+
+		Sound.prototype.shouldPlaySound = function (id) {
+			var data = appData.get();
+			return data && data.master.settings.playSoundEffects;
+		};
+
+		// Active initialized sound instances are kept here.
+		var registry = {};
+		window.PLAYSOUND = registry; // make available for debug.
 
 		return {
 			initialize: function(options, name, aliases) {

@@ -55,7 +55,8 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					audioTypingNoiseDetection: true,
 					videoLeakyBucket: true,
 					videoNoiseReduction: false
-				}
+				},
+				playSoundEffects: true
 			}
 		};
 		$scope.master = angular.copy($scope.defaults);
