@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-04-30 19:22+0200\n"
+"POT-Creation-Date: 2015-07-08 11:02+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -356,6 +356,10 @@ msgstr "기본 방"
 
 msgid "Set alternative room to join at start."
 msgstr "시작시에 다른 방에 합류하도록 설정 되었습니다"
+
+#, fuzzy
+msgid "Notification sounds"
+msgstr "데스크탑에 통보"
 
 msgid "Desktop notification"
 msgstr "데스크탑에 통보"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-04-30 19:22+0200\n"
+"POT-Creation-Date: 2015-07-08 11:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -348,6 +348,9 @@ msgid "Default room"
 msgstr ""
 
 msgid "Set alternative room to join at start."
+msgstr ""
+
+msgid "Notification sounds"
 msgstr ""
 
 msgid "Desktop notification"
