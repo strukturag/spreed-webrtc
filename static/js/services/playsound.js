@@ -22,6 +22,10 @@
 "use strict";
 define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
+	// Active initialized sound instances are kept here.
+	var registry = {};
+	window.PLAYSOUND = registry; // make available for debug.
+
 	// playSound
 	return ["appData", function(appData) {
 
@@ -156,14 +160,10 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
 		};
 
-		Sound.prototype.shouldPlaySound = function (id) {
+		Sound.prototype.shouldPlaySound = function(id) {
 			var data = appData.get();
 			return data && data.master.settings.playSoundEffects;
 		};
-
-		// Active initialized sound instances are kept here.
-		var registry = {};
-		window.PLAYSOUND = registry; // make available for debug.
 
 		return {
 			initialize: function(options, name, aliases) {
