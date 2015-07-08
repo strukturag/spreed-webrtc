@@ -24,6 +24,7 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
 	// Active initialized sound instances are kept here.
 	var registry = {};
+	var disabled = {};
 	window.PLAYSOUND = registry; // make available for debug.
 
 	// playSound
@@ -118,7 +119,7 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 				return null;
 			}
 			if (!this.shouldPlaySound(id)) {
-				return;
+				return null;
 			}
 
 			id = this.getId(id);
@@ -161,6 +162,9 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 		};
 
 		Sound.prototype.shouldPlaySound = function(id) {
+			if (disabled[id]) {
+				return false;
+			}
 			var data = appData.get();
 			return data && data.master.settings.playSoundEffects;
 		};
@@ -198,6 +202,15 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 					time = 1500;
 				}
 				return s.play(id, time);
+			},
+			disable: function(id, status) {
+				// Use disable disable play back of a certain sound id.
+				// Pass status as false to reenable.
+				if (status !== false) {
+					disabled[id] = true;
+				} else {
+					delete disabled[id];
+				}
 			}
 		}
 
