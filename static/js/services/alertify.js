@@ -89,7 +89,38 @@ define(["angular"], function(angular) {
 			});
 		};
 
+		var registeredCustomDialog = [];
 		var dialog = {
+			/**
+			* registerCustom registers a custom dialog. To overwrite an existing custom dialog simply use the same id.
+			*
+			* @param {Object} config Preferences for the custom dialog with the following properties:
+			* @param {String} config.baseType Existing dialog type to use as initial values and from which a template will be used.
+			* @param {String} config.type The ID of the custom dialog. The template name which is saved in $templateCache. If the the type is 'notify' the templateUrl must be '/dialogs/notify.html'.
+			* @param {String} [config.template] A custom template to use for the dialog instead of the baseType template.
+			* @param {String} [config.title] The title which the baseType modal dialog should display. If none is provided the baseType title is used.
+			* @param {String} [config.message] The message which the baseType modal dialog should display.
+			* @param {Function} [config.ok_cb] The callback function to be called on success.
+			* @param {Function} [config.err_cb] The callback function to be called on error.
+			*/
+			registerCustom: function(config) {
+				var conf = angular.extend({}, config);
+				if (!conf ||
+					conf && !conf.type ||
+					conf && !conf.baseType) {
+					throw Error("Custom template not configured correctly.");
+				}
+				var templateUrl = '/dialogs/' + conf.type + '.html';
+				if (conf.template) {
+					$templateCache.put(templateUrl, conf.template);
+				} else {
+					$templateCache.put(templateUrl, $templateCache.get('/dialogs/' + conf.baseType + '.html'));
+				}
+				if (!conf.title) {
+					conf.title = api.defaultMessages[conf.baseType];
+				}
+				registeredCustomDialog[conf.type] = conf;
+			},
 			exec: function(n, title, message, ok_cb, err_cb) {
 				if (!message && title) {
 					message = title;
@@ -103,6 +134,13 @@ define(["angular"], function(angular) {
 					dlg.result.then(ok_cb, err_cb);
 				}
 				return dlg;
+			},
+			custom: function(type) {
+				var config = registeredCustomDialog[type];
+				if (!config) {
+					throw new Error('The custom dialog type "' + type + '" is not registered.');
+				}
+				return dialog.exec(config.type, config.title, config.message, config.ok_cb, config.err_cb);
 			},
 			error: function(title, message, ok_cb, err_cb) {
 				return dialog.exec("error", title, message, ok_cb, err_cb);

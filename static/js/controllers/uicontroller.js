@@ -24,6 +24,12 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
 
+		alertify.dialog.registerCustom({
+			baseType: 'notify',
+			type: 'webrtcUnsupported',
+			message: translation._("Your browser does not support WebRTC. No calls possible.")
+		});
+
 		// Avoid accidential reloads or exits when in a call.
 		$($window).on("beforeunload", function(event) {
 			if (appData.flags.manualUnload || !$scope.peer) {
@@ -714,7 +720,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				return;
 			}
 			if (!$window.webrtcDetectedVersion) {
-				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
+				alertify.dialog.custom("webrtcUnsupported");
 				return;
 			}
 			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
