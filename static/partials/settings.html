@@ -110,6 +110,16 @@
             <span class="help-block">{{_('Set alternative room to join at start.')}}</span>
           </div>
         </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label">{{_('Notification sounds')}}</label>
+          <div class="col-xs-8">
+            <div class="checkbox">
+              <label>
+                 <input type="checkbox" ng-model="user.settings.playSoundEffects"/>&nbsp;
+              </label>
+            </div>
+          </div>
+        </div>
         <div class="form-group" ng-show="desktopNotify.supported">
           <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
           <div class="col-xs-8">
@@ -262,19 +272,6 @@
          <div class="col-xs-4 control-label"></div>
         <div class="col-xs-8">
           <a ng-click="showAdvancedSettings = !showAdvancedSettings"><span ng-show="showAdvancedSettings">{{_('Show advanced settings')}}</span><span ng-hide="showAdvancedSettings">{{_('Hide advanced settings')}}</span></a>
-        </div>
-      </div>
-
-      <div>
-        <legend>{{_('Sound effects')}}</legend>
-        <div class="form-group">
-          <div class="col-xs-8 col-xs-offset-4">
-            <div class="checkbox">
-              <label>
-                 <input type="checkbox" ng-model="user.settings.playSoundEffects"> {{_('Play Sound Effects')}}
-              </label>
-            </div>
-          </div>
         </div>
       </div>
 
