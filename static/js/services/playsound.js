@@ -162,7 +162,7 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 		};
 
 		Sound.prototype.shouldPlaySound = function(id) {
-			if (disabled[id]) {
+			if (disabled.hasOwnProperty(id) && disabled[id] >= 1) {
 				return false;
 			}
 			var data = appData.get();
@@ -204,11 +204,19 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 				return s.play(id, time);
 			},
 			disable: function(id, status) {
-				// Use disable disable play back of a certain sound id.
-				// Pass status as false to reenable.
+				// Disable play back of a certain sound id. Pass status as false to re-enable.
+				if (!disabled.hasOwnProperty(id)) {
+					disabled[id] = 0;
+				}
 				if (status !== false) {
-					disabled[id] = true;
+					// Increment for disable.
+					disabled[id]++;
 				} else {
+					// Decrement for eenable.
+					disabled[id]--;
+				}
+				if (disabled[id] === 0) {
+					// Cleanup when 0.
 					delete disabled[id];
 				}
 			}
