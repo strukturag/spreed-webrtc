@@ -231,6 +231,19 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			mediaStream.webrtc.setAudioMute(cameraMute);
 		});
 
+		$scope.$watch("peer", function(c, o) {
+			// Watch for peer and disable some sounds while there is a peer.
+			if (c && !o) {
+				// New call.
+				playSound.disable("joined");
+				playSound.disable("left");
+			} else if (!c && o) {
+				// No longer in call.
+				playSound.disable("joined", false);
+				playSound.disable("left", false);
+			}
+		});
+
 		var ringer = playSound.interval("ring", null, 4000);
 		var dialer = playSound.interval("dial", null, 4000);
 		var dialerEnabled = false;
