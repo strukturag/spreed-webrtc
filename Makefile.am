@@ -42,7 +42,7 @@ DIST_BIN := $(DIST)/bin
 
 all: build
 
-build: binary assets
+build: get binary assets
 
 gopath:
 	@echo GOPATH=$(GOPATH)
@@ -59,7 +59,11 @@ endif
 
 getupdate: vendorclean get
 
-binary: get
+gpm:
+	@if [ "$(GPM)" = "" ]; then echo "Command 'gpm' not found"; exit 1; fi
+	$(GPM) install
+
+binary:
 	$(GO) build $(GOBUILDFLAGS) -o bin/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
 
 binaryrace: GOBUILDFLAGS := $(GOBUILDFLAGS) -race
