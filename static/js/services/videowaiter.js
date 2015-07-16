@@ -36,7 +36,7 @@ define(["underscore"], function(_) {
 				}
 				return;
 			}
-			var videoTracks = stream.getVideoTracks();
+			var videoTracks = stream && stream.getVideoTracks() || [];
 			//console.log("wait for video", videoTracks.length, video.currentTime, video.videoHeight, video);
 			if (videoTracks.length === 0 && this.count >= 10) {
 				cb(false, video, stream);
