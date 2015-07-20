@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-20 11:05+0200\n"
+"POT-Creation-Date: 2015-07-20 11:29+0200\n"
 "PO-Revision-Date: 2015-07-08 11:02+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
@@ -175,7 +175,7 @@ msgstr "Optionen"
 
 #, python-format
 msgid "Window %d of %d"
-msgstr ""
+msgstr "Fenster %d von %d"
 
 msgid ""
 "On the options menu you can open the settings, activate or deactivate "
