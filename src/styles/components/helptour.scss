@@ -27,7 +27,7 @@ $darken-tour-opacity: .4;
     text-align: center;
 
     hr {
-        margin: 10px 0;
+      margin: 10px 0;
     }
   }
 
@@ -40,7 +40,7 @@ $darken-tour-opacity: .4;
   }
 
   .popover {
-    opacity: 0.95;
+    opacity: .95;
   }
 
   .twoThirdsLeft {
@@ -70,6 +70,7 @@ $darken-tour-opacity: .4;
     left: initial;
     right: 280px;
     top: 70px;
+
     .arrow {
       top: 20%;
     }
@@ -103,8 +104,8 @@ $darken-tour-opacity: .4;
   }
 
   .welcomePane {
-    position: relative;
     margin: 0 auto;
+    position: relative;
     top: 150px;
 
     .btn {
