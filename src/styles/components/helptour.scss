@@ -43,6 +43,20 @@ $darken-tour-opacity: .4;
     opacity: 0.95;
   }
 
+  .twoThirdsLeft {
+
+    &.popover > .arrow {
+      left: 75%;
+    }
+  }
+
+  .oneThirdLeft {
+
+    &.popover > .arrow {
+      left: 25%;
+    }
+  }
+
   .roomPane {
     left: 10px;
     top: 97px;
