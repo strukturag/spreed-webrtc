@@ -585,15 +585,13 @@ msgid "Hide advanced settings"
 msgstr "Erweiterte Einstellungen ausblenden"
 
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
-#, fuzzy
 msgid "Tour features"
-msgstr "Ihr Bild"
+msgstr "Tour Funktionen"
 
-#, fuzzy
-msgid "Take tour"
-msgstr "Bild machen"
+msgid "Take Tour"
+msgstr "Tour starten"
 
 msgid "Remember settings"
 msgstr "Einstellungen merken"
