@@ -10,7 +10,8 @@ go:
   - tip
 
 env:
-  - GEM_HOME=/var/lib/gems/1.9.1
+  - GEM_HOME=/var/lib/gems/1.9.1 USE_GODEPS=0
+  - GEM_HOME=/var/lib/gems/1.9.1 USE_GODEPS=1
 
 before_install:
   - sudo add-apt-repository -y ppa:chris-lea/node.js
@@ -21,11 +22,13 @@ install:
   - sudo gem1.9.1 install compass
   - sudo gem1.9.1 install scss-lint
   - npm install
+  - if [ "$USE_GODEPS" = "1" ]; then wget https://raw.githubusercontent.com/pote/gpm/v1.3.2/bin/gpm && chmod +x gpm && sudo mv gpm /usr/local/bin; fi
 
 script:
   - ./autogen.sh
   - ./configure
-  - make get
+  - if [ "$USE_GODEPS" = "0" ]; then make get; fi
+  - if [ "$USE_GODEPS" = "1" ]; then make gpm; fi
   - make styleshint
   # TODO(fancycode): enable styleslint once all styles have been fixed
   # - make styleslint
