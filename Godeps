@@ -1,11 +1,11 @@
 github.com/gorilla/context						215affda49addc4c8ef7e2534915df2c8c35c6cd
-github.com/gorilla/mux							94903de8c98a68d8b4483c529b26a5d146e386a2
-github.com/gorilla/securecookie					1b0c7f6e9ab3d7f500fd7d50c7ad835ff428139b
-github.com/gorilla/websocket					1e6e1281b05fe5eaaf3300bdedb8e75880b9c6fd
+github.com/gorilla/mux							ba336c9cfb43552c90de6cb2ceedd3271c747558
+github.com/gorilla/securecookie					aeade84400a85c6875264ae51c7a56ecdcb61751
+github.com/gorilla/websocket					6eb6ad425a89d9da7a5549bc6da8f79ba5c17844
 github.com/longsleep/pkac						0.0.1
-github.com/satori/go.uuid						46e1db27972f44c7722f23195ba6a8d2c2f3a0a3
+github.com/satori/go.uuid						afe1e2ddf0f05b7c29d388a3f8e76cb15c2231ca
 github.com/strukturag/goacceptlanguageparser	goacceptlanguageparser_v100
 github.com/strukturag/httputils					httputils_v012
-github.com/strukturag/phoenix					phoenix_v0130
+github.com/strukturag/phoenix					phoenix_v0131
 github.com/strukturag/sloth						v0.9.2
 code.google.com/p/goconf/...					a4db5c465ed1
