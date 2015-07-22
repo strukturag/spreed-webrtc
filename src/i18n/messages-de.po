@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-08 11:02+0200\n"
+"POT-Creation-Date: 2015-07-20 11:29+0200\n"
 "PO-Revision-Date: 2015-07-08 11:02+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
@@ -170,6 +170,167 @@ msgstr "Nochmal versuchen"
 msgid "Download failed."
 msgstr "Fehler beim Download."
 
+msgid "Options menu"
+msgstr "Optionen"
+
+#, python-format
+msgid "Window %d of %d"
+msgstr "Fenster %d von %d"
+
+msgid ""
+"On the options menu you can open the settings, activate or deactivate "
+"your camera and microphone. You also can open the contact manager or the "
+"chat view to open a group chat. During a call you have further options "
+"like sharing your screen, sharing a file as presentation, or even a "
+"YouTube Video."
+msgstr ""
+"Hier können Sie die Einstellungen öffnen und Ihre Kamera oder Ihr "
+"Mikrophon aktivieren und dekativieren. Sie können auch den Kontaktmanager"
+" oder die Chatansicht, um den Gruppenchat zu aktivieren, öffnen. Während "
+"eines Calls können Sie weitere Optionen wählen wie Screensharing starten,"
+" eine Präsentation hochladen oder ein YouTube-Video einzufügen."
+
+msgid "Cancel Tour"
+msgstr "Tour abbrechen"
+
+msgid "Continue Tour"
+msgstr "Tour fortsetzen"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid ""
+"Complete your profile by adding your name and picture. You also can enter"
+" a status message. If you want, you can change further settings like your"
+" camera, video quality, or language. Confirm your settings with a click "
+"on \"close\"."
+msgstr ""
+"Vervollständigen Sie Ihr Profil, indem Sie Ihren Namen und ein Bild "
+"hinzufügen. Sie können auch eine Statusnachricht eingeben oder weitere "
+"Einstellungen bearbeiten, z.B. Kamera, Videoqualität und Sprache-"
+"Einstellungen. Bestätigen Sie die Änderungen mit einem Klick auf "
+"“Schließen”."
+
+msgid "Rooms"
+msgstr "Räume"
+
+msgid ""
+"Create a new room or enter the name of an existing room and click on the "
+"icon to enter the room. You can share the room by email, Facebook, "
+"Twitter, Google+, and Xing. Your contacts can meet you without creating "
+"an account. "
+msgstr ""
+"Erstellen Sie einen neuen Raum oder geben den Namen eines bestehenden ein"
+" und klicken auf das Icon, um ihn zu betreten. Teilen Sie den Raum per "
+"Mail, Facebook, Twitter, Google+ und Xing. Ihre Kontakte können Sie "
+"treffen, ohne dafür ein eigenes Konto anzulegen."
+
+msgid "Buddies"
+msgstr "Buddies"
+
+msgid ""
+"A buddy is a person in the same room. Want to call or chat with them? "
+"Simply hover over a buddy and start a conversation. Group calls and chats"
+" are also possible. "
+msgstr ""
+"Ein Buddy ist eine Person im selben Raum. Möchten Sie anrufen oder "
+"chatten? Fahren Sie mit Ihrer Maus über den Namen und wählen Sie aus, ob "
+"Sie ihn anrufen oder anchatten wollen. Fügen Sie weitere Personen für ein"
+" Gruppengespräch hinzu."
+
+msgid "Contacts"
+msgstr "Kontakte"
+
+msgid ""
+"When a buddy and you are logged in you can add him as a contact. Just "
+"click on the unfilled star to send a contact request. He is in your "
+"contact list when the star is filled. You can call or chat with a contact"
+" even when you are in different rooms."
+msgstr ""
+"Sie können einen Buddy als Kontakt hinzufügen, wenn Sie beide angemeldet "
+"sind. Klicken Sie einfach auf den unausgefüllten Stern, um eine "
+"Kontaktanfrage zu senden. Wenn der Stern ausgefüllt ist, befindet sich "
+"der Kontakt in Ihrer Kontaktliste. Telefonieren oder chatten Sie "
+"miteinander, selbst wenn Sie sich in verschiedenen Räumen befinden."
+
+msgid "Chat"
+msgstr "Chat"
+
+msgid ""
+"You can chat with everyone in a room (room chat) or with a buddy. You "
+"also can share a file or your location within the chat. While chatting "
+"with a buddy, you can start a call from the chat window."
+msgstr ""
+"Chatten Sie mit anderen in einem Raum (Raumchat) oder mit einem Buddy. "
+"Teilen Sie während des Gesprächs Dateien oder Ihren Standort. Wenn Sie "
+"mit einem Buddy chatten, können Sie Ihn auch über das Chatfenster "
+"anrufen."
+
+msgid "Contacts Manager"
+msgstr "Kontakt-Manager"
+
+msgid ""
+"With the contact manager you can manage your contacts. You can call or "
+"chat with your contacts even if you are in different rooms. You also can "
+"change the name of your contacts."
+msgstr ""
+"Ihre Kontakte können Sie auch mit dem Kontakt-Manager verwalten. Sie "
+"können Ihre Kontakte vom Manger aus anrufen oder anchatten, auch wenn Sie"
+" sich in unterschiedlichen Räumen aufhalten. Sie können auch die Namen "
+"der Kontakte abändern."
+
+msgid "Microphone / Camera"
+msgstr "Mikrofon / Kamera"
+
+msgid ""
+"Click on the eye icon to deactivate or activate your camera. Click on the"
+" microphone to mute and unmute your microphone. You can change the "
+"setting before or during a call."
+msgstr ""
+"Klicken Sie auf das Augen-Icon, um Ihre Kamera bei einem Call zu "
+"aktivieren oder zu deaktivieren. Mit einem Klick auf das Mikrofon-Icon "
+"können Sie Ihr Mikrofon stumm oder laut schalten. Sie können die "
+"Einstellungen vor oder während einem Call durchführen."
+
+msgid "Start your video calls now!"
+msgstr "Starten Sie jetzt mit Ihren Calls!"
+
+msgid ""
+"Go on, invite your friends and start your calls. You can restart the tour"
+" anytime you want in \"Settings\"."
+msgstr ""
+"Laden Sie Ihre Freunde ein und starten einen Call. Sie können die Tour "
+"jederzeit über die Einstllungen erneut Starten."
+
+msgid "Exit Tour."
+msgstr "Tour beenden"
+
+msgid "Replay Tour"
+msgstr "Tour wiederholen"
+
+msgid "Welcome to Spreed WebRTC!"
+msgstr "Willkommen bei Spreed WebRTC!"
+
+msgid ""
+"Spreed WebRTC is your personal online presence and virtual classroom. It "
+"is complete with content library, document sharing, and P2P file sharing."
+" Start your presence or training with a blink: simply select the contacts"
+" you want to include."
+msgstr ""
+"Spreed WebRTC ist Ihre persönliche Online-Präsenz und virtueller "
+"Klassenraum. Sie könner ihre Dokumente via P2P-File-Sharing mit anderen "
+"teilen oder als Präsentation gemeinsam betrachten. Starten Sie sofort: "
+"Wählen Sie einfach die Kontakte aus, die Sie einladen möchten."
+
+msgid "Do you want to take a tour?"
+msgstr "Möchten Sie einen Rundgang machen?"
+
+msgid "No, thanks."
+msgstr "Nein, danke."
+
+msgid "Yes, show me Spreed WebRTC."
+msgstr "Ja, zeigen Sie mir Spreed WebRTC"
+
 msgid "Share a YouTube video"
 msgstr "Ein YouTube Video teilen"
 
@@ -179,20 +340,11 @@ msgstr "Datei als Präsentation teilen."
 msgid "Share your screen"
 msgstr "Bildschirm freigeben"
 
-msgid "Chat"
-msgstr "Chat"
-
-msgid "Contacts"
-msgstr "Kontakte"
-
 msgid "Mute microphone"
 msgstr "Mikrofon abschalten"
 
 msgid "Turn camera off"
 msgstr "Kamera abschalten"
-
-msgid "Settings"
-msgstr "Einstellungen"
 
 msgid "Loading presentation ..."
 msgstr "Präsentation wird geladen..."
@@ -432,6 +584,15 @@ msgstr "Erweiterte Einstellungen anzeigen"
 msgid "Hide advanced settings"
 msgstr "Erweiterte Einstellungen ausblenden"
 
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "Tour features"
+msgstr "Tour Funktionen"
+
+msgid "Take Tour"
+msgstr "Tour starten"
+
 msgid "Remember settings"
 msgstr "Einstellungen merken"
 
@@ -619,11 +780,11 @@ msgstr "Ihre Kontaktanfrage wurde abgelehnt."
 msgid "Edit Contact"
 msgstr "Kontakt bearbeiten"
 
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "Ihr Browser unterstützt kein WebRTC. Keine Anrufe möglich."
+
 msgid "Close this window and disconnect?"
 msgstr "Fenster schließen und die Verbindung trennen?"
-
-msgid "Contacts Manager"
-msgstr "Kontakte"
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""
@@ -667,9 +828,6 @@ msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
 "Ihr Browser wird nicht unterstützt. Bitte aktualisieren Sie auf eine "
 "aktuelle Version."
-
-msgid "Your browser does not support WebRTC. No calls possible."
-msgstr "Ihr Browser unterstützt kein WebRTC. Keine Anrufe möglich."
 
 msgid "Chat with"
 msgstr "Chat mit"

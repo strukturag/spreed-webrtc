@@ -1,0 +1,160 @@
+/*
+ * Spreed WebRTC.
+ * Copyright (C) 2013-2014 struktur AG
+ *
+ * This file is part of Spreed WebRTC.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+$darken-tour-opacity: .4;
+
+.helptour {
+
+  .tourControl {
+    text-align: center;
+
+    hr {
+      margin: 10px 0;
+    }
+  }
+
+  .in {
+    display: block;
+  }
+
+  .slideInfo {
+    float: right;
+  }
+
+  .popover {
+    opacity: .95;
+  }
+
+  .twoThirdsLeft {
+
+    &.popover > .arrow {
+      left: 75%;
+    }
+  }
+
+  .oneThirdLeft {
+
+    &.popover > .arrow {
+      left: 25%;
+    }
+  }
+
+  .roomPane {
+    left: 10px;
+    top: 97px;
+
+    .arrow {
+      left: 10%;
+    }
+  }
+
+  .buddyListPane {
+    left: initial;
+    right: 280px;
+    top: 70px;
+
+    .arrow {
+      top: 20%;
+    }
+  }
+
+  .chatPane {
+    left: initial;
+    right: 540px;
+    top: 70px;
+
+    .arrow {
+      top: 20%;
+    }
+  }
+
+  .settingsPane {
+    left: initial;
+    right: 540px;
+    top: 200px;
+
+    .arrow {
+      top: 20%;
+    }
+  }
+
+  .optionsPane {
+    float: right;
+    margin-right: 20px;
+    position: relative;
+    top: 71px;
+  }
+
+  .welcomePane {
+    margin: 0 auto;
+    position: relative;
+    top: 150px;
+
+    .btn {
+      margin-top: 10px;
+    }
+  }
+}
+
+.helptourShowRoomPane {
+  // scss-lint:disable IdSelector
+  #bar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+
+  .overlaybar {
+    background: $componentfg2;
+  }
+}
+
+.helptourShowSettingsPane {
+  // scss-lint:disable IdSelector
+  #roombar {
+    opacity: $darken-tour-opacity;
+  }
+}
+
+.helptourShowOptionsPane,
+.helptourShowChatPane {
+  // scss-lint:disable IdSelector
+  #roombar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+}
+
+.helptourShowBuddyListPane {
+  // scss-lint:disable IdSelector
+  #bar,
+  #roombar {
+    opacity: $darken-tour-opacity;
+  }
+}
+
+.helptourShowWelcomePane {
+  // scss-lint:disable IdSelector
+  #bar,
+  #roombar,
+  #buddylist {
+    opacity: $darken-tour-opacity;
+  }
+}

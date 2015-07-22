@@ -55,7 +55,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', '$rootScope', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout, $rootScope) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -84,6 +84,10 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					$scope.saveSettings();
 				}
 			});
+
+			$scope.takeTour = function() {
+				$rootScope.$broadcast('showHelpTourStart');
+			};
 
 			$scope.saveSettings = function() {
 				var form = $scope.settingsform;

@@ -1,0 +1,16 @@
+<div>
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="$close()">×</button>
+    <h3 class="modal-title">{{_('Welcome to Spreed WebRTC!')}}</h3>
+  </div>
+  <div  class="modal-body">
+    <p>{{_('Spreed WebRTC is your personal online presence and virtual classroom. It is complete with content library, document sharing, and P2P file sharing. Start your presence or training with a blink: simply select the contacts you want to include.')}}</p>
+    <p>{{_('Do you want to take a tour?')}}</p>
+  </div>
+  <div class="modal-footer">
+    <div class="pull-right">
+      <button class="btn btn-default" ng-click="$dismiss()">{{_('No, thanks.')}}</button>
+      <button class="btn btn-primary" ng-click="goTour()">{{_('Yes, show me Spreed WebRTC.')}}</button>
+    </div>
+  </div>
+</div>
