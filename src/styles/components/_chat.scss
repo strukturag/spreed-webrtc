@@ -42,6 +42,18 @@
     width: auto;
   }
 
+  &.withChatMaximized #chat .message {
+    @include breakpt($breakpoint-large, max-width) {
+      max-width: 55%;
+    }
+    @include breakpt($breakpoint-medium, max-width) {
+      max-width: 70%;
+    }
+    @include breakpt($breakpoint-small, max-width) {
+      max-width: 85%;
+    }
+  }
+
   .chat {
     pointer-events: auto;
   }
@@ -289,6 +301,7 @@
     padding: 8px 8px 4px 8px;
     position: relative;
     word-wrap: break-word;
+    max-width: 85%;
 
     ul {
       list-style-type: none;
