@@ -383,7 +383,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								// Make sure we are not in group chat or the message is from ourselves
 								// before we beep and shout.
 								if (!subscope.isgroupchat && from !== sessionid) {
-									playSound.play("message1");
+									playSound.play("chatmessage");
 									desktopNotify.notify(translation._("Message from ") + displayName(from), message);
 									appData.e.triggerHandler("uiNotification", ["chatmessage", {from: from, message: message, first: subscope.firstmessage}]);
 								}

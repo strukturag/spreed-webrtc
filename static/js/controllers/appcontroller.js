@@ -56,7 +56,11 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					videoLeakyBucket: true,
 					videoNoiseReduction: false
 				},
-				playSoundEffects: true
+				sound: {
+					incomingMessages: true,
+					incomingCall: true,
+					roomJoinLeave: false
+				}
 			}
 		};
 		$scope.master = angular.copy($scope.defaults);
@@ -67,6 +71,7 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 				$scope.updateStatus();
 			}
 			$scope.refreshWebrtcSettings();
+			$scope.refreshSoundSettings();
 		};
 
 		$scope.reset = function() {

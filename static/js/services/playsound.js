@@ -28,7 +28,7 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 	window.PLAYSOUND = registry; // make available for debug.
 
 	// playSound
-	return ["appData", function(appData) {
+	return [function() {
 
 		var SoundInterval = function(sound, id, time) {
 			this.sound = sound;
@@ -112,17 +112,14 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 
 		};
 
-		Sound.prototype.play = function(id, interval, autostart) {
+		Sound.prototype.play = function(name, interval, autostart) {
 
 			if (!this.sound) {
-				console.log("Play sound but not initialized.", id);
-				return null;
-			}
-			if (!this.shouldPlaySound(id)) {
+				console.log("Play sound but not initialized.", name);
 				return null;
 			}
 
-			id = this.getId(id);
+			var id = this.getId(name);
 
 			if (interval) {
 
@@ -136,6 +133,10 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 				return i;
 
 			} else {
+
+				if (!this.shouldPlaySound(name) || !this.shouldPlaySound(id)) {
+					return;
+				}
 
 				var player = this.players[id];
 				var sound = this.sound;
@@ -162,11 +163,10 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 		};
 
 		Sound.prototype.shouldPlaySound = function(id) {
-			if (disabled.hasOwnProperty(id) && disabled[id] >= 1) {
+			if (disabled.all || disabled.hasOwnProperty(id)) {
 				return false;
 			}
-			var data = appData.get();
-			return data && data.master.settings.playSoundEffects;
+			return true;
 		};
 
 		return {
@@ -204,19 +204,9 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 				return s.play(id, time);
 			},
 			disable: function(id, status) {
-				// Disable play back of a certain sound id. Pass status as false to re-enable.
-				if (!disabled.hasOwnProperty(id)) {
-					disabled[id] = 0;
-				}
 				if (status !== false) {
-					// Increment for disable.
-					disabled[id]++;
+					disabled[id] = true;
 				} else {
-					// Decrement for eenable.
-					disabled[id]--;
-				}
-				if (disabled[id] === 0) {
-					// Cleanup when 0.
 					delete disabled[id];
 				}
 			}

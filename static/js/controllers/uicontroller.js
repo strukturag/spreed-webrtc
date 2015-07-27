@@ -88,7 +88,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			"end": "end1",
 			"dial": "ringtone1",
 			"connect": "connect1",
-			"prompt": "question1"
+			"prompt": "question1",
+			"chatmessage": "message1"
 		});
 
 		var displayName = safeDisplayName;
@@ -164,6 +165,16 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
+		$scope.refreshSoundSettings = function() {
+			var s = $scope.master.settings.sound;
+			playSound.disable("chatmessage", !s.incomingMessages);
+			playSound.disable("ring", !s.incomingCall);
+			var roomJoinLeave = $scope.peer ? false : s.roomJoinLeave; // Do not play these sounds when in call.
+			playSound.disable("joined", !roomJoinLeave);
+			playSound.disable("left", !roomJoinLeave);
+		};
+		$scope.refreshSoundSettings(); // Call once on bootstrap;
+
 		var pickupTimeout = null;
 		var autoAcceptTimeout = null;
 		$scope.updateAutoAccept = function(id, from) {
@@ -235,12 +246,10 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			// Watch for peer and disable some sounds while there is a peer.
 			if (c && !o) {
 				// New call.
-				playSound.disable("joined");
-				playSound.disable("left");
+				$scope.refreshSoundSettings();
 			} else if (!c && o) {
 				// No longer in call.
-				playSound.disable("joined", false);
-				playSound.disable("left", false);
+				$scope.refreshSoundSettings();
 			}
 		});
 

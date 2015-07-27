@@ -110,16 +110,7 @@
             <span class="help-block">{{_('Set alternative room to join at start.')}}</span>
           </div>
         </div>
-        <div class="form-group">
-          <label class="col-xs-4 control-label">{{_('Notification sounds')}}</label>
-          <div class="col-xs-8">
-            <div class="checkbox">
-              <label>
-                 <input type="checkbox" ng-model="user.settings.playSoundEffects"/>&nbsp;
-              </label>
-            </div>
-          </div>
-        </div>
+        <legend>{{_('Notifications')}}</legend>
         <div class="form-group" ng-show="desktopNotify.supported">
           <label class="col-xs-4 control-label">{{_('Desktop notification')}}</label>
           <div class="col-xs-8">
@@ -128,6 +119,24 @@
               <p class="form-control-static text-error" ng-switch-when="denied"><i class="fa fa-exclamation-triangle"></i>{{_('Denied - check your browser settings')}}</p>
               <p class="form-control-static text-success" ng-switch-when="granted"><i class="fa fa-ok"></i>{{_('Allowed')}}</p>
             </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label"><input type="checkbox" ng-model="user.settings.sound.incomingMessages"/></label>
+          <div class="col-xs-8">
+            <div class="form-control-static">{{_('Sounds for incoming messages')}}</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label"><input type="checkbox" ng-model="user.settings.sound.incomingCall"/></label>
+          <div class="col-xs-8">
+            <div class="form-control-static">{{_('Ring on incoming calls')}}</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-4 control-label"><input type="checkbox" ng-model="user.settings.sound.roomJoinLeave"/></label>
+          <div class="col-xs-8">
+            <div class="form-control-static">{{_('Sounds for users in current room')}}</div>
           </div>
         </div>
       </settings-settings>
@@ -268,8 +277,10 @@
 
       </settings-advanced>
 
+      <hr/>
+
       <div class="form-group">
-         <div class="col-xs-4 control-label"></div>
+        <div class="col-xs-4 control-label"></div>
         <div class="col-xs-8">
           <a ng-click="showAdvancedSettings = !showAdvancedSettings"><span ng-show="showAdvancedSettings">{{_('Show advanced settings')}}</span><span ng-hide="showAdvancedSettings">{{_('Hide advanced settings')}}</span></a>
         </div>
