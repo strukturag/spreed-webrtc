@@ -286,7 +286,7 @@
     clear: both;
     display: block;
     margin: 0 4px 2px 18px;
-    padding: 8px;
+    padding: 8px 8px 4px 8px;
     position: relative;
     word-wrap: break-word;
 
@@ -322,7 +322,7 @@
 
     li {
       line-height: 1.1em;
-      margin: 4px 0;
+      margin: 0 0 4px 0;
       padding-left: 1.2em;
       position: relative;
 
@@ -406,6 +406,7 @@
     }
 
     &.is_remote {
+      float: left;
       background: $chat-msg-remote-background;
 
       &:before {  // arrow border
@@ -426,6 +427,7 @@
     }
 
     &.is_self {
+      float: right;
       background: $chat-msg-self-background;
       margin-left: 4px;
       margin-right: 18px;
@@ -448,7 +450,6 @@
       }
 
       li:before {
-        color: $chat-msg-default-icon-color;
         transform: scale(-1, 1);
       }
 
