@@ -177,15 +177,15 @@
 
   &.with_pictures .message {
     &.is_self {
-      padding-right: 54px;
+      padding-right: 34px;
 
       .timestamp {
-        right: 58px;
+        right: 45px;
       }
     }
 
     &.is_remote {
-      padding-left: 58px;
+      padding-left: 44px;
     }
   }
 
@@ -378,18 +378,19 @@
     .buddyPicture {
       background: $actioncolor1;
       border-radius: 2px;
-      height: 46px;
+      font-size: .7em;
+      height: 30px;
       left: 4px;
       overflow: hidden;
       position: absolute;
       text-align: center;
       top: 4px;
-      width: 46px;
+      width: 30px;
       z-index: 0;
 
       .#{$fa-css-prefix} {
         color: $actioncolor2;
-        line-height: 46px;
+        line-height: 30px;
       }
 
       img {
@@ -480,7 +481,6 @@
         z-index: initial;
 
         &:hover .buddyInfoActions {
-          height: 40px;
           opacity: 1;
         }
       }
@@ -488,20 +488,23 @@
       .buddyInfoActions {
         cursor: default;
         display: inline-block;
-        height: 0;
+        height: 40px;
         left: 0;
         opacity: 0;
         overflow: hidden;
         position: absolute;
-        top: 48px;
-        transition: opacity 0.1s .1s linear, height .4s .1s ease-out;
+        top: 32px;
+        transition: opacity 0.1s .1s linear;
         white-space: nowrap;
         z-index: 1;
 
         .btn-group {
           display: block;
           margin: 0 auto;
-          width: 55px;
+          width: 70px;
+          .btn {
+            width:35px;
+          }
         }
 
         .btn-primary {
