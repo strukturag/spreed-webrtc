@@ -434,7 +434,7 @@
       &:before { // arrow border
         border-color: transparent $chat-arrow-border;
         border-width: 7px 0 7px 11px;
-        bottom: 4px;
+        top: 4px;
         bottom: auto;
         right: -12px;
       }
@@ -442,7 +442,7 @@
       &:after { // arrow background
         border-color: transparent $chat-msg-self-background;
         border-width: 6px 0 6px 10px;
-        bottom: 5px;
+        top: 5px;
         bottom: auto;
         right: -11px;
       }
