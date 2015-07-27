@@ -83,19 +83,6 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 				}
 			}
 		});
-		if (window.webrtcDetectedBrowser === "firefox" && window.webrtcDetectedVersion < 38) {
-			// Firefox < 38 needs a extra require field.
-			var r = [];
-			if (c.height) {
-				r.push("height");
-			}
-			if (c.width) {
-				r.push("width");
-			}
-			if (r.length) {
-				c.require = r;
-			}
-		}
 		return c;
 	};
 	// Adapter to support navigator.mediaDevices API.

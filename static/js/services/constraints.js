@@ -128,23 +128,24 @@
 		};
 
 		service.iceServers = function(constraints) {
-
-			var iceServers = [];
-			var iceServer;
-			if (service.stun && service.stun.length) {
-				iceServer = $window.createIceServers(service.stun);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer)
+			var createIceServers = function(urls, username, password) {
+				var s = {
+					urls: urls
 				}
+				if (username) {
+					s.username = username;
+					s.credential = password;
+				}
+				return s;
+			};
+			var iceServers = [];
+			if (service.stun && service.stun.length) {
+				iceServers.push(createIceServers(service.stun));
 			}
 			if (service.turn && service.turn.urls && service.turn.urls.length) {
-				iceServer = $window.createIceServers(service.turn.urls, service.turn.username, service.turn.password);
-				if (iceServer.length) {
-					iceServers.push.apply(iceServers, iceServer)
-				}
+				iceServers.push(createIceServers(service.turn.urls, service.turn.username, service.turn.password));
 			}
 			webrtc.settings.pcConfig.iceServers = iceServers;
-
 		};
 
 		// Some default constraints.
@@ -191,6 +192,7 @@
 			supported: (function() {
 				var isChrome = $window.webrtcDetectedBrowser === "chrome";
 				var isFirefox = $window.webrtcDetectedBrowser === "firefox";
+				var isEdge = $window.webrtcDetectedBrowser === "edge";
 				var version = $window.webrtcDetectedVersion;
 				// Constraints support table.
 				return {
@@ -201,7 +203,8 @@
 					// Chrome supports this on Windows only.
 					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
 					chrome: isChrome,
-					firefox: isFirefox
+					firefox: isFirefox,
+					edge: isEdge
 				};
 			})()
 		};

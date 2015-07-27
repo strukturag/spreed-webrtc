@@ -46,8 +46,8 @@ define([
 
 		// Apply configuration details.
 		webrtc.settings.renegotiation = context.Cfg.Renegotiation && true;
-		if (webrtc.settings.renegotiation && $window.webrtcDetectedBrowser === "firefox") {
-			console.warn("Disable renegotiation in Firefox for now.");
+		if (webrtc.settings.renegotiation && $window.webrtcDetectedBrowser !== "chrome") {
+			console.warn("Disable renegotiation in anything but Chrome for now.");
 			webrtc.settings.renegotiation = false;
 		}
 

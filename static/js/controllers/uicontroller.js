@@ -727,13 +727,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		});
 
 		_.defer(function() {
-			if (!Modernizr.websockets) {
-				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
-				$scope.setStatus("unsupported");
-				return;
-			}
 			if (!$window.webrtcDetectedVersion) {
 				alertify.dialog.custom("webrtcUnsupported");
+				return;
+			}
+			if (!Modernizr.websockets || $window.webrtcDetectedVersion < $window.webrtcMinimumVersion) {
+				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
+				$scope.setStatus("unsupported");
 				return;
 			}
 			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {
