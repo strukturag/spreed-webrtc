@@ -1,3 +1,14 @@
+<div>
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div>
+        <a class="navbar-brand">{{_('Settings')}}</a>
+      </div>
+      <div class="navbar-right">
+          <button ng-click="layout.settings=false" type="button" class="btn btn-primary navbar-btn">{{_('OK')}}</button>
+      </div>
+    </div>
+  </nav>
 <div class="settings nicescroll">
   <div class="version">{{version}}</div>
   <div ng-form="settingsform" class="form-horizontal" on-enter="saveSettings(user)" on-escape="cancelSettings()"
@@ -24,7 +35,8 @@
           </div>
         </div>
         <div class="form-group profile-publicnotice">
-          <div class="col-xs-8 col-xs-offset-4">
+          <label class="col-xs-4 control-label"></label>
+          <div class="col-xs-8">
             <p class="help-block">{{_('Your picture, name and status message identify yourself in calls, chats and rooms.')}}</p>
           </div>
         </div>
@@ -298,12 +310,8 @@
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <div class="col-xs-8 col-xs-offset-4">
-          <a ng-click="layout.settings=false" class="btn btn-default">{{_('Close')}}</a>
-        </div>
-      </div>
 
     </fieldset>
   </div>
+</div>
 </div>
