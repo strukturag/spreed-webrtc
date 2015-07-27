@@ -93,7 +93,7 @@
     position: relative;
 
     &.newmessage {
-      animation: newmessage 1s ease -.3s infinite;
+      animation: newmessage 1s steps(1) infinite alternate;
     }
 
     &.disabled {
@@ -155,7 +155,7 @@
     }
 
     .chatheader {
-      animation: newmessage 1s ease -.3s infinite;
+      animation: newmessage 1s steps(1) infinite alternate;
     }
   }
 
