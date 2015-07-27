@@ -29,7 +29,7 @@
   left: 0;
   pointer-events: none;
   position: absolute;
-  right: -260px;
+  right: -1 * $pane-width;
   top: $minbarheight;
   transition: right 200ms ease-in-out;
   z-index: 5;
