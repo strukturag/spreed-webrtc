@@ -32,6 +32,7 @@ $sidepanebg: #fff !default;
 $bordercolor: #e7e7e7 !default;
 $actioncolor1: rgb(132, 184, 25) !default;
 $actioncolor2: rgb(0, 149, 52) !default;
+$specialbg1: $background;
 
 // branding
 $logo: url('../img/logo-small.png') !default;
@@ -54,7 +55,7 @@ $welcome: #aaa !default;
 $loading: #ddd !default;
 
 // panes
-$pane-width: 260px !default;
+$pane-width: 320px !default;
 
 // font
 $font-sans-serif: 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
@@ -107,17 +108,16 @@ $buddylist-action-font-size: 1.6em;
 
 // chat
 $chat-width: $pane-width !default;
-$chat-background: $componentbg !default;
+$chat-background: $specialbg1 !default;
 $chat-header: rgba(255, 255, 255, .9) !default;
 $chat-disabled: #aaa !default;
 $chat-badge: #84b819 !default;
 $chat-ctrl: rgba(0, 0, 0, .3) !default;
-$chat-timestamp: #aaa !default;
-$chat-meta: #aaa !default;
+$chat-meta: #666 !default;
 $chat-msg-background: #fff !default;
 $chat-msg-border: transparent !default;
 $chat-msg-shadow: rgba(0, 0, 0, .03) !default;
-$chat-arrow-border: #eee;
+$chat-arrow-border: #fff;
 
 $chat-msg-default-icon-color: #ccc !default;
 $chat-msg-unread-icon-color: #fe9a2e !default;
@@ -135,9 +135,11 @@ $chat-msg-received-icon: '\f06e' !default;
 $chat-msg-read-icon: '\f00c' !default;
 
 $chat-msg-self-background: #fff !default;
+$chat-msg-self-color: $font-color !default;
 $chat-msg-remote-background: #fff !default;
+$chat-msg-remote-color: $font-color !default;
 
-$chat-bottom-background: $chat-background !default;
+$chat-bottom-background: transparent !default;
 $chat-typing: $chat-meta !default;
 $chat-input-border-color: #66afe9 !default;
 
