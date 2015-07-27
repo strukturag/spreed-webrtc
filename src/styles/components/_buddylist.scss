@@ -237,7 +237,8 @@
     left: 65px;
     overflow: hidden;
     position: absolute;
-    right: 0;
+    right: 4px;
+    text-overflow: ellipsis;
     top: 33px;
     white-space: nowrap;
   }

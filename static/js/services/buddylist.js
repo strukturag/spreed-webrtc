@@ -446,11 +446,9 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 				display.subline = "";
 				return;
 			}
-			if (s.length > 20) {
-				display.sublineFull = s;
-				s = s.substr(0, 20) + "...";
-			} else {
-				display.sublineFull = null;
+			display.sublineFull = s;
+			if (s.length > 100) {
+				s = s.substr(0, 100);
 			}
 			display.subline = s;
 
