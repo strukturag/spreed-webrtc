@@ -58,6 +58,9 @@
 .withBuddylist #buddylist:before { // scss-lint:disable IdSelector
   content: '\f101';
   padding-right: 0;
+  @include breakpt($breakpoint-medium, max-width) {
+    display: block;
+  }
 }
 
 .withBuddylistAutoHide #buddylist:before { // scss-lint:disable IdSelector

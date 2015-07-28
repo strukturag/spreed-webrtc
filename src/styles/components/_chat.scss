@@ -21,13 +21,13 @@
 
 #chat { // scss-lint:disable IdSelector
   bottom: 0;
-  min-width: $chat-width;
+  width: $chat-width;
+  min-width: 200px;
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  right: $chat-width;
+  right: $buddylist-width;
   top: 0;
-  width: $chat-width;
   z-index: 45;
 }
 
@@ -35,6 +35,11 @@
   // scss-lint:disable IdSelector
   #chat {
     opacity: 1;
+
+    @include breakpt($chat-width + 200, max-width) {
+      left: 0;
+      width: auto;
+    }
   }
 
   &.withChatMaximized #chat {

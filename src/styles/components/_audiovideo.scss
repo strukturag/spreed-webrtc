@@ -29,16 +29,22 @@
   }
 }
 
-.withChat,
+.withChat {
+  // scss-lint:disable IdSelector
+  #audiovideo {
+    right: $chat-width;
+  }
+}
+
 .withBuddylist {
   // scss-lint:disable IdSelector
   #audiovideo {
-    right: 260px;
+    right: $buddylist-width;
   }
 }
 
 .withBuddylist.withChat #audiovideo { // scss-lint:disable IdSelector
-  right: 520px;
+  right: $chat-width + $buddylist-width;
 }
 
 #audiovideo { // scss-lint:disable IdSelector
@@ -50,7 +56,7 @@
   user-select: none;
 
   @include breakpt($breakpoint-video-small, max-width, only screen) {
-    right: 0;
+    right: 0 !important;
   }
 
   &.fullscreen {

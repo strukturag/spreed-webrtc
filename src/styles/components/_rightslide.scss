@@ -21,7 +21,9 @@
 
 
 .withBuddylist #rightslide { // scss-lint:disable IdSelector
-  right: 0;
+  @include breakpt($breakpoint-medium, min-width) {
+    right: 0;
+  }
 }
 
 #rightslide { // scss-lint:disable IdSelector
@@ -29,7 +31,7 @@
   left: 0;
   pointer-events: none;
   position: absolute;
-  right: -1 * $pane-width;
+  right: -1 * $buddylist-width;
   top: $minbarheight;
   transition: right 200ms ease-in-out;
   z-index: 5;

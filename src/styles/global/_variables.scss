@@ -54,9 +54,6 @@ $action-enable: $actioncolor1 !default;
 $welcome: #aaa !default;
 $loading: #ddd !default;
 
-// panes
-$pane-width: 320px !default;
-
 // font
 $font-sans-serif: 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
 $base-font-size: 13px; // compass vertical_rhythm mixin
@@ -97,7 +94,7 @@ $video-overlayactions: rgba(0, 0, 0, .9) !default;
 $settings-background: #fff !default;
 
 // buddylist
-$buddylist-width: $pane-width !default;
+$buddylist-width: 300px !default;
 $buddylist-background: $componentbg !default;
 $buddylist-tab-color: rgba(0, 0, 0, .3) !default;
 $buddylist-tab-background: $componentbg !default;
@@ -107,7 +104,7 @@ $buddylist-buddy2: $componentfg2 !default;
 $buddylist-action-font-size: 1.6em;
 
 // chat
-$chat-width: $pane-width !default;
+$chat-width: 300px !default;
 $chat-background: $specialbg1 !default;
 $chat-header: rgba(255, 255, 255, .9) !default;
 $chat-disabled: #aaa !default;
