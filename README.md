@@ -4,7 +4,7 @@ Spreed WebRTC
 Spreed WebRTC implements a WebRTC audio/video call and conferencing server
 and web client.
 
-The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/strukturag/spreed-webrtc). IF you are a user, just wanting a secure and private alternative for online communication make sure to check out the [Spreedbox](http://spreedbox.com), providing a ready to use hardware with Spreed WebRTC included.
+The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/strukturag/spreed-webrtc). If you are a user, just wanting a secure and private alternative for online communication make sure to check out the [Spreedbox](http://spreedbox.com), providing a ready to use hardware with Spreed WebRTC included.
 
 
 ## Build prerequisites
