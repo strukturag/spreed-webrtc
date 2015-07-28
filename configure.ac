@@ -57,6 +57,13 @@ AC_PROG_AWK
 
 AC_PATH_PROGS([FIND],[find])
 
+AC_PATH_PROGS([GPM],[gpm])
+if test x"${GPM}" != x"" ; then
+    AC_MSG_CHECKING([for version of gpm])
+    GPM_VERSION=`$GPM version 2>&1 | $SED 's/^>> gpm v//'`
+    AC_MSG_RESULT([$GPM_VERSION])
+fi
+
 AC_PATH_PROG([JSHINT],jshint, [], [$PWD/node_modules/.bin$PATH_SEPARATOR$PATH])
 if test x"${JSHINT}" != x"" ; then
     AC_MSG_CHECKING([for version of jshint])

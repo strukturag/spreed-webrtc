@@ -24,13 +24,13 @@
   background: $settings-background;
   border-left: 1px solid $bordercolor;
   bottom: 0;
-  padding-right: 20px;
+  padding-right: 0px;
   position: fixed;
   right: -520px;
-  top: $minbarheight;
+  top: 0;
   transition: right 200ms ease-in-out;
   width: 520px;
-  z-index: 50;
+  z-index: 80;
 
   &.show {
     right: 0;
@@ -41,18 +41,6 @@
       width: auto;
     }
 
-    .form-actions {
-
-      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-        bottom: 0;
-        height: 60px;
-        left: 0;
-        margin-bottom: 0;
-        padding: 6px 0 6px 120px;
-        position: fixed;
-        right: 0;
-      }
-    }
   }
 }
 
@@ -62,13 +50,18 @@
   left: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 10px;
+  padding: 10px 15px;
   position: absolute;
   right: 0;
   top: 0;
+  margin-top: 50px;
 
   @include breakpt($breakpoint-settings-medium, max-width, only screen) {
     padding-bottom: 10px;
+  }
+
+  legend {
+    font-size: ceil(($font-size-base * 1.25));
   }
 
   .version {
@@ -79,20 +72,6 @@
     top: 10px;
   }
 
-  .form-horizontal {
-    .controls {
-      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-        margin-left: 110px;
-      }
-    }
-
-    .control-label {
-      @include breakpt($breakpoint-settings-medium, max-width, only screen) {
-        width: 100px;
-        word-wrap: break-word;
-      }
-    }
-  }
 }
 
 settings-advanced {

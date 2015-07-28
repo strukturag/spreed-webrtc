@@ -216,6 +216,6 @@
   animation-duration: 4s;
   animation-iteration-count: infinite;
   animation-name: shakeityeah;
-  animation-timing-function: linear;
+  animation-timing-function: steps(5);
   transform-origin: 50% 50%;
 }

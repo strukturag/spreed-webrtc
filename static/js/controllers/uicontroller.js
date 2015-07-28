@@ -24,6 +24,12 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
 
+		alertify.dialog.registerCustom({
+			baseType: 'notify',
+			type: 'webrtcUnsupported',
+			message: translation._("Your browser does not support WebRTC. No calls possible.")
+		});
+
 		// Avoid accidential reloads or exits when in a call.
 		$($window).on("beforeunload", function(event) {
 			if (appData.flags.manualUnload || !$scope.peer) {
@@ -82,7 +88,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			"end": "end1",
 			"dial": "ringtone1",
 			"connect": "connect1",
-			"prompt": "question1"
+			"prompt": "question1",
+			"chatmessage": "message1"
 		});
 
 		var displayName = safeDisplayName;
@@ -158,6 +165,16 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		};
 		$scope.refreshWebrtcSettings(); // Call once for bootstrap.
 
+		$scope.refreshSoundSettings = function() {
+			var s = $scope.master.settings.sound;
+			playSound.disable("chatmessage", !s.incomingMessages);
+			playSound.disable("ring", !s.incomingCall);
+			var roomJoinLeave = $scope.peer ? false : s.roomJoinLeave; // Do not play these sounds when in call.
+			playSound.disable("joined", !roomJoinLeave);
+			playSound.disable("left", !roomJoinLeave);
+		};
+		$scope.refreshSoundSettings(); // Call once on bootstrap;
+
 		var pickupTimeout = null;
 		var autoAcceptTimeout = null;
 		$scope.updateAutoAccept = function(id, from) {
@@ -223,6 +240,17 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		$scope.$watch("microphoneMute", function(cameraMute) {
 			mediaStream.webrtc.setAudioMute(cameraMute);
+		});
+
+		$scope.$watch("peer", function(c, o) {
+			// Watch for peer and disable some sounds while there is a peer.
+			if (c && !o) {
+				// New call.
+				$scope.refreshSoundSettings();
+			} else if (!c && o) {
+				// No longer in call.
+				$scope.refreshSoundSettings();
+			}
 		});
 
 		var ringer = playSound.interval("ring", null, 4000);
@@ -708,13 +736,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		});
 
 		_.defer(function() {
-			if (!Modernizr.websockets) {
-				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
-				$scope.setStatus("unsupported");
+			if (!$window.webrtcDetectedVersion || $window.webrtcDetectedBrowser === "edge") {
+				alertify.dialog.custom("webrtcUnsupported");
 				return;
 			}
-			if (!$window.webrtcDetectedVersion) {
-				alertify.dialog.alert(translation._("Your browser does not support WebRTC. No calls possible."));
+			if (!Modernizr.websockets || $window.webrtcDetectedVersion < $window.webrtcMinimumVersion) {
+				alertify.dialog.alert(translation._("Your browser is not supported. Please upgrade to a current version."));
+				$scope.setStatus("unsupported");
 				return;
 			}
 			if (mediaStream.config.Renegotiation && $window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion < 38) {

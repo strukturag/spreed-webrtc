@@ -83,19 +83,6 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 				}
 			}
 		});
-		if (window.webrtcDetectedBrowser === "firefox" && window.webrtcDetectedVersion < 38) {
-			// Firefox < 38 needs a extra require field.
-			var r = [];
-			if (c.height) {
-				r.push("height");
-			}
-			if (c.width) {
-				r.push("width");
-			}
-			if (r.length) {
-				c.require = r;
-			}
-		}
 		return c;
 	};
 	// Adapter to support navigator.mediaDevices API.
@@ -116,6 +103,20 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		} else {
 			// Use existing adapter.
 			return window.getUserMedia;
+		}
+	})();
+
+	var stopUserMediaStream = (function() {
+		return function(stream) {
+			if (stream && stream.getTracks) {
+				var tracks = stream.getTracks();
+				_.each(tracks, function(t) {
+					t.stop();
+				});
+			} else {
+				console.warn("MediaStream.stop is deprecated");
+				stream.stop();
+			}
 		}
 	})();
 
@@ -214,7 +215,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 					clearTimeout(timeout);
 					timeout = null;
 				}
-				stream.stop();
+				stopUserMediaStream(stream);
 				if (complete.done) {
 					return;
 				}
@@ -251,6 +252,8 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		})({});
 
 	};
+	UserMedia.getUserMedia = getUserMedia;
+	UserMedia.stopUserMediaStream = stopUserMediaStream;
 
 	UserMedia.prototype.doGetUserMedia = function(currentcall, mediaConstraints) {
 
@@ -308,7 +311,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		console.log('User has granted access to local media.');
 
 		if (!this.started) {
-			stream.stop();
+			stopUserMediaStream(stream);
 			return;
 		}
 
@@ -336,7 +339,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			oldStream.onended = function() {
 				console.log("Silently ended replaced user media stream.");
 			};
-			oldStream.stop();
+			stopUserMediaStream(oldStream);
 		}
 
 		if (stream) {
@@ -381,7 +384,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			this.audioSource = null;
 		}
 		if (this.localStream) {
-			this.localStream.stop()
+			stopUserMediaStream(this.localStream);
 			this.localStream = null;
 		}
 		if (this.audioProcessor) {

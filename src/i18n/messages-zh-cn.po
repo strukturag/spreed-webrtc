@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-04-30 19:22+0200\n"
+"POT-Creation-Date: 2015-07-08 11:02+0200\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -356,6 +356,10 @@ msgstr "系统默认房间"
 
 msgid "Set alternative room to join at start."
 msgstr "重设初始默认房间"
+
+#, fuzzy
+msgid "Notification sounds"
+msgstr "桌面提醒"
 
 msgid "Desktop notification"
 msgstr "桌面提醒"

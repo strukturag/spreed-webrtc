@@ -19,26 +19,18 @@
  *
  */
 
+"use strict";
+define(['mediastream/usermedia'], function(UserMedia) {
 
-.withBuddylist #rightslide { // scss-lint:disable IdSelector
-  @include breakpt($breakpoint-medium, min-width) {
-    right: 0;
-  }
-}
+	// userMedia
+	return [function() {
 
-#rightslide { // scss-lint:disable IdSelector
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: -1 * $buddylist-width;
-  top: $minbarheight;
-  transition: right 200ms ease-in-out;
-  z-index: 5;
+		// Public api.
+		return {
+			getUserMedia: UserMedia.getUserMedia,
+			stopUserMediaStream: UserMedia.stopUserMediaStream
+		}
 
-  .rightslidepane {
-    height: 100%;
-    position: relative;
-    width: 100%;
-  }
-}
+	}];
+
+});

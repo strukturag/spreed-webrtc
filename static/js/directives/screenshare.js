@@ -95,9 +95,11 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				mediaStream.webrtc.doSubscribeScreenshare(from, token, {
 					created: function(peerscreenshare) {
 						peerscreenshare.e.on("remoteStreamAdded", function(event, stream) {
-							$scope.$apply(function(scope) {
-								scope.addRemoteStream(stream, peerscreenshare);
-							});
+							if (stream) {
+								$scope.$apply(function(scope) {
+									scope.addRemoteStream(stream, peerscreenshare);
+								});
+							}
 						});
 						peerscreenshare.e.on("remoteStreamRemoved", function(event, stream) {
 							safeApply($scope, function(scope) {
