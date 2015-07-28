@@ -1,3 +1,21 @@
+spreed-webrtc-server (0.24.3) precise; urgency=low
+ 
+  * Removed deprecated API to fix Chromium 47 compatibility.
+  * Improved UI usability for smaller devices.
+  * Increased the width of buddy list and chat.
+  * Cleaned up sized, borders and default colors.
+  * Cleaned up chat ui.
+  * Chat animations no longer comnsume GPU power.
+  * Chat icons are now shown in their proper color again.
+  * Chat arrows are displayed properly again.
+  * Updated WebRTC adapter to latest version (fixing Chromium 45).
+  * Fixed CSP example for Chromium 45 and later.
+  * Added GPM Godebs file to track Golang dependencies.
+  * Fixed a problem where screen sharing streams were not cleaned up.
+  * Added support for custom type dialogs.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 28 Jul 2015 19:22:28 +0200
+
 spreed-webrtc-server (0.24.2) precise; urgency=low
 
   * Fixed javascript load order, so compiled scripts load properly. 
