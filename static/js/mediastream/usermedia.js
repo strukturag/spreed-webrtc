@@ -106,6 +106,20 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		}
 	})();
 
+	var stopUserMediaStream = (function() {
+		return function(stream) {
+			if (stream && stream.getTracks) {
+				var tracks = stream.getTracks();
+				_.each(tracks, function(t) {
+					t.stop();
+				});
+			} else {
+				console.warn("MediaStream.stop is deprecated");
+				stream.stop();
+			}
+		}
+	})();
+
 	// UserMedia.
 	var UserMedia = function(options) {
 
@@ -201,7 +215,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 					clearTimeout(timeout);
 					timeout = null;
 				}
-				stream.stop();
+				stopUserMediaStream(stream);
 				if (complete.done) {
 					return;
 				}
@@ -238,6 +252,8 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		})({});
 
 	};
+	UserMedia.getUserMedia = getUserMedia;
+	UserMedia.stopUserMediaStream = stopUserMediaStream;
 
 	UserMedia.prototype.doGetUserMedia = function(currentcall, mediaConstraints) {
 
@@ -295,7 +311,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 		console.log('User has granted access to local media.');
 
 		if (!this.started) {
-			stream.stop();
+			stopUserMediaStream(stream);
 			return;
 		}
 
@@ -323,7 +339,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			oldStream.onended = function() {
 				console.log("Silently ended replaced user media stream.");
 			};
-			oldStream.stop();
+			stopUserMediaStream(oldStream);
 		}
 
 		if (stream) {
@@ -368,7 +384,7 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			this.audioSource = null;
 		}
 		if (this.localStream) {
-			this.localStream.stop()
+			stopUserMediaStream(this.localStream);
 			this.localStream = null;
 		}
 		if (this.audioProcessor) {

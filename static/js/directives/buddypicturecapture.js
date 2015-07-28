@@ -25,7 +25,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 	// buddyPictureCapture
 	return ["$compile", "$window", function($compile, $window) {
 
-		var controller = ['$scope', 'safeApply', '$timeout', '$q', "mediaDevices", function($scope, safeApply, $timeout, $q, mediaDevices) {
+		var controller = ['$scope', 'safeApply', '$timeout', '$q', "mediaDevices", "userMedia", function($scope, safeApply, $timeout, $q, mediaDevices, userMedia) {
 
 			// Buddy picutre capture size.
 			$scope.captureSize = {
@@ -110,7 +110,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 			var videoStop = function(stream, video) {
 				if (stream) {
 					video.pause();
-					stream.stop();
+					userMedia.stopUserMediaStream(stream);
 					stream = null;
 				}
 			};
