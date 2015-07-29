@@ -75,7 +75,7 @@
 					// Optional constraints are arrays.
 					var d = {};
 					d[k] = v;
-					obj.push(d)
+					obj.push(d);
 				}
 			}
 		};
