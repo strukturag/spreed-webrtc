@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-08 11:02+0200\n"
+"POT-Creation-Date: 2015-07-29 11:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -268,6 +268,9 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
+msgid "OK"
+msgstr ""
+
 msgid "Profile"
 msgstr ""
 
@@ -350,7 +353,7 @@ msgstr ""
 msgid "Set alternative room to join at start."
 msgstr ""
 
-msgid "Notification sounds"
+msgid "Notifications"
 msgstr ""
 
 msgid "Desktop notification"
@@ -363,6 +366,15 @@ msgid "Denied - check your browser settings"
 msgstr ""
 
 msgid "Allowed"
+msgstr ""
+
+msgid "Sounds for incoming messages"
+msgstr ""
+
+msgid "Ring on incoming calls"
+msgstr ""
+
+msgid "Sounds for users in current room"
 msgstr ""
 
 msgid "Advanced settings"
@@ -594,6 +606,9 @@ msgstr ""
 msgid "Edit Contact"
 msgstr ""
 
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr ""
+
 msgid "Close this window and disconnect?"
 msgstr ""
 
@@ -637,9 +652,6 @@ msgid " called you"
 msgstr ""
 
 msgid "Your browser is not supported. Please upgrade to a current version."
-msgstr ""
-
-msgid "Your browser does not support WebRTC. No calls possible."
 msgstr ""
 
 msgid "Chat with"

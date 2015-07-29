@@ -209,6 +209,8 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/localaudiosource.cc (audio constraints)
 					// https://code.google.com/p/webrtc/source/browse/trunk/talk/app/webrtc/webrtcsession.cc (pc constraints)
 
+					c.add("pc", "googCpuOveruseDetection", settings.videoCpuOveruseDetection && true); // defaults to true in Chrome
+
 					// Experimental audio settings.
 					if (settings.experimental.enabled) {
 						c.add("audio", "googEchoCancellation", true); // defaults to true
@@ -216,7 +218,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						c.add("audio", "googAutoGainControl", true); // defaults to true
 						c.add("audio", "googAutoGainControl2", settings.experimental.audioAutoGainControl2 && true); // defaults to false in Chrome
 						c.add("audio", "googNoiseSuppression", true); // defaults to true
-						c.add("audio", "googgNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
+						c.add("audio", "googNoiseSuppression2", settings.experimental.audioNoiseSuppression2 && true); // defaults to false in Chrome
 						c.add("audio", "googHighpassFilter", true); // defaults to true
 						c.add("audio", "googTypingNoiseDetection", settings.experimental.audioTypingNoiseDetection && true); // defaults to true in Chrome
 					}
@@ -239,7 +241,6 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						c.add(["video", "screensharing"], "googLeakyBucket", settings.experimental.videoLeakyBucket && true); // defaults to false in Chrome
 						// Removes the noise in the captured video stream at the expense of CPU.
 						c.add(["video", "screensharing"], "googNoiseReduction", settings.experimental.videoNoiseReduction && true); // defaults to false in Chrome
-						c.add("pc", "googCpuOveruseDetection", settings.experimental.videoCpuOveruseDetection && true); // defaults to true in Chrome
 
 					}
 

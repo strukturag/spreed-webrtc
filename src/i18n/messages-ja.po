@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-08 11:02+0200\n"
+"POT-Creation-Date: 2015-07-29 11:32+0200\n"
 "PO-Revision-Date: 2014-04-23 22:25+0100\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -275,6 +275,9 @@ msgstr ""
 msgid "Share"
 msgstr "共有取り消し"
 
+msgid "OK"
+msgstr ""
+
 msgid "Profile"
 msgstr ""
 
@@ -358,7 +361,7 @@ msgid "Set alternative room to join at start."
 msgstr "スタート時に別のルームに参加する."
 
 #, fuzzy
-msgid "Notification sounds"
+msgid "Notifications"
 msgstr "デスクトップ通知"
 
 msgid "Desktop notification"
@@ -372,6 +375,16 @@ msgstr "拒否 - ブラウザ設定を確認して下さい"
 
 msgid "Allowed"
 msgstr "許可"
+
+msgid "Sounds for incoming messages"
+msgstr ""
+
+#, fuzzy
+msgid "Ring on incoming calls"
+msgstr "着信中"
+
+msgid "Sounds for users in current room"
+msgstr ""
 
 msgid "Advanced settings"
 msgstr "詳細設定"
@@ -605,6 +618,9 @@ msgstr ""
 msgid "Edit Contact"
 msgstr ""
 
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "ブラウザがWebRTCをサポートしていない為通話はできません."
+
 msgid "Close this window and disconnect?"
 msgstr ""
 
@@ -652,9 +668,6 @@ msgstr "から電話がありました."
 #, fuzzy
 msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr "ブラウザがファイル転送をサポートしていません."
-
-msgid "Your browser does not support WebRTC. No calls possible."
-msgstr "ブラウザがWebRTCをサポートしていない為通話はできません."
 
 msgid "Chat with"
 msgstr "とチャットする"
