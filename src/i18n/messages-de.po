@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-08 11:02+0200\n"
-"PO-Revision-Date: 2015-07-08 11:02+0100\n"
+"POT-Creation-Date: 2015-07-29 11:32+0200\n"
+"PO-Revision-Date: 2015-07-29 11:40+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -279,6 +279,9 @@ msgstr ""
 msgid "Share"
 msgstr "Teilen"
 
+msgid "OK"
+msgstr "OK"
+
 msgid "Profile"
 msgstr "Profil"
 
@@ -365,8 +368,8 @@ msgstr "Standard Raum"
 msgid "Set alternative room to join at start."
 msgstr " Raum wird beim Start automatisch betreten."
 
-msgid "Notification sounds"
-msgstr "Klänge"
+msgid "Notifications"
+msgstr "Benachrichtigungen"
 
 msgid "Desktop notification"
 msgstr "Desktop-Benachrichtigung"
@@ -379,6 +382,15 @@ msgstr "Verweigert - prüfen Sie die Browser-Einstellungen"
 
 msgid "Allowed"
 msgstr "Aktiviert"
+
+msgid "Sounds for incoming messages"
+msgstr "Töne bei eingehenden Nachrichten"
+
+msgid "Ring on incoming calls"
+msgstr "Klingeln bei eingehenden Anrufen"
+
+msgid "Sounds for users in current room"
+msgstr "Töne für Nutzer im aktuellen Raum"
 
 msgid "Advanced settings"
 msgstr "Erweiterte Einstellungen"
@@ -619,6 +631,9 @@ msgstr "Ihre Kontaktanfrage wurde abgelehnt."
 msgid "Edit Contact"
 msgstr "Kontakt bearbeiten"
 
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "Ihr Browser unterstützt kein WebRTC. Keine Anrufe möglich."
+
 msgid "Close this window and disconnect?"
 msgstr "Fenster schließen und die Verbindung trennen?"
 
@@ -667,9 +682,6 @@ msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
 "Ihr Browser wird nicht unterstützt. Bitte aktualisieren Sie auf eine "
 "aktuelle Version."
-
-msgid "Your browser does not support WebRTC. No calls possible."
-msgstr "Ihr Browser unterstützt kein WebRTC. Keine Anrufe möglich."
 
 msgid "Chat with"
 msgstr "Chat mit"
