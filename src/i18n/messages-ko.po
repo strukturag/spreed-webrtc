@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2015-07-08 11:02+0200\n"
+"POT-Creation-Date: 2015-07-29 11:32+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -275,6 +275,9 @@ msgstr ""
 msgid "Share"
 msgstr "비공유"
 
+msgid "OK"
+msgstr ""
+
 msgid "Profile"
 msgstr ""
 
@@ -358,7 +361,7 @@ msgid "Set alternative room to join at start."
 msgstr "시작시에 다른 방에 합류하도록 설정 되었습니다"
 
 #, fuzzy
-msgid "Notification sounds"
+msgid "Notifications"
 msgstr "데스크탑에 통보"
 
 msgid "Desktop notification"
@@ -372,6 +375,16 @@ msgstr "거부됨 - 브라우저 설정을 확인하세요"
 
 msgid "Allowed"
 msgstr "허락됨"
+
+msgid "Sounds for incoming messages"
+msgstr ""
+
+#, fuzzy
+msgid "Ring on incoming calls"
+msgstr "전화 걸려옴"
+
+msgid "Sounds for users in current room"
+msgstr ""
 
 msgid "Advanced settings"
 msgstr "고급 설정"
@@ -605,6 +618,9 @@ msgstr ""
 msgid "Edit Contact"
 msgstr ""
 
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "브라우저가 WebRTC를 지원하지 않습니다. 전화걸기가 불가능 합니다."
+
 msgid "Close this window and disconnect?"
 msgstr ""
 
@@ -652,9 +668,6 @@ msgstr "전화 드렸습니다."
 #, fuzzy
 msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr "당신의 브라우저가 회일전송을 지원하지 않습니다."
-
-msgid "Your browser does not support WebRTC. No calls possible."
-msgstr "브라우저가 WebRTC를 지원하지 않습니다. 전화걸기가 불가능 합니다."
 
 msgid "Chat with"
 msgstr "대화하기"
