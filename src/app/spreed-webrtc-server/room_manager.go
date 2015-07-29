@@ -65,7 +65,9 @@ func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 		OutgoingEncoder: encoder,
 		roomTable:       make(map[string]RoomWorker),
 	}
-	rm.globalRoomID = rm.MakeRoomID(config.globalRoomID, "")
+	if config.globalRoomID != "" {
+		rm.globalRoomID = rm.MakeRoomID(config.globalRoomID, "")
+	}
 	rm.defaultRoomID = rm.MakeRoomID("", "")
 	return rm
 }
@@ -120,7 +122,7 @@ func (rooms *roomManager) Broadcast(sessionID, roomID string, outgoing *DataOutg
 		return
 	}
 
-	if roomID != "" && roomID == rooms.globalRoomID {
+	if roomID == rooms.globalRoomID {
 		rooms.RLock()
 		for _, room := range rooms.roomTable {
 			room.Broadcast(sessionID, message)
