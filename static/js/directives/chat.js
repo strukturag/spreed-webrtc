@@ -227,6 +227,9 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							subscope.contact.showContact = !subscope.isgroupchat && buddyId;
 						};
 						handleContactFunctionality();
+						appData.e.on('authenticationChanged', function() {
+							handleContactFunctionality();
+						});
 						if (!subscope.isgroupchat) {
 							buddyData.push(id);
 						}
