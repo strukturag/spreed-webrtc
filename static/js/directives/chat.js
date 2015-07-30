@@ -205,6 +205,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						}
 						subscope = controller.rooms[id] = scope.$new();
 						translation.inject(subscope);
+						subscope.contact = {};
 						subscope.id = id;
 						subscope.isgroupchat = !!settings.group;
 						subscope.index = index;
@@ -217,9 +218,15 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.p2pstate = false;
 						subscope.active = false;
 						subscope.pending = 0;
-						subscope.isUser = !!(buddy && buddy.session && buddy.session.Userid);
-						subscope.isContact = !!(buddy && buddy.contact);
-						subscope.canAddContact = !subscope.isgroupchat && subscope.isUser;
+						var handleContactFunctionality = function() {
+							var buddyId = buddy && buddy.session && buddy.session.Userid;
+							var myId = appData.get().userid;
+							var isAnotherUser = buddyId && myId !== buddyId;
+							subscope.contact.isContact = !!(buddy && buddy.contact);
+							subscope.contact.disableContact = !myId || !isAnotherUser;
+							subscope.contact.showContact = !subscope.isgroupchat && buddyId;
+						};
+						handleContactFunctionality();
 						if (!subscope.isgroupchat) {
 							buddyData.push(id);
 						}
@@ -349,7 +356,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							if (userid !== data.Userid) {
 								return;
 							}
-							subscope.isContact = event.type === "contactadded";
+							subscope.contact.isContact = event.type === "contactadded";
 							safeApply(subscope);
 						};
 						contacts.e.on("contactadded", subscope.updateContactStatus);
