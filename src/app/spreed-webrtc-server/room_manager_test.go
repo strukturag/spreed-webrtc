@@ -26,7 +26,9 @@ import (
 )
 
 func NewTestRoomManager() (RoomManager, *Config) {
-	config := &Config{}
+	config := &Config{
+		roomTypeDefault: "Room",
+	}
 	return NewRoomManager(config, nil), config
 }
 
