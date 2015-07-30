@@ -35,5 +35,6 @@ script:
   - make styles
   - make jshint
   - make javascript
+  - make test
   - make binary
   - make build-i18n
