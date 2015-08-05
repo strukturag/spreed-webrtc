@@ -19,7 +19,7 @@ Then add the following lines to your VirtualHost section:
 
   ProxyVia On
   ProxyPreserveHost On
-  RequestHeader set X_FORWARDED_PROTO 'https' env=HTTPS
+  RequestHeader set X-Forwarded-Proto 'https' env=HTTPS
 
 Thats it.
 
