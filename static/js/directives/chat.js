@@ -218,17 +218,30 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.p2pstate = false;
 						subscope.active = false;
 						subscope.pending = 0;
-						var handleContactFunctionality = function() {
+						var handleContactFunctionality = function(buddy) {
 							var buddyId = buddy && buddy.session && buddy.session.Userid;
 							var myId = appData.get().userid;
 							var isAnotherUser = buddyId && myId !== buddyId;
 							subscope.contact.isContact = !!(buddy && buddy.contact);
 							subscope.contact.disableContact = !myId || !isAnotherUser;
 							subscope.contact.showContact = !subscope.isgroupchat && buddyId;
+							safeApply(subscope);
 						};
-						handleContactFunctionality();
+						handleContactFunctionality(buddy);
+						// Update chatter
 						appData.e.on('authenticationChanged', function() {
-							handleContactFunctionality();
+							handleContactFunctionality(buddy);
+						});
+						// Update chattee
+						mediaStream.api.e.on("received.status", function(event, data) {
+							if (!id && !data) {
+								return;
+							}
+							// Chattee status changed - logged in
+							var bd = buddyData.lookup(id);
+							if ((bd && bd.session.Userid) === data.Userid) {
+								handleContactFunctionality(buddyData.lookup(data.Id));
+							}
 						});
 						if (!subscope.isgroupchat) {
 							buddyData.push(id);
