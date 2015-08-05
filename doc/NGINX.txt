@@ -9,10 +9,10 @@ Add the following to your Nginx server section:
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
-  	proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Host $http_host;
-  	proxy_set_header X-Real-IP $remote_addr;
-	  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   }
 
 This is using a map to provide the Upgrade and Connection
@@ -27,17 +27,17 @@ the http section of your server:
 Also make sure that you have the general proxy configuration
 like this in place:
 
-	proxy_buffering             on;
-	proxy_ignore_client_abort   off;
-	proxy_redirect              off;
-	proxy_connect_timeout       90;
-	proxy_send_timeout          90;
-	proxy_read_timeout          90;
-	proxy_buffer_size           4k;
-	proxy_buffers               4 32k;
-	proxy_busy_buffers_size     64k;
-	proxy_temp_file_write_size  64k;
-	proxy_next_upstream error timeout invalid_header http_502 http_503 http_504;
+  proxy_buffering             on;
+  proxy_ignore_client_abort   off;
+  proxy_redirect              off;
+  proxy_connect_timeout       90;
+  proxy_send_timeout          90;
+  proxy_read_timeout          90;
+  proxy_buffer_size           4k;
+  proxy_buffers               4 32k;
+  proxy_busy_buffers_size     64k;
+  proxy_temp_file_write_size  64k;
+  proxy_next_upstream error timeout invalid_header http_502 http_503 http_504;
 
 And thats it.
 
