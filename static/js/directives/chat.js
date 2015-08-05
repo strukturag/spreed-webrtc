@@ -365,7 +365,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							});
 						};
 						subscope.removeContact = function() {
-							contacts.remove(buddy.contact.Userid);
+							contacts.remove(buddyData.lookup(id).contact.Userid);
 						};
 						subscope.updateContactStatus = function(event, data) {
 							var userid = buddy && buddy.session && buddy.session.Userid;
