@@ -94,9 +94,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 				pc.onnegotiationneeded = _.bind(this.onNegotiationNeeded, this);
 			}
 			pc.ondatachannel = _.bind(this.onDatachannel, this);
-			pc.onsignalingstatechange = function(event) {
-				console.debug("Signaling state changed", pc.signalingState);
-			};
+			pc.onsignalingstatechange = _.bind(this.onSignalingStateChange, this);
 			// NOTE(longsleep):
 			// Support old callback too (https://groups.google.com/forum/?fromgroups=#!topic/discuss-webrtc/glukq0OWwVM)
 			// Chrome < 27 and Firefox < 24 need this.
@@ -222,10 +220,18 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 
 	};
 
+	PeerConnection.prototype.onSignalingStateChange = function(event) {
+
+		var signalingState = event.target.signalingState;
+		console.debug("Connection signaling state change", signalingState, this.currentcall.id);
+		this.currentcall.onSignalingStateChange(signalingState);
+
+	};
+
 	PeerConnection.prototype.onIceConnectionStateChange = function(event) {
 
 		var iceConnectionState = event.target.iceConnectionState;
-		console.info("ICE connection state change", iceConnectionState, event, this.currentcall);
+		console.debug("ICE connection state change", iceConnectionState, this.currentcall.id);
 		this.currentcall.onIceConnectionStateChange(iceConnectionState);
 
 	};
