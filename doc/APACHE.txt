@@ -1,0 +1,30 @@
+## Apache HTTP Server configuration for Spreed WebRTC
+
+Apache supports websocket proxy starting with 2.4.5.
+
+Make sure you have the module mod_proxy_wstunnel enabled. In addition proxy,
+proxy_http and headers modules have to be enabled. On Ubuntu this goes like
+this: `a2enmod proxy proxy_http proxy_wstunnel headers`
+
+Then add the following lines to your VirtualHost section:
+
+  <Location />
+      ProxyPass http://127.0.0.1:8080/
+      ProxyPassReverse /
+  </Location>
+
+  <Location /ws>
+      ProxyPass ws://127.0.0.1:8080/ws
+  </Location>
+
+  ProxyVia On
+  ProxyPreserveHost On
+  RequestHeader set X-Forwarded-Proto 'https' env=HTTPS
+
+Thats it.
+
+--
+(c)2015 struktur AG
+
+
+

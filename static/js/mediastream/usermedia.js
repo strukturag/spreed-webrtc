@@ -109,12 +109,20 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 	var stopUserMediaStream = (function() {
 		return function(stream) {
 			if (stream && stream.getTracks) {
+				// Stop all tracks.
 				var tracks = stream.getTracks();
 				_.each(tracks, function(t) {
 					t.stop();
 				});
+				if (window.webrtcDetectedBrowser === "firefox") {
+					// Always call stop for Firefox as long as it is available.
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=1192170
+					if (stream.stop) {
+						stream.stop();
+					}
+				}
 			} else {
-				console.warn("MediaStream.stop is deprecated");
+				// MediaStream.stop is deprecated.
 				stream.stop();
 			}
 		}
@@ -277,21 +285,26 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			}
 		}
 
-		if (this.renegotiation && this.audioMute && this.videoMute) {
-			// Fast path as nothing should be shared.
-			_.defer(_.bind(function() {
-				this.onUserMediaSuccess(new DummyStream());
-			}, this));
-			this.started = true;
-			return true
-		}
-
 		var constraints = $.extend(true, {}, mediaConstraints);
-		if (this.audioMute) {
-			constraints.audio = false;
-		}
-		if (this.videoMute) {
-			constraints.video = false;
+
+		if (this.renegotiation) {
+
+			if (this.audioMute && this.videoMute) {
+				// Fast path as nothing should be shared.
+				_.defer(_.bind(function() {
+					this.onUserMediaSuccess(new DummyStream());
+				}, this));
+				this.started = true;
+				return true
+			}
+
+			if (this.audioMute) {
+				constraints.audio = false;
+			}
+			if (this.videoMute) {
+				constraints.video = false;
+			}
+
 		}
 
 		try {
@@ -334,22 +347,39 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 	UserMedia.prototype.replaceStream = function(stream) {
 
 		var oldStream = this.localStream;
+
 		if (oldStream && oldStream.active) {
 			// Let old stream silently end.
-			oldStream.onended = function() {
+			var onendedsilent = function(event) {
 				console.log("Silently ended replaced user media stream.");
 			};
+			if (oldStream.getTracks) {
+				_.each(stream.getTracks(), function(t) {
+					t.onended = onendedsilent;
+				});
+			} else {
+				// Legacy api.
+				oldStream.onended = onendedsilent;
+			}
 			stopUserMediaStream(oldStream);
 		}
 
 		if (stream) {
-			// Get notified of end events.
-			stream.onended = _.bind(function(event) {
-				console.log("User media stream ended.");
+			// Catch events when streams end.
+			var onended = _.bind(function(event) {
 				if (this.started) {
+					console.log("Stopping user media as a stream has ended.", event);
 					this.stop();
 				}
 			}, this);
+			if (stream.getTracks) {
+				_.each(stream.getTracks(), function(t) {
+					t.onended = onended;
+				});
+			} else {
+				// Legacy api.
+				stream.onended = onended;
+			}
 			// Set new stream.
 			this.localStream = stream;
 			this.e.triggerHandler("localstream", [stream, oldStream, this]);
@@ -371,6 +401,12 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			setTimeout(_.bind(function() {
 				this.e.triggerHandler("mediasuccess", [this]);
 			}, this), 0);
+		}
+
+		if (!this.renegotiation) {
+			// Apply mute states after we got streams.
+			this.applyAudioMute(this.audioMute);
+			this.applyVideoMute(this.videoMute);
 		}
 
 	};
@@ -510,6 +546,9 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 					delete this.peerconnections[id];
 				}, this));
 			}
+		} else {
+			// Make sure to trigger renegotiation even if we have no media.
+			_.defer(pc.negotiationNeeded);
 		}
 
 	};

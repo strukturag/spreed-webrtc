@@ -211,6 +211,12 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		}
 	};
 
+	PeerCall.prototype.onSignalingStateChange = function(signalingState) {
+
+		this.e.triggerHandler("signalingStateChange", [signalingState, this]);
+
+	};
+
 	PeerCall.prototype.onIceConnectionStateChange = function(iceConnectionState) {
 
 		this.e.triggerHandler("connectionStateChange", [iceConnectionState, this]);
