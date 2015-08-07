@@ -62,7 +62,8 @@ define(["jquery"], function($) {
 		service.e = $({});
 		service.data = null;
 		service.flags = {
-			authorizing: false
+			authorizing: false,
+			resurrect: null
 		};
 
 		service.language = $window.document.getElementsByTagName("html")[0].getAttribute("lang");

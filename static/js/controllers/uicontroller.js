@@ -454,7 +454,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		var reconnect = function() {
 			if (appData.flags.connected && appData.flags.autoreconnect) {
 				if (appData.flags.resurrect === null) {
-					// Storage data at the resurrection shrine.
+					// Store data at the resurrection shrine.
 					appData.flags.resurrect = {
 						status: $scope.getStatus(),
 						id: $scope.id
