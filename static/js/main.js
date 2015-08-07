@@ -53,6 +53,13 @@ require.config({
 		'sjcl': 'libs/sjcl',
 		'bootstrap-file-input': 'libs/bootstrap.file-input',
 		'webfont': 'libs/webfont',
+		'axolotl': 'libs/axolotl/libaxolotl-javascript-1.3.0',
+		'protobufjs': 'libs/axolotl/protobufjs.min',
+		'traceur-runtime': 'libs/axolotl/traceur-runtime.min',
+		'axolotl-crypto': 'libs/axolotl/axolotl-crypto',
+		'axolotlCryptoCurve25519': 'libs/axolotl/axolotl-crypto-curve25519',
+		'ByteBuffer': 'libs/axolotl/ByteBufferAB.min',
+		'Long': 'libs/axolotl/Long.min',
 
 		'partials': '../partials',
 		'sounds': '../sounds',
@@ -181,8 +188,8 @@ if (Object.create) {
 			custom: {
 				families: ["FontAwesome"],
 				testStrings: {
-     				"FontAwesome": '\uf004\uf005'
-    			}
+					"FontAwesome": '\uf004\uf005'
+				}
 			},
 			active: function() {
 				console.log("Web fonts loaded.");
