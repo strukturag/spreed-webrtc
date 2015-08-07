@@ -347,22 +347,39 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 	UserMedia.prototype.replaceStream = function(stream) {
 
 		var oldStream = this.localStream;
+
 		if (oldStream && oldStream.active) {
 			// Let old stream silently end.
-			oldStream.onended = function() {
+			var onendedsilent = function(event) {
 				console.log("Silently ended replaced user media stream.");
 			};
+			if (oldStream.getTracks) {
+				_.each(stream.getTracks(), function(t) {
+					t.onended = onendedsilent;
+				});
+			} else {
+				// Legacy api.
+				oldStream.onended = onendedsilent;
+			}
 			stopUserMediaStream(oldStream);
 		}
 
 		if (stream) {
-			// Get notified of end events.
-			stream.onended = _.bind(function(event) {
-				console.log("User media stream ended.");
+			// Catch events when streams end.
+			var onended = _.bind(function(event) {
 				if (this.started) {
+					console.log("Stopping user media as a stream has ended.", event);
 					this.stop();
 				}
 			}, this);
+			if (stream.getTracks) {
+				_.each(stream.getTracks(), function(t) {
+					t.onended = onended;
+				});
+			} else {
+				// Legacy api.
+				stream.onended = onended;
+			}
 			// Set new stream.
 			this.localStream = stream;
 			this.e.triggerHandler("localstream", [stream, oldStream, this]);
