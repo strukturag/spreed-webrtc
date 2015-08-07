@@ -285,21 +285,26 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			}
 		}
 
-		if (this.renegotiation && this.audioMute && this.videoMute) {
-			// Fast path as nothing should be shared.
-			_.defer(_.bind(function() {
-				this.onUserMediaSuccess(new DummyStream());
-			}, this));
-			this.started = true;
-			return true
-		}
-
 		var constraints = $.extend(true, {}, mediaConstraints);
-		if (this.audioMute) {
-			constraints.audio = false;
-		}
-		if (this.videoMute) {
-			constraints.video = false;
+
+		if (this.renegotiation) {
+
+			if (this.audioMute && this.videoMute) {
+				// Fast path as nothing should be shared.
+				_.defer(_.bind(function() {
+					this.onUserMediaSuccess(new DummyStream());
+				}, this));
+				this.started = true;
+				return true
+			}
+
+			if (this.audioMute) {
+				constraints.audio = false;
+			}
+			if (this.videoMute) {
+				constraints.video = false;
+			}
+
 		}
 
 		try {
@@ -379,6 +384,12 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			setTimeout(_.bind(function() {
 				this.e.triggerHandler("mediasuccess", [this]);
 			}, this), 0);
+		}
+
+		if (!this.renegotiation) {
+			// Apply mute states after we got streams.
+			this.applyAudioMute(this.audioMute);
+			this.applyVideoMute(this.videoMute);
 		}
 
 	};
