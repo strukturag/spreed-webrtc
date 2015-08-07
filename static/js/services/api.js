@@ -23,7 +23,7 @@
 define([
 	'mediastream/api'
 ], function(Api) {
-	return ["globalContext", "connector", function(context, connector) {
-		return new Api(context.Cfg.Version, connector);
+	return ["globalContext", "connector", "encryption", function(context, connector, encryption) {
+		return new Api(context.Cfg.Version, connector, encryption);
 	}];
 });

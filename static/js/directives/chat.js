@@ -266,12 +266,12 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							}
 							_.delay(function() {
 								mediaStream.api.apply("sendChat", {
-									send: function(type, data) {
+									send: function(type, data, origType, origData) {
 										// We also send to self, to display our own stuff.
 										if (!noloop) {
 											mediaStream.api.received({
-												Type: data.Type,
-												Data: data,
+												Type: origData.Type,
+												Data: origData,
 												From: mediaStream.api.id,
 												To: peercall.id
 											});

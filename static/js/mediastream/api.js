@@ -22,15 +22,21 @@
 "use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
-	var Api = function(version, connector) {
+	var Api = function(version, connector, encryption) {
+		this.e = $({});
 		this.version = version;
 		this.id = null;
 		this.sid = null;
 		this.session = {};
 		this.connector = connector;
+		if (!encryption.initialize(this)) {
+			console.warn("Encryption services failed to initialize");
+			this.encryption = null;
+		} else {
+			console.log("Encryption services initialized");
+			this.encryption = encryption;
+		}
 		this.iids= 0;
-
-		this.e = $({});
 
 		var ua = uaparser();
 		if (ua.os.name && /Spreed Desktop Caller/i.test(ua.ua)) {
@@ -99,9 +105,27 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 					cb(type, data);
 				}
 				this.send(type, data);
+			}, this),
+			sendEncrypted: _.bind(function(type, data) {
+				if (cb) {
+					cb(type, data);
+				}
+				this.sendEncrypted(type, data);
 			}, this)
 		}
 		return this.apply(name, obj);
+	};
+
+	Api.prototype.sendEncrypted = function(type, data, noqueue) {
+		var to = data.To;
+		if (!to || !this.encryption) {
+			return this.send(type, data, noqueue);
+		}
+
+		this.encryption.encrypt(to, type, data, _.bind(function(type, encrypted) {
+			encrypted.To = to
+			this.send(type, encrypted, noqueue);
+		}, this));
 	};
 
 	Api.prototype.request = function(type, data, cb, noqueue) {
@@ -120,9 +144,25 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 	}
 
 	// Helper hack function to send API requests to other destinations.
-	// Simply provide an alternative send function on the obj Object.
+	// Simply provide an alternative send function on the obj Object. The
+	// alternative send function will get the type and data to send, together
+	// with the original type and data (which are potentially unencrypted).
 	Api.prototype.apply = function(name, obj) {
 		var f = this[name];
+		if (!obj.hasOwnProperty("sendEncrypted")) {
+			obj.sendEncrypted = _.bind(function(type, data) {
+				var to = data.To;
+				if (!to || !this.encryption) {
+					return obj.send(type, data, type, data);
+				}
+
+				this.encryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
+					encrypted.To = to
+					encrypted.Type = encryptedType
+					obj.send(encryptedType, encrypted, type, data);
+				}, this));
+			}, this);
+		}
 		return _.bind(f, obj);
 	};
 
@@ -149,6 +189,21 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			return;
 		}
 
+		if (dataType === "Encrypted") {
+			if (!this.encryption) {
+				console.log("Encryption is not supported, can't handle", data);
+				return;
+			}
+			this.encryption.decrypt(d.From, data, _.bind(function(decrypted) {
+				this.processReceived(d, decrypted.Type, decrypted[decrypted.Type]);
+			}, this));
+			return;
+		}
+
+		this.processReceived(d, dataType, data);
+	}
+
+	Api.prototype.processReceived = function(d, dataType, data) {
 		switch (dataType) {
 			case "Self":
 				//console.log("Self received", data);
@@ -214,6 +269,12 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			case "Room":
 				this.e.triggerHandler("received.room", [data]);
 				break;
+			case "EncryptionRequestKeyBundle":
+				this.e.triggerHandler("received.requestkeybundle", [d.From]);
+				break;
+			case "EncryptionKeyBundle":
+				this.e.triggerHandler("received.keybundle", [d.From, data]);
+				break;
 			default:
 				console.log("Unhandled type received:", dataType, data);
 				break;
@@ -272,7 +333,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Offer: payload
 		}
 
-		return this.send("Offer", data);
+		return this.sendEncrypted("Offer", data);
 
 	};
 
@@ -284,7 +345,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Candidate: payload
 		}
 
-		return this.send("Candidate", data);
+		return this.sendEncrypted("Candidate", data);
 
 	}
 
@@ -296,7 +357,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Answer: payload
 		}
 
-		return this.send("Answer", data);
+		return this.sendEncrypted("Answer", data);
 
 	}
 
@@ -361,7 +422,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}
 		}
 
-		return this.send("Bye", data);
+		return this.sendEncrypted("Bye", data);
 
 	};
 
@@ -378,7 +439,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}
 		}
 
-		return this.send("Chat", data);
+		return this.sendEncrypted("Chat", data);
 
 	};
 
