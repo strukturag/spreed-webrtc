@@ -156,6 +156,30 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 		}
 
 		return api.HandleRoom(session, msg.Room)
+	case "EncryptionRegister":
+		if msg.EncryptionRegister == nil {
+			return nil, NewDataError("bad_request", "message did not contain EncryptionRegister")
+		}
+
+		api.HandleEncryptionRegister(session, msg.EncryptionRegister)
+	case "EncryptionRequestKeyBundle":
+		if msg.EncryptionRequestKeyBundle == nil {
+			return nil, NewDataError("bad_request", "message did not contain EncryptionRequestKeyBundle")
+		}
+
+		return api.HandleEncryptionRequestKeyBundle(session, msg.EncryptionRequestKeyBundle)
+	case "EncryptionKeyBundle":
+		if msg.EncryptionKeyBundle == nil {
+			return nil, NewDataError("bad_request", "message did not contain EncryptionKeyBundle")
+		}
+
+		return api.HandleEncryptionKeyBundle(session, msg.EncryptionKeyBundle)
+	case "Encrypted":
+		if msg.Encrypted == nil {
+			return nil, NewDataError("bad_request", "message did not contain Encrypted")
+		}
+
+		return api.HandleEncrypted(session, msg.Encrypted)
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
@@ -326,4 +350,43 @@ func (api *channellingAPI) HandleRoom(session *Session, room *DataRoom) (*DataRo
 		session.Broadcast(room)
 	}
 	return room, err
+}
+
+func (api *channellingAPI) HandleEncryptionRegister(session *Session, register *DataEncryptionRegister) {
+	session.encryptionRegistration = register
+}
+
+func (api *channellingAPI) HandleEncryptionRequestKeyBundle(session *Session, request *DataEncryptionRequestKeyBundle) (interface{}, error) {
+	if request.To == "" {
+		return nil, NewDataError("empty_peer", "cannot send to empty peer")
+	}
+	// TODO(fancycode): Check if peer is online and return bundle based on
+	// registration data if not.
+	message := &DataEncryptionRequestKeyBundle{
+		Type: "EncryptionRequestKeyBundle",
+	}
+	session.Unicast(request.To, message)
+	return nil, nil
+}
+
+func (api *channellingAPI) HandleEncryptionKeyBundle(session *Session, bundle *DataEncryptionKeyBundle) (interface{}, error) {
+	if bundle.To == "" {
+		return nil, NewDataError("empty_peer", "cannot send to empty peer")
+	}
+	message := *bundle
+	message.To = ""
+	message.Type = "EncryptionKeyBundle"
+	session.Unicast(bundle.To, message)
+	return nil, nil
+}
+
+func (api *channellingAPI) HandleEncrypted(session *Session, data *DataEncrypted) (interface{}, error) {
+	if data.To == "" {
+		return nil, NewDataError("empty_peer", "cannot send to empty peer")
+	}
+	message := *data
+	message.To = ""
+	message.Type = "Encrypted"
+	session.Unicast(data.To, message)
+	return nil, nil
 }
