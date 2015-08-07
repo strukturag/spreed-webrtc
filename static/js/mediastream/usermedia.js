@@ -109,12 +109,20 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 	var stopUserMediaStream = (function() {
 		return function(stream) {
 			if (stream && stream.getTracks) {
+				// Stop all tracks.
 				var tracks = stream.getTracks();
 				_.each(tracks, function(t) {
 					t.stop();
 				});
+				if (window.webrtcDetectedBrowser === "firefox") {
+					// Always call stop for Firefox as long as it is available.
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=1192170
+					if (stream.stop) {
+						stream.stop();
+					}
+				}
 			} else {
-				console.warn("MediaStream.stop is deprecated");
+				// MediaStream.stop is deprecated.
 				stream.stop();
 			}
 		}
