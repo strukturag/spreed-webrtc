@@ -518,6 +518,9 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 					delete this.peerconnections[id];
 				}, this));
 			}
+		} else {
+			// Make sure to trigger renegotiation even if we have no media.
+			_.defer(pc.negotiationNeeded);
 		}
 
 	};
