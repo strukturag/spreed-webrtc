@@ -82,6 +82,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 				// implemented. This does not work together with Chrome, so we trigger negotiation
 				// manually when a stream is added or removed.
 				// https://bugzilla.mozilla.org/show_bug.cgi?id=1017888
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=1149838
 				this.negotiationNeeded = _.bind(function() {
 					if (this.currentcall.initiate) {
 						// Trigger onNegotiationNeeded once for Firefox.
