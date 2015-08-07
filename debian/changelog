@@ -1,3 +1,17 @@
+spreed-webrtc-server (0.24.5) trusty; urgency=medium
+
+  * Updated ua-parser to 0.7.9.
+  * Fixed errors in unit tests.
+  * Added Apache HTTPD example configuration.
+  * Fixed a problem where Firefox did not release media permissions.
+  * More use of track API instead of stream API.
+  * SignalingState changes are now triggered as event.
+  * Fixed a problem where Firefox did not start the call when media permission was denied.
+  * Fixed a problem where streams could not be started when they were disabled when call was started and server has renegotiation disabled.
+  * Fixed a problem where the renegotiation shrine was ignored.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 07 Aug 2015 16:08:14 +0200
+
 spreed-webrtc-server (0.24.4) precise; urgency=low
 
   * Updated German translations.
