@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
+define(['jquery', 'underscore', 'desktop-notify', 'webrtc.adapter'], function($, _, notify) {
 
 	return ["$window", function($window) {
 
@@ -29,8 +29,8 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 			var iconElement = $("<span>").addClass("desktopnotify-icon hidden");
 			iconElement.appendTo("body");
 			var url = iconElement.css('background-image');
-    		url = /^url\((['"]?)(.*)\1\)$/.exec(url);
-    		url = url ? url[2] : "";
+			url = /^url\((['"]?)(.*)\1\)$/.exec(url);
+			url = url ? url[2] : "";
 			iconElement.remove();
 			return url;
 		}());
@@ -55,18 +55,43 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 
 		DesktopNotify.prototype.enabled = function() {
 
-			if (this.level === "default") {
+			if (this.supported && this.level === "default") {
 				this.asked = true;
 				this.requestPermission();
 			}
-			return (this.supported && this.level === "granted") ? true : false;
+			return this.supported && this.level === "granted";
 
 		};
 
 		DesktopNotify.prototype.refresh = function() {
 
-			this.supported = helper.isSupported;
-			this.level = helper.permissionLevel();
+			var level = this.level = helper.permissionLevel();
+			this.supported = (function() {
+				if (helper.isSupported) {
+					if ($window.Notification && $window.Notification.requestPermission) {
+						if (level !== "granted") {
+							// Aditional check to verify Notification really works. This fails
+							// on Android, where Notifications raise an exception.
+							// See https://code.google.com/p/chromium/issues/detail?id=481856
+							try {
+								/*jshint nonew: false */
+								new $window.Notification('');
+							} catch(e) {
+								if (e.name == 'TypeError') {
+									return false;
+								}
+							}
+						} else {
+							// Disable notifications even if granted and on Android Chrome.
+							if ($window.webrtcDetectedAndroid) {
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+				return false;
+			}());
 
 		};
 
