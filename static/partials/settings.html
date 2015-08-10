@@ -40,6 +40,13 @@
             <p class="help-block">{{_('Your picture, name and status message identify yourself in calls, chats and rooms.')}}</p>
           </div>
         </div>
+        <div class="form-group profile-fingerprint" ng-show="fingerprint">
+          <label class="col-xs-4 control-label">{{_('Fingerprint')}}</label>
+          <div class="col-xs-8">
+            <pre class="help-block">{{fingerprint}}</pre>
+            <p class="help-block">{{_('You can compare the fingerprint with other peers to confirm your identity.')}}</p>
+          </div>
+        </div>
         <div ng-if="(withUsers && withUsersRegistration) || userid">
           <div class="form-group profile-yourid">
             <label class="col-xs-4 control-label">{{_('Your ID')}}</label>

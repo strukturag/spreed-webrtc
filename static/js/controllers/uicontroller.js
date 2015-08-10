@@ -116,6 +116,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.id = $scope.myid = null;
 		$scope.userid = $scope.myuserid = null;
 		$scope.suserid = null;
+		$scope.fingerprint = null;
 		$scope.peer = null;
 		$scope.dialing = null;
 		$scope.conference = null;
@@ -533,6 +534,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 					mediaStream.webrtc.doHangup("failed", currentcall.id);
 					alertify.dialog.alert(translation._("Peer connection failed. Check your settings."));
 					break;
+			}
+		});
+
+		appData.e.on("identity.own", function(event, identity) {
+			if (identity) {
+				$scope.fingerprint = identity.getFingerprint();
+			} else {
+				$scope.fingerprint = null;
 			}
 		});
 

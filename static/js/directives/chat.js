@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function($, _, templateChat, templateChatroom) {
 
-	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
+	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "alertify", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, alertify, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
 
 		var displayName = safeDisplayName;
 		var groupChatId = "";
@@ -57,7 +57,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 				return res;
 			};
 
-			mediaStream.api.e.on("received.chat", function(event, id, from, data, p2p) {
+			mediaStream.api.e.on("received.chat", function(event, id, from, data, p2p, encrypted) {
 
 				//console.log("received", data, id, from);
 
@@ -102,7 +102,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 				}
 
 				safeApply(room);
-				room.$broadcast("received", from, data);
+				room.$broadcast("received", from, data, encrypted);
 
 			});
 
@@ -127,6 +127,28 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						default:
 							break;
 					}
+				}
+			});
+
+			appData.e.on("identity.request", function(event, peer) {
+				var room = rooms[peer];
+				if (room) {
+					room.$apply(function(scope) {
+						scope.requestPeerIdentity = true;
+					});
+				}
+			});
+			appData.e.on("identity.received", function(event, peer, identity) {
+				var room = rooms[peer];
+				if (room) {
+					room.$apply(function(scope) {
+						scope.requestPeerIdentity = false;
+						if (identity) {
+							scope.fingerprint = identity.getFingerprint();
+						} else {
+							scope.fingerprint = null;
+						}
+					});
 				}
 			});
 
@@ -205,6 +227,10 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope = controller.rooms[id] = scope.$new();
 						translation.inject(subscope);
 						subscope.id = id;
+						var bd = buddyData.get(id);
+						var identity = bd ? bd.identity : null;
+						subscope.requestPeerIdentity = false;
+						subscope.fingerprint = identity ? identity.getFingerprint() : null;
 						subscope.isgroupchat = !!settings.group;
 						subscope.index = index;
 						subscope.settings = settings;
@@ -269,12 +295,13 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 									send: function(type, data, origType, origData) {
 										// We also send to self, to display our own stuff.
 										if (!noloop) {
+											var encrypted = (type !== origType);
 											mediaStream.api.received({
 												Type: origData.Type,
 												Data: origData,
 												From: mediaStream.api.id,
 												To: peercall.id
-											});
+											}, encrypted);
 										}
 										return peercall.peerconnection.send(data);
 									}
@@ -289,7 +316,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								});
 							}
 							_.delay(function() {
-								mediaStream.api.send2("sendChat", function(type, data) {
+								mediaStream.api.send2("sendChat", function(type, data, encrypted) {
 									if (!noloop) {
 										//console.log("looped to self", type, data);
 										mediaStream.api.received({
@@ -297,7 +324,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 											Data: data,
 											From: mediaStream.api.id,
 											To: to
-										});
+										}, encrypted);
 									}
 								})(to, message, status, mid);
 							}, 100);
@@ -328,6 +355,14 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							}, function(err) {
 								console.error("Failed to receive geolocation", err);
 							});
+						};
+						subscope.showFingerprint = function() {
+							if (subscope.fingerprint) {
+								// TODO(fancycode): Show a nicer notification.
+								var msg = translation._("%1$s has an identity with the fingerprint %2$s.",
+									displayName(subscope.id), subscope.fingerprint);
+								alertify.dialog.notify(translation._("Fingerprint"), msg);
+							}
 						};
 						subscope.doClear = function() {
 							subscope.$broadcast("clear");

@@ -102,7 +102,9 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}, this),
 			sendEncrypted: _.bind(function(type, data) {
 				if (cb) {
-					cb(type, data);
+					var to = data.To;
+					var encrypted = (to && this.endToEndEncryption);
+					cb(type, data, encrypted);
 				}
 				this.sendEncrypted(type, data);
 			}, this)
@@ -160,7 +162,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		return _.bind(f, obj);
 	};
 
-	Api.prototype.received = function(d) {
+	Api.prototype.received = function(d, encrypted) {
 
 		// Store received timestamp.
 		var now = new Date().getTime();
@@ -189,11 +191,13 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				return;
 			}
 			this.endToEndEncryption.decrypt(d.From, data, _.bind(function(decrypted) {
+				d.encrypted = true;
 				this.processReceived(d, decrypted.Type, decrypted[decrypted.Type]);
 			}, this));
 			return;
 		}
 
+		d.encrypted = !!encrypted;
 		this.processReceived(d, dataType, data);
 	}
 
@@ -239,7 +243,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				break;
 			case "Chat":
 				//console.log("chat received", dataType, data);
-				this.e.triggerHandler("received.chat", [data.To, d.From, data.Chat, d.p2p]);
+				this.e.triggerHandler("received.chat", [data.To, d.From, data.Chat, d.p2p, d.encrypted]);
 				break;
 			case "Conference":
 				this.e.triggerHandler("received.conference", [data.Id, data.Conference, data.Type, d.To, d.From]);

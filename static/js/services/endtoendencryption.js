@@ -36,9 +36,11 @@ define([
 	return [
 		"$window",
 		"$q",
+		"appData",
 		function(
 			$window,
-			$q
+			$q,
+			appData
 		) {
 
 		// Bitflags for the different components that need to be ready for
@@ -231,6 +233,24 @@ define([
 			return this.save("signed_pre_key_" + this.id + "_" + key.id, data);
 		};
 
+		var PeerIdentity = function(id, identity_key) {
+			this.id = id;
+			this.identity_key = identity_key;
+		};
+
+		PeerIdentity.prototype.getFingerprint = function() {
+			// TODO(jojo): Change this to be the SHA-1 hash of a three-byte key
+			// id and the public key.
+			// See https://github.com/WhisperSystems/TextSecure/blob/08ed90c5ece49c92e35c492afb4e60160983015a/src/org/thoughtcrime/securesms/crypto/PublicKey.java#L95
+			var fingerprint = ByteBuffer.wrap(this.identity_key).toHex();
+			var pos;
+			for (pos = fingerprint.length - 4; pos >= 4; pos -= 4) {
+				fingerprint = fingerprint.substr(0, pos) + "-" +
+						fingerprint.substr(pos);
+			}
+			return fingerprint.substr(2);
+		};
+
 		var EndToEndEncryption = function(api) {
 			this.e = $({});
 			this.api = api;
@@ -292,36 +312,32 @@ define([
 			}
 		};
 
-		EndToEndEncryption.prototype.getIdentityFingerprint = function() {
-			return this.formatIdentityFingerprint(this.identity_keypair.public);
-		};
-
-		EndToEndEncryption.prototype.formatIdentityFingerprint = function(public_key) {
-			// TODO(jojo): Change this to be the SHA-1 hash of a three-byte key
-			// id and the public key.
-			// See https://github.com/WhisperSystems/TextSecure/blob/08ed90c5ece49c92e35c492afb4e60160983015a/src/org/thoughtcrime/securesms/crypto/PublicKey.java#L95
-			var fingerprint = ByteBuffer.wrap(public_key).toHex();
-			var pos;
-			for (pos = fingerprint.length - 4; pos >= 4; pos -= 4) {
-				fingerprint = fingerprint.substr(0, pos) + "-" +
-						fingerprint.substr(pos);
-			}
-			return fingerprint.substr(2);
+		EndToEndEncryption.prototype.setOwnIdentity = function(public_key) {
+			var identity = new PeerIdentity(null, public_key);
+			this.own_identity = identity;
+			appData.e.triggerHandler("identity.own", [identity]);
 		};
 
 		EndToEndEncryption.prototype.storePeerIdentity = function(peer, public_key) {
-			var fingerprint = this.formatIdentityFingerprint(public_key);
+			var identity = new PeerIdentity(peer, public_key);
+			var fingerprint = identity.getFingerprint();
 			var existing = this.peer_identities[peer];
-			if (existing === fingerprint) {
-				return;
-			} else if (existing && existing !== fingerprint) {
-				console.warn("Fingerprint changed", {
-					"peer": peer,
-					"existing": existing,
-					"fingerprint": fingerprint
-				});
+			if (existing) {
+				if (existing.getFingerprint() === fingerprint) {
+					// No change.
+					return;
+				} else {
+					// Uh oh, remote peer has a new identity, this is something
+					// the user should know about!
+					appData.e.triggerHandler("identity.changed", [
+						peer,
+						existing,
+						identity
+					]);
+				}
 			}
-			this.peer_identities[peer] = fingerprint;
+			this.peer_identities[peer] = identity;
+			appData.e.triggerHandler("identity.received", [peer, identity]);
 		};
 
 		EndToEndEncryption.prototype.getReadyPromise = function() {
@@ -360,6 +376,9 @@ define([
 			var deferred = $q.defer();
 			var doLoadData = _.bind(function() {
 				this.identity_keypair = this.store.loadKeypair();
+				if (this.identity_keypair) {
+					this.setOwnIdentity(this.identity_keypair.public);
+				}
 				this.registration_id = this.store.loadRegistrationId();
 				this.last_resort_pre_key =
 						this.store.loadSignedPreKey(LAST_RESORT_PRE_KEY_ID);
@@ -390,6 +409,7 @@ define([
 						.then(_.bind(function(keypair) {
 					if (this.identity_keypair === null) {
 						this.identity_keypair = keypair;
+						this.setOwnIdentity(this.identity_keypair.public);
 						this.store.saveKeypair(keypair);
 					}
 					deferred.resolve(this.identity_keypair);
@@ -593,6 +613,7 @@ define([
 					"message": message,
 					"callback": callback
 				});
+				appData.e.triggerHandler("identity.request", [peer]);
 				this.apiSend("EncryptionRequestKeyBundle", {"To": peer});
 				return;
 			}

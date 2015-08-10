@@ -647,6 +647,13 @@ define(['jquery', 'angular', 'underscore', 'modernizr', 'avltree', 'text!partial
 
 		};
 
+		Buddylist.prototype.onIdentityReceived = function(id, identity) {
+			var scope = buddyData.get(id);
+			if (scope) {
+				scope.identity = identity;
+			}
+		};
+
 		Buddylist.prototype.click = function(buddyElement, target) {
 
 			var be = buddyElement[0];
