@@ -191,7 +191,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		if (dataType === "Encrypted") {
 			if (!this.endToEndEncryption) {
-				console.log("Encryption is not supported, can't handle", data);
+				console.error("Encryption is not supported, can't handle", data);
 				return;
 			}
 			this.endToEndEncryption.decrypt(d.From, data, _.bind(function(decrypted) {
