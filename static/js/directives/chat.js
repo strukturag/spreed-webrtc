@@ -24,6 +24,10 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
 
+		// Translation helpers.
+		translation._("Chat with %1$s");
+		translation._("Room chat %1$s");
+
 		var displayName = safeDisplayName;
 		var groupChatId = "";
 		var maxMessageSize = 200000;
@@ -138,7 +142,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					$scope.showGroupRoom(null, options);
 				} else {
 					$scope.showRoom(id, {
-						title: translation._("Chat with")
+						// Gets translated in template.
+						title: "Chat with %1$s"
 					}, options);
 				}
 
@@ -160,7 +165,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						return;
 					}
 					var subscope = $scope.showRoom(id, {
-						title: translation._("Chat with")
+						// Gets translated in template.
+						title: "Chat with %1$s"
 					}, options);
 					subscope.sendChatServer(id, "Contact request", {
 						ContactRequest: {
@@ -182,7 +188,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 				scope.showGroupRoom = function(settings, options) {
 					var stngs = $.extend({
-						title: translation._("Room chat"),
+						// Gets translated in template.
+						title: "Room chat %1$s",
 						group: true
 					}, settings);
 					return scope.showRoom(controller.group, stngs, options);
@@ -385,7 +392,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								// before we beep and shout.
 								if (!subscope.isgroupchat && from !== sessionid) {
 									playSound.play("chatmessage");
-									desktopNotify.notify(translation._("Message from ") + displayName(from), message);
+									desktopNotify.notify(translation._("Message from %1$s", displayName(from)), message);
 									appData.e.triggerHandler("uiNotification", ["chatmessage", {from: from, message: message, first: subscope.firstmessage}]);
 								}
 								subscope.firstmessage = false;

@@ -1,5 +1,5 @@
 <div ng-controller="ChatroomController" class="chat room-{{index}}" ng-class="{'newmessage': newmessage, 'visible': visible, 'chat-p2p': 'p2pstate', 'with_pictures': isgroupchat, 'active': active}">
-    <div class="chatheader"><div class="chatstatusicon" ng-click="deactivateRoom()"><i class="fa fa-angle-left"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{settings.title}} {{id|displayName}}</span></div> <div class="ctrl"><i ng-hide="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-expand"></i><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i><!--<i title="{{_('Close chat')}}" ng-click="hide()" class="fa fa-times"></i>--></div></div>
+    <div class="chatheader"><div class="chatstatusicon" ng-click="deactivateRoom()"><i class="fa fa-angle-left"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span ng-show="p2pstate" class="fa fa-exchange" title="{{_('Peer to peer')}}"/><span>{{_(settings.title, displayName(id))}}</span></div> <div class="ctrl"><i ng-hide="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-expand"></i><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i><!--<i title="{{_('Close chat')}}" ng-click="hide()" class="fa fa-times"></i>--></div></div>
     <div class="chatmenu">
         <div class="btn-group">
             <button ng-if="!isgroupchat && roomType!='Conference'" class="btn btn-sm btn-default" title="{{_('Start video call')}}" ng-click="doCall()"><i class="fa fa-phone fa-fw"></i></button>
@@ -16,8 +16,8 @@
         </div>
         <div class="chatbodybottom">
             <div class="typinghint" ng-switch on="peerIsTyping">
-                <span ng-switch-when="start"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('is typing...')}}</span>
-                <span ng-switch-when="stop"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('has stopped typing...')}}</span>
+                <span ng-switch-when="start"><i class="fa fa-pencil"></i> {{_('%1$s is typing...', displayName(id))}}</span>
+                <span ng-switch-when="stop"><i class="fa fa-pencil"></i> {{_('%1$s has stopped typing...', displayName(id))}}</span>
             </div>
             <div class="inputbox">
                 <div>
