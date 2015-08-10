@@ -115,13 +115,13 @@ define([
 			return JSON.stringify(data);
 		};
 
-		var LocalStorageDataStore = function(encryption) {
+		var LocalStorageDataStore = function(endToEndEncryption) {
 			this.e = $({});
-			this.encryption = encryption;
+			this.endToEndEncryption = endToEndEncryption;
 			this.userid = null;
-			this.id = encryption.api.sid;
+			this.id = endToEndEncryption.api.sid;
 			this.anonymous_storage = {};
-			encryption.api.e.on("received.self", _.bind(function(event, data) {
+			endToEndEncryption.api.e.on("received.self", _.bind(function(event, data) {
 				var userid = data.Suserid || null;
 				if (this.id === (userid || data.Sid) && this.userid === userid) {
 					return;
@@ -132,7 +132,7 @@ define([
 					this.userid = userid;
 					this.anonymous_storage = {};
 				}
-				this.encryption.resetStore();
+				this.endToEndEncryption.resetStore();
 				if (initial) {
 					this.e.triggerHandler("ready");
 				}
@@ -231,7 +231,7 @@ define([
 			return this.save("signed_pre_key_" + this.id + "_" + key.id, data);
 		};
 
-		var Encryption = function(api) {
+		var EndToEndEncryption = function(api) {
 			this.e = $({});
 			this.api = api;
 			// TODO(fancycode): Look into using IndexedDB as storage backend.
@@ -271,11 +271,11 @@ define([
 			this.resetStore();
 		};
 
-		Encryption.prototype.isSupported = function() {
+		EndToEndEncryption.prototype.isSupported = function() {
 			return !!this.store;
 		};
 
-		Encryption.prototype.resetStore = function() {
+		EndToEndEncryption.prototype.resetStore = function() {
 			// TODO(fancycode): We should process any pending messages before
 			// resetting everything.
 			this.identity_keypair = null;
@@ -292,11 +292,11 @@ define([
 			}
 		};
 
-		Encryption.prototype.getIdentityFingerprint = function() {
+		EndToEndEncryption.prototype.getIdentityFingerprint = function() {
 			return this.formatIdentityFingerprint(this.identity_keypair.public);
 		};
 
-		Encryption.prototype.formatIdentityFingerprint = function(public_key) {
+		EndToEndEncryption.prototype.formatIdentityFingerprint = function(public_key) {
 			// TODO(jojo): Change this to be the SHA-1 hash of a three-byte key
 			// id and the public key.
 			// See https://github.com/WhisperSystems/TextSecure/blob/08ed90c5ece49c92e35c492afb4e60160983015a/src/org/thoughtcrime/securesms/crypto/PublicKey.java#L95
@@ -309,7 +309,7 @@ define([
 			return fingerprint.substr(2);
 		};
 
-		Encryption.prototype.storePeerIdentity = function(peer, public_key) {
+		EndToEndEncryption.prototype.storePeerIdentity = function(peer, public_key) {
 			var fingerprint = this.formatIdentityFingerprint(public_key);
 			var existing = this.peer_identities[peer];
 			if (existing === fingerprint) {
@@ -324,7 +324,7 @@ define([
 			this.peer_identities[peer] = fingerprint;
 		};
 
-		Encryption.prototype.getReadyPromise = function() {
+		EndToEndEncryption.prototype.getReadyPromise = function() {
 			if (!this.ready_promise) {
 				// Load/create initial objects
 				this.ready_promise = this.loadData().then(_.bind(function() {
@@ -356,7 +356,7 @@ define([
 			return this.ready_promise;
 		};
 
-		Encryption.prototype.loadData = function() {
+		EndToEndEncryption.prototype.loadData = function() {
 			var deferred = $q.defer();
 			var doLoadData = _.bind(function() {
 				this.identity_keypair = this.store.loadKeypair();
@@ -378,7 +378,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.getLocalIdentityKeyPair = function() {
+		EndToEndEncryption.prototype.getLocalIdentityKeyPair = function() {
 			var deferred = $q.defer();
 			_.defer(_.bind(function() {
 				if (this.identity_keypair) {
@@ -398,7 +398,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.getLocalRegistrationId = function() {
+		EndToEndEncryption.prototype.getLocalRegistrationId = function() {
 			var deferred = $q.defer();
 			_.defer(_.bind(function() {
 				if (this.registration_id) {
@@ -417,7 +417,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.getLastResortPreKey = function() {
+		EndToEndEncryption.prototype.getLastResortPreKey = function() {
 			var deferred = $q.defer();
 			_.defer(_.bind(function() {
 				if (this.last_resort_pre_key) {
@@ -437,7 +437,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.getLocalSignedPreKeyPair = function(id) {
+		EndToEndEncryption.prototype.getLocalSignedPreKeyPair = function(id) {
 			var deferred = $q.defer();
 			_.defer(_.bind(function() {
 				var signed_pre_key;
@@ -451,7 +451,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.getSignedPreKey = function(id) {
+		EndToEndEncryption.prototype.getSignedPreKey = function(id) {
 			if (!id) {
 				id = this.next_signed_pre_key_id;
 				this.next_signed_pre_key_id++;
@@ -475,7 +475,7 @@ define([
 			return deferred.promise;
 		};
 
-		Encryption.prototype.apiSend = function(type, message) {
+		EndToEndEncryption.prototype.apiSend = function(type, message) {
 			var msg = {
 				"Type": type
 			};
@@ -483,7 +483,7 @@ define([
 			this.api.send(type, message);
 		};
 
-		Encryption.prototype.register = function() {
+		EndToEndEncryption.prototype.register = function() {
 			this.getReadyPromise().then(_.bind(function() {
 				var message = {
 					"RegistrationId": this.registration_id,
@@ -500,7 +500,7 @@ define([
 			}, this));
 		};
 
-		Encryption.prototype.processPendingMessages = function(peer) {
+		EndToEndEncryption.prototype.processPendingMessages = function(peer) {
 			var pending = this.pending_messages[peer];
 			if (pending && pending.length > 0) {
 				var msg = pending.shift();
@@ -526,7 +526,7 @@ define([
 			}
 		};
 
-		Encryption.prototype.requestKeyBundle = function(peer) {
+		EndToEndEncryption.prototype.requestKeyBundle = function(peer) {
 			this.getSignedPreKey().then(_.bind(function(signed_pre_key) {
 				var bundle = {
 					"To": peer,
@@ -543,7 +543,7 @@ define([
 			}, this));
 		};
 
-		Encryption.prototype.receivedKeyBundle = function(peer, data) {
+		EndToEndEncryption.prototype.receivedKeyBundle = function(peer, data) {
 			var bundle = {
 				"identityKey": deserializePublicKey(data.Identity),
 				"preKeyId": null,
@@ -571,7 +571,7 @@ define([
 			}, this));
 		};
 
-		Encryption.prototype.encrypt = function(peer, type, message, callback) {
+		EndToEndEncryption.prototype.encrypt = function(peer, type, message, callback) {
 			var msg = {"Type": type};
 			msg[type] = message;
 			message = JSON.stringify(msg);
@@ -599,7 +599,7 @@ define([
 			this.encryptWithSession(peer, session, message, callback);
 		};
 
-		Encryption.prototype.encryptWithSession = function(
+		EndToEndEncryption.prototype.encryptWithSession = function(
 				peer, session, message, callback) {
 			var buffer = ByteBuffer.fromUTF8(message).toArrayBuffer();
 			// TODO(fancycode): Add error handling.
@@ -617,7 +617,7 @@ define([
 			}, this));
 		};
 
-		Encryption.prototype.decrypt = function(peer, message, callback) {
+		EndToEndEncryption.prototype.decrypt = function(peer, message, callback) {
 			if (this.is_processing_messages[peer]) {
 				this.pending_messages[peer].push({
 					"type": "decrypt",
@@ -632,7 +632,7 @@ define([
 			this.decryptWithSession(peer, session, message, callback);
 		};
 
-		Encryption.prototype.decryptWithSession = function(
+		EndToEndEncryption.prototype.decryptWithSession = function(
 				peer, session, message, callback) {
 			var handle_decrypted = _.bind(function(decrypted) {
 				if (decrypted.identityKey) {
@@ -662,38 +662,38 @@ define([
 			}
 		};
 
-		var encryption;
+		var endToEndEncryption;
 
 		// Only export limited public encryption API.
-		var encryptionApi = {
+		var endToEndEncryptionApi = {
 			"initialize": function(api) {
-				if (encryption) {
+				if (endToEndEncryption) {
 					return true;
 				}
-				encryption = new Encryption(api);
-				if (!encryption.isSupported()) {
-					encryption = null;
+				endToEndEncryption = new EndToEndEncryption(api);
+				if (!endToEndEncryption.isSupported()) {
+					endToEndEncryption = null;
 					return false;
 				}
 				return true;
 			},
 			"encrypt": function(peer, type, message, callback) {
-				if (!encryption) {
+				if (!endToEndEncryption) {
 					callback(type, message);
 					return;
 				}
-				encryption.encrypt(peer, type, message, callback);
+				endToEndEncryption.encrypt(peer, type, message, callback);
 			},
 			"decrypt": function(peer, message, callback) {
-				if (!encryption) {
+				if (!endToEndEncryption) {
 					callback(message);
 					return;
 				}
-				encryption.decrypt(peer, message, callback);
+				endToEndEncryption.decrypt(peer, message, callback);
 			}
 		};
 
-		return encryptionApi;
+		return endToEndEncryptionApi;
 
 	}];
 

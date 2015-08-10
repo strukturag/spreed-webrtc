@@ -71,7 +71,7 @@ define([
 	'services/sandbox',
 	'services/dummystream',
 	'services/usermedia',
-	'services/encryption'], function(_,
+	'services/endtoendencryption'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -120,7 +120,7 @@ mediaDevices,
 sandbox,
 dummyStream,
 userMedia,
-encryption) {
+endToEndEncryption) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -171,7 +171,7 @@ encryption) {
 		sandbox: sandbox,
 		dummyStream: dummyStream,
 		userMedia: userMedia,
-		encryption: encryption
+		endToEndEncryption: endToEndEncryption
 	};
 
 	var initialize = function(angModule) {

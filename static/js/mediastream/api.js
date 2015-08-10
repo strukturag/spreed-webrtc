@@ -22,19 +22,19 @@
 "use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
-	var Api = function(version, connector, encryption) {
+	var Api = function(version, connector, endToEndEncryption) {
 		this.e = $({});
 		this.version = version;
 		this.id = null;
 		this.sid = null;
 		this.session = {};
 		this.connector = connector;
-		if (!encryption.initialize(this)) {
+		if (!endToEndEncryption.initialize(this)) {
 			console.warn("Encryption services failed to initialize");
-			this.encryption = null;
+			this.endToEndEncryption = null;
 		} else {
 			console.log("Encryption services initialized");
-			this.encryption = encryption;
+			this.endToEndEncryption = endToEndEncryption;
 		}
 		this.iids= 0;
 
@@ -118,11 +118,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	Api.prototype.sendEncrypted = function(type, data, noqueue) {
 		var to = data.To;
-		if (!to || !this.encryption) {
+		if (!to || !this.endToEndEncryption) {
 			return this.send(type, data, noqueue);
 		}
 
-		this.encryption.encrypt(to, type, data, _.bind(function(type, encrypted) {
+		this.endToEndEncryption.encrypt(to, type, data, _.bind(function(type, encrypted) {
 			encrypted.To = to
 			this.send(type, encrypted, noqueue);
 		}, this));
@@ -152,11 +152,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		if (!obj.hasOwnProperty("sendEncrypted")) {
 			obj.sendEncrypted = _.bind(function(type, data) {
 				var to = data.To;
-				if (!to || !this.encryption) {
+				if (!to || !this.endToEndEncryption) {
 					return obj.send(type, data, type, data);
 				}
 
-				this.encryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
+				this.endToEndEncryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
 					encrypted.To = to
 					encrypted.Type = encryptedType
 					obj.send(encryptedType, encrypted, type, data);
@@ -190,11 +190,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		}
 
 		if (dataType === "Encrypted") {
-			if (!this.encryption) {
+			if (!this.endToEndEncryption) {
 				console.log("Encryption is not supported, can't handle", data);
 				return;
 			}
-			this.encryption.decrypt(d.From, data, _.bind(function(decrypted) {
+			this.endToEndEncryption.decrypt(d.From, data, _.bind(function(decrypted) {
 				this.processReceived(d, decrypted.Type, decrypted[decrypted.Type]);
 			}, this));
 			return;
