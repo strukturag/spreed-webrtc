@@ -668,14 +668,16 @@ define([
 		var endToEndEncryptionApi = {
 			"initialize": function(api) {
 				if (endToEndEncryption) {
-					return true;
+					return endToEndEncryption;
 				}
 				endToEndEncryption = new EndToEndEncryption(api);
 				if (!endToEndEncryption.isSupported()) {
+					console.warn("EndToEnd encryption services not supported");
 					endToEndEncryption = null;
-					return false;
+					return null;
 				}
-				return true;
+				console.log("EndToEnd encryption services initialized");
+				return endToEndEncryption;
 			},
 			"encrypt": function(peer, type, message, callback) {
 				if (!endToEndEncryption) {

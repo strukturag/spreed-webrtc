@@ -29,13 +29,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.sid = null;
 		this.session = {};
 		this.connector = connector;
-		if (!endToEndEncryption.initialize(this)) {
-			console.warn("Encryption services failed to initialize");
-			this.endToEndEncryption = null;
-		} else {
-			console.log("Encryption services initialized");
-			this.endToEndEncryption = endToEndEncryption;
-		}
+		this.endToEndEncryption = endToEndEncryption.initialize(this);
 		this.iids= 0;
 
 		var ua = uaparser();
