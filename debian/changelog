@@ -1,3 +1,10 @@
+spreed-webrtc-server (0.24.6) trusty; urgency=medium
+
+  * Make travis run 'make test'.
+  * Disable notifications on Android Chrome (see https://code.google.com/p/chromium/issues/detail?id=481856). 
+
+ -- Simon Eisenmann <simon@struktur.de>  Mon, 10 Aug 2015 17:33:46 +0200
+
 spreed-webrtc-server (0.24.5) trusty; urgency=medium
 
   * Updated ua-parser to 0.7.9.
