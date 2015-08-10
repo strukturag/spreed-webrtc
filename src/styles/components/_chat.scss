@@ -363,12 +363,12 @@
       }
 
       &:after {
+        float: right;
         font-family: FontAwesome;
         left: 0;
-        float: right;
+        margin-left: 1em;
         text-align: center;
         width: 12px;
-        margin-left: 1em;
       }
 
       &.unread:before {
