@@ -124,6 +124,16 @@ require.config({
 		},
 		'webfont': {
 			exports: 'WebFont'
+		},
+		'axolotl': {
+			deps: [
+				'axolotl-crypto',
+				'axolotlCryptoCurve25519',
+				'ByteBuffer',
+				'Long',
+				'protobufjs',
+				'traceur-runtime'
+			]
 		}
 	}
 });
