@@ -29,8 +29,8 @@ define(['jquery', 'underscore', 'desktop-notify'], function($, _, notify) {
 			var iconElement = $("<span>").addClass("desktopnotify-icon hidden");
 			iconElement.appendTo("body");
 			var url = iconElement.css('background-image');
-    		url = /^url\((['"]?)(.*)\1\)$/.exec(url);
-    		url = url ? url[2] : "";
+			url = /^url\((['"]?)(.*)\1\)$/.exec(url);
+			url = url ? url[2] : "";
 			iconElement.remove();
 			return url;
 		}());
