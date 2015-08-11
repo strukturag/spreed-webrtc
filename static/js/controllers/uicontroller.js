@@ -677,7 +677,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		});
 
 		mediaStream.webrtc.e.on("bye", function(event, reason, from) {
-			console.log("received bye", pickupTimeout, reason);
+			//console.log("received bye", pickupTimeout, reason);
 			switch (reason) {
 				case "busy":
 					console.log("User is busy", reason, from);
