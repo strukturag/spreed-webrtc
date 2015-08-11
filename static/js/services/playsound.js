@@ -119,20 +119,20 @@ define(['underscore', 'Howler', 'require'], function(_, Howler, require) {
 				return null;
 			}
 
-			var id = this.getId(name);
-
 			if (interval) {
 
-				if (this.intervals.hasOwnProperty(id)) {
-					return this.intervals[id];
+				if (this.intervals.hasOwnProperty(name)) {
+					return this.intervals[name];
 				}
-				var i = this.intervals[id] = new SoundInterval(this, id, interval);
+				var i = this.intervals[name] = new SoundInterval(this, name, interval);
 				if (autostart) {
 					i.start();
 				}
 				return i;
 
 			} else {
+
+				var id = this.getId(name);
 
 				if (!this.shouldPlaySound(name) || !this.shouldPlaySound(id)) {
 					return;
