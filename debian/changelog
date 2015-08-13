@@ -1,3 +1,11 @@
+spreed-webrtc-server (0.24.7) trusty; urgency=medium
+
+  * Fixed a problem where Chrome did not apply screen sharing constraints correctly and screen sharing was using a low resolution.
+  * Fixed a problem where sounds used as interval could not be disabled. 
+  * Added window.showCiphers helper for testing WebRTC stats API.
+
+ -- Simon Eisenmann <simon@struktur.de>  Thu, 13 Aug 2015 16:01:41 +0200
+
 spreed-webrtc-server (0.24.6) trusty; urgency=medium
 
   * Make travis run 'make test'.

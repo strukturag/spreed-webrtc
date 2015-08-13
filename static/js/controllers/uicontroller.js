@@ -52,6 +52,52 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		}, 100, true));
 
+		// Helper to test WebRTC stats api.
+		$window.showCiphers = function() {
+
+			var prettyPrint = function(obj) {
+				return JSON.stringify(obj, null, 2)
+			};
+
+			var processStatsReport = function(report) {
+				var channels = {};
+				for (var i in report) {
+					if (report.hasOwnProperty(i)) {
+						var entry = report[i];
+						var channel = null;
+						if (entry.type === "googCandidatePair") {
+							// Chrome candidate pair.
+							if (!entry.googActiveConnection) {
+								continue
+							}
+							channel = report[entry.googChannelId];
+						} else {
+							continue;
+						}
+						if (channel && !channels[channel.id]) {
+							channels[channel.id] = true;
+							console.info("Connected channel", prettyPrint(channel));
+							var localCertificate = report[channel.localCertificateId];
+							var remoteCertificate = report[channel.remoteCertificateId];
+							console.info("Local  certificate", prettyPrint(localCertificate));
+							console.info("Remote certificate", prettyPrint(remoteCertificate));
+						}
+					}
+				}
+			};
+
+			mediaStream.webrtc.callForEachCall(function(c) {
+				if (c.peerconnection && c.peerconnection.pc) {
+					c.peerconnection.pc.getStats(null, function(report) {
+						processStatsReport(report);
+					}, function(error) {
+						console.log("Failed to retrieve stats report", error);
+					});
+				}
+			});
+
+		};
+
 		// Load default sounds.
 		playSound.initialize({
 			urls: ['sounds/sprite1.ogg', 'sounds/sprite1.mp3'],
@@ -631,7 +677,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		});
 
 		mediaStream.webrtc.e.on("bye", function(event, reason, from) {
-			console.log("received bye", pickupTimeout, reason);
+			//console.log("received bye", pickupTimeout, reason);
 			switch (reason) {
 				case "busy":
 					console.log("User is busy", reason, from);

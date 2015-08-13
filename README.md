@@ -130,6 +130,23 @@ open source TURN server implementation. Make sure to use a recent
 version (We recommend 3.2). Versions below 2.5 are not supported.
 
 
+## Setup Screensharing
+
+### Chrome
+Chrome should work out of the box.
+
+### Firefox
+
+As of Firefox >= 36 you must append the domain being used to the allowed domains
+to access your screen. You do this by navigating to `about:config`, search for
+'media.getusermedia.screensharing.allowed_domains', and append the domain
+to the list of strings. You can edit the field simply by double clicking on it.
+Ensure that you follow the syntax rules of the field. If you are using an `ip:port`
+url, simply append `ip` to the list. Also ensure that you are using `https`,
+otherwise permission will be denied to share your screen. You do not need to restart
+or reload in order for it to take affect.
+
+
 ## Contributing
 
 1. "Fork" develop branch.
