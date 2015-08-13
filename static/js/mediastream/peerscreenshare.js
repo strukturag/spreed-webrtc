@@ -80,8 +80,8 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 		var mandatoryVideoConstraints = $.extend(true, {}, {
 			maxWidth: screenWidth,
 			maxHeight: screenHeight,
-			minWidth: screenWidth,
-			minHeight: screenHeight
+			minWidth: 1,
+			minHeight: 1
 		}, webrtc.settings.screensharing.mediaConstraints.video.mandatory, options);
 		var mediaConstraints = $.extend(true, {}, webrtc.settings.screensharing.mediaConstraints, {
 			audio: false
