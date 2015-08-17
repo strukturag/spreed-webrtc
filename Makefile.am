@@ -124,32 +124,32 @@ release: OUTPUT = $(DIST_BIN)
 release: $(DIST_BIN) binary releaseassets
 
 install:
-	@echo "Installing binaries to: $(BIN)"
-	@echo "Installing static resources to: $(SHARE)"
-	$(INSTALL) -d $(BIN)
-	$(INSTALL) -d $(SHARE)/www/html
-	$(INSTALL) -d $(SHARE)/www/html/sandboxes
-	$(INSTALL) -d $(SHARE)/www/static
-	$(INSTALL) -d $(SHARE)/www/static/img
-	$(INSTALL) -d $(SHARE)/www/static/sounds
-	$(INSTALL) -d $(SHARE)/www/static/fonts
-	$(INSTALL) -d $(SHARE)/www/static/translation
-	$(INSTALL) -d $(SHARE)/www/static/css
-	$(INSTALL) -d $(SHARE)/www/static/js/libs/pdf
-	$(INSTALL) -d $(SHARE)/www/static/js/sandboxes
-	$(INSTALL) bin/$(EXENAME) $(BIN)
-	$(INSTALL) html/*.html $(SHARE)/www/html
-	$(INSTALL) html/sandboxes/*.html $(SHARE)/www/html/sandboxes
-	$(INSTALL) static/img/* $(SHARE)/www/static/img
-	$(INSTALL) static/sounds/* $(SHARE)/www/static/sounds
-	$(INSTALL) static/fonts/* $(SHARE)/www/static/fonts
-	$(INSTALL) static/translation/* $(SHARE)/www/static/translation
-	$(INSTALL) static/css/* $(SHARE)/www/static/css
-	$(INSTALL) -D static/js/libs/require/require.js $(SHARE)/www/static/js/libs/require/require.js
-	$(INSTALL) $(OUTPUT_JS)/*.js $(SHARE)/www/static/js
-	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(SHARE)/www/static/js/libs/pdf
-	$(INSTALL) -D static/js/libs/webodf.js $(SHARE)/www/static/js/libs/webodf.js
-	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(SHARE)/www/static/js/sandboxes
+	@echo "Installing binaries to: $(DESTDIR)$(BIN)"
+	@echo "Installing static resources to: $(DESTDIR)$(SHARE)"
+	$(INSTALL) -d $(DESTDIR)$(BIN)
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html/sandboxes
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/img
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/sounds
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/fonts
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/translation
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/css
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/sandboxes
+	$(INSTALL) bin/$(EXENAME) $(DESTDIR)$(BIN)
+	$(INSTALL) html/*.html $(DESTDIR)$(SHARE)/www/html
+	$(INSTALL) html/sandboxes/*.html $(DESTDIR)$(SHARE)/www/html/sandboxes
+	$(INSTALL) static/img/* $(DESTDIR)$(SHARE)/www/static/img
+	$(INSTALL) static/sounds/* $(DESTDIR)$(SHARE)/www/static/sounds
+	$(INSTALL) static/fonts/* $(DESTDIR)$(SHARE)/www/static/fonts
+	$(INSTALL) static/translation/* $(DESTDIR)$(SHARE)/www/static/translation
+	$(INSTALL) static/css/* $(DESTDIR)$(SHARE)/www/static/css
+	$(INSTALL) -D static/js/libs/require/require.js $(DESTDIR)$(SHARE)/www/static/js/libs/require/require.js
+	$(INSTALL) $(OUTPUT_JS)/*.js $(DESTDIR)$(SHARE)/www/static/js
+	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -D static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs/webodf.js
+	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 
 clean:
 	$(GO) clean -i -r app/... 2>/dev/null || true
