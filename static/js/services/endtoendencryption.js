@@ -36,11 +36,9 @@ define([
 	return [
 		"$window",
 		"$q",
-		"appData",
 		function(
 			$window,
-			$q,
-			appData
+			$q
 		) {
 
 		// Bitflags for the different components that need to be ready for
@@ -251,8 +249,11 @@ define([
 			return fingerprint.substr(2);
 		};
 
-		var EndToEndEncryption = function(api) {
+		var EndToEndEncryption = function(api, events) {
+			// Private events.
 			this.e = $({});
+			// Public events.
+			this.events = events;
 			this.api = api;
 			// TODO(fancycode): Look into using IndexedDB as storage backend.
 			if (modernizr.localstorage) {
@@ -315,7 +316,7 @@ define([
 		EndToEndEncryption.prototype.setOwnIdentity = function(public_key) {
 			var identity = new PeerIdentity(null, public_key);
 			this.own_identity = identity;
-			appData.e.triggerHandler("identity.own", [identity]);
+			this.events.triggerHandler("identity.own", [identity]);
 		};
 
 		EndToEndEncryption.prototype.storePeerIdentity = function(peer, public_key) {
@@ -329,7 +330,7 @@ define([
 				} else {
 					// Uh oh, remote peer has a new identity, this is something
 					// the user should know about!
-					appData.e.triggerHandler("identity.changed", [
+					this.events.triggerHandler("identity.changed", [
 						peer,
 						existing,
 						identity
@@ -337,7 +338,7 @@ define([
 				}
 			}
 			this.peer_identities[peer] = identity;
-			appData.e.triggerHandler("identity.received", [peer, identity]);
+			this.events.triggerHandler("identity.received", [peer, identity]);
 		};
 
 		EndToEndEncryption.prototype.getReadyPromise = function() {
@@ -613,7 +614,7 @@ define([
 					"message": message,
 					"callback": callback
 				});
-				appData.e.triggerHandler("identity.request", [peer]);
+				this.events.triggerHandler("identity.request", [peer]);
 				this.apiSend("EncryptionRequestKeyBundle", {"To": peer});
 				return;
 			}
@@ -685,13 +686,16 @@ define([
 
 		var endToEndEncryption;
 
+		var events = $({});
+
 		// Only export limited public encryption API.
 		var endToEndEncryptionApi = {
+			"events": events,
 			"initialize": function(api) {
 				if (endToEndEncryption) {
 					return endToEndEncryption;
 				}
-				endToEndEncryption = new EndToEndEncryption(api);
+				endToEndEncryption = new EndToEndEncryption(api, events);
 				if (!endToEndEncryption.isSupported()) {
 					console.warn("EndToEnd encryption services not supported");
 					endToEndEncryption = null;

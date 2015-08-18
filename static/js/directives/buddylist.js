@@ -23,7 +23,7 @@
 define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 	// buddyList
-	return ["buddyList", "api", "webrtc", "contacts", "appData", function(buddyList, api, webrtc, contacts, appData) {
+	return ["buddyList", "api", "webrtc", "contacts", "endToEndEncryption", function(buddyList, api, webrtc, contacts, endToEndEncryption) {
 
 		//console.log("buddyList directive");
 
@@ -125,7 +125,7 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				onContactUpdated(data);
 			});
 
-			appData.e.on("identity.received", function(event, peer, identity) {
+			endToEndEncryption.events.on("identity.received", function(event, peer, identity) {
 				buddylist.onIdentityReceived(peer, identity);
 			});
 		}];

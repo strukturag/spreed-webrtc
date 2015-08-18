@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function($, _, templateChat, templateChatroom) {
 
-	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "alertify", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, alertify, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
+	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "alertify", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", "endToEndEncryption", function($compile, safeDisplayName, mediaStream, safeApply, alertify, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation, endToEndEncryption) {
 
 		var displayName = safeDisplayName;
 		var groupChatId = "";
@@ -130,7 +130,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 				}
 			});
 
-			appData.e.on("identity.request", function(event, peer) {
+			endToEndEncryption.events.on("identity.request", function(event, peer) {
 				var room = rooms[peer];
 				if (room) {
 					room.$apply(function(scope) {
@@ -138,7 +138,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					});
 				}
 			});
-			appData.e.on("identity.received", function(event, peer, identity) {
+			endToEndEncryption.events.on("identity.received", function(event, peer, identity) {
 				var room = rooms[peer];
 				if (room) {
 					room.$apply(function(scope) {
