@@ -205,12 +205,11 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						delete peers[currentcall.id];
 						console.log("Removed closed call from screen sharing.", currentcall.id);
 					});
-					mediaStream.api.apply("sendScreenshare", {
-						send: function(type, data) {
-							//console.log("sent screenshare", data, peercall);
-							return peercall.peerconnection.send(data);
-						}
-					})(peercall.from, token);
+					mediaStream.api.sendScreenshare(function(type, data) {
+						data.Type = type;
+						//console.log("sent screenshare", data, peercall);
+						return peercall.peerconnection.send(data);
+					}, peercall.from, token);
 				};
 
 				usermedia.e.one("mediasuccess", function(event, usermedia) {

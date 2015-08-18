@@ -482,17 +482,16 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			var tokenHandler = null;
 
 			var mediaStreamSendYouTubeVideo = function(peercall, token, params) {
-				mediaStream.api.apply("sendYouTubeVideo", {
-					send: function(type, data) {
-						if (!peercall.peerconnection.datachannelReady) {
-							return peercall.e.one("dataReady", function() {
-								peercall.peerconnection.send(data);
-							});
-						} else {
-							return peercall.peerconnection.send(data);
-						}
+				mediaStream.api.sendYouTubeVideo(function(type, data) {
+					data.Type = type;
+					if (!peercall.peerconnection.datachannelReady) {
+						return peercall.e.one("dataReady", function() {
+							peercall.peerconnection.send(data);
+						});
+					} else {
+						return peercall.peerconnection.send(data);
 					}
-				})(peercall.id, token, params);
+				}, peercall.id, token, params);
 			};
 
 			var connector = function(token, peercall) {

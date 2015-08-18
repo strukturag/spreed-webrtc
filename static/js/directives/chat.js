@@ -291,21 +291,10 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								});
 							}
 							_.delay(function() {
-								mediaStream.api.apply("sendChat", {
-									send: function(type, data, origType, origData) {
-										// We also send to self, to display our own stuff.
-										if (!noloop) {
-											var encrypted = (type !== origType);
-											mediaStream.api.received({
-												Type: origData.Type,
-												Data: origData,
-												From: mediaStream.api.id,
-												To: peercall.id
-											}, encrypted);
-										}
-										return peercall.peerconnection.send(data);
-									}
-								})(to, message, status, mid);
+								mediaStream.api.sendChat(function(type, data) {
+									data.Type = type;
+									return peercall.peerconnection.send(data);
+								}, to, message, status, mid, true);
 							}, 100);
 							return mid;
 						};
@@ -316,17 +305,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								});
 							}
 							_.delay(function() {
-								mediaStream.api.send2("sendChat", function(type, data, encrypted) {
-									if (!noloop) {
-										//console.log("looped to self", type, data);
-										mediaStream.api.received({
-											Type: data.Type,
-											Data: data,
-											From: mediaStream.api.id,
-											To: to
-										}, encrypted);
-									}
-								})(to, message, status, mid);
+								// Tell API to loop back message internally.
+								mediaStream.api.sendChat(to, message, status, mid, true);
 							}, 100);
 							return mid;
 						};

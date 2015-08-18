@@ -22,6 +22,21 @@
 "use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
+	// "Decorate" the passed method to make sure the first argument is a
+	// function to use for sending data. Use the default send function if
+	// no function is passed.
+	var addDefaultSendFunc = function(f) {
+		var func = function(sendFunc) {
+			if (!_.isFunction(sendFunc)) {
+				var args = Array.prototype.slice.call(arguments);
+				args.unshift(_.bind(this.defaultSendFunc, this));
+				return func.apply(this, args);
+			}
+			return f.apply(this, arguments);
+		};
+		return func;
+	};
+
 	var Api = function(version, connector, endToEndEncryption) {
 		this.e = $({});
 		this.version = version;
@@ -81,48 +96,64 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.send = function(type, data, noqueue) {
-
+	Api.prototype.defaultSendFunc = function(type, data, noqueue) {
 		var payload = {
 			Type: type
 		};
 		payload[type] = data;
 		//console.log("<<<<<<<<<<<<", JSON.stringify(payload, null, 2));
 		this.connector.send(payload, noqueue);
-
 	};
 
-	Api.prototype.send2 = function(name, cb) {
-		var obj = {
-			send: _.bind(function(type, data) {
-				if (cb) {
-					cb(type, data);
-				}
-				this.send(type, data);
-			}, this),
-			sendEncrypted: _.bind(function(type, data) {
-				if (cb) {
-					var to = data.To;
-					var encrypted = (to && this.endToEndEncryption);
-					cb(type, data, encrypted);
-				}
-				this.sendEncrypted(type, data);
-			}, this)
+	Api.prototype.supportsEncryption = function(peer, type) {
+		// Broadcast or server messages are never encrypted.
+		if (!peer) {
+			return false;
 		}
-		return this.apply(name, obj);
+
+		// Need encryption support in the current browser environment.
+		if (!this.endToEndEncryption) {
+			return false;
+		}
+
+		// Messages to setup encryption are never encrypted.
+		if (type === "EncryptionRegister" ||
+			type === "EncryptionKeyBundle" ||
+			type === "EncryptionRequestKeyBundle") {
+			return false;
+		}
+
+		// TODO(fancycode): Check if remote peer supports encryption.
+		return true;
 	};
 
-	Api.prototype.sendEncrypted = function(type, data, noqueue) {
+	Api.prototype.loopSelf = function(type, data, encrypted) {
+		this.received({
+			Type: data.Type,
+			Data: data,
+			From: this.id,
+			To: data.To
+		}, encrypted);
+	};
+
+	Api.prototype.send = addDefaultSendFunc(function(sendFunc, type, data, noqueue, loopSelf) {
 		var to = data.To;
-		if (!to || !this.endToEndEncryption) {
-			return this.send(type, data, noqueue);
+		if (this.supportsEncryption(to, type)) {
+			this.endToEndEncryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
+				if (loopSelf) {
+					this.loopSelf(type, data, true);
+				}
+				encrypted.To = to;
+				sendFunc(encryptedType, encrypted, noqueue);
+			}, this));
+			return;
 		}
 
-		this.endToEndEncryption.encrypt(to, type, data, _.bind(function(type, encrypted) {
-			encrypted.To = to
-			this.send(type, encrypted, noqueue);
-		}, this));
-	};
+		if (loopSelf) {
+			this.loopSelf(type, data, false);
+		}
+		sendFunc(type, data, noqueue);
+	});
 
 	Api.prototype.request = function(type, data, cb, noqueue) {
 
@@ -138,29 +169,6 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 		this.connector.send(payload, noqueue);
 
 	}
-
-	// Helper hack function to send API requests to other destinations.
-	// Simply provide an alternative send function on the obj Object. The
-	// alternative send function will get the type and data to send, together
-	// with the original type and data (which are potentially unencrypted).
-	Api.prototype.apply = function(name, obj) {
-		var f = this[name];
-		if (!obj.hasOwnProperty("sendEncrypted")) {
-			obj.sendEncrypted = _.bind(function(type, data) {
-				var to = data.To;
-				if (!to || !this.endToEndEncryption) {
-					return obj.send(type, data, type, data);
-				}
-
-				this.endToEndEncryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
-					encrypted.To = to
-					encrypted.Type = encryptedType
-					obj.send(encryptedType, encrypted, type, data);
-				}, this));
-			}, this);
-		}
-		return _.bind(f, obj);
-	};
 
 	Api.prototype.received = function(d, encrypted) {
 
@@ -331,7 +339,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Offer: payload
 		}
 
-		return this.sendEncrypted("Offer", data);
+		return this.send("Offer", data);
 
 	};
 
@@ -343,7 +351,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Candidate: payload
 		}
 
-		return this.sendEncrypted("Candidate", data);
+		return this.send("Candidate", data);
 
 	}
 
@@ -355,7 +363,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			Answer: payload
 		}
 
-		return this.sendEncrypted("Answer", data);
+		return this.send("Answer", data);
 
 	}
 
@@ -420,11 +428,15 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}
 		}
 
-		return this.sendEncrypted("Bye", data);
+		return this.send("Bye", data);
 
 	};
 
-	Api.prototype.sendChat = function(to, message, status, mid) {
+	Api.prototype.sendChat = addDefaultSendFunc(function(sendFunc, to, message, status, mid, loopSelf) {
+		if (!loopSelf && this.supportsEncryption(to, "Chat")) {
+			// We can't let the server loop back the encrypted message.
+			loopSelf = true;
+		}
 
 		var data = {
 			To: to,
@@ -433,13 +445,12 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				Mid: mid,
 				Message: message,
 				Status: status,
-				NoEcho: true // This client shows own messages internally.
+				NoEcho: !!loopSelf
 			}
 		}
 
-		return this.sendEncrypted("Chat", data);
-
-	};
+		return this.send(sendFunc, "Chat", data, false, loopSelf);
+	});
 
 	Api.prototype.sendConference = function(id, ids) {
 
@@ -453,8 +464,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.sendScreenshare = function(id, screen_id) {
-
+	Api.prototype.sendScreenshare = addDefaultSendFunc(function(sendFunc, id, screen_id) {
 		var data = {
 			Id: id,
 			Type: "Screenshare",
@@ -463,12 +473,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}
 		}
 
-		return this.send("Screenshare", data);
+		return this.send(sendFunc, "Screenshare", data);
 
-	};
+	});
 
-	Api.prototype.sendPresentation = function(id, viewer_id, viewer_data) {
-
+	Api.prototype.sendPresentation = addDefaultSendFunc(function(sendFunc, id, viewer_id, viewer_data) {
 		var data = {
 			Id: id,
 			Type: "Presentation",
@@ -480,12 +489,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			data.Presentation = _.extend(data.Presentation, viewer_data);
 		}
 
-		return this.send("Presentation", data);
+		return this.send(sendFunc, "Presentation", data);
 
-	};
+	});
 
-	Api.prototype.sendYouTubeVideo = function(id, video_id, video_data) {
-
+	Api.prototype.sendYouTubeVideo = addDefaultSendFunc(function(sendFunc, id, video_id, video_data) {
 		var data = {
 			Id: id,
 			Type: "YouTubeVideo",
@@ -497,9 +505,9 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			data.YouTubeVideo = _.extend(data.YouTubeVideo, video_data);
 		}
 
-		return this.send("YouTubeVideo", data);
+		return this.send(sendFunc, "YouTubeVideo", data);
 
-	};
+	});
 
 	Api.prototype.sendAlive = function(timestamp) {
 
