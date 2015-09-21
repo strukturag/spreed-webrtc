@@ -10,6 +10,7 @@
   <a class="btn">Browse</a>
 
 */
+// Version 1.0.0
 (function($) {
 
 $.fn.bootstrapFileInput = function() {
