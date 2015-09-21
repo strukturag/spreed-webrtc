@@ -41,7 +41,7 @@
  * - reverseOrderTraverse   O(logn + k), where k is number of traversed nodes
  * </pre>
  */
-
+// Version 6ffd3f2917d32c28a6651644843edb979b42c3f0
 
 // Compatibility code to run standalone.
 (function(root) {
