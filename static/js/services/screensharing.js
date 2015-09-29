@@ -32,6 +32,9 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 		};
 	}];
 
+	var GLOBAL_SCREENSHARING_START_EVENT = new Event('webrtcStartScreensharing');
+	var GLOBAL_SCREENSHARING_STOP_EVENT = new Event('webrtcStopScreensharing');
+
 	// screensharing
 	return ["$window", "$q", "$timeout", "$interval", "chromeExtension", "firefoxExtension", "dialogs", "$templateCache", function($window, $q, $timeout, $interval, chromeExtension, firefoxExtension, dialogs, $templateCache) {
 
@@ -46,6 +49,17 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 			firefoxExtension.e.on("available", _.bind(function() {
 				this.initialize();
 			}, this));
+		};
+
+		Screensharing.prototype.globalNotify = function() {
+			return {
+				screensharingStart: function() {
+					$window.dispatchEvent(GLOBAL_SCREENSHARING_START_EVENT);
+				},
+				screensharingStop: function() {
+					$window.dispatchEvent(GLOBAL_SCREENSHARING_STOP_EVENT);
+				}
+			};
 		};
 
 		Screensharing.prototype.initialize = function() {
