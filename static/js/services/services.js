@@ -70,7 +70,8 @@ define([
 	'services/mediadevices',
 	'services/sandbox',
 	'services/dummystream',
-	'services/usermedia'], function(_,
+	'services/usermedia',
+	'services/firefoxextension'], function(_,
 desktopNotify,
 playSound,
 safeApply,
@@ -118,7 +119,8 @@ modules,
 mediaDevices,
 sandbox,
 dummyStream,
-userMedia) {
+userMedia,
+firefoxExtension) {
 
 	var services = {
 		desktopNotify: desktopNotify,
@@ -168,7 +170,8 @@ userMedia) {
 		mediaDevices: mediaDevices,
 		sandbox: sandbox,
 		dummyStream: dummyStream,
-		userMedia: userMedia
+		userMedia: userMedia,
+		firefoxExtension: firefoxExtension
 	};
 
 	var initialize = function(angModule) {
