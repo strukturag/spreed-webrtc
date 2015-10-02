@@ -34,7 +34,6 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 
 		FirefoxExtension.prototype.initialize = function() {
 			var marker = $window.document.getElementById("firefoxextension-available");
-			console.log('Firefox extension marker', marker);
 			if (marker) {
 				this.available = true;
 				console.log("Firefox extension is available.");
