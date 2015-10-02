@@ -168,16 +168,13 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 				// No support for screen sharing.
 			}
 
-			var that = null;
-			var waiting = null;
-			var prepareAlternative = null;
+			var that = this;
+			var waiting = false;
+			var prepareAlternative = this.prepare;
 
 			// Auto install support.
 			if (!this.supported && chromeExtension.autoinstall.install) {
 				this.supported = this.autoinstall = true;
-				that = this;
-				waiting = false;
-				prepareAlternative = this.prepare;
 				this.prepare = function(options) {
 					var d = $q.defer();
 					var install = chromeExtension.autoinstall.install();
@@ -239,9 +236,6 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 				};
 			} else if (!this.supported && firefoxExtension.autoinstall.install) {
 				this.supported = this.autoinstall = true;
-				that = this;
-				waiting = false;
-				prepareAlternative = this.prepare;
 				this.prepare = function(options) {
 					var d = $q.defer();
 					var install = firefoxExtension.autoinstall.install();
