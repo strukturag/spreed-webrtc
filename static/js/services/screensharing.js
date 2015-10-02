@@ -162,6 +162,12 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 						});
 						return d.promise;
 					};
+				} else {
+
+					if (firefoxExtension.autoinstall.force) {
+						this.supported = false;
+					}
+
 				}
 
 			} else {
