@@ -36,7 +36,7 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 	var GLOBAL_SCREENSHARING_STOP_EVENT = new Event('webrtcStopScreensharing');
 
 	// screensharing
-	return ["$window", "$q", "$timeout", "$interval", "chromeExtension", "firefoxExtension", "dialogs", "$templateCache", function($window, $q, $timeout, $interval, chromeExtension, firefoxExtension, dialogs, $templateCache) {
+	return ["$window", "$q", "$timeout", "chromeExtension", "firefoxExtension", "dialogs", "$templateCache", function($window, $q, $timeout, chromeExtension, firefoxExtension, dialogs, $templateCache) {
 
 		$templateCache.put('/dialogs/screensharedialogff.html', screenshareDialogFF);
 
@@ -273,27 +273,13 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 								d.reject(err);
 							});
 						};
-						var hasBeenInstalled = function() {
-							return $window.document.getElementById('firefoxextension-available');
-						};
-						var cancelInterval = function(promise) {
-							$interval.cancel(promise);
-						};
-						var maxTimeout = 30000;
-						var intervalCount = 1;
-						var intervalSecs = 50;
-						var intervalPromise = $interval(function() {
-							if (that.autoinstall && that.supported && hasBeenInstalled()) {
-								console.log("Auto install success Firefox extension");
-								cancelInterval(intervalPromise);
+						firefoxExtension.detectInstalled(30000).then(function() {
+							if (!that.autoinstall && that.supported) {
 								starter();
-							} else if (intervalCount * intervalSecs >= maxTimeout) {
-								cancelInterval(intervalPromise);
-								d.reject("Timeout while waiting for extension to become available");
 							}
-							intervalCount++;
-						}, intervalSecs);
-
+						}, function(reason) {
+							d.reject(reason);
+						});
 					}, function(err) {
 						console.log("Auto install of extension failed.", err);
 						if (prepareAlternative) {

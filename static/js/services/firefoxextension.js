@@ -23,7 +23,7 @@
 define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 
 	// firefoxExtension
-	return ["$window", "$q", "alertify", "translation", function($window, $q, alertify, translation) {
+	return ["$window", "$q", "alertify", "translation", "$interval", function($window, $q, alertify, translation, $interval) {
 
 		var FirefoxExtension = function() {
 			this.available = false;
@@ -46,14 +46,49 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 		};
 
 		FirefoxExtension.prototype.registerAutoInstall = function(installFunc, cancelInstallFunc, force) {
-
 			this.autoinstall.install = installFunc;
 			this.autoinstall.cancel = cancelInstallFunc;
 			this.autoinstall.force = !!force;
 			if (!this.available && installFunc) {
 				this.e.triggerHandler("available", true);
 			}
+		};
 
+		var EXTENSION_DOM_ID = 'firefoxextension-available';
+		var intervalSecs = 50;
+		var intervalCount = 1;
+		var hasBeenInstalled = function() {
+			return $window.document.getElementById(EXTENSION_DOM_ID);
+		};
+
+		/**
+		 * Checks for availability of the Firefox extension by looking for the id which the extension
+		 * will append to the body of the document. Unfortunately there is no callback
+		 * API implemented by Firefox which will allow other domains to see if an
+		 * extension is installed using `InstallTrigger.install`. Only priviledged
+		 * domains may use the callback.
+		 *
+		 * @param {int} How long of a timespan the function should check for the extension install at intervalSecs interval rate
+		 * @return {promise}
+		 */
+		FirefoxExtension.prototype.detectInstalled = function(maxTimeout) {
+			var defer = $q.defer();
+			var that = this;
+
+			var intervalPromise = $interval(function() {
+				if (hasBeenInstalled()) {
+					console.log("Auto install success Firefox extension");
+					$interval.cancel(intervalPromise);
+					that.initialize();
+					defer.resolve("Auto install success Firefox extension");
+				} else if (intervalCount * intervalSecs >= maxTimeout) {
+					$interval.cancel(intervalPromise);
+					defer.reject("Timeout while waiting for extension to become available");
+				}
+				intervalCount++;
+			}, intervalSecs);
+
+			return defer.promise;
 		};
 
 		// Create extension api and wait for messages.
