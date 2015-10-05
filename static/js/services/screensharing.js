@@ -70,11 +70,13 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 			// Define our helpers.
 			this.prepare = null;
 			this.cancel = null;
+			var that = this;
 
 			var selectFirefoxScreenToShare = function(options) {
 				// To work, the current domain must be whitelisted in
 				// media.getusermedia.screensharing.allowed_domains (about:config).
 				// See https://wiki.mozilla.org/Screensharing for reference.
+				that.globalNotify().screensharingStart();
 				var d = $q.defer();
 				var dlg = dialogs.create('/dialogs/screensharedialogff.html', screenshareDialogFFController, {selection: "screen"}, {});
 				dlg.result.then(function(source) {
@@ -192,7 +194,6 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 				// No support for screen sharing.
 			}
 
-			var that = this;
 			var waiting = false;
 			var prepareAlternative = this.prepare;
 
