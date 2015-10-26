@@ -102,6 +102,9 @@ Styles can be found in src/styles. Translations are found in src/i18n.
 Each folder has its own Makefile to build the corresponding files. Check the
 Makefile.am templates for available make targets.
 
+Javascript console logging is automatically _disabled_ and can be enabled by
+adding the query parameter `debug` to your url `https://my_url?debug`.
+
 
 ## Running server for development
 
