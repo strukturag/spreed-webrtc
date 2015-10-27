@@ -29,8 +29,8 @@ define(['underscore', 'modernizr'], function(_, Modernizr) {
 
 		var defaults = {
 			enableHighAccuracy: true,
-  			timeout: 5000,
-  			maximumAge: 0
+			timeout: 5000,
+			maximumAge: 0
 		};
 
 		return {
