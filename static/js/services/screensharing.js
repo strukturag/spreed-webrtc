@@ -179,7 +179,9 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 					this.prepare = function(options) {
 						return selectFirefoxScreenToShare(options);
 					};
-					if (!firefoxExtension.autoinstall.force) {
+					if (firefoxExtension.available) {
+						this.supported = true;
+					} else if (!firefoxExtension.autoinstall.force) {
 						this.supported = true;
 					}
 				}
@@ -268,9 +270,7 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 							});
 						};
 						firefoxExtension.detectInstalled(30000).then(function() {
-							if (!that.autoinstall && that.supported) {
-								starter();
-							}
+							starter();
 						}, function(reason) {
 							d.reject(reason);
 						});
