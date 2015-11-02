@@ -25,6 +25,14 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 	// firefoxExtension
 	return ["$window", "$q", "alertify", "translation", "$interval", function($window, $q, alertify, translation, $interval) {
 
+		var EXTENSION_DOM_ID = 'firefoxextension-available';
+
+		var intervalSecs = 50;
+		var intervalCount = 1;
+		var isAvailable = function() {
+			return $window.document.getElementById(EXTENSION_DOM_ID);
+		};
+
 		var FirefoxExtension = function() {
 			this.available = false;
 			this.e = $({});
@@ -54,13 +62,6 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 			}
 		};
 
-		var EXTENSION_DOM_ID = 'firefoxextension-available';
-		var intervalSecs = 50;
-		var intervalCount = 1;
-		var hasBeenInstalled = function() {
-			return $window.document.getElementById(EXTENSION_DOM_ID);
-		};
-
 		/**
 		 * Checks for availability of the Firefox extension by looking for the id which the extension
 		 * will append to the body of the document. Unfortunately there is no callback
@@ -76,7 +77,7 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 			var that = this;
 
 			var intervalPromise = $interval(function() {
-				if (hasBeenInstalled()) {
+				if (isAvailable()) {
 					console.log("Auto install success Firefox extension");
 					$interval.cancel(intervalPromise);
 					that.initialize();
@@ -93,17 +94,6 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 
 		// Create extension api and wait for messages.
 		var extension = new FirefoxExtension();
-
-		// Always register default auto install which tells user that extension is required
-		// if screen sharing can only work with extension.
-		if ($window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion >= 36) {
-			extension.registerAutoInstall(function() {
-				var d = $q.defer();
-				alertify.dialog.alert(translation._("Screen sharing requires a browser extension. Please add the Spreed WebRTC screen sharing extension to Firefox and try again."));
-				d.reject("Manual extension installation required");
-				return d.promise;
-			});
-		}
 
 		// Expose.
 		return extension;
