@@ -51,15 +51,13 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 			}, this));
 		};
 
-		Screensharing.prototype.globalNotify = function() {
-			return {
-				screensharingStart: function() {
-					$window.dispatchEvent(GLOBAL_SCREENSHARING_START_EVENT);
-				},
-				screensharingStop: function() {
-					$window.dispatchEvent(GLOBAL_SCREENSHARING_STOP_EVENT);
-				}
-			};
+		Screensharing.prototype.globalNotify = {
+			screensharingStart: function() {
+				$window.dispatchEvent(GLOBAL_SCREENSHARING_START_EVENT);
+			},
+			screensharingStop: function() {
+				$window.dispatchEvent(GLOBAL_SCREENSHARING_STOP_EVENT);
+			}
 		};
 
 		Screensharing.prototype.initialize = function() {
@@ -76,7 +74,7 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 				// To work, the current domain must be whitelisted in
 				// media.getusermedia.screensharing.allowed_domains (about:config).
 				// See https://wiki.mozilla.org/Screensharing for reference.
-				that.globalNotify().screensharingStart();
+				that.globalNotify.screensharingStart();
 				var d = $q.defer();
 				var dlg = dialogs.create('/dialogs/screensharedialogff.html', screenshareDialogFFController, {selection: "screen"}, {});
 				dlg.result.then(function(source) {
