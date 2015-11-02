@@ -41,12 +41,11 @@ define(["underscore", "jquery", "webrtc.adapter"], function(_, $) {
 		};
 
 		FirefoxExtension.prototype.initialize = function() {
-			var marker = $window.document.getElementById("firefoxextension-available");
-			if (marker) {
+			if (isAvailable()) {
 				this.available = true;
 				console.log("Firefox extension is available.");
 				this.e.triggerHandler("available", true);
-			} else if (!marker && this.available) {
+			} else if (this.available) {
 				this.available = false;
 				console.log("Firefox extension is no longer available.");
 				this.e.triggerHandler("available", false);
