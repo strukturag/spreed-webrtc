@@ -171,19 +171,17 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 
 				}
 
-			} else if ($window.webrtcDetectedBrowser === "firefox") {
+			} else if ($window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion >= 36) {
 
 				// Firefox 36 got screen sharing support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
-				if ($window.webrtcDetectedVersion >= 36) {
-					this.prepare = function(options) {
-						return selectFirefoxScreenToShare(options);
-					};
-					if (firefoxExtension.available) {
-						this.supported = true;
-					} else if (!firefoxExtension.autoinstall.force) {
-						this.supported = true;
-					}
+				this.prepare = function(options) {
+					return selectFirefoxScreenToShare(options);
+				};
+				if (firefoxExtension.available) {
+					this.supported = true;
+				} else if (!firefoxExtension.autoinstall.force) {
+					this.supported = true;
 				}
 
 			} else {
