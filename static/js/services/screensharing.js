@@ -175,17 +175,13 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 
 				// Firefox 36 got screen sharing support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
-				if ($window.webrtcDetectedVersion >= 36 && firefoxExtension.available) {
-					this.supported = true;
+				if ($window.webrtcDetectedVersion >= 36) {
 					this.prepare = function(options) {
 						return selectFirefoxScreenToShare(options);
 					};
-				} else {
-
-					if (firefoxExtension.autoinstall.force) {
-						this.supported = false;
+					if (!firefoxExtension.autoinstall.force) {
+						this.supported = true;
 					}
-
 				}
 
 			} else {
