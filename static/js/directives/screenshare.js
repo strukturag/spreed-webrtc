@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials/screensharepeer.html', 'bigscreen', 'webrtc.adapter'], function($, _, template, templatePeer, BigScreen) {
 
-	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing) {
+	return ["$window", "mediaStream", "$compile", "safeApply", "videoWaiter", "$timeout", "alertify", "translation", "screensharing", "$location", function($window, mediaStream, $compile, safeApply, videoWaiter, $timeout, alertify, translation, screensharing, $location) {
 
 		var peerTemplate = $compile(templatePeer);
 
@@ -279,9 +279,13 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						switch (error.name) {
 						case "PermissionDeniedError":
 						case "InvalidStateError":
-							if ($window.webrtcDetectedVersion >= 32 &&
+							if ($window.webrtcDetectedBrowser === "chrome" &&
+								$window.webrtcDetectedVersion >= 32 &&
 								$window.webrtcDetectedVersion < 37) {
 								alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go."));
+							} else if ($window.webrtcDetectedBrowser === "firefox" &&
+								$window.webrtcDetectedVersion >= 36) {
+								alertify.dialog.alert(translation._("Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy about:config?filter=screensharing.allowed_domains and open it with your browser, double click the option, and add the domain %s to the list (include a comma). Then you are ready to go. Otherwise install the Firefox screensharing extension.", $location.host()));
 							} else {
 								alertify.dialog.alert(translation._("Permission to start screen sharing was denied."));
 							}
