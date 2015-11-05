@@ -58,9 +58,9 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 				},
 				webrtc: {
 					turn: {
-						urls: ['turn:turnserver:port?transport=udp', 'turn:turnserver:port?transport=tcp'],
-						username: 'myusername',
-						password: 'the-default-turn-secret-do-not-keep'
+						urls: [],
+						username: '',
+						password: ''
 					}
 				},
 				sound: {

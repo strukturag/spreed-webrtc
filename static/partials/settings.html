@@ -283,26 +283,26 @@
             </div>
           </div>
 
-          <div>
+          <div ng-show="withTurnCustomizable">
               <legend>{{_('Turn')}}</legend>
-              <div ng-show="withTurnCustomizable">
+              <div>
                 <div class="form-group">
                   <label class="col-xs-4 control-label">{{_('Turn urls')}}</label>
                   <div class="col-xs-8">
                     <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.urls" placeholder="turn:turnserver:port?transport=udp"/>
-                    <span class="help-block">Comma separated list of urls</span>
+                    <span class="help-block">{{_('Comma separated list of urls')}}</span>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-xs-4 control-label">{{_('Turn username')}}</label>
                   <div class="col-xs-8">
-                    <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.username"/>
+                    <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.username" placeholder="{{_('username')}}"/>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-xs-4 control-label">{{_('Turn password')}}</label>
                   <div class="col-xs-8">
-                    <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.password"/>
+                    <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.password" placeholder="{{_('password')}}"/>
                   </div>
                 </div>
               </div>
