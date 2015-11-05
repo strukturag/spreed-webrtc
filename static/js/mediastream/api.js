@@ -151,7 +151,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 		switch (dataType) {
 			case "Self":
-				//console.log("Self received", data);
+				console.log("Self received", data);
 				if (data.Token) {
 					this.connector.token = data.Token;
 				}

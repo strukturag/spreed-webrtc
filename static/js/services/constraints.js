@@ -143,6 +143,7 @@
 				iceServers.push(createIceServers(service.stun));
 			}
 			if (service.turn && service.turn.urls && service.turn.urls.length) {
+				console.log('iceServers', service.turn);
 				iceServers.push(createIceServers(service.turn.urls, service.turn.username, service.turn.password));
 			}
 			webrtc.settings.pcConfig.iceServers = iceServers;
@@ -185,6 +186,7 @@
 			// Setters for TURN and STUN data.
 			turn: function(turnData) {
 				service.turn = turnData;
+				console.log("turnData", service.turn);
 			},
 			stun: function(stunData) {
 				service.stun = stunData;
