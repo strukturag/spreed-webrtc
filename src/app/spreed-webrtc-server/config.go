@@ -117,7 +117,7 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 		Renegotiation:             container.GetBoolDefault("app", "renegotiation", false),
 		StunURIs:                  stunURIs,
 		TurnURIs:                  turnURIs,
-		TurnURIsClientSideSetable: container.GetBoolDefault("app", "turnClientSideSetable", true),
+		TurnURIsClientSideSetable: container.GetBoolDefault("app", "turnURIsClientSideSetable", false),
 		Tokens:                          tokens,
 		Version:                         version,
 		UsersEnabled:                    container.GetBoolDefault("users", "enabled", false),
