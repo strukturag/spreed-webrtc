@@ -51,15 +51,15 @@ define(["angular"], function(angular) {
 		};
 
 		if (preferClientSideTurnSettings) {
-			// Overwrite server Turn settings when loading app
+			// Overwrite server Turn settings with user settings when loading app
 			appData.e.one("userSettingsLoaded", function(event, loadedUser, user) {
 				if (user) {
 					updateTurnSettings(user.settings.webrtc.turn);
 				}
 			});
-			// Set server side TURN settings
+			// Get server site TURN settings
 			mediaStream.api.e.on("received.self", function(event, data) {
-				if (data.Turn && data.Turn.urls.length) {
+				if (data.Turn.urls && data.Turn.urls.length) {
 					turnConfigServer = data.Turn;
 				}
 			});
