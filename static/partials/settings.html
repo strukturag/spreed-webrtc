@@ -283,6 +283,27 @@
             </div>
           </div>
 
+          <div ng-show="withTurnCustomizable">
+            <div class="form-group">
+              <label class="col-xs-4 control-label">{{_('Turn urls')}}</label>
+              <div class="col-xs-8">
+                <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.urls"/>&nbsp;
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-4 control-label">{{_('Turn username')}}</label>
+              <div class="col-xs-8">
+                <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.username"/>&nbsp;
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-4 control-label">{{_('Turn password')}}</label>
+              <div class="col-xs-8">
+                <input class="form-control" type="text" ng-model="user.settings.webrtc.turn.password"/>&nbsp;
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <settings-advanced-extra settings-advanced-extra></settings-advanced-extra>

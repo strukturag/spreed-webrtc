@@ -70,6 +70,18 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			$scope.withUsers = mediaStream.config.UsersEnabled;
 			$scope.withUsersRegistration = mediaStream.config.UsersAllowRegistration;
 			$scope.withUsersMode = mediaStream.config.UsersMode;
+			$scope.withTurnCustomizable = mediaStream.config.TurnURIsClientSideSetable;
+
+			var updateTurnSettings = function() {
+				constraints.turn($scope.user.settings.webrtc.turn);
+			};
+
+			if ($scope.withTurnCustomizable && $scope.user.settings.webrtc.turn.urls) {
+				// Overwrite server Turn settings
+				appData.e.one("userSettingsLoaded", function() {
+					updateTurnSettings();
+				});
+			}
 
 			_.each(availableLanguages, function(name, code) {
 				$scope.availableLanguages.push({
@@ -90,6 +102,9 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				if (form.$valid && form.$dirty) {
 					var user = $scope.user;
 					$scope.update(user);
+					if ($scope.withTurnCustomizable) {
+						updateTurnSettings();
+					}
 					if ($scope.rememberSettings) {
 						userSettingsData.save(user);
 						localStorage.setItem("mediastream-language", user.settings.language || "");
