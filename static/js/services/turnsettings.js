@@ -29,7 +29,7 @@ define(["angular"], function(angular) {
 	 */
 	return ['mediaStream', 'appData', 'constraints', function(mediaStream, appData, constraints) {
 
-		var preferClientSideTurnSettings = mediaStream.config.TurnURIsClientSideSetable;
+		var preferClientSideTurnSettings = mediaStream.config.TurnClientSideSetable;
 		var turnConfigServer = null;
 
 		/**

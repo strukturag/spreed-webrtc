@@ -39,7 +39,7 @@ type Config struct {
 	Renegotiation                   bool            // Renegotiation flag
 	StunURIs                        []string        // STUN server URIs
 	TurnURIs                        []string        // TURN server URIs
-	TurnURIsClientSideSetable       bool            // Enable TURN server customization under settings in web ui
+	TurnClientSideSetable           bool            // Enable TURN server customization under settings in web ui
 	Tokens                          bool            // True when we got a tokens file
 	Version                         string          // Server version number
 	UsersEnabled                    bool            // Flag if users are enabled
@@ -109,15 +109,15 @@ func NewConfig(container phoenix.Container, tokens bool) *Config {
 	log.Println("Enabled modules:", modules)
 
 	return &Config{
-		Title:                     container.GetStringDefault("app", "title", "Spreed WebRTC"),
-		ver:                       ver,
-		S:                         fmt.Sprintf("static/ver=%s", ver),
-		B:                         basePath,
-		Token:                     serverToken,
-		Renegotiation:             container.GetBoolDefault("app", "renegotiation", false),
-		StunURIs:                  stunURIs,
-		TurnURIs:                  turnURIs,
-		TurnURIsClientSideSetable: container.GetBoolDefault("app", "turnURIsClientSideSetable", false),
+		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
+		ver:                             ver,
+		S:                               fmt.Sprintf("static/ver=%s", ver),
+		B:                               basePath,
+		Token:                           serverToken,
+		Renegotiation:                   container.GetBoolDefault("app", "renegotiation", false),
+		StunURIs:                        stunURIs,
+		TurnURIs:                        turnURIs,
+		TurnClientSideSetable:           container.GetBoolDefault("app", "turnClientSideSetable", false),
 		Tokens:                          tokens,
 		Version:                         version,
 		UsersEnabled:                    container.GetBoolDefault("users", "enabled", false),
