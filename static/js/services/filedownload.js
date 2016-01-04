@@ -176,7 +176,7 @@ define(["jquery", "underscore"], function($, _) {
 						session.done(this);
 						return;
 					}
-					this.fileDownload.sendRequest(xfer, this.chunk++);
+					session.fileDownload.sendRequest(xfer, this.chunk++);
 				}, job);
 				//console.log("Starting new job", job, this.fragments, xfer.id);
 				xfer.e.on("sessionData", _.bind(this.handleData, this, job));
