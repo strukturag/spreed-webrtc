@@ -195,6 +195,11 @@ type DataIncoming struct {
 	Sessions       *DataSessions
 	Room           *DataRoom
 	Iid            string `json:",omitempty"`
+
+	EncryptionRegister         *DataEncryptionRegister
+	EncryptionRequestKeyBundle *DataEncryptionRequestKeyBundle
+	EncryptionKeyBundle        *DataEncryptionKeyBundle
+	Encrypted                  *DataEncrypted
 }
 
 type DataOutgoing struct {
@@ -230,4 +235,39 @@ type DataAlive struct {
 type DataAuthentication struct {
 	Type           string
 	Authentication *SessionToken
+}
+
+type DataEncryptionRegisterSignedPreKey struct {
+	Id        int64
+	Key       string
+	Signature string
+}
+
+type DataEncryptionRegister struct {
+	RegistrationId         int64
+	Identity               string
+	LastResortSignedPreKey DataEncryptionRegisterSignedPreKey
+}
+
+type DataEncryptionRequestKeyBundle struct {
+	To   string `json:",omitempty"`
+	Type string `json:",omitempty"`
+}
+
+type DataEncryptionKeyBundle struct {
+	To                    string `json:",omitempty"`
+	Type                  string `json:",omitempty"`
+	Identity              string
+	PreKeyId              int64  `json:",omitempty"`
+	PreKey                string `json:",omitempty"`
+	SignedPreKeyId        int64  `json:",omitempty"`
+	SignedPreKey          string `json:",omitempty"`
+	SignedPreKeySignature string `json:",omitempty"`
+}
+
+type DataEncrypted struct {
+	To      string `json:",omitempty"`
+	Type    string `json:",omitempty"`
+	Message string
+	Data    string
 }

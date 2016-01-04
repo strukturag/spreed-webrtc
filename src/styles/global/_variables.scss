@@ -123,6 +123,7 @@ $chat-msg-sent-icon-color: #5882fa !default;
 $chat-msg-delivered-icon-color: #5882fa !default;
 $chat-msg-received-icon-color: #84b819 !default;
 $chat-msg-read-icon-color: $chat-msg-default-icon-color !default;
+$chat-msg-encrypted-icon-color: $chat-msg-default-icon-color !default;
 
 $chat-msg-unread-icon: '\f0eb' !default;
 $chat-msg-sending-icon: '\f0ec' !default;
@@ -130,6 +131,7 @@ $chat-msg-sent-icon: '\f003' !default;
 $chat-msg-delivered-icon: '\f019' !default;
 $chat-msg-received-icon: '\f06e' !default;
 $chat-msg-read-icon: '\f00c' !default;
+$chat-msg-encrypted-icon: '\f023' !default;
 
 $chat-msg-self-background: #fff !default;
 $chat-msg-self-color: $font-color !default;

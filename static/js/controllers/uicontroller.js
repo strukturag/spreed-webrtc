@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", "endToEndEncryption", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints, endToEndEncryption) {
 
 		alertify.dialog.registerCustom({
 			baseType: 'notify',
@@ -162,6 +162,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.id = $scope.myid = null;
 		$scope.userid = $scope.myuserid = null;
 		$scope.suserid = null;
+		$scope.fingerprint = null;
 		$scope.peer = null;
 		$scope.dialing = null;
 		$scope.conference = null;
@@ -579,6 +580,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 					mediaStream.webrtc.doHangup("failed", currentcall.id);
 					alertify.dialog.alert(translation._("Peer connection failed. Check your settings."));
 					break;
+			}
+		});
+
+		endToEndEncryption.events.on("identity.own", function(event, identity) {
+			if (identity) {
+				$scope.fingerprint = identity.getFingerprint();
+			} else {
+				$scope.fingerprint = null;
 			}
 		});
 

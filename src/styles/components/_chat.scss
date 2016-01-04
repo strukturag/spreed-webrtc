@@ -220,6 +220,19 @@
     }
   }
 
+  .identityhint {
+    color: $chat-typing;
+    font-size: .8em;
+    height: 16px;
+    overflow: hidden;
+    padding: 0 6px;
+    white-space: nowrap;
+
+    @include breakpt($breakpoint-chat-small, max-height) {
+      display: none;
+    }
+  }
+
   .inputbox {
     position: relative;
 
@@ -349,6 +362,15 @@
         width: 12px;
       }
 
+      &:after {
+        float: right;
+        font-family: FontAwesome;
+        left: 0;
+        margin-left: 1em;
+        text-align: center;
+        width: 12px;
+      }
+
       &.unread:before {
         color: $chat-msg-unread-icon-color;
         content: $chat-msg-unread-icon;
@@ -377,6 +399,11 @@
       &.read:before {
         color: $chat-msg-read-icon-color;
         content: $chat-msg-read-icon;
+      }
+
+      &.encrypted:after {
+        color: $chat-msg-encrypted-icon-color;
+        content: $chat-msg-encrypted-icon;
       }
     }
 

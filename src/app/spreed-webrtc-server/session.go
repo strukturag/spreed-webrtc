@@ -56,6 +56,8 @@ type Session struct {
 	subscribers   map[string]*Session
 	disconnected  bool
 	replaced      bool
+
+	encryptionRegistration *DataEncryptionRegister
 }
 
 func NewSession(manager SessionManager, unicaster Unicaster, broadcaster Broadcaster, rooms RoomStatusManager, buddyImages ImageCache, attestations *securecookie.SecureCookie, id, sid string) *Session {

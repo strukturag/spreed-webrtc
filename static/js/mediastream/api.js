@@ -22,15 +22,30 @@
 "use strict";
 define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
-	var Api = function(version, connector) {
+	// "Decorate" the passed method to make sure the first argument is a
+	// function to use for sending data. Use the default send function if
+	// no function is passed.
+	var addDefaultSendFunc = function(f) {
+		var func = function(sendFunc) {
+			if (!_.isFunction(sendFunc)) {
+				var args = Array.prototype.slice.call(arguments);
+				args.unshift(_.bind(this.defaultSendFunc, this));
+				return func.apply(this, args);
+			}
+			return f.apply(this, arguments);
+		};
+		return func;
+	};
+
+	var Api = function(version, connector, endToEndEncryption) {
+		this.e = $({});
 		this.version = version;
 		this.id = null;
 		this.sid = null;
 		this.session = {};
 		this.connector = connector;
+		this.endToEndEncryption = endToEndEncryption.initialize(this);
 		this.iids= 0;
-
-		this.e = $({});
 
 		var ua = uaparser();
 		if (ua.os.name && /Spreed Desktop Caller/i.test(ua.ua)) {
@@ -81,28 +96,64 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.send = function(type, data, noqueue) {
-
+	Api.prototype.defaultSendFunc = function(type, data, noqueue) {
 		var payload = {
 			Type: type
 		};
 		payload[type] = data;
 		//console.log("<<<<<<<<<<<<", JSON.stringify(payload, null, 2));
 		this.connector.send(payload, noqueue);
-
 	};
 
-	Api.prototype.send2 = function(name, cb) {
-		var obj = {
-			send: _.bind(function(type, data) {
-				if (cb) {
-					cb(type, data);
-				}
-				this.send(type, data);
-			}, this)
+	Api.prototype.supportsEncryption = function(peer, type) {
+		// Broadcast or server messages are never encrypted.
+		if (!peer) {
+			return false;
 		}
-		return this.apply(name, obj);
+
+		// Need encryption support in the current browser environment.
+		if (!this.endToEndEncryption) {
+			return false;
+		}
+
+		// Messages to setup encryption are never encrypted.
+		if (type === "EncryptionRegister" ||
+			type === "EncryptionKeyBundle" ||
+			type === "EncryptionRequestKeyBundle") {
+			return false;
+		}
+
+		// TODO(fancycode): Check if remote peer supports encryption.
+		return true;
 	};
+
+	Api.prototype.loopSelf = function(type, data, encrypted) {
+		this.received({
+			Type: data.Type,
+			Data: data,
+			From: this.id,
+			To: data.To
+		}, encrypted);
+	};
+
+	Api.prototype.send = addDefaultSendFunc(function(sendFunc, type, data, noqueue, loopSelf) {
+		var to = data.To;
+		if (this.supportsEncryption(to, type)) {
+			this.endToEndEncryption.encrypt(to, type, data, _.bind(function(encryptedType, encrypted) {
+				if (loopSelf) {
+					this.loopSelf(type, data, true);
+				}
+				encrypted.To = to;
+				sendFunc(encryptedType, encrypted, noqueue);
+			}, this));
+			return;
+		}
+
+		if (loopSelf) {
+			this.loopSelf(type, data, false);
+		}
+		sendFunc(type, data, noqueue);
+	});
 
 	Api.prototype.request = function(type, data, cb, noqueue) {
 
@@ -119,14 +170,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	}
 
-	// Helper hack function to send API requests to other destinations.
-	// Simply provide an alternative send function on the obj Object.
-	Api.prototype.apply = function(name, obj) {
-		var f = this[name];
-		return _.bind(f, obj);
-	};
-
-	Api.prototype.received = function(d) {
+	Api.prototype.received = function(d, encrypted) {
 
 		// Store received timestamp.
 		var now = new Date().getTime();
@@ -149,6 +193,23 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			return;
 		}
 
+		if (dataType === "Encrypted") {
+			if (!this.endToEndEncryption) {
+				console.error("Encryption is not supported, can't handle", data);
+				return;
+			}
+			this.endToEndEncryption.decrypt(d.From, data, _.bind(function(decrypted) {
+				d.encrypted = true;
+				this.processReceived(d, decrypted.Type, decrypted[decrypted.Type]);
+			}, this));
+			return;
+		}
+
+		d.encrypted = !!encrypted;
+		this.processReceived(d, dataType, data);
+	}
+
+	Api.prototype.processReceived = function(d, dataType, data) {
 		switch (dataType) {
 			case "Self":
 				//console.log("Self received", data);
@@ -190,7 +251,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				break;
 			case "Chat":
 				//console.log("chat received", dataType, data);
-				this.e.triggerHandler("received.chat", [data.To, d.From, data.Chat, d.p2p]);
+				this.e.triggerHandler("received.chat", [data.To, d.From, data.Chat, d.p2p, d.encrypted]);
 				break;
 			case "Conference":
 				this.e.triggerHandler("received.conference", [data.Id, data.Conference, data.Type, d.To, d.From]);
@@ -213,6 +274,12 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				break;
 			case "Room":
 				this.e.triggerHandler("received.room", [data]);
+				break;
+			case "EncryptionRequestKeyBundle":
+				this.e.triggerHandler("received.requestkeybundle", [d.From]);
+				break;
+			case "EncryptionKeyBundle":
+				this.e.triggerHandler("received.keybundle", [d.From, data]);
 				break;
 			default:
 				console.log("Unhandled type received:", dataType, data);
@@ -365,7 +432,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.sendChat = function(to, message, status, mid) {
+	Api.prototype.sendChat = addDefaultSendFunc(function(sendFunc, to, message, status, mid, loopSelf) {
+		if (!loopSelf && this.supportsEncryption(to, "Chat")) {
+			// We can't let the server loop back the encrypted message.
+			loopSelf = true;
+		}
 
 		var data = {
 			To: to,
@@ -374,13 +445,12 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				Mid: mid,
 				Message: message,
 				Status: status,
-				NoEcho: true // This client shows own messages internally.
+				NoEcho: !!loopSelf
 			}
 		}
 
-		return this.send("Chat", data);
-
-	};
+		return this.send(sendFunc, "Chat", data, false, loopSelf);
+	});
 
 	Api.prototype.sendConference = function(id, ids) {
 
@@ -394,8 +464,7 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 
 	};
 
-	Api.prototype.sendScreenshare = function(id, screen_id) {
-
+	Api.prototype.sendScreenshare = addDefaultSendFunc(function(sendFunc, id, screen_id) {
 		var data = {
 			Id: id,
 			Type: "Screenshare",
@@ -404,12 +473,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			}
 		}
 
-		return this.send("Screenshare", data);
+		return this.send(sendFunc, "Screenshare", data);
 
-	};
+	});
 
-	Api.prototype.sendPresentation = function(id, viewer_id, viewer_data) {
-
+	Api.prototype.sendPresentation = addDefaultSendFunc(function(sendFunc, id, viewer_id, viewer_data) {
 		var data = {
 			Id: id,
 			Type: "Presentation",
@@ -421,12 +489,11 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			data.Presentation = _.extend(data.Presentation, viewer_data);
 		}
 
-		return this.send("Presentation", data);
+		return this.send(sendFunc, "Presentation", data);
 
-	};
+	});
 
-	Api.prototype.sendYouTubeVideo = function(id, video_id, video_data) {
-
+	Api.prototype.sendYouTubeVideo = addDefaultSendFunc(function(sendFunc, id, video_id, video_data) {
 		var data = {
 			Id: id,
 			Type: "YouTubeVideo",
@@ -438,9 +505,9 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 			data.YouTubeVideo = _.extend(data.YouTubeVideo, video_data);
 		}
 
-		return this.send("YouTubeVideo", data);
+		return this.send(sendFunc, "YouTubeVideo", data);
 
-	};
+	});
 
 	Api.prototype.sendAlive = function(timestamp) {
 

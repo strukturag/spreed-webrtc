@@ -5,6 +5,7 @@
             <button ng-if="!isgroupchat" class="btn btn-sm btn-default" title="{{_('Start video call')}}" ng-click="doCall()"><i class="fa fa-phone fa-fw"></i></button>
             <button class="btn btn-sm btn-default btn-fileupload" title="{{_('Upload files')}}"><i class="fa fa-upload fa-fw"></i></button>
             <button class="btn btn-sm btn-default btn-locationshare" title="{{_('Share my location')}}" ng-click="shareGeolocation()"><i class="fa fa-location-arrow fa-fw"></i></button>
+            <button ng-if="!isgroupchat" ng-show="fingerprint" class="btn btn-sm btn-default btn-fingerprint" title="{{_('Show peer fingerprint')}}" ng-click="showFingerprint()"><i class="fa fa-lock fa-fw"></i></button>
         </div>
         <div class="btn-group pull-right">
             <button class="btn btn-sm btn-default" title="{{_('Clear chat')}}" ng-click="doClear()"><i class="fa fa-eraser fa-fw"></i></button>
@@ -18,6 +19,9 @@
             <div class="typinghint" ng-switch on="peerIsTyping">
                 <span ng-switch-when="start"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('is typing...')}}</span>
                 <span ng-switch-when="stop"><i class="fa fa-pencil"></i> {{id|displayName}} {{_('has stopped typing...')}}</span>
+            </div>
+            <div class="identityhint" ng-show="requestPeerIdentity">
+                <i class="fa fa-lock"></i> {{_('Preparing encrypted session...')}}
             </div>
             <div class="inputbox">
                 <div>

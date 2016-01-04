@@ -415,17 +415,16 @@ define(['jquery', 'underscore', 'text!partials/presentation.html', 'bigscreen'],
 			var tokenHandler = null;
 
 			var mediaStreamSendPresentation = function(peercall, token, params) {
-				mediaStream.api.apply("sendPresentation", {
-					send: function(type, data) {
-						if (!peercall.peerconnection.datachannelReady) {
-							return peercall.e.one("dataReady", function() {
-								peercall.peerconnection.send(data);
-							});
-						} else {
-							return peercall.peerconnection.send(data);
-						}
+				mediaStream.api.sendPresentation(function(type, data) {
+					data.Type = type;
+					if (!peercall.peerconnection.datachannelReady) {
+						return peercall.e.one("dataReady", function() {
+							peercall.peerconnection.send(data);
+						});
+					} else {
+						return peercall.peerconnection.send(data);
 					}
-				})(peercall.id, token, params);
+				}, peercall.id, token, params);
 			};
 
 			var connector = function(token, peercall) {

@@ -214,7 +214,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 
 		}
 
-		$scope.display = function(s, nodes, extra_css, title, picture) {
+		$scope.display = function(s, nodes, extra_css, title, picture, encrypted) {
 
 			var container;
 			var element;
@@ -235,6 +235,9 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 				lastMessageContainer = $("<ul>").appendTo(container);
 				if ($.trim(s)) {
 					element = $("<li>").html(s);
+					if (encrypted) {
+						element.addClass("encrypted");
+					}
 					element.prepend('<div class="timestamp-space">');
 					element.appendTo(lastMessageContainer);
 				}
@@ -267,7 +270,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			$scope.display(s, nodes);
 		});
 
-		$scope.append = function(s, nodes) {
+		$scope.append = function(s, nodes, encrypted) {
 
 			if (!lastMessageContainer) {
 				return;
@@ -276,6 +279,9 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			var scroll = this.canScroll();
 
 			var li = $("<li>");
+			if (encrypted) {
+				li.addClass("encrypted");
+			}
 			li.html(s)
 			lastMessageContainer.append(li)
 
@@ -325,7 +331,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 
 		};
 
-		$scope.showmessage = function(from, timestamp, message, nodes) {
+		$scope.showmessage = function(from, timestamp, message, nodes, encrypted) {
 
 			var sessonid = $scope.$parent.$parent.id;
 
@@ -354,7 +360,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			var strMessage = s.join(" ");
 
 			if (!is_new_message) {
-				var element = this.append(strMessage, nodes);
+				var element = this.append(strMessage, nodes, encrypted);
 				if (element) {
 					return element;
 				}
@@ -375,7 +381,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 					nodes = ts;
 				}
 			}
-			return $scope.display(strMessage, nodes, msg.extra_css, msg.title, msg.picture);
+			return $scope.display(strMessage, nodes, msg.extra_css, msg.title, msg.picture, encrypted);
 
 		};
 
@@ -406,7 +412,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			$scope.focus();
 		});
 
-		$scope.$on("received", function(event, from, data) {
+		$scope.$on("received", function(event, from, data, encrypted) {
 
 			var sessionid = $scope.$parent.$parent.id;
 			var mid = data.Mid || null;
@@ -482,7 +488,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 							subscope.from = from;
 							fileInfo(subscope, function(clonedElement, scope) {
 								var text = fromself ? translation._("You share file:") : translation._("Incoming file:");
-								element = $scope.showmessage(from, timestamp, text, clonedElement);
+								element = $scope.showmessage(from, timestamp, text, clonedElement, encrypted);
 							});
 							noop = true;
 						}
@@ -494,7 +500,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 							subscope.from = from;
 							geoLocation(subscope, function(clonedElement, scope) {
 								var text = fromself ? translation._("You shared your location:") : translation._("Location received:");
-								element = $scope.showmessage(from, timestamp, text, clonedElement);
+								element = $scope.showmessage(from, timestamp, text, clonedElement, encrypted);
 							});
 							noop = true;
 						}
@@ -527,7 +533,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 										}
 									}
 								}
-								element = $scope.showmessage(from, timestamp, text, clonedElement);
+								element = $scope.showmessage(from, timestamp, text, clonedElement, encrypted);
 							});
 							noop = true;
 						}
@@ -550,7 +556,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 							message = safeMessage(data.Message);
 						}
 						// Show the beast.
-						element = $scope.showmessage(from, timestamp, message, nodes);
+						element = $scope.showmessage(from, timestamp, message, nodes, encrypted);
 					}
 
 					if (element && mid && !$scope.isgroupchat) {
