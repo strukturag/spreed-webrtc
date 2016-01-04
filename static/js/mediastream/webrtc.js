@@ -80,18 +80,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				mandatory: {},
 				optional: []
 			},
-			// Set up audio and video regardless of what devices are present.
-			sdpConstraints: {
-				mandatory: {
-					OfferToReceiveAudio: true,
-					OfferToReceiveVideo: true
-				},
-				optional: []
-			},
-			offerConstraints: {
-				mandatory: {},
-				optional: []
-			},
 			screensharing: {
 				mediaConstraints: {
 					audio: false,
@@ -114,6 +102,11 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				videoSendCodec: "VP8/90000"
 				//videoRecvBitrate: ,
 				//videoRecvCodec
+			},
+			// Set up audio and video regardless of what devices are present.
+			offerOptions: {
+				offerToReceiveAudio: true,
+				offerToReceiveVideo: true
 			},
 			renegotiation: true
 		};
