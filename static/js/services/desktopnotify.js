@@ -74,7 +74,7 @@ define(['jquery', 'underscore', 'desktop-notify', 'webrtc.adapter'], function($,
 							// on Android, where Notifications raise an exception.
 							// See https://code.google.com/p/chromium/issues/detail?id=481856
 							try {
-								/*jshint nonew: false */
+								/*jshint strict: true, nonew: false */
 								new $window.Notification('');
 							} catch(e) {
 								if (e.name == 'TypeError') {

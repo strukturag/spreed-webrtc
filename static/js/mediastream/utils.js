@@ -41,6 +41,7 @@
 
 "use strict";
 define([], function() {
+  /*jshint strict: true, latedef: false */
 
   function trace(text) {
     // noop

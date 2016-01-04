@@ -23,6 +23,7 @@
 define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens', 'webrtc.adapter'], function($, _, PeerCall, tokens) {
 
 	var xfersIds = 0;
+	var PeerXfer;
 
 	// Register ourselves for tokens.
 	tokens.registerHandler("xfer", function(webrtc, id, token, from) {
@@ -32,7 +33,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens', 'w
 	});
 
 	// PeerXfer inherits from PeerCall.
-	var PeerXfer = function(webrtc, id, token, to) {
+	PeerXfer = function(webrtc, id, token, to) {
 
 		if (id === null) {
 			id = xfersIds++;

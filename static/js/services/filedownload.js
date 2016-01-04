@@ -26,8 +26,9 @@ define(["jquery", "underscore"], function($, _) {
 
 		var downloads = 0;
 
-		var Session = function(id, token, scope) {
+		var Session = function(fileDownload, id, token, scope) {
 
+			this.fileDownload = fileDownload;
 			this.id = id;
 			this.token = token;
 			this.scope = scope;
@@ -175,7 +176,7 @@ define(["jquery", "underscore"], function($, _) {
 						session.done(this);
 						return;
 					}
-					fileDownload.sendRequest(xfer, this.chunk++);
+					this.fileDownload.sendRequest(xfer, this.chunk++);
 				}, job);
 				//console.log("Starting new job", job, this.fragments, xfer.id);
 				xfer.e.on("sessionData", _.bind(this.handleData, this, job));
@@ -287,7 +288,7 @@ define(["jquery", "underscore"], function($, _) {
 		FileDownload.prototype.createSession = function(scope, token) {
 
 			var id = Session.makeId(token, this.downloads++);
-			var session = this.sessions[id] = new Session(id, token, scope);
+			var session = this.sessions[id] = new Session(this, id, token, scope);
 			//console.log("Created new file download session", id, session);
 			return session;
 		};
@@ -330,11 +331,7 @@ define(["jquery", "underscore"], function($, _) {
 
 		};
 
-
-		// Create signleton.
-		var fileDownload = new FileDownload();
-
-		return fileDownload;
+		return new FileDownload();
 
 	}];
 

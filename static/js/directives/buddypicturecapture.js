@@ -27,6 +27,17 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 
 		var controller = ['$scope', 'safeApply', '$timeout', '$q', "mediaDevices", "userMedia", function($scope, safeApply, $timeout, $q, mediaDevices, userMedia) {
 
+			var localStream = null;
+			var delayToTakePicture = 3000;
+			var countDownFrom = 3;
+
+			var takePictureCountDown;
+			var writeVideoToCanvas;
+			var writePreviewPic;
+			var makePicture;
+			var videoStop;
+			var videoStart;
+
 			// Buddy picutre capture size.
 			$scope.captureSize = {
 				width: 128,
@@ -41,12 +52,8 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 			$scope.canvasPic = null;
 			$scope.canvasPrev = null;
 
-			var localStream = null;
-			var delayToTakePicture = 3000;
-			var countDownFrom = 3;
-
 			// Counts down from start to 1
-			var takePictureCountDown = function(start, delayTotal) {
+			takePictureCountDown = function(start, delayTotal) {
 				$scope.countingDown = true;
 				$scope.countdown = {};
 				$scope.countdown.num = start;
@@ -63,7 +70,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				}
 			};
 
-			var writeVideoToCanvas = function(canvas) {
+			writeVideoToCanvas = function(canvas) {
 
 				var videoWidth = $scope.video.videoWidth;
 				var videoHeight = $scope.video.videoHeight;
@@ -89,12 +96,12 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 
 			};
 
-			var writePreviewPic = function() {
+			writePreviewPic = function() {
 				writeVideoToCanvas($scope.canvasPrev);
 				$scope.preview = $scope.canvasPrev.toDataURL("image/jpeg");
 			};
 
-			var makePicture = function(stream, cntFrom, delayTotal) {
+			makePicture = function(stream, cntFrom, delayTotal) {
 				takePictureCountDown(cntFrom, delayTotal);
 				$timeout(function() {
 					$scope.flash.addClass("flash");
@@ -107,7 +114,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				}, delayTotal);
 			};
 
-			var videoStop = function(stream, video) {
+			videoStop = function(stream, video) {
 				if (stream) {
 					video.pause();
 					userMedia.stopUserMediaStream(stream);
@@ -115,7 +122,7 @@ define(['jquery', 'underscore', 'text!partials/buddypicturecapture.html'], funct
 				}
 			};
 
-			var videoStart = function() {
+			videoStart = function() {
 				$scope.waitingForPermission = true;
 				var videoConstraints = true;
 				var videoAllowed = $q.defer();

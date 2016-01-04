@@ -37,7 +37,14 @@ define([
 		var canJoinRooms = !mediaStream.config.AuthorizeRoomJoin;
 		var canCreateRooms = canJoinRooms ? !mediaStream.config.AuthorizeRoomCreation : false;
 
-		var joinFailed = function(error) {
+		var rooms;
+		var joinFailed;
+		var joinRequestedRoom;
+		var setCurrentRoom;
+		var updateRoom;
+		var applyRoomUpdate;
+
+		joinFailed = function(error) {
 			setCurrentRoom(null);
 
 			switch(error.Code) {
@@ -70,7 +77,7 @@ define([
 			}
 		};
 
-		var joinRequestedRoom = function() {
+		joinRequestedRoom = function() {
 			if (!connector.connected || appData.authorizing()) {
 				// Do nothing while not connected or authorizing.
 				return;
@@ -95,7 +102,7 @@ define([
 			}
 		};
 
-		var setCurrentRoom = function(room) {
+		setCurrentRoom = function(room) {
 			if (room === currentRoom) {
 				return;
 			}
@@ -112,13 +119,13 @@ define([
 			}
 		};
 
-		var updateRoom = function(room) {
+		updateRoom = function(room) {
 			var response = $q.defer();
 			api.requestRoomUpdate(room, response.resolve, response.reject);
 			return response.promise.then(applyRoomUpdate);
 		};
 
-		var applyRoomUpdate = function(room) {
+		applyRoomUpdate = function(room) {
 			if (room.Credentials) {
 				roompin.update(currentRoom.Name, room.Credentials.PIN);
 				delete room.Credentials;
@@ -169,7 +176,8 @@ define([
 			}
 		});
 
-		var rooms = {
+		// Public API.
+		rooms = {
 			inDefaultRoom: function() {
 				return (currentRoom !== null ? currentRoom.Name : requestedRoomName) === "";
 			},

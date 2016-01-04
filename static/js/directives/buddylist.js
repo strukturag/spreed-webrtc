@@ -29,10 +29,19 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
+			var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
+			var onJoined = _.bind(buddylist.onJoined, buddylist);
+			var onLeft = _.bind(buddylist.onLeft, buddylist);
+			var onStatus = _.bind(buddylist.onStatus, buddylist);
+			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
+			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
+			var onContactUpdated = _.bind(buddylist.onContactUpdated, buddylist);
+
+			var inRoom = false;
+
 			$scope.layout.buddylist = false;
 			$scope.layout.buddylistAutoHide = true;
 
-			var inRoom = false;
 			var updateBuddyListVisibility = function() {
 				if (inRoom && !$scope.peer) {
 					$scope.layout.buddylist = true;
@@ -87,13 +96,6 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 
 			};
 
-			var buddylist = $scope.buddylist = buddyList.buddylist($element, $scope, {});
-			var onJoined = _.bind(buddylist.onJoined, buddylist);
-			var onLeft = _.bind(buddylist.onLeft, buddylist);
-			var onStatus = _.bind(buddylist.onStatus, buddylist);
-			var onContactAdded = _.bind(buddylist.onContactAdded, buddylist);
-			var onContactRemoved = _.bind(buddylist.onContactRemoved, buddylist);
-			var onContactUpdated = _.bind(buddylist.onContactUpdated, buddylist);
 			api.e.on("received.userleftorjoined", function(event, dataType, data) {
 				if (dataType === "Left") {
 					onLeft(data);

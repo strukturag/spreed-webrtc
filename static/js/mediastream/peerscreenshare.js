@@ -23,6 +23,7 @@
 define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], function($, _, PeerCall, tokens) {
 
 	var screenshareIds = 0;
+	var PeerScreenshare;
 
 	// Register ourselves for tokens.
 	tokens.registerHandler("screenshare", function(webrtc, id, token, from) {
@@ -32,7 +33,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 	});
 
 	// PeerScreenshare inherits from PeerCall.
-	var PeerScreenshare = function(webrtc, id, token, to) {
+	PeerScreenshare = function(webrtc, id, token, to) {
 
 		if (id === null) {
 			id = screenshareIds++;

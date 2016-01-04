@@ -22,6 +22,8 @@
 "use strict";
 define(['jquery', 'underscore'], function($, _) {
 
+	var tokens;
+
 	var Token = function(handlerKey) {
 		this.e = $({});
 		this.count = 0;
@@ -179,7 +181,7 @@ define(['jquery', 'underscore'], function($, _) {
 
 	};
 
-	var tokens = new Tokens();
+	tokens = new Tokens();
 	return tokens;
 
 });

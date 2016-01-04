@@ -28,20 +28,26 @@ define(["underscore", "rAF"], function(_) {
 		var requestAnimationFrame = $window.requestAnimationFrame;
 		var registry = [];
 
-		var caller = function(f) {
+		var caller;
+		var runner;
+		var timer;
+		var worker;
+		var animationFrame;
+
+		caller = function(f) {
 			f();
 		};
-		var runner = function(c) {
+		runner = function(c) {
 			registry.forEach(caller);
 			requestAnimationFrame(worker)
 		}
-		var timer = $window.setTimeout;
-		var worker = function() {
+		timer = $window.setTimeout;
+		worker = function() {
 			timer(runner, 100);
 		};
 
 		// Public api.
-		var animationFrame = {
+		animationFrame = {
 			register: function(f) {
 				registry.push(f);
 			}

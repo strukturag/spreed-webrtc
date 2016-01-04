@@ -27,7 +27,6 @@ echo "==========================================================================
     fi
 done
 
-
 for file in `git diff-index --cached --name-only HEAD --diff-filter=ACMR| grep "\.js$"` ; do
     case "$file" in
         */libs/*)
@@ -39,7 +38,7 @@ for file in `git diff-index --cached --name-only HEAD --diff-filter=ACMR| grep "
         *)
             echo "Checking ${file}"
             nf=`git checkout-index --temp ${file} | cut -f 1`
-            jshint --config .jshint "${nf}"
+            PATH="node_modules/.bin:${PATH}" jshint --config .jshint "${nf}"
             r=$?
             rm "${nf}"
             if [ $r != 0 ] ; then
