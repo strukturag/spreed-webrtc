@@ -29,7 +29,7 @@ define([], function() {
 		var enrichMessage = {
 			url: function(s) {
 				s = linky(s);
-				s = s.replace(/<a/g, '<a rel="external noreferrer"');
+				s = s.replace(/<a/g, '<a rel="external"');
 				return s;
 			},
 			multiline: function(s) {
