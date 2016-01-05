@@ -415,11 +415,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							pane.append(clonedElement);
 							$scope.element = clonedElement;
 							$scope.visible = true;
-							if (options.autofocus) {
-								_.defer(function() {
-									$scope.$broadcast("focus");
-								});
-							}
 
 							var sendFiles = function(files) {
 								_.each(files, function(f) {
@@ -461,14 +456,11 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								subscope.enabled = true;
 							}
 						}
-						if (options.autofocus && subscope.visible) {
-							subscope.$broadcast("focus");
-						}
 
 					}
 
 					if (!options.noactivate) {
-						scope.activateRoom(subscope.id, true);
+						scope.activateRoom(subscope.id, true, !!options.autofocus);
 					}
 
 					if (options.restore && !options.noenable) {
@@ -524,7 +516,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					scope.layout.chatMaximized = !scope.layout.chatMaximized;
 				};
 
-				scope.activateRoom = function(id, active) {
+				scope.activateRoom = function(id, active, autofocus) {
 					var subscope = controller.rooms[id];
 					if (!subscope) {
 						return;
@@ -554,6 +546,13 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					}
 					if (flip) {
 						pane.toggleClass("flip");
+					}
+					if (active && autofocus) {
+						_.defer(function() {
+							if (scope.layout.chat) {
+								subscope.$broadcast("focus");
+							}
+						});
 					}
 				};
 
