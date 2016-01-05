@@ -20,13 +20,14 @@
  */
 
 "use strict";
-define(['jquery', 'underscore'], function($, _) {
+define(['jquery', 'underscore', 'webrtc.adapter'], function($, _, adapter) {
 
-	return ["$window", function($window) {
+	return ["$window", "mediaDevices", function($window, mediaDevices) {
 
 		var MediaSources = function() {
 
-			this.supported = $window.MediaStreamTrack && $window.MediaStreamTrack.getSources
+			// For now enable media sources only in Chrome until other browsers have some use for it.
+			this.supported = $window.navigator.mediaDevices.enumerateDevices && adapter.webrtcDetectedBrowser === "chrome";
 			this.audio = [];
 			this.video = [];
 
@@ -57,24 +58,28 @@ define(['jquery', 'underscore'], function($, _) {
 
 		MediaSources.prototype._refresh = function(cb) {
 
-			$window.MediaStreamTrack.getSources(_.bind(function(sources) {
+			mediaDevices.enumerateDevices().then(_.bind(function(devices) {
 				var audio = this.audio = [];
 				var video = this.video = [];
-				_.each(sources, function(source) {
+				_.each(devices, function(device) {
 					var o = {
-						id: source.id,
-						facing: source.facing
-					};
-					if (source.kind === "audio") {
-						o.label = source.label ? source.label : "Microphone " + (audio.length + 1);
+						id: device.deviceId,
+					}
+					if (device.kind === "audioinput") {
+						o.label = device.label ? device.label : "Microphone " + (audio.length + 1);
 						audio.push(o);
-					} else if (source.kind === "video") {
-						o.label = source.label ? source.label : "Camera " + (video.length + 1);
+					} else if (device.kind === "videoinput") {
+						o.label = device.label ? device.label : "Camera " + (video.length + 1);
 						video.push(o);
 					}
 				});
 				if (cb) {
 					cb(audio, video);
+				}
+			}, this), _.bind(function(error) {
+				console.error("failed to get media devices: " + error);
+				if (cb) {
+					cb([], []);
 				}
 			}, this));
 

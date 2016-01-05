@@ -5,7 +5,7 @@
 			<div class="chatheader"><div class="chatstatusicon" ng-click="activateRoom(currentRoom.id, true)"><i class="fa fa-angle-right"></i> <i class="fa fa fa-comments-o"></i></div><div class="chatheadertitle"><span>{{_("Chat sessions")}}</span></div> <div class="ctrl"><i ng-show="layout.chatMaximized" ng-click="toggleMax()" class="fa fa-compress"></i></div></div>
 			<div class="chatbody">
 				<div class="list-group nicescroll">
-					<a ng-repeat="room in getVisibleRooms()" ng-click="activateRoom(room.id, true)" class="list-group-item" ng-class="{newmessage: room.pending, disabled: !room.enabled}">
+					<a ng-repeat="room in getVisibleRooms()" ng-click="activateRoom(room.id, true, true)" class="list-group-item" ng-class="{newmessage: room.pending, disabled: !room.enabled}">
 						<span class="badge" ng-show="room.pending">{{room.pending}}</span>
                         <span ng-if="room.id !== ''">{{room.id|displayName}}</span>
                         <span ng-if="room.id === ''">{{_("Room chat")}} {{currentRoomName}}</span>

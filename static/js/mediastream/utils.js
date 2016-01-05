@@ -41,6 +41,7 @@
 
 "use strict";
 define([], function() {
+  /*jshint strict: true, latedef: false */
 
   function trace(text) {
     // noop
@@ -232,7 +233,7 @@ define([], function() {
   // The format of |codec| is 'NAME/RATE', e.g. 'opus/48000'.
   function maybePreferCodec(sdp, type, dir, codec) {
     var str = type + ' ' + dir + ' codec';
-    if (codec === '') {
+    if (!codec) {
       trace('No preference on ' + str + '.');
       return sdp;
     }

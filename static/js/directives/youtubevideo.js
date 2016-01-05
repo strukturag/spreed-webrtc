@@ -106,6 +106,16 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			var initialState = null;
 			var sandboxApi = null;
 
+			var peers = {};
+			var youtubevideos = [];
+			var youtubevideoCount = 0;
+			var currentToken = null;
+			var tokenHandler = null;
+
+			var mediaStreamSendYouTubeVideo;
+			var connector;
+			var updater;
+
 			var createSandboxApi = function(force, template) {
 				if (sandboxApi && force) {
 					sandboxApi.destroy();
@@ -475,13 +485,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 				}
 			});
 
-			var peers = {};
-			var youtubevideos = [];
-			var youtubevideoCount = 0;
-			var currentToken = null;
-			var tokenHandler = null;
-
-			var mediaStreamSendYouTubeVideo = function(peercall, token, params) {
+			mediaStreamSendYouTubeVideo = function(peercall, token, params) {
 				mediaStream.api.apply("sendYouTubeVideo", {
 					send: function(type, data) {
 						if (!peercall.peerconnection.datachannelReady) {
@@ -495,7 +499,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 				})(peercall.id, token, params);
 			};
 
-			var connector = function(token, peercall) {
+			connector = function(token, peercall) {
 				if (peers.hasOwnProperty(peercall.id)) {
 					// Already got a connection.
 					return;
@@ -522,7 +526,7 @@ define(['require', 'jquery', 'underscore', 'moment', 'text!partials/youtubevideo
 			};
 
 			// Updater function to bring in new calls.
-			var updater = function(event, state, currentcall) {
+			updater = function(event, state, currentcall) {
 				switch (state) {
 					case "completed":
 					case "connected":

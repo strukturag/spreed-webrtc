@@ -23,6 +23,7 @@
 define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], function($, _, PeerCall, tokens) {
 
 	var screenshareIds = 0;
+	var PeerScreenshare;
 
 	// Register ourselves for tokens.
 	tokens.registerHandler("screenshare", function(webrtc, id, token, from) {
@@ -32,7 +33,7 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 	});
 
 	// PeerScreenshare inherits from PeerCall.
-	var PeerScreenshare = function(webrtc, id, token, to) {
+	PeerScreenshare = function(webrtc, id, token, to) {
 
 		if (id === null) {
 			id = screenshareIds++;
@@ -50,9 +51,6 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 			audio: false,
 			video: false
 		}
-		this.sdpConstraints.mandatory.OfferToReceiveAudio = false;
-		this.sdpConstraints.mandatory.OfferToReceiveVideo = true;
-
 		// SCTP is supported from Chrome M31.
 		// No need to pass DTLS constraint as it is on by default in Chrome M31.
 		// For SCTP, reliable and ordered is true by default.
@@ -60,6 +58,8 @@ define(['jquery', 'underscore', 'mediastream/peercall', 'mediastream/tokens'], f
 			mandatory: {},
 			optional: []
 		};
+		this.offerOptions.offerToReceiveAudio = false;
+		this.offerOptions.offerToReceiveVideo = true;
 
 		// Inject token into sessiondescription and ice candidate data.
 		this.e.on("sessiondescription icecandidate", _.bind(function(event, data) {

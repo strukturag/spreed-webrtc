@@ -34,9 +34,8 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		this.mediaConstraints = $.extend(true, {}, this.webrtc.settings.mediaConstraints);
 		this.pcConfig = $.extend(true, {}, this.webrtc.settings.pcConfig);
 		this.pcConstraints = $.extend(true, {}, this.webrtc.settings.pcConstraints);
-		this.sdpConstraints = $.extend(true, {}, this.webrtc.settings.sdpConstraints);
-		this.offerConstraints = $.extend(true, {}, this.webrtc.settings.offerConstraints);
 		this.sdpParams = $.extend(true, {}, this.webrtc.settings.sdpParams);
+		this.offerOptions = $.extend(true, {}, this.webrtc.settings.offerOptions);
 
 		this.peerconnection = null;
 		this.datachannels = {};
@@ -69,17 +68,17 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 	PeerCall.prototype.createOffer = function(cb) {
 
-		var constraints = utils.mergeConstraints(this.offerConstraints, this.sdpConstraints);
-		console.log('Creating offer with constraints: \n' +
-			'  \'' + JSON.stringify(constraints, null, '\t') + '\'.', this.negotiationNeeded);
-		this.peerconnection.createOffer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this), constraints);
+		var options = this.offerOptions;
+		console.log('Creating offer with options: \n' +
+			'  \'' + JSON.stringify(options, null, '\t') + '\'.', this.negotiationNeeded);
+		this.peerconnection.createOffer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this), options);
 
 	};
 
 	PeerCall.prototype.createAnswer = function(cb) {
 
 		console.log("Creating answer.", this.negotiationNeeded);
-		this.peerconnection.createAnswer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this), this.peerconnection.sdpConstraints);
+		this.peerconnection.createAnswer(_.bind(this.onCreateAnswerOffer, this, cb), _.bind(this.onErrorAnswerOffer, this));
 
 	};
 
@@ -151,7 +150,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 						streams++;
 					}
 				}, this));
-				if (streams === 0 && this.sdpConstraints.mandatory && (this.sdpConstraints.mandatory.OfferToReceiveAudio || this.sdpConstraints.mandatory.OfferToReceiveVideo)) {
+				if (streams === 0 && (this.offerOptions.offerToReceiveAudio || this.offerOptions.offerToReceiveVideo)) {
 					// We assume that we will eventually receive a stream, so we trigger the event to let the UI prepare for it.
 					this.e.triggerHandler("remoteStreamAdded", [null, this]);
 				}

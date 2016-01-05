@@ -181,8 +181,8 @@ if (Object.create) {
 			custom: {
 				families: ["FontAwesome"],
 				testStrings: {
-     				"FontAwesome": '\uf004\uf005'
-    			}
+					"FontAwesome": '\uf004\uf005'
+				}
 			},
 			active: function() {
 				console.log("Web fonts loaded.");

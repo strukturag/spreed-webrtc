@@ -108,7 +108,7 @@ define(["angular"], function(angular) {
 				if (!conf ||
 					conf && !conf.type ||
 					conf && !conf.baseType) {
-					throw Error("Custom template not configured correctly.");
+					throw new Error("Custom template not configured correctly.");
 				}
 				var templateUrl = '/dialogs/' + conf.type + '.html';
 				if (conf.template) {

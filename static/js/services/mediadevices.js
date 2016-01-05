@@ -19,44 +19,12 @@
  *
  */
 
-/* global Promise */
 "use strict";
 define(['webrtc.adapter'], function() {
 
 	// mediaDevices
 	return ["$window", function($window) {
-
-		var mediaDevices = $window.navigator.mediaDevices || {};
-		var getUserMedia = (function() {
-			// Implement a Promise based wrapper around getUserMedia.
-			if (mediaDevices.getUserMedia) {
-				// mediaDevices calls return Promise native.
-				return mediaDevices.getUserMedia.bind(mediaDevices);
-			} else {
-				return function getUserMedia(constraints) {
-					return new Promise(function(resolve, reject) {
-						var onSuccess = function(stream) {
-							resolve(stream)
-						};
-						var onError = function(error) {
-							reject(error);
-						};
-						try {
-							$window.getUserMedia(constraints, onSuccess, onError);
-						} catch(err) {
-							onError(err);
-						}
-					});
-				}
-			}
-		})();
-
-		// Public api.
-		return {
-			shim: mediaDevices.getUserMedia ? false : true,
-			getUserMedia: getUserMedia
-		}
-
+		return $window.navigator.mediaDevices;
 	}];
 
 });

@@ -30,6 +30,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+'use strict';
+
 var getUserMedia = null;
 var attachMediaStream = null;
 var reattachMediaStream = null;
@@ -39,24 +41,79 @@ var webrtcMinimumVersion = null;
 var webrtcUtils = {
   log: function() {
     // suppress console.log output when being included as a module.
-    if (!(typeof module !== 'undefined' ||
-        typeof require === 'function') && (typeof define === 'function')) {
-      console.log.apply(console, arguments);
+    if (typeof module !== 'undefined' ||
+        typeof require === 'function' && typeof define === 'function') {
+      return;
     }
+    console.log.apply(console, arguments);
+  },
+  extractVersion: function(uastring, expr, pos) {
+    var match = uastring.match(expr);
+    return match && match.length >= pos && parseInt(match[pos], 10);
   }
+};
+
+/*
+function trace(text) {
+  // This function is used for logging.
+  if (text[text.length - 1] === '\n') {
+    text = text.substring(0, text.length - 1);
+  }
+  if (window.performance) {
+    var now = (window.performance.now() / 1000).toFixed(3);
+    webrtcUtils.log(now + ': ' + text);
+  } else {
+    webrtcUtils.log(text);
+  }
+}
+*/
+
+if (typeof window === 'object') {
+  if (window.HTMLMediaElement &&
+    !('srcObject' in window.HTMLMediaElement.prototype)) {
+    // Shim the srcObject property, once, when HTMLMediaElement is found.
+    Object.defineProperty(window.HTMLMediaElement.prototype, 'srcObject', {
+      get: function() {
+        // If prefixed srcObject property exists, return it.
+        // Otherwise use the shimmed property, _srcObject
+        return 'mozSrcObject' in this ? this.mozSrcObject : this._srcObject;
+      },
+      set: function(stream) {
+        if ('mozSrcObject' in this) {
+          this.mozSrcObject = stream;
+        } else {
+          // Use _srcObject as a private property for this shim
+          this._srcObject = stream;
+          // TODO: revokeObjectUrl(this.src) when !stream to release resources?
+          this.src = URL.createObjectURL(stream);
+        }
+      }
+    });
+  }
+  // Proxy existing globals
+  getUserMedia = window.navigator && window.navigator.getUserMedia;
+}
+
+// Attach a media stream to an element.
+attachMediaStream = function(element, stream) {
+  element.srcObject = stream;
+};
+
+reattachMediaStream = function(to, from) {
+  to.srcObject = from.srcObject;
 };
 
 if (typeof window === 'undefined' || !window.navigator) {
   webrtcUtils.log('This does not appear to be a browser');
   webrtcDetectedBrowser = 'not a browser';
-} else if (navigator.mozGetUserMedia) {
+} else if (navigator.mozGetUserMedia && window.mozRTCPeerConnection) {
   webrtcUtils.log('This appears to be Firefox');
 
   webrtcDetectedBrowser = 'firefox';
 
   // the detected firefox version.
-  webrtcDetectedVersion =
-    parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+  webrtcDetectedVersion = webrtcUtils.extractVersion(navigator.userAgent,
+      /Firefox\/([0-9]+)\./, 1);
 
   // the minimum firefox version still supported by adapter.
   webrtcMinimumVersion = 31;
@@ -88,14 +145,18 @@ if (typeof window === 'undefined' || !window.navigator) {
         pcConfig.iceServers = newIceServers;
       }
     }
-    return new mozRTCPeerConnection(pcConfig, pcConstraints);
+    return new mozRTCPeerConnection(pcConfig, pcConstraints); // jscs:ignore requireCapitalizedConstructors
   };
 
   // The RTCSessionDescription object.
-  window.RTCSessionDescription = mozRTCSessionDescription;
+  if (!window.RTCSessionDescription) {
+    window.RTCSessionDescription = mozRTCSessionDescription;
+  }
 
   // The RTCIceCandidate object.
-  window.RTCIceCandidate = mozRTCIceCandidate;
+  if (!window.RTCIceCandidate) {
+    window.RTCIceCandidate = mozRTCIceCandidate;
+  }
 
   // getUserMedia constraints shim.
   getUserMedia = function(constraints, onSuccess, onError) {
@@ -168,8 +229,8 @@ if (typeof window === 'undefined' || !window.navigator) {
       navigator.mediaDevices.enumerateDevices || function() {
     return new Promise(function(resolve) {
       var infos = [
-        {kind: 'audioinput', deviceId: 'default', label:'', groupId:''},
-        {kind: 'videoinput', deviceId: 'default', label:'', groupId:''}
+        {kind: 'audioinput', deviceId: 'default', label: '', groupId: ''},
+        {kind: 'videoinput', deviceId: 'default', label: '', groupId: ''}
       ];
       resolve(infos);
     });
@@ -180,7 +241,7 @@ if (typeof window === 'undefined' || !window.navigator) {
     var orgEnumerateDevices =
         navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
     navigator.mediaDevices.enumerateDevices = function() {
-      return orgEnumerateDevices().catch(function(e) {
+      return orgEnumerateDevices().then(undefined, function(e) {
         if (e.name === 'NotFoundError') {
           return [];
         }
@@ -188,30 +249,27 @@ if (typeof window === 'undefined' || !window.navigator) {
       });
     };
   }
-  // Attach a media stream to an element.
-  attachMediaStream = function(element, stream) {
-    element.mozSrcObject = stream;
-  };
-
-  reattachMediaStream = function(to, from) {
-    to.mozSrcObject = from.mozSrcObject;
-  };
-
-} else if (navigator.webkitGetUserMedia) {
+} else if (navigator.webkitGetUserMedia && window.webkitRTCPeerConnection) {
   webrtcUtils.log('This appears to be Chrome');
 
   webrtcDetectedBrowser = 'chrome';
 
   // the detected chrome version.
-  webrtcDetectedVersion =
-    parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
+  webrtcDetectedVersion = webrtcUtils.extractVersion(navigator.userAgent,
+      /Chrom(e|ium)\/([0-9]+)\./, 2);
 
   // the minimum chrome version still supported by adapter.
   webrtcMinimumVersion = 38;
 
   // The RTCPeerConnection object.
   window.RTCPeerConnection = function(pcConfig, pcConstraints) {
-    var pc = new webkitRTCPeerConnection(pcConfig, pcConstraints);
+    // Translate iceTransportPolicy to iceTransports,
+    // see https://code.google.com/p/webrtc/issues/detail?id=4869
+    if (pcConfig && pcConfig.iceTransportPolicy) {
+      pcConfig.iceTransports = pcConfig.iceTransportPolicy;
+    }
+
+    var pc = new webkitRTCPeerConnection(pcConfig, pcConstraints); // jscs:ignore requireCapitalizedConstructors
     var origGetStats = pc.getStats.bind(pc);
     pc.getStats = function(selector, successCallback, errorCallback) { // jshint ignore: line
       var self = this;
@@ -251,7 +309,14 @@ if (typeof window === 'undefined' || !window.navigator) {
 
       // promise-support
       return new Promise(function(resolve, reject) {
-        origGetStats.apply(self, [resolve, reject]);
+        if (args.length === 1 && selector === null) {
+          origGetStats.apply(self, [
+              function(response) {
+                resolve.apply(null, [fixChromeStats(response)]);
+              }, reject]);
+        } else {
+          origGetStats.apply(self, [resolve, reject]);
+        }
       });
     };
 
@@ -417,7 +482,7 @@ if (typeof window === 'undefined' || !window.navigator) {
 
   // Attach a media stream to an element.
   attachMediaStream = function(element, stream) {
-    if (typeof element.srcObject !== 'undefined') {
+    if (webrtcDetectedVersion >= 43) {
       element.srcObject = stream;
     } else if (typeof element.src !== 'undefined') {
       element.src = URL.createObjectURL(stream);
@@ -425,9 +490,12 @@ if (typeof window === 'undefined' || !window.navigator) {
       webrtcUtils.log('Error attaching stream to element.');
     }
   };
-
   reattachMediaStream = function(to, from) {
-    to.src = from.src;
+    if (webrtcDetectedVersion >= 43) {
+      to.srcObject = from.srcObject;
+    } else {
+      to.src = from.src;
+    }
   };
 
 } else if (navigator.mediaDevices && navigator.userAgent.match(
@@ -435,20 +503,11 @@ if (typeof window === 'undefined' || !window.navigator) {
   webrtcUtils.log('This appears to be Edge');
   webrtcDetectedBrowser = 'edge';
 
-  webrtcDetectedVersion =
-    parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10);
+  webrtcDetectedVersion = webrtcUtils.extractVersion(navigator.userAgent,
+      /Edge\/(\d+).(\d+)$/, 2);
 
   // the minimum version still supported by adapter.
   webrtcMinimumVersion = 12;
-
-  getUserMedia = navigator.getUserMedia;
-
-  attachMediaStream = function(element, stream) {
-    element.srcObject = stream;
-  };
-  reattachMediaStream = function(to, from) {
-    to.srcObject = from.srcObject;
-  };
 } else {
   webrtcUtils.log('Browser does not appear to be WebRTC-capable');
 }
@@ -461,26 +520,35 @@ function requestUserMedia(constraints) {
 }
 
 var webrtcTesting = {};
-Object.defineProperty(webrtcTesting, 'version', {
-  set: function(version) {
-    webrtcDetectedVersion = version;
-  }
-});
+try {
+  Object.defineProperty(webrtcTesting, 'version', {
+    set: function(version) {
+      webrtcDetectedVersion = version;
+    }
+  });
+} catch (e) {}
 
 if (typeof module !== 'undefined') {
   var RTCPeerConnection;
+  var RTCIceCandidate;
+  var RTCSessionDescription;
   if (typeof window !== 'undefined') {
     RTCPeerConnection = window.RTCPeerConnection;
+    RTCIceCandidate = window.RTCIceCandidate;
+    RTCSessionDescription = window.RTCSessionDescription;
   }
   module.exports = {
     RTCPeerConnection: RTCPeerConnection,
+    RTCIceCandidate: RTCIceCandidate,
+    RTCSessionDescription: RTCSessionDescription,
     getUserMedia: getUserMedia,
     attachMediaStream: attachMediaStream,
     reattachMediaStream: reattachMediaStream,
     webrtcDetectedBrowser: webrtcDetectedBrowser,
     webrtcDetectedVersion: webrtcDetectedVersion,
     webrtcMinimumVersion: webrtcMinimumVersion,
-    webrtcTesting: webrtcTesting
+    webrtcTesting: webrtcTesting,
+    webrtcUtils: webrtcUtils
     //requestUserMedia: not exposed on purpose.
     //trace: not exposed on purpose.
   };
@@ -489,13 +557,16 @@ if (typeof module !== 'undefined') {
   define([], function() {
     return {
       RTCPeerConnection: window.RTCPeerConnection,
+      RTCIceCandidate: window.RTCIceCandidate,
+      RTCSessionDescription: window.RTCSessionDescription,
       getUserMedia: getUserMedia,
       attachMediaStream: attachMediaStream,
       reattachMediaStream: reattachMediaStream,
       webrtcDetectedBrowser: webrtcDetectedBrowser,
       webrtcDetectedVersion: webrtcDetectedVersion,
       webrtcMinimumVersion: webrtcMinimumVersion,
-      webrtcTesting: webrtcTesting
+      webrtcTesting: webrtcTesting,
+      webrtcUtils: webrtcUtils
       //requestUserMedia: not exposed on purpose.
       //trace: not exposed on purpose.
     };

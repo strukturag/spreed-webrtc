@@ -44,6 +44,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 			$scope.currentRoom = null;
 			$scope.currentRoomActive = false;
 			$scope.maxMessageSize = maxMessageSize;
+			$scope.autoFocusDisabled = false;
 
 			$scope.getVisibleRooms = function() {
 				var res = [];
@@ -415,11 +416,6 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 							pane.append(clonedElement);
 							$scope.element = clonedElement;
 							$scope.visible = true;
-							if (options.autofocus) {
-								_.defer(function() {
-									$scope.$broadcast("focus");
-								});
-							}
 
 							var sendFiles = function(files) {
 								_.each(files, function(f) {
@@ -461,18 +457,16 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 								subscope.enabled = true;
 							}
 						}
-						if (options.autofocus && subscope.visible) {
-							subscope.$broadcast("focus");
-						}
 
 					}
 
 					if (!options.noactivate) {
-						scope.activateRoom(subscope.id, true);
+						scope.activateRoom(subscope.id, true, !!options.autofocus);
 					}
 
 					if (options.restore && !options.noenable) {
 						if (!scope.layout.chat) {
+							scope.autoFocusDisabled = true;
 							scope.layout.chat = true;
 						}
 					}
@@ -524,7 +518,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					scope.layout.chatMaximized = !scope.layout.chatMaximized;
 				};
 
-				scope.activateRoom = function(id, active) {
+				scope.activateRoom = function(id, active, autofocus) {
 					var subscope = controller.rooms[id];
 					if (!subscope) {
 						return;
@@ -555,6 +549,13 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					if (flip) {
 						pane.toggleClass("flip");
 					}
+					if (active && autofocus && !scope.autoFocusDisabled) {
+						_.defer(function() {
+							if (scope.layout.chat) {
+								subscope.$broadcast("focus");
+							}
+						});
+					}
 				};
 
 				scope.deactivateRoom = function() {
@@ -566,13 +567,22 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						pane.removeClass("flip");
 					}
 					scope.layout.chatMaximized = false;
+					if (chat) {
+						if (!scope.autoFocusDisabled) {
+							if (scope.currentRoom && scope.currentRoom.active) {
+								scope.activateRoom(scope.currentRoom.id, true, true);
+							}
+						} else {
+							scope.autoFocusDisabled = false;
+						}
+					}
 				});
 
 				scope.$on("room.updated", function(event, room) {
 					var subscope = scope.showGroupRoom(null, {
 						restore: true,
 						noenable: true,
-						noactivate: true
+						noactivate: !!scope.currentRoomActive
 					});
 					if (scope.currentRoomName != room.Name) {
 						var msg = $("<span>").text(translation._("You are now in room %s ...", room.Name));

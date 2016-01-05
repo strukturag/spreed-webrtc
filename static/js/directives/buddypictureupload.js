@@ -39,8 +39,16 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 
 			var previewWidth = 205;
 			var previewHeight = 205;
-			$scope.maxUploadMb = 8;
-			var maxUploadBytes = $scope.maxUploadMb * 1024 * 1024;
+			var maxUploadBytes = 8388608; // 8MB
+
+			var completedUpload;
+			var setUploadImageDimension;
+			var getAutoFitDimensions;
+			var getScaledDimensions;
+			var writePictureToCanvas;
+			var clearPicture;
+
+			$scope.maxUploadMb = maxUploadBytes / 1024 / 1024;
 			$scope.showUploadPicture = false;
 			$scope.previewUpload = false;
 			$scope.imgData = null;
@@ -54,11 +62,11 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 			$scope.aspectRatio = 1;
 
-			var completedUpload = function() {
+			completedUpload = function() {
 				$scope.upload.status = 100;
 			};
 
-			var setUploadImageDimension = function(data) {
+			setUploadImageDimension = function(data) {
 				$scope.prevImage.onload = function() {
 					// clear old dimensions
 					this.style.cssText = null;
@@ -76,7 +84,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 
 			// Auto fit by smallest dimension
-			var getAutoFitDimensions = function(from, to) {
+			getAutoFitDimensions = function(from, to) {
 				if (!from.width && !from.height && !to.width && !to.height) {
 					return null;
 				}
@@ -94,7 +102,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 			};
 
 			// (image, canvas) -> object
-			var getScaledDimensions = function(from, to) {
+			getScaledDimensions = function(from, to) {
 				if (!from.style.width && !from.style.height && !to.width && !to.height) {
 					return null;
 				}
@@ -120,7 +128,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				return {width: width, height: height, x: x, y: y};
 			};
 
-			var writePictureToCanvas = function(canvas) {
+			writePictureToCanvas = function(canvas) {
 				var img = $scope.prevImage;
 				var dim = getScaledDimensions(img, canvas);
 				var context = canvas.getContext("2d");
@@ -129,7 +137,7 @@ define(['jquery', 'underscore', 'text!partials/buddypictureupload.html'], functi
 				//console.log('writeUploadToCanvas', dim);
 			};
 
-			var clearPicture = function() {
+			clearPicture = function() {
 				$(".file-input-name").empty();
 				$scope.imgData = null;
 				$scope.prevImage.src = "";
