@@ -22,22 +22,18 @@
 define([], function() {
 	"use strict";
 
-	/**
-	 * turnSettings
-	 * Service to correctly sync client and server side TURN settings to contraints.js
-	 * See contraints.js for actual TURN configuration in use for a connection
-	 */
+	// turnSettings
+	// Service to correctly sync client and server side TURN settings to contraints.js
+	// See contraints.js for actual TURN configuration in use for a connection
 	return ['mediaStream', 'appData', 'constraints', function(mediaStream, appData, constraints) {
 
 		var preferClientSideTurnSettings = mediaStream.config.TurnClientSideSetable;
 		var turnConfigServer = null;
 
-		/**
-		 * @param Object config Turn configuration object
-		 * @param Array config.urls
-		 * @param String config.username
-		 * @param String config.password
-		 */
+		// @param Object config Turn configuration object
+		// @param Array config.urls
+		// @param String config.username
+		// @param String config.password
 		var updateTurnSettings = function(config) {
 			if (!preferClientSideTurnSettings) {
 				return;
