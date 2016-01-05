@@ -582,7 +582,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					var subscope = scope.showGroupRoom(null, {
 						restore: true,
 						noenable: true,
-						noactivate: true
+						noactivate: !!scope.currentRoomActive
 					});
 					if (scope.currentRoomName != room.Name) {
 						var msg = $("<span>").text(translation._("You are now in room %s ...", room.Name));
