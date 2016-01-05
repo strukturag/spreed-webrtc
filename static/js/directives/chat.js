@@ -44,6 +44,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 			$scope.currentRoom = null;
 			$scope.currentRoomActive = false;
 			$scope.maxMessageSize = maxMessageSize;
+			$scope.autoFocusDisabled = false;
 
 			$scope.getVisibleRooms = function() {
 				var res = [];
@@ -465,6 +466,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 
 					if (options.restore && !options.noenable) {
 						if (!scope.layout.chat) {
+							scope.autoFocusDisabled = true;
 							scope.layout.chat = true;
 						}
 					}
@@ -547,7 +549,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					if (flip) {
 						pane.toggleClass("flip");
 					}
-					if (active && autofocus) {
+					if (active && autofocus && !scope.autoFocusDisabled) {
 						_.defer(function() {
 							if (scope.layout.chat) {
 								subscope.$broadcast("focus");
@@ -565,6 +567,15 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						pane.removeClass("flip");
 					}
 					scope.layout.chatMaximized = false;
+					if (chat) {
+						if (!scope.autoFocusDisabled) {
+							if (scope.currentRoom && scope.currentRoom.active) {
+								scope.activateRoom(scope.currentRoom.id, true, true);
+							}
+						} else {
+							scope.autoFocusDisabled = false;
+						}
+					}
 				});
 
 				scope.$on("room.updated", function(event, room) {
