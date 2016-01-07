@@ -19,8 +19,8 @@
  *
  */
 
+"use strict";
 define([], function() {
-	"use strict";
 
 	// turnSettings
 	// Service to correctly sync client and server side TURN settings to contraints.js
