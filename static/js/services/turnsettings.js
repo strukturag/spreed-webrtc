@@ -62,7 +62,7 @@ define([], function() {
 		}
 
 		return {
-			showClientSideTurnOptions: function() {
+			clientSideTurn: function() {
 				return clientSideTurn;
 			},
 			update: updateTurnSettings
