@@ -180,8 +180,21 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 						$scope.stopScreenshare();
 					}
 				}, function(err) {
-					console.log("Screen sharing request returned error", err);
-					alertify.dialog.alert(translation._("Failed to start screen sharing (%s).", err));
+					var errMsg = '';
+					var errCode = '';
+					if (err && err.detail) {
+						errMsg = err.detail;
+						errCode = err.errorCode;
+					} else {
+						errMsg = err;
+					}
+					console.log("Screen sharing request returned error", errMsg);
+					// Do not display error dialog when user cancelled action of
+					// chrome extension installation
+					// https://developer.chrome.com/extensions/webstore#type-ErrorCode
+					if (errCode !== 'userCancelled') {
+						alertify.dialog.alert(translation._("Failed to start screen sharing (%s).", errMsg));
+					}
 					$scope.stopScreenshare();
 				});
 
