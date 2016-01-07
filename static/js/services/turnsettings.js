@@ -50,7 +50,7 @@ define([], function() {
 			// Overwrite server Turn settings with user settings when loading app
 			appData.e.one("userSettingsLoaded", function(event, loadedUser, user) {
 				if (user) {
-					updateTurnSettings(user.settings.webrtc.turn);
+					updateTurnSettings(user.settings.turn.clientSideTurn);
 				}
 			});
 			// Get server site TURN settings

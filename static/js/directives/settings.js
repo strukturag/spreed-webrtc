@@ -91,7 +91,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				if (form.$valid && form.$dirty) {
 					var user = $scope.user;
 					$scope.update(user);
-					turnSettings.update($scope.user.settings.webrtc.turn);
+					turnSettings.update($scope.user.settings.turn.clientSideTurn);
 					if ($scope.rememberSettings) {
 						userSettingsData.save(user);
 						localStorage.setItem("mediastream-language", user.settings.language || "");
