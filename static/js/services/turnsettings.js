@@ -27,7 +27,7 @@ define([], function() {
 	// See contraints.js for actual TURN configuration in use for a connection
 	return ['mediaStream', 'appData', 'constraints', function(mediaStream, appData, constraints) {
 
-		var preferClientSideTurnSettings = mediaStream.config.TurnClientSideSetable;
+		var clientSideTurn = mediaStream.config.ClientSideTurn;
 		var turnConfigServer = null;
 
 		// @param Object config Turn configuration object
@@ -35,7 +35,7 @@ define([], function() {
 		// @param String config.username
 		// @param String config.password
 		var updateTurnSettings = function(config) {
-			if (!preferClientSideTurnSettings) {
+			if (!clientSideTurn) {
 				return;
 			}
 			if (config.urls.length) {
@@ -46,7 +46,7 @@ define([], function() {
 			}
 		};
 
-		if (preferClientSideTurnSettings) {
+		if (clientSideTurn) {
 			// Overwrite server Turn settings with user settings when loading app
 			appData.e.one("userSettingsLoaded", function(event, loadedUser, user) {
 				if (user) {
@@ -63,7 +63,7 @@ define([], function() {
 
 		return {
 			showClientSideTurnOptions: function() {
-				return preferClientSideTurnSettings;
+				return clientSideTurn;
 			},
 			update: updateTurnSettings
 		};

@@ -70,7 +70,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			$scope.withUsers = mediaStream.config.UsersEnabled;
 			$scope.withUsersRegistration = mediaStream.config.UsersAllowRegistration;
 			$scope.withUsersMode = mediaStream.config.UsersMode;
-			$scope.withTurnCustomizable = turnSettings.showClientSideTurnOptions();
+			$scope.clientSideTurn = turnSettings.showClientSideTurnOptions();
 
 			_.each(availableLanguages, function(name, code) {
 				$scope.availableLanguages.push({

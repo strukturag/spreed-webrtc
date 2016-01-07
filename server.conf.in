@@ -58,7 +58,7 @@ listen = 127.0.0.1:8080
 ; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
 ;turnSecret = the-default-turn-shared-secret-do-not-keep
 ; Enable adding TURN servers inside of the client side webui under settings
-;turnClientSideSetable = false
+;clientSideTurn = false
 ; Enable renegotiation support. Set to true to tell clients that they can
 ; renegotiate peer connections when required. Firefox support is not complete,
 ; so do not enable if you want compatibility with Firefox clients.
