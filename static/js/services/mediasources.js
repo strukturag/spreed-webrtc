@@ -27,7 +27,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _, adapter) {
 		var MediaSources = function() {
 
 			// For now enable media sources only in Chrome until other browsers have some use for it.
-			this.supported = $window.navigator.mediaDevices.enumerateDevices && adapter.webrtcDetectedBrowser === "chrome";
+			this.supported = $window.navigator.mediaDevices && $window.navigator.mediaDevices.enumerateDevices && adapter.webrtcDetectedBrowser === "chrome";
 			this.audio = [];
 			this.video = [];
 
