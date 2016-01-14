@@ -439,6 +439,15 @@ define([], function() {
       return sdp;
     },
     fixRemote: function(sdp) {
+      if (window.webrtcDetectedBrowser === "chrome" && window.webrtcDetectedVersion <= 38) {
+        // Chrome 46 started to send m lines as UDP/TLS/RTP/SAVPF
+        // https://bugs.chromium.org/p/webrtc/issues/detail?id=2796
+        // https://groups.google.com/forum/#!searchin/discuss-webrtc/psa$20savpf/discuss-webrtc/ZOjSMolpP40/gF5_1Tk8xRAJ
+        // https://groups.google.com/forum/#!topic/mozilla.dev.media/vNCjLFgc97c
+        // This change breaks very old versions of WebRTC. So we change it back locally
+        // for Chrome <= 38 which makes things work fine again.
+        sdp = sdp.replace(/UDP\/TLS\/RTP\/SAVPF/g, "RTP/SAVPF")
+      }
       return sdp;
     }
   }
