@@ -1,3 +1,12 @@
+spreed-webrtc-server (0.24.10) trusty; urgency=medium
+
+  * Avoid to break when there is no mediaDevices.
+  * Added compatibility fix for Chrome 38 which stopped working when called from Chrome 46+ (Munge remote offer UDP/TLS/RTP/SAVPF to RTP/SAVPF).
+  * Only stop user media automatically, when all tracks have ended.
+  * Stop waiting on video early if first video track is enabled but muted.
+
+ -- Simon Eisenmann <simon@struktur.de>  Fri, 15 Jan 2016 12:57:13 +0100
+
 spreed-webrtc-server (0.24.9) trusty; urgency=medium
 
   * Added support for Firefox 43 API changes.
