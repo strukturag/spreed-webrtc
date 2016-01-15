@@ -366,8 +366,10 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 
 		if (stream) {
 			// Catch events when streams end.
+			var trackCount = 0;
 			var onended = _.bind(function(event) {
-				if (this.started) {
+				trackCount--;
+				if (this.started && trackCount <= 0) {
 					console.log("Stopping user media as a stream has ended.", event);
 					this.stop();
 				}
@@ -375,10 +377,12 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 			if (stream.getTracks) {
 				_.each(stream.getTracks(), function(t) {
 					t.onended = onended;
+					trackCount++;
 				});
 			} else {
 				// Legacy api.
 				stream.onended = onended;
+				trackCount++;
 			}
 			// Set new stream.
 			this.localStream = stream;
