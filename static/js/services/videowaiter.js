@@ -43,6 +43,13 @@ define(["underscore"], function(_) {
 			} else if (video.currentTime > 0 && video.videoHeight > 0) {
 				cb(true, video, stream);
 			} else {
+				if (videoTracks.length > 0 && this.count >= 10) {
+					var videoTrack = videoTracks[0];
+					if (videoTrack.enabled === true && videoTrack.muted === true) {
+						cb(false, video, stream);
+						return;
+					}
+				}
 				this.count++;
 				if (this.count < this.retries) {
 					$window.setTimeout(_.bind(this.start, this, video, stream, cb, err_cb), 100);
