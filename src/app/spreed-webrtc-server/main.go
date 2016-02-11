@@ -367,13 +367,13 @@ func runner(runtime phoenix.Runtime) error {
 	// Try to increase number of file open files. This only works as root.
 	maxfd, err := runtime.GetInt("http", "maxfd")
 	if err == nil {
-		rLimit.Max = uint64(maxfd)
-		rLimit.Cur = uint64(maxfd)
+		rLimit.Max = rlim_t(maxfd)
+		rLimit.Cur = rlim_t(maxfd)
 		err = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit)
 		if err != nil {
 			log.Println("Error setting max open files", err)
 		} else {
-			log.Printf("Set max open files successfully to %d\n", uint64(maxfd))
+			log.Printf("Set max open files successfully to %d\n", rlim_t(maxfd))
 		}
 	}
 
