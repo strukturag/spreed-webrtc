@@ -35,8 +35,8 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 				_.each(tracks, function(t) {
 					t.stop();
 				});
-				if (window.webrtcDetectedBrowser === "firefox") {
-					// Always call stop for Firefox as long as it is available.
+				if (window.webrtcDetectedBrowser === "firefox" && window.webrtcDetectedVersion < 44) {
+					// Always call stop for older Firefox < 44 to make sure gUM is correctly cleaned up.
 					// https://bugzilla.mozilla.org/show_bug.cgi?id=1192170
 					if (stream.stop) {
 						stream.stop();
