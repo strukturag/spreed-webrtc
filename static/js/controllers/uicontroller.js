@@ -200,6 +200,15 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		};
 
 		$scope.refreshWebrtcSettings = function() {
+			var settings = $scope.master.settings;
+			// Refresh SDP params.
+			if (settings.experimental.preferVideoSendCodecVP9) {
+				// Prefer VP9.
+				mediaStream.webrtc.settings.sdpParams.videoSendCodec = "VP9/90000";
+			} else {
+				// Else prefer VP8.
+				mediaStream.webrtc.settings.sdpParams.videoSendCodec = "VP8/90000";
+			}
 			// Refresh constraints.
 			constraints.refresh($scope.master.settings).then(function() {
 				var um = $scope.usermedia;
