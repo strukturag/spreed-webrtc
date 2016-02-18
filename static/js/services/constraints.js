@@ -202,6 +202,7 @@
 					hdVideo: isChrome || (isFirefox && version >= 38),
 					// Chrome supports this on Windows only.
 					renderToAssociatedSink: isChrome && $window.navigator.platform.indexOf("Win") === 0,
+					vp9: isChrome && version >= 48,
 					chrome: isChrome,
 					firefox: isFirefox,
 					edge: isEdge

@@ -54,7 +54,8 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					audioNoiseSuppression2: true,
 					audioTypingNoiseDetection: true,
 					videoLeakyBucket: true,
-					videoNoiseReduction: false
+					videoNoiseReduction: false,
+					preferVideoSendCodecVP9: false
 				},
 				sound: {
 					incomingMessages: true,

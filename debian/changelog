@@ -1,3 +1,18 @@
+spreed-webrtc-server (0.24.11) trusty; urgency=medium
+
+  * Stop waiting on video early if first video track is enabled but muted.
+  * Use sh shebang instead of bash to be less Linux specific (#244).
+  * Updated deps to no longer user code.google.com.
+  * Fix wrong type for syscall.Setrlimit on FreeBSD (#244) Values are uint64 on Unix but FreeBSD uses int64 for legacy reasons.
+  * Updated WebRTC adapter to 0.2.10
+  * Added support to prefer VP9 video codec (works with Chrome >= 48) as experimental setting.
+  * Only prefer VP9 when experiments are actually enabled.
+  * Removed local getUserMedia conversion code and use the one provided by the adapter, fixing screen sharing for Chrome >= 49.
+  * Firefox 44 has fixed gUM permission indicator, so limiting workaround to 43 and lower.
+  * Restrict VP9 experiment to Chrome >= 48.
+
+ -- Simon Eisenmann <simon@struktur.de>  Thu, 18 Feb 2016 11:05:49 +0100
+
 spreed-webrtc-server (0.24.10) trusty; urgency=medium
 
   * Avoid to break when there is no mediaDevices.
