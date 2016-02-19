@@ -250,7 +250,7 @@ msgid "Share screen"
 msgstr "Поделиться экраном"
 
 msgid "Please select what to share."
-msgstr "Пожалуста выберите чем поделиться"
+msgstr "Пожалуйста выберите чем поделиться"
 
 msgid "Screen"
 msgstr "Экран"
