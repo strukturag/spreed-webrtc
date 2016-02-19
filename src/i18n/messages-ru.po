@@ -302,7 +302,7 @@ msgid "Status message"
 msgstr "Сообщение о статусе"
 
 msgid "What's on your mind?"
-msgstr "Что у тебя на уме?"
+msgstr "О чем ты думаешь?"
 
 msgid ""
 "Your picture, name and status message identify yourself in calls, chats "
