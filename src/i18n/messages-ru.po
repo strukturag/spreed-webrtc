@@ -2,7 +2,11 @@
 # Copyright (C) 2015 struktur AG
 # This file is distributed under the same license as the Spreed WebRTC
 # project.
+<<<<<<< HEAD
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+=======
+# Irek Zaripov <iazaripov@gmail.com> , 2016.
+>>>>>>> origin/master
 #
 #, fuzzy
 msgid ""
@@ -250,7 +254,11 @@ msgid "Share screen"
 msgstr "Поделиться экраном"
 
 msgid "Please select what to share."
+<<<<<<< HEAD
 msgstr "Пожалуйста выберите чем поделиться"
+=======
+msgstr "Пожалуста выберите чем поделиться"
+>>>>>>> origin/master
 
 msgid "Screen"
 msgstr "Экран"
