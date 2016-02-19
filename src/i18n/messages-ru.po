@@ -174,7 +174,7 @@ msgid "Download failed."
 msgstr "Ошибка загрузки."
 
 msgid "Share a YouTube video"
-msgstr "Поделиться видео YouTube"
+msgstr "Поделиться c видео YouTube"
 
 msgid "Share a file as presentation"
 msgstr "Поделиться с файлом презентации"
