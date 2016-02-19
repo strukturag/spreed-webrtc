@@ -2,7 +2,7 @@
 # Copyright (C) 2015 struktur AG
 # This file is distributed under the same license as the Spreed WebRTC
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+#Irek Zaripov <iazaripov@gmail.com> , 2016.
 #
 #, fuzzy
 msgid ""
