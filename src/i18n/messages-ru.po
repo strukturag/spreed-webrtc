@@ -259,7 +259,7 @@ msgid "Window"
 msgstr "Окно"
 
 msgid "Application"
-msgstr "Придожение"
+msgstr "Приложение"
 
 msgid "Share the whole screen. Click share to select the screen."
 msgstr "Поделиться полным экраном. Нажмите поделиться, чтобы выбрать экран."
