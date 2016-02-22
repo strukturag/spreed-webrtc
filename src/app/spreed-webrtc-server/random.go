@@ -23,6 +23,7 @@ package main
 
 import (
 	"crypto/rand"
+	"math/big"
 	pseudoRand "math/rand"
 	"time"
 )
@@ -31,19 +32,24 @@ const (
 	dict = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
+// NewRandomInt returns a random integer in range [0, max[
+// Tries to use crypto/rand and falls back to math/rand
+func NewRandomInt(max int) int {
+
+	rand, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
+	if err != nil {
+		// Fallback to pseudo-random
+		return pseudoRand.Intn(max)
+	}
+	return int(rand.Int64())
+
+}
+
 func NewRandomString(length int) string {
 
 	buf := make([]byte, length)
-	_, err := rand.Read(buf)
-	if err != nil {
-		// fallback to pseudo-random
-		for i := 0; i < length; i++ {
-			buf[i] = dict[pseudoRand.Intn(len(dict))]
-		}
-	} else {
-		for i := 0; i < length; i++ {
-			buf[i] = dict[int(buf[i])%len(dict)]
-		}
+	for i := 0; i < length; i++ {
+		buf[i] = dict[NewRandomInt(len(dict))]
 	}
 	return string(buf)
 
