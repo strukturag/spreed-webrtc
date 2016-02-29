@@ -63,7 +63,7 @@ type DataRoom struct {
 type DataOffer struct {
 	Type  string
 	To    string
-	Offer interface{}
+	Offer map[string]interface{}
 }
 
 type DataCandidate struct {
@@ -75,7 +75,7 @@ type DataCandidate struct {
 type DataAnswer struct {
 	Type   string
 	To     string
-	Answer interface{}
+	Answer map[string]interface{}
 }
 
 type DataSelf struct {

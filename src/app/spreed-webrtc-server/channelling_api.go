@@ -88,30 +88,35 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 
 		return api.HandleHello(session, msg.Hello, sender)
 	case "Offer":
-		if msg.Offer == nil {
+		if msg.Offer == nil || msg.Offer.Offer == nil {
 			log.Println("Received invalid offer message.", msg)
 			break
 		}
-		api.Trigger(BusManagerOffer, session.Id, msg.Offer.To, nil)
+		if _, ok := msg.Offer.Offer["_token"]; !ok {
+			// Trigger offer event when offer has no token, so this is
+			// not triggered for peerxfer and peerscreenshare offers.
+			api.Trigger(BusManagerOffer, session.Id, msg.Offer.To, nil)
+		}
 
-		// TODO(longsleep): Validate offer
 		session.Unicast(msg.Offer.To, msg.Offer)
 	case "Candidate":
-		if msg.Candidate == nil {
+		if msg.Candidate == nil || msg.Candidate.Candidate == nil {
 			log.Println("Received invalid candidate message.", msg)
 			break
 		}
 
-		// TODO(longsleep): Validate candidate
 		session.Unicast(msg.Candidate.To, msg.Candidate)
 	case "Answer":
-		if msg.Answer == nil {
+		if msg.Answer == nil || msg.Answer.Answer == nil {
 			log.Println("Received invalid answer message.", msg)
 			break
 		}
-		api.Trigger(BusManagerAnswer, session.Id, msg.Answer.To, nil)
+		if _, ok := msg.Answer.Answer["_token"]; !ok {
+			// Trigger answer event when answer has no token. so this is
+			// not triggered for peerxfer and peerscreenshare answers.
+			api.Trigger(BusManagerAnswer, session.Id, msg.Answer.To, nil)
+		}
 
-		// TODO(longsleep): Validate Answer
 		session.Unicast(msg.Answer.To, msg.Answer)
 	case "Users":
 		return api.HandleUsers(session)
