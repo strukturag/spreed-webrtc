@@ -9,3 +9,4 @@ github.com/strukturag/httputils					httputils_v012
 github.com/strukturag/phoenix					phoenix_v0133
 github.com/strukturag/sloth						v0.9.2
 github.com/dlintw/goconf						dcc070983490608a14480e3bf943bad464785df5
+github.com/nats-io/nats							v1.1.6

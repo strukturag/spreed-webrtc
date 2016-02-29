@@ -46,9 +46,10 @@ type channellingAPI struct {
 	ContactManager
 	TurnDataCreator
 	Unicaster
+	BusManager
 }
 
-func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster) ChannellingAPI {
+func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, busManager BusManager) ChannellingAPI {
 	return &channellingAPI{
 		config,
 		roomStatus,
@@ -58,16 +59,22 @@ func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEnco
 		contactManager,
 		turnDataCreator,
 		unicaster,
+		busManager,
 	}
 }
 
 func (api *channellingAPI) OnConnect(client Client, session *Session) (interface{}, error) {
 	api.Unicaster.OnConnect(client, session)
-	return api.HandleSelf(session)
+	self, err := api.HandleSelf(session)
+	if err == nil {
+		api.Trigger(BusManagerConnect, session.Id, "", nil)
+	}
+	return self, err
 }
 
 func (api *channellingAPI) OnDisconnect(client Client, session *Session) {
 	api.Unicaster.OnDisconnect(client, session)
+	api.Trigger(BusManagerDisconnect, session.Id, "", nil)
 }
 
 func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *DataIncoming) (interface{}, error) {
@@ -85,6 +92,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 			log.Println("Received invalid offer message.", msg)
 			break
 		}
+		api.Trigger(BusManagerOffer, session.Id, msg.Offer.To, nil)
 
 		// TODO(longsleep): Validate offer
 		session.Unicast(msg.Offer.To, msg.Offer)
@@ -101,6 +109,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 			log.Println("Received invalid answer message.", msg)
 			break
 		}
+		api.Trigger(BusManagerAnswer, session.Id, msg.Answer.To, nil)
 
 		// TODO(longsleep): Validate Answer
 		session.Unicast(msg.Answer.To, msg.Answer)
@@ -117,6 +126,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 			log.Println("Received invalid bye message.", msg)
 			break
 		}
+		api.Trigger(BusManagerBye, session.Id, msg.Bye.To, nil)
 
 		session.Unicast(msg.Bye.To, msg.Bye)
 	case "Status":
@@ -226,6 +236,7 @@ func (api *channellingAPI) HandleAuthentication(session *Session, st *SessionTok
 	log.Println("Authentication success", session.Userid())
 	self, err := api.HandleSelf(session)
 	if err == nil {
+		api.Trigger("Auth", session.Id, session.Userid(), nil)
 		session.BroadcastStatus()
 	}
 
