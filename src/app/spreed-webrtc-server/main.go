@@ -306,6 +306,20 @@ func runner(runtime phoenix.Runtime) error {
 		tokenProvider = TokenFileProvider(tokenFile)
 	}
 
+	// Nats pub/sub supports.
+	natsChannellingTrigger, _ := runtime.GetBool("nats", "channelling_trigger")
+	natsChannellingTriggerSubject, _ := runtime.GetString("nats", "channelling_trigger_subject")
+	if natsURL, err := runtime.GetString("nats", "url"); err == nil {
+		if natsURL != "" {
+			DefaultNatsURL = natsURL
+		}
+	}
+	if natsEstablishTimeout, err := runtime.GetInt("nats", "establishTimeout"); err == nil {
+		if natsEstablishTimeout != 0 {
+			DefaultNatsEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
+		}
+	}
+
 	// Load remaining configuration items.
 	config = NewConfig(runtime, tokenProvider != nil)
 
@@ -407,7 +421,8 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := NewStatsManager(hub, roomManager, sessionManager)
-	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub)
+	busManager := NewBusManager(natsChannellingTrigger, natsChannellingTriggerSubject)
+	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager)
 
 	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))

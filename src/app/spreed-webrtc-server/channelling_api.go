@@ -46,9 +46,13 @@ type channellingAPI struct {
 	ContactManager
 	TurnDataCreator
 	Unicaster
+	BusManager
 }
 
-func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster) ChannellingAPI {
+// NewChannellingAPI creates and initializes a new ChannellingAPI using
+// various other services for initialization. It is intended to handle
+// incoming and outgoing channeling API events from clients.
+func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, busManager BusManager) ChannellingAPI {
 	return &channellingAPI{
 		config,
 		roomStatus,
@@ -58,16 +62,22 @@ func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEnco
 		contactManager,
 		turnDataCreator,
 		unicaster,
+		busManager,
 	}
 }
 
 func (api *channellingAPI) OnConnect(client Client, session *Session) (interface{}, error) {
 	api.Unicaster.OnConnect(client, session)
-	return api.HandleSelf(session)
+	self, err := api.HandleSelf(session)
+	if err == nil {
+		api.Trigger(BusManagerConnect, session.Id, "", nil)
+	}
+	return self, err
 }
 
 func (api *channellingAPI) OnDisconnect(client Client, session *Session) {
 	api.Unicaster.OnDisconnect(client, session)
+	api.Trigger(BusManagerDisconnect, session.Id, "", nil)
 }
 
 func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *DataIncoming) (interface{}, error) {
@@ -81,28 +91,35 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 
 		return api.HandleHello(session, msg.Hello, sender)
 	case "Offer":
-		if msg.Offer == nil {
+		if msg.Offer == nil || msg.Offer.Offer == nil {
 			log.Println("Received invalid offer message.", msg)
 			break
 		}
+		if _, ok := msg.Offer.Offer["_token"]; !ok {
+			// Trigger offer event when offer has no token, so this is
+			// not triggered for peerxfer and peerscreenshare offers.
+			api.Trigger(BusManagerOffer, session.Id, msg.Offer.To, nil)
+		}
 
-		// TODO(longsleep): Validate offer
 		session.Unicast(msg.Offer.To, msg.Offer)
 	case "Candidate":
-		if msg.Candidate == nil {
+		if msg.Candidate == nil || msg.Candidate.Candidate == nil {
 			log.Println("Received invalid candidate message.", msg)
 			break
 		}
 
-		// TODO(longsleep): Validate candidate
 		session.Unicast(msg.Candidate.To, msg.Candidate)
 	case "Answer":
-		if msg.Answer == nil {
+		if msg.Answer == nil || msg.Answer.Answer == nil {
 			log.Println("Received invalid answer message.", msg)
 			break
 		}
+		if _, ok := msg.Answer.Answer["_token"]; !ok {
+			// Trigger answer event when answer has no token. so this is
+			// not triggered for peerxfer and peerscreenshare answers.
+			api.Trigger(BusManagerAnswer, session.Id, msg.Answer.To, nil)
+		}
 
-		// TODO(longsleep): Validate Answer
 		session.Unicast(msg.Answer.To, msg.Answer)
 	case "Users":
 		return api.HandleUsers(session)
@@ -117,6 +134,7 @@ func (api *channellingAPI) OnIncoming(sender Sender, session *Session, msg *Data
 			log.Println("Received invalid bye message.", msg)
 			break
 		}
+		api.Trigger(BusManagerBye, session.Id, msg.Bye.To, nil)
 
 		session.Unicast(msg.Bye.To, msg.Bye)
 	case "Status":
@@ -226,6 +244,7 @@ func (api *channellingAPI) HandleAuthentication(session *Session, st *SessionTok
 	log.Println("Authentication success", session.Userid())
 	self, err := api.HandleSelf(session)
 	if err == nil {
+		api.Trigger("Auth", session.Id, session.Userid(), nil)
 		session.BroadcastStatus()
 	}
 
