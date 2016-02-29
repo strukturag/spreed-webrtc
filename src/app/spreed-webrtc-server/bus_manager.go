@@ -37,21 +37,32 @@ const (
 	BusManagerAuth       = "auth"
 )
 
+// A BusManager provides the API to interact with a bus.
 type BusManager interface {
 	Trigger(name, from, payload string, data interface{}) error
 }
 
-type BusEvent struct {
+// A BusTrigger is a container to serialize trigger events
+// for the bus backend.
+type BusTrigger struct {
 	Name    string
 	From    string
 	Payload string      `json:",omitempty"`
 	Data    interface{} `json:",omitempty"`
 }
 
+// BusSubjectTrigger returns the bus subject for trigger payloads.
+func BusSubjectTrigger(prefix, suffix string) string {
+	return fmt.Sprintf("%s.%s", prefix, suffix)
+}
+
 type busManager struct {
 	BusManager
 }
 
+// NewBusManager creates and initializes a new BusMager with the
+// provided flags for NATS support. It is intended to connect the
+// backend bus with a easy to use API to send and receive bus data.
 func NewBusManager(useNats bool, subjectPrefix string) BusManager {
 	var b BusManager
 	if useNats {
@@ -94,13 +105,13 @@ func newNatsBus(prefix string) (*natsBus, error) {
 
 func (bus *natsBus) Trigger(name, from, payload string, data interface{}) (err error) {
 	if bus.ec != nil {
-		event := &BusEvent{
+		trigger := &BusTrigger{
 			Name:    name,
 			From:    from,
 			Payload: payload,
 			Data:    data,
 		}
-		err = bus.ec.Publish(fmt.Sprintf("%s.%s", bus.prefix, name), event)
+		err = bus.ec.Publish(BusSubjectTrigger(bus.prefix, name), trigger)
 		if err != nil {
 			log.Println("Failed to trigger NATS event", err)
 		}

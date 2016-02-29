@@ -49,6 +49,9 @@ type channellingAPI struct {
 	BusManager
 }
 
+// NewChannellingAPI creates and initializes a new ChannellingAPI using
+// various other services for initialization. It is intended to handle
+// incoming and outgoing channeling API events from clients.
 func NewChannellingAPI(config *Config, roomStatus RoomStatusManager, sessionEncoder SessionEncoder, sessionManager SessionManager, statsCounter StatsCounter, contactManager ContactManager, turnDataCreator TurnDataCreator, unicaster Unicaster, busManager BusManager) ChannellingAPI {
 	return &channellingAPI{
 		config,
