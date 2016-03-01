@@ -203,3 +203,6 @@ enabled = false
 ;url = nats://127.0.0.1:4222
 ; NATS connect establish timeout in seconds
 ;establishTimeout = 60
+; Use client_id to distinguish between multipe servers. The value is sent
+; together with every NATS request. Defaults to empty.
+;client_id =

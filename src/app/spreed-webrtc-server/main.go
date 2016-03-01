@@ -319,6 +319,7 @@ func runner(runtime phoenix.Runtime) error {
 			DefaultNatsEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
 		}
 	}
+	natsClientId, _ := runtime.GetString("nats", "client_id")
 
 	// Load remaining configuration items.
 	config = NewConfig(runtime, tokenProvider != nil)
@@ -421,7 +422,7 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := NewStatsManager(hub, roomManager, sessionManager)
-	busManager := NewBusManager(natsChannellingTrigger, natsChannellingTriggerSubject)
+	busManager := NewBusManager(natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
 	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager)
 
 	// Add handlers.
