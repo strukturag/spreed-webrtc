@@ -201,6 +201,7 @@ func (api *channellingAPI) HandleSelf(session *Session) (*DataSelf, error) {
 		Turn:       api.CreateTurnData(session),
 		Stun:       api.StunURIs,
 	}
+	api.Trigger(BusManagerSession, session.Id, session.Userid(), nil)
 
 	return self, nil
 }
@@ -244,7 +245,6 @@ func (api *channellingAPI) HandleAuthentication(session *Session, st *SessionTok
 	log.Println("Authentication success", session.Userid())
 	self, err := api.HandleSelf(session)
 	if err == nil {
-		api.Trigger("Auth", session.Id, session.Userid(), nil)
 		session.BroadcastStatus()
 	}
 

@@ -34,7 +34,7 @@ const (
 	BusManagerBye        = "bye"
 	BusManagerConnect    = "connect"
 	BusManagerDisconnect = "disconnect"
-	BusManagerAuth       = "auth"
+	BusManagerSession    = "session"
 )
 
 // A BusManager provides the API to interact with a bus.
