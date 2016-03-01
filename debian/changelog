@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.24.12) trusty; urgency=medium
+
+  * Brought back mediaDevices wrapper for gUM for Firefox >= 38 fixing #263 and #264.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 01 Mar 2016 17:31:11 +0100
+
 spreed-webrtc-server (0.24.11) trusty; urgency=medium
 
   * Stop waiting on video early if first video track is enabled but muted.
