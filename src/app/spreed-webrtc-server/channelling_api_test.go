@@ -80,8 +80,9 @@ func NewTestChannellingAPI() (ChannellingAPI, *fakeClient, *Session, *fakeRoomMa
 		Broadcaster:       roomManager,
 		RoomStatusManager: roomManager,
 	}
+	busManager := NewBusManager("", false, "")
 	session.attestation = &SessionAttestation{s: session}
-	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil), client, session, roomManager
+	return NewChannellingAPI(nil, roomManager, nil, nil, nil, nil, nil, nil, busManager), client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {
