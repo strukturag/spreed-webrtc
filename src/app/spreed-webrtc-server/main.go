@@ -475,7 +475,9 @@ func runner(runtime phoenix.Runtime) error {
 }
 
 func boot() error {
+	defaultConfigPath := flag.String("dc", "", "Default configuration file.")
 	configPath := flag.String("c", defaultConfig, "Configuration file.")
+	overrideConfigPath := flag.String("oc", "", "Override configuration file.")
 	logPath := flag.String("l", "", "Log file, defaults to stderr.")
 	showVersion := flag.Bool("v", false, "Display version number and exit.")
 	memprofile := flag.String("memprofile", "", "Write memory profile to this file.")
@@ -492,7 +494,9 @@ func boot() error {
 	}
 
 	return phoenix.NewServer("server", version).
+		DefaultConfig(defaultConfigPath).
 		Config(configPath).
+		OverrideConfig(overrideConfigPath).
 		Log(logPath).
 		CpuProfile(cpuprofile).
 		MemProfile(memprofile).
