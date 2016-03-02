@@ -123,10 +123,13 @@ release: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultCon
 release: OUTPUT = $(DIST_BIN)
 release: $(DIST_BIN) binary releaseassets
 
-install:
+install-binary:
 	@echo "Installing binaries to: $(DESTDIR)$(BIN)"
-	@echo "Installing static resources to: $(DESTDIR)$(SHARE)"
 	$(INSTALL) -d $(DESTDIR)$(BIN)
+	$(INSTALL) bin/$(EXENAME) $(DESTDIR)$(BIN)
+
+install-assets:
+	@echo "Installing static resources to: $(DESTDIR)$(SHARE)"
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html/sandboxes
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static
@@ -137,7 +140,6 @@ install:
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/css
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/sandboxes
-	$(INSTALL) bin/$(EXENAME) $(DESTDIR)$(BIN)
 	$(INSTALL) html/*.html $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) html/sandboxes/*.html $(DESTDIR)$(SHARE)/www/html/sandboxes
 	$(INSTALL) static/img/* $(DESTDIR)$(SHARE)/www/static/img
@@ -150,6 +152,8 @@ install:
 	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) -D static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs/webodf.js
 	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(DESTDIR)$(SHARE)/www/static/js/sandboxes
+
+install: install-binary install-assets
 
 clean:
 	$(GO) clean -i -r app/... 2>/dev/null || true
@@ -181,4 +185,4 @@ tarball: distclean release install
 		cp server.conf.in $(TARPATH)/loader
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-.PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install install-binary install-assets gopath binary binaryrace binaryall tarball assets
