@@ -1,3 +1,10 @@
+## 0.25.1
+
+  * Use new changelog to retrieve VERSION.
+  * Added support for default and override config.
+  * Removed obsolete file.
+
+
 ## 0.25.0
 
   * Added hints how CHANGELOG.md is created.
