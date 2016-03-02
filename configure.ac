@@ -202,7 +202,7 @@ else
 fi
 AC_SUBST(NODEJS_SUPPORT_PO2JSON)
 
-VERSION=`head -n1 $PWD/debian/changelog | $AWK -F'[[()]]' '{print $2}'`
+VERSION=`head -n1 $PWD/CHANGELOG.md | $AWK '{print $2}'`
 PACKAGE_VERSION="$VERSION"
 PACKAGE_STRING="$PACKAGE_NAME $PACKAGE_VERSION"
 AC_DEFINE_UNQUOTED(VERSION, ["$VERSION"], [Version number of package])
