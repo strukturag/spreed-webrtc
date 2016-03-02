@@ -1,3 +1,27 @@
+## 0.25.0
+
+  * Added hints how CHANGELOG.md is created.
+  * Use markdown for changelog.
+  * Removed own debian folder, to avoid conflicts for packagers.
+  * Trigger NATS events non blocking through buffered channel.
+  * Split "release" target into binary and assets.
+  * Split "install" target into binary and assets. This way packaging can later move the static assets to a separate package.
+  * Brought back mediaDevices wrapper for gUM for Firefox >= 38 fixing #263 and #264.
+  * Added Go 1.6.
+  * Fixed tests to reflect busManager changes.
+  * Added startup bus event and a NATS client id.
+  * Removed auth bus event in favour of session bus event.
+  * Added docstrings and cleaned up code.
+  * Validate Offer and Answer content, so only events without _token key are triggered as channelling event to bus.
+  * Added support for NATS pub/sub messaging to trigger channeling events for external services.
+  * Added Leon to authors.
+  * cryptoRand.Int / pseudoRand.Intn to generate random integer. Previous way was modulo-biased
+  * Add missing characters to random string function, so we use the full upper+lowercase alphabet
+  * Avoid using LDFLAGS as this might be set to unexpected values in environment.
+  * Require a golang version of at least 1.3.0.
+  * Only run TravisCI builds against go1.3 and tip.
+
+
 ## 0.24.12
 
   * Brought back mediaDevices wrapper for gUM for Firefox >= 38 fixing #263 and #264.
