@@ -80,8 +80,8 @@ test: get
 
 assets: javascript fonts
 
-releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
-releaseassets: assets
+release-assets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
+release-assets: assets
 
 fonts:
 	$(MKDIR_P) $(CURDIR)/static/fonts
@@ -119,9 +119,11 @@ extract-i18n:
 update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
-release: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
-release: OUTPUT = $(DIST_BIN)
-release: $(DIST_BIN) binary releaseassets
+release-binary: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
+release-binary: OUTPUT = $(DIST_BIN)
+release-binary: $(DIST_BIN) binary
+
+release: release-binary release-assets
 
 install-binary:
 	@echo "Installing binaries to: $(DESTDIR)$(BIN)"
