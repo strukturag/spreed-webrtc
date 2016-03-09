@@ -85,7 +85,7 @@ msgid "Chat sessions"
 msgstr "Чаты"
 
 msgid "Room chat"
-msgstr "Комната чата"
+msgstr "Чат комнаты"
 
 msgid "Peer to peer"
 msgstr "Пиринговый"
@@ -508,7 +508,7 @@ msgid "Incoming call"
 msgstr "Входящий звонок"
 
 msgid "from"
-msgstr "из"
+msgstr "от"
 
 msgid "Accept call"
 msgstr "Принять вызов"
@@ -589,10 +589,10 @@ msgid "YouTube video to share"
 msgstr "Видео YouTube, чтобы поделиться"
 
 msgid "Peer to peer chat active."
-msgstr "Пиринговая чат активна"
+msgstr "Пиринговый чат активен"
 
 msgid "Peer to peer chat is now off."
-msgstr "Пиринговая чат теперь выключена"
+msgstr "Пиринговый чат теперь выключена"
 
 msgid " is now offline."
 msgstr " вышел."
@@ -660,7 +660,7 @@ msgid "Oops"
 msgstr "Ой"
 
 msgid "Peer connection failed. Check your settings."
-msgstr "Спиринговое соединение не удалось. Проверьте настройки."
+msgstr "Пиринговое соединение не удалось. Проверьте настройки."
 
 msgid "User hung up because of error."
 msgstr "Пользователь сбросил из-за ошибки."
