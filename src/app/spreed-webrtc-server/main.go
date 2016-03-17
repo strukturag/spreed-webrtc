@@ -25,6 +25,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -89,6 +90,38 @@ func sandboxHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	origin := fmt.Sprintf("%s://%s", originURL.Scheme, originURL.Host)
 	handleSandboxView(vars["sandbox"], origin, w, r)
+
+}
+
+func wellKnownHandler(w http.ResponseWriter, r *http.Request) {
+
+	// Detect if the request was made with SSL.
+	ssl := r.TLS != nil
+	scheme := "http"
+	proto, ok := r.Header["X-Forwarded-Proto"]
+	if ok {
+		ssl = proto[0] == "https"
+	}
+	if ssl {
+		scheme = "https"
+	}
+
+	// Construct our URL.
+	url := url.URL{
+		Scheme: scheme,
+		Host:   r.Host,
+		Path:   strings.TrimSuffix(config.B, "/"),
+	}
+	doc := &map[string]string{
+		"spreed-webrtc_endpoint": url.String(),
+	}
+	data, err := json.MarshalIndent(doc, "", "  ")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
 
 }
 
@@ -432,6 +465,7 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
 	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
+	r.HandleFunc("/.well-known/spreed-configuration", wellKnownHandler)
 
 	// Simple room handler.
 	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
