@@ -1,7 +1,7 @@
 
                    Spreed WebRTC REST API v1.0.0
             ===============================================
-                        (c)2014 struktur AG
+                        (c)2016 struktur AG
 
 The server provides a REST api end point to provide functionality outside the
 the channeling API or without a established web socket connection.
@@ -13,11 +13,25 @@ API or there was a problem while JSON encoding.
 Some end points of this API require a existing session from the channeling
 API, incuding the private secret session ID. To get these it is sufficient
 to connect to the channeling API with a websocket connection. The server
-sends the session ID (Id) and secure session ID (Sid) within the Self 
+sends the session ID (Id) and secure session ID (Sid) within the Self
 document after connection was established.
 
 
 Available end points with request methods and content-type:
+
+  /.well-known/spreed-configuration
+
+    The well-known end points can be used to discover the base addresses for
+    other end points. Spreed WebRTC provides this for compatibility with
+    larger setups so clients using this can find the Spreed WebRTC end point.
+
+    GET application/x-www-form-urlencoded
+    No parameters.
+    Response 200:
+      {
+        "spreed-webrtc_endpoint": "http://localhost:8093"
+      }
+
 
   /api/v1/config
 
@@ -178,4 +192,4 @@ https://github.com/strukturag/spreed-webrtc
 For questions, contact mailto:opensource@struktur.de.
 
 
-(c)2014 struktur AG
+(c)2016 struktur AG
