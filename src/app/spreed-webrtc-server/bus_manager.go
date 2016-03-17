@@ -72,9 +72,9 @@ func NewBusManager(id string, useNats bool, subjectPrefix string) BusManager {
 	if useNats {
 		b, err = newNatsBus(id, subjectPrefix)
 		if err == nil {
-			log.Println("Nats bus connected")
+			log.Println("NATS bus connected")
 		} else {
-			log.Println("Error connecting nats bus", err)
+			log.Println("Error connecting NATS bus", err)
 			b = &noopBus{id}
 		}
 	} else {

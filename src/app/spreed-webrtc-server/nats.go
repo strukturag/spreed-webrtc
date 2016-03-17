@@ -20,7 +20,26 @@ var DefaultNatsURL = nats.DefaultURL
 // and tries to establish the connection. It returns the connection
 // and any connection error encountered.
 func NewNatsConnection() (*nats.EncodedConn, error) {
-	nc, err := nats.Connect(DefaultNatsURL)
+	opts := &nats.Options{
+		Url:            DefaultNatsURL,
+		AllowReconnect: true,
+		MaxReconnect:   -1, // Reconnect forever.
+		ReconnectWait:  nats.DefaultReconnectWait,
+		Timeout:        nats.DefaultTimeout,
+		PingInterval:   nats.DefaultPingInterval,
+		MaxPingsOut:    nats.DefaultMaxPingOut,
+		SubChanLen:     nats.DefaultMaxChanLen,
+		ClosedCB: func(conn *nats.Conn) {
+			log.Println("NATS connection closed")
+		},
+		DisconnectedCB: func(conn *nats.Conn) {
+			log.Println("NATS disconnected")
+		},
+		ReconnectedCB: func(conn *nats.Conn) {
+			log.Println("NATS reconnected")
+		},
+	}
+	nc, err := opts.Connect()
 	if err != nil {
 		return nil, err
 	}
