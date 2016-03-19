@@ -57,6 +57,13 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					videoNoiseReduction: false,
 					preferVideoSendCodecVP9: false
 				},
+				turn: {
+					clientSideTurn: {
+						urls: [],
+						username: '',
+						password: ''
+					}
+				},
 				sound: {
 					incomingMessages: true,
 					incomingCall: true,

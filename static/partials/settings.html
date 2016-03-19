@@ -294,6 +294,32 @@
             </div>
           </div>
 
+          <div ng-show="clientSideTurn">
+              <legend>{{_('Turn')}}</legend>
+              <div>
+                <p>{{_('Normally a TURN server is not required. Only use in cases when peer to peer connections are blocked by a firewall.')}}</p>
+                <div class="form-group">
+                  <label class="col-xs-4 control-label">{{_('Turn urls')}}</label>
+                  <div class="col-xs-8">
+                    <input class="form-control" type="text" ng-model="user.settings.turn.clientSideTurn.urls" placeholder="turn:turnserver:port?transport=udp"/>
+                    <span class="help-block">{{_('Comma separated list of urls')}}</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-xs-4 control-label">{{_('Turn username')}}</label>
+                  <div class="col-xs-8">
+                    <input class="form-control" type="text" ng-model="user.settings.turn.clientSideTurn.username" placeholder="{{_('username')}}"/>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-xs-4 control-label">{{_('Turn password')}}</label>
+                  <div class="col-xs-8">
+                    <input class="form-control" type="text" ng-model="user.settings.turn.clientSideTurn.password" placeholder="{{_('password')}}"/>
+                  </div>
+                </div>
+              </div>
+          </div>
+
         </div>
 
         <settings-advanced-extra settings-advanced-extra></settings-advanced-extra>
