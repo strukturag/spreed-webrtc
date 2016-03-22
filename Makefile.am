@@ -175,7 +175,7 @@ distclean: clean
 govendorclean:
 	rm -rf vendor/*
 
-pristine: distclean vendorclean
+pristine: distclean govendorclean
 	rm -f server.conf
 
 $(DIST):
