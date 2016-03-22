@@ -293,41 +293,27 @@ func (un *UserNonce) Response() (int, interface{}, http.Header) {
 }
 
 type Users struct {
+	channelling.SessionStore
 	channelling.SessionValidator
 	channelling.SessionManager
-	channelling.SessionStore
 	realm   string
 	handler UsersHandler
 }
 
 func NewUsers(sessionStore channelling.SessionStore, sessionValidator channelling.SessionValidator, sessionManager channelling.SessionManager, mode, realm string, runtime phoenix.Runtime) *Users {
-
 	var users = &Users{
+		sessionStore,
 		sessionValidator,
 		sessionManager,
-		sessionStore,
 		realm,
 		nil,
 	}
 
+	// Create handler based on mode.
 	var handler UsersHandler
 	var err error
-
-	// Create handler based on mode.
 	if handler, err = users.createHandler(mode, runtime); handler != nil && err == nil {
 		users.handler = handler
-		// Register handler Get.
-		sessionManager.RetrieveUsersWith(func(request *http.Request) (userid string, err error) {
-			userid, err = handler.Get(request)
-			if err != nil {
-				log.Printf("Failed to get userid from handler: %s", err)
-			} else {
-				if userid != "" {
-					log.Printf("Users handler get success: %s\n", userid)
-				}
-			}
-			return
-		})
 		log.Printf("Enabled users handler '%s'\n", mode)
 	} else if err != nil {
 		log.Printf("Failed to enable handler '%s': %s\n", mode, err)
@@ -422,6 +408,21 @@ func (users *Users) createHandler(mode string, runtime phoenix.Runtime) (handler
 
 }
 
+func (users *Users) GetUserID(request *http.Request) (userid string, err error) {
+	if users.handler == nil {
+		return
+	}
+	userid, err = users.handler.Get(request)
+	if err != nil {
+		log.Printf("Failed to get userid from handler: %s", err)
+	} else {
+		if userid != "" {
+			log.Printf("Users handler get success: %s\n", userid)
+		}
+	}
+	return
+}
+
 // Post is used to create new userids for this server.
 func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) {
 
@@ -465,7 +466,7 @@ func (users *Users) Post(request *http.Request) (int, interface{}, http.Header) 
 		nonce string
 		err   error
 	)
-	if session, ok := users.GetSession(snr.Id); ok {
+	if session, ok := users.SessionStore.GetSession(snr.Id); ok {
 		nonce, err = session.Authorize(users.Realm(), &channelling.SessionToken{Id: snr.Id, Sid: snr.Sid, Userid: userid})
 	} else {
 		err = errors.New("no such session")

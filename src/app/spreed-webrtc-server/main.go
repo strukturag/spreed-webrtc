@@ -266,7 +266,8 @@ func runner(runtime phoenix.Runtime) error {
 	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
 	busManager := channelling.NewBusManager(natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
-	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager)
+	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager)
+	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
 
 	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
@@ -274,11 +275,7 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
-	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
 	r.HandleFunc("/.well-known/spreed-configuration", wellKnownHandler)
-
-	// Simple room handler.
-	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Sandbox handler.
 	r.HandleFunc("/sandbox/{origin_scheme}/{origin_host}/{sandbox}.html", httputils.MakeGzipHandler(sandboxHandler))
@@ -289,9 +286,11 @@ func runner(runtime phoenix.Runtime) error {
 	rest.AddResource(&server.Rooms{}, "/rooms")
 	rest.AddResource(config, "/config")
 	rest.AddResourceWithWrapper(&server.Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+
+	var users *server.Users
 	if config.UsersEnabled {
 		// Create Users handler.
-		users := server.NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
+		users = server.NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
 		rest.AddResource(&server.Sessions{tickets, hub, users}, "/sessions/{id}/")
 		if config.UsersAllowRegistration {
 			rest.AddResource(users, "/users")
@@ -301,6 +300,7 @@ func runner(runtime phoenix.Runtime) error {
 		rest.AddResourceWithWrapper(&server.Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
 	}
+	rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
 
 	// Add extra/static support if configured and exists.
 	if extraFolder != "" {
@@ -310,6 +310,12 @@ func runner(runtime phoenix.Runtime) error {
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
+
+	// Finally add websocket handler.
+	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI, users))
+
+	// Simple room handler.
+	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Map everything else to a room when it is a GET.
 	rooms := r.PathPrefix("/").Methods("GET").Subrouter()

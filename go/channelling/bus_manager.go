@@ -25,7 +25,9 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
+	"github.com/nats-io/nats"
 	"github.com/strukturag/spreed-webrtc/go/natsconnection"
 )
 
@@ -41,17 +43,21 @@ const (
 
 // A BusManager provides the API to interact with a bus.
 type BusManager interface {
-	Trigger(name, from, payload string, data interface{}) error
+	Publish(subject string, v interface{}) error
+	Request(subject string, v interface{}, vPtr interface{}, timeout time.Duration) error
+	Trigger(name, from, payload string, data interface{}, pipeline *Pipeline) error
+	Subscribe(subject string, cb nats.Handler) (*nats.Subscription, error)
 }
 
 // A BusTrigger is a container to serialize trigger events
 // for the bus backend.
 type BusTrigger struct {
-	Id      string
-	Name    string
-	From    string
-	Payload string      `json:",omitempty"`
-	Data    interface{} `json:",omitempty"`
+	Id       string
+	Name     string
+	From     string
+	Payload  string      `json:",omitempty"`
+	Data     interface{} `json:",omitempty"`
+	Pipeline string      `json:",omitempty"`
 }
 
 // BusSubjectTrigger returns the bus subject for trigger payloads.
@@ -81,7 +87,7 @@ func NewBusManager(id string, useNats bool, subjectPrefix string) BusManager {
 		b = &noopBus{id}
 	}
 	if err == nil {
-		b.Trigger(BusManagerStartup, id, "", nil)
+		b.Trigger(BusManagerStartup, id, "", nil, nil)
 	}
 
 	return &busManager{b}
@@ -91,8 +97,20 @@ type noopBus struct {
 	id string
 }
 
-func (bus *noopBus) Trigger(name, from, payload string, data interface{}) error {
+func (bus *noopBus) Publish(subject string, v interface{}) error {
 	return nil
+}
+
+func (bus *noopBus) Request(subject string, v interface{}, vPtr interface{}, timeout time.Duration) error {
+	return nil
+}
+
+func (bus *noopBus) Trigger(name, from, payload string, data interface{}, pipeline *Pipeline) error {
+	return nil
+}
+
+func (bus *noopBus) Subscribe(subject string, cb nats.Handler) (*nats.Subscription, error) {
+	return nil, nil
 }
 
 type natsBus struct {
@@ -118,26 +136,39 @@ func newNatsBus(id, prefix string) (*natsBus, error) {
 	return &natsBus{id, prefix, ec, triggerQueue}, nil
 }
 
-func (bus *natsBus) Trigger(name, from, payload string, data interface{}) (err error) {
-	if bus.ec != nil {
-		trigger := &BusTrigger{
-			Id:      bus.id,
-			Name:    name,
-			From:    from,
-			Payload: payload,
-			Data:    data,
-		}
-		entry := &busQueueEntry{BusSubjectTrigger(bus.prefix, name), trigger}
-		select {
-		case bus.triggerQueue <- entry:
-			// sent ok
-		default:
-			log.Println("Failed to queue NATS event - queue full?")
-			err = errors.New("NATS trigger queue full")
-		}
+func (bus *natsBus) Publish(subject string, v interface{}) error {
+	return bus.ec.Publish(subject, v)
+}
+
+func (bus *natsBus) Request(subject string, v interface{}, vPtr interface{}, timeout time.Duration) error {
+	return bus.ec.Request(subject, v, vPtr, timeout)
+}
+
+func (bus *natsBus) Trigger(name, from, payload string, data interface{}, pipeline *Pipeline) (err error) {
+	trigger := &BusTrigger{
+		Id:      bus.id,
+		Name:    name,
+		From:    from,
+		Payload: payload,
+		Data:    data,
+	}
+	if pipeline != nil {
+		trigger.Pipeline = pipeline.GetID()
+	}
+	entry := &busQueueEntry{BusSubjectTrigger(bus.prefix, name), trigger}
+	select {
+	case bus.triggerQueue <- entry:
+		// sent ok
+	default:
+		log.Println("Failed to queue NATS event - queue full?")
+		err = errors.New("NATS trigger queue full")
 	}
 
 	return err
+}
+
+func (bus *natsBus) Subscribe(subject string, cb nats.Handler) (*nats.Subscription, error) {
+	return bus.ec.Subscribe(subject, cb)
 }
 
 type busQueueEntry struct {

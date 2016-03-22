@@ -41,6 +41,7 @@ type channellingAPI struct {
 	TurnDataCreator   channelling.TurnDataCreator
 	Unicaster         channelling.Unicaster
 	BusManager        channelling.BusManager
+	PipelineManager   channelling.PipelineManager
 	config            *channelling.Config
 }
 
@@ -55,7 +56,8 @@ func New(config *channelling.Config,
 	contactManager channelling.ContactManager,
 	turnDataCreator channelling.TurnDataCreator,
 	unicaster channelling.Unicaster,
-	busManager channelling.BusManager) channelling.ChannellingAPI {
+	busManager channelling.BusManager,
+	pipelineManager channelling.PipelineManager) channelling.ChannellingAPI {
 	return &channellingAPI{
 		roomStatus,
 		sessionEncoder,
@@ -65,6 +67,7 @@ func New(config *channelling.Config,
 		turnDataCreator,
 		unicaster,
 		busManager,
+		pipelineManager,
 		config,
 	}
 }
@@ -73,17 +76,18 @@ func (api *channellingAPI) OnConnect(client *channelling.Client, session *channe
 	api.Unicaster.OnConnect(client, session)
 	self, err := api.HandleSelf(session)
 	if err == nil {
-		api.BusManager.Trigger(channelling.BusManagerConnect, session.Id, "", nil)
+		api.BusManager.Trigger(channelling.BusManagerConnect, session.Id, "", nil, nil)
 	}
 	return self, err
 }
 
 func (api *channellingAPI) OnDisconnect(client *channelling.Client, session *channelling.Session) {
 	api.Unicaster.OnDisconnect(client, session)
-	api.BusManager.Trigger(channelling.BusManagerDisconnect, session.Id, "", nil)
+	api.BusManager.Trigger(channelling.BusManagerDisconnect, session.Id, "", nil, nil)
 }
 
 func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channelling.Session, msg *channelling.DataIncoming) (interface{}, error) {
+	var pipeline *channelling.Pipeline
 	switch msg.Type {
 	case "Self":
 		return api.HandleSelf(session)
@@ -99,19 +103,21 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 			break
 		}
 		if _, ok := msg.Offer.Offer["_token"]; !ok {
+			pipeline = api.PipelineManager.GetPipeline(channelling.PipelineNamespaceCall, sender, session, msg.Offer.To)
 			// Trigger offer event when offer has no token, so this is
 			// not triggered for peerxfer and peerscreenshare offers.
-			api.BusManager.Trigger(channelling.BusManagerOffer, session.Id, msg.Offer.To, nil)
+			api.BusManager.Trigger(channelling.BusManagerOffer, session.Id, msg.Offer.To, nil, pipeline)
 		}
 
-		session.Unicast(msg.Offer.To, msg.Offer)
+		session.Unicast(msg.Offer.To, msg.Offer, pipeline)
 	case "Candidate":
 		if msg.Candidate == nil || msg.Candidate.Candidate == nil {
 			log.Println("Received invalid candidate message.", msg)
 			break
 		}
 
-		session.Unicast(msg.Candidate.To, msg.Candidate)
+		pipeline = api.PipelineManager.GetPipeline(channelling.PipelineNamespaceCall, sender, session, msg.Candidate.To)
+		session.Unicast(msg.Candidate.To, msg.Candidate, pipeline)
 	case "Answer":
 		if msg.Answer == nil || msg.Answer.Answer == nil {
 			log.Println("Received invalid answer message.", msg)
@@ -120,10 +126,10 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 		if _, ok := msg.Answer.Answer["_token"]; !ok {
 			// Trigger answer event when answer has no token. so this is
 			// not triggered for peerxfer and peerscreenshare answers.
-			api.BusManager.Trigger(channelling.BusManagerAnswer, session.Id, msg.Answer.To, nil)
+			api.BusManager.Trigger(channelling.BusManagerAnswer, session.Id, msg.Answer.To, nil, pipeline)
 		}
 
-		session.Unicast(msg.Answer.To, msg.Answer)
+		session.Unicast(msg.Answer.To, msg.Answer, pipeline)
 	case "Users":
 		return api.HandleUsers(session)
 	case "Authentication":
@@ -137,9 +143,11 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 			log.Println("Received invalid bye message.", msg)
 			break
 		}
-		api.BusManager.Trigger(channelling.BusManagerBye, session.Id, msg.Bye.To, nil)
+		pipeline = api.PipelineManager.GetPipeline(channelling.PipelineNamespaceCall, sender, session, msg.Bye.To)
+		api.BusManager.Trigger(channelling.BusManagerBye, session.Id, msg.Bye.To, nil, pipeline)
 
-		session.Unicast(msg.Bye.To, msg.Bye)
+		session.Unicast(msg.Bye.To, msg.Bye, pipeline)
+		pipeline.Close()
 	case "Status":
 		if msg.Status == nil {
 			log.Println("Received invalid status message.", msg)

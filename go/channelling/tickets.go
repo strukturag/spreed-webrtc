@@ -96,13 +96,12 @@ func (tickets *tickets) DecodeSessionToken(token string) (st *SessionToken) {
 	return
 }
 
-func (tickets *tickets) FakeSessionToken(userid string) *SessionToken {
-	st := &SessionToken{}
-	st.Sid = fmt.Sprintf("fake-%s", randomstring.NewRandomString(27))
-	st.Id, _ = tickets.Encode("id", st.Sid)
-	st.Userid = userid
+func (tickets *tickets) FakeSessionToken(userid string) (st *SessionToken) {
+	sid := fmt.Sprintf("fake-%s", randomstring.NewRandomString(27))
+	id, _ := tickets.Encode("id", sid)
+	st = &SessionToken{Id: id, Sid: sid, Userid: userid}
 	log.Println("Created new fake session id", st.Id)
-	return st
+	return
 }
 
 func (tickets *tickets) ValidateSession(id, sid string) bool {

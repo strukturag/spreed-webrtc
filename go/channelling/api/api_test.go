@@ -35,6 +35,10 @@ import (
 type fakeClient struct {
 }
 
+func (fake *fakeClient) Index() uint64 {
+	return 0
+}
+
 func (fake *fakeClient) Send(_ buffercache.Buffer) {
 }
 
@@ -83,7 +87,7 @@ func NewTestChannellingAPI() (channelling.ChannellingAPI, *fakeClient, *channell
 	sessionNonces := securecookie.New(securecookie.GenerateRandomKey(64), nil)
 	session := channelling.NewSession(nil, nil, roomManager, roomManager, nil, sessionNonces, "", "")
 	busManager := channelling.NewBusManager("", false, "")
-	return New(nil, roomManager, nil, nil, nil, nil, nil, nil, busManager), client, session, roomManager
+	return New(nil, roomManager, nil, nil, nil, nil, nil, nil, busManager, nil), client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {

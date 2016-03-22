@@ -21,9 +21,12 @@
 
 package channelling
 
-type Unicaster interface {
-	SessionStore
-	OnConnect(*Client, *Session)
-	OnDisconnect(*Client, *Session)
-	Unicast(to string, outgoing *DataOutgoing, pipeline *Pipeline)
+import ()
+
+// Sink connects a Pipeline with end points in both directions by
+// getting attached to a Pipeline.
+type Sink interface {
+	// Write sends outgoing data on the sink from the
+	Write(interface{})
+	Close()
 }

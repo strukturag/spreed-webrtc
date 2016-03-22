@@ -35,11 +35,13 @@ type UserStats interface {
 
 type SessionManager interface {
 	UserStats
-	RetrieveUsersWith(func(*http.Request) (string, error))
-	CreateSession(*http.Request) *Session
+	SessionStore
+	UserStore
+	CreateSession(st *SessionToken, userid string) *Session
 	DestroySession(sessionID, userID string)
 	Authenticate(*Session, *SessionToken, string) error
 	GetUserSessions(session *Session, id string) []*DataSession
+	DecodeSessionToken(token string) (st *SessionToken)
 }
 
 type sessionManager struct {
@@ -48,12 +50,13 @@ type sessionManager struct {
 	Unicaster
 	Broadcaster
 	RoomStatusManager
-	buddyImages      ImageCache
-	config           *Config
-	userTable        map[string]*User
-	fakesessionTable map[string]*Session
-	useridRetriever  func(*http.Request) (string, error)
-	attestations     *securecookie.SecureCookie
+	buddyImages          ImageCache
+	config               *Config
+	userTable            map[string]*User
+	sessionTable         map[string]*Session
+	sessionByUserIDTable map[string]*Session
+	useridRetriever      func(*http.Request) (string, error)
+	attestations         *securecookie.SecureCookie
 }
 
 func NewSessionManager(config *Config, tickets Tickets, unicaster Unicaster, broadcaster Broadcaster, rooms RoomStatusManager, buddyImages ImageCache, sessionSecret []byte) SessionManager {
@@ -66,6 +69,7 @@ func NewSessionManager(config *Config, tickets Tickets, unicaster Unicaster, bro
 		buddyImages,
 		config,
 		make(map[string]*User),
+		make(map[string]*Session),
 		make(map[string]*Session),
 		nil,
 		nil,
@@ -93,29 +97,28 @@ func (sessionManager *sessionManager) UserInfo(details bool) (userCount int, use
 	return
 }
 
-func (sessionManager *sessionManager) RetrieveUsersWith(retriever func(*http.Request) (string, error)) {
-	sessionManager.useridRetriever = retriever
+// GetSession returns the client-less sessions created directly by sessionManager.
+func (sessionManager *sessionManager) GetSession(id string) (*Session, bool) {
+	sessionManager.RLock()
+	defer sessionManager.RUnlock()
+
+	session, ok := sessionManager.sessionTable[id]
+	return session, ok
 }
 
-func (sessionManager *sessionManager) CreateSession(request *http.Request) *Session {
-	request.ParseForm()
-	token := request.FormValue("t")
-	st := sessionManager.DecodeSessionToken(token)
+func (sessionManager *sessionManager) GetUser(id string) (*User, bool) {
+	sessionManager.RLock()
+	defer sessionManager.RUnlock()
 
-	var userid string
-	if sessionManager.config.UsersEnabled {
-		if sessionManager.useridRetriever != nil {
-			userid, _ = sessionManager.useridRetriever(request)
-			if userid == "" {
-				userid = st.Userid
-			}
-		}
-	}
+	user, ok := sessionManager.userTable[id]
+	return user, ok
+}
 
+func (sessionManager *sessionManager) CreateSession(st *SessionToken, userid string) *Session {
 	session := NewSession(sessionManager, sessionManager.Unicaster, sessionManager.Broadcaster, sessionManager.RoomStatusManager, sessionManager.buddyImages, sessionManager.attestations, st.Id, st.Sid)
 
 	if userid != "" {
-		// XXX(lcooper): Should errors be handled here?
+		// Errors are ignored here, session is returned without userID when auth failed.
 		sessionManager.Authenticate(session, st, userid)
 	}
 
@@ -128,9 +131,14 @@ func (sessionManager *sessionManager) DestroySession(sessionID, userID string) {
 	}
 
 	sessionManager.Lock()
-	user, ok := sessionManager.userTable[userID]
-	if ok && user.RemoveSession(sessionID) {
+	if user, ok := sessionManager.userTable[userID]; ok && user.RemoveSession(sessionID) {
 		delete(sessionManager.userTable, userID)
+	}
+	if _, ok := sessionManager.sessionTable[sessionID]; ok {
+		delete(sessionManager.sessionTable, sessionID)
+	}
+	if session, ok := sessionManager.sessionByUserIDTable[userID]; ok && session.Id == sessionID {
+		delete(sessionManager.sessionByUserIDTable, sessionID)
 	}
 	sessionManager.Unlock()
 }
@@ -165,12 +173,13 @@ func (sessionManager *sessionManager) GetUserSessions(session *Session, userid s
 	if !ok {
 		// No user. Create fake session.
 		sessionManager.Lock()
-		session, ok := sessionManager.fakesessionTable[userid]
+		session, ok := sessionManager.sessionByUserIDTable[userid]
 		if !ok {
 			st := sessionManager.FakeSessionToken(userid)
 			session = NewSession(sessionManager, sessionManager.Unicaster, sessionManager.Broadcaster, sessionManager.RoomStatusManager, sessionManager.buddyImages, sessionManager.attestations, st.Id, st.Sid)
 			session.SetUseridFake(st.Userid)
-			sessionManager.fakesessionTable[userid] = session
+			sessionManager.sessionByUserIDTable[userid] = session
+			sessionManager.sessionTable[session.Id] = session
 		}
 		sessionManager.Unlock()
 		users = make([]*DataSession, 1, 1)
