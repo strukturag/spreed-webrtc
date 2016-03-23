@@ -232,6 +232,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		var pickupTimeout = null;
 		var autoAcceptTimeout = null;
+		var ringerTimeout = null;
 		$scope.updateAutoAccept = function(id, from) {
 
 			if (id) {
@@ -726,8 +727,19 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.$on("status", function(event, status) {
 			if (status === "connecting" && dialerEnabled) {
 				dialer.start();
+				// Start accept timeout.
+				ringerTimeout = $timeout(function() {
+					console.log("Ringer timeout reached.");
+					mediaStream.webrtc.doHangup("ringertimeout");
+					$scope.$emit("notification", "pickuptimeout", {
+						reason: 'pickuptimeout',
+						from: $scope.dialing
+					});
+				}, 35000);
 			} else {
 				dialer.stop();
+				$timeout.cancel(ringerTimeout);
+				ringerTimeout = null;
 			}
 			safeApply($scope, function(scope) {
 				var old = $scope.status;
