@@ -41,6 +41,7 @@ import (
 	"github.com/strukturag/spreed-webrtc/go/channelling"
 	"github.com/strukturag/spreed-webrtc/go/channelling/api"
 	"github.com/strukturag/spreed-webrtc/go/channelling/server"
+	"github.com/strukturag/spreed-webrtc/go/natsconnection"
 
 	"github.com/gorilla/mux"
 	"github.com/strukturag/httputils"
@@ -153,12 +154,12 @@ func runner(runtime phoenix.Runtime) error {
 	natsChannellingTriggerSubject, _ := runtime.GetString("nats", "channelling_trigger_subject")
 	if natsURL, err := runtime.GetString("nats", "url"); err == nil {
 		if natsURL != "" {
-			channelling.DefaultNatsURL = natsURL
+			natsconnection.DefaultURL = natsURL
 		}
 	}
 	if natsEstablishTimeout, err := runtime.GetInt("nats", "establishTimeout"); err == nil {
 		if natsEstablishTimeout != 0 {
-			channelling.DefaultNatsEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
+			natsconnection.DefaultEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
 		}
 	}
 	natsClientId, _ := runtime.GetString("nats", "client_id")

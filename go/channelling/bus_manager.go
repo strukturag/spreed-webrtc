@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/nats-io/nats"
+	"github.com/strukturag/spreed-webrtc/go/natsconnection"
 )
 
 const (
@@ -98,12 +98,12 @@ func (bus *noopBus) Trigger(name, from, payload string, data interface{}) error 
 type natsBus struct {
 	id           string
 	prefix       string
-	ec           *nats.EncodedConn
+	ec           *natsconnection.EncodedConnection
 	triggerQueue chan *busQueueEntry
 }
 
 func newNatsBus(id, prefix string) (*natsBus, error) {
-	ec, err := EstablishNatsConnection(nil)
+	ec, err := natsconnection.EstablishJSONEncodedConnection(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ type busQueueEntry struct {
 	data    interface{}
 }
 
-func chPublish(ec *nats.EncodedConn, channel chan (*busQueueEntry)) {
+func chPublish(ec *natsconnection.EncodedConnection, channel chan (*busQueueEntry)) {
 	for {
 		entry := <-channel
 		err := ec.Publish(entry.subject, entry.data)
