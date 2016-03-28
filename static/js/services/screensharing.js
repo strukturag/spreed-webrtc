@@ -32,8 +32,11 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 		};
 	}];
 
+	var GLOBAL_SCREENSHARING_START_EVENT = new Event('webrtcStartScreensharing');
+	var GLOBAL_SCREENSHARING_STOP_EVENT = new Event('webrtcStopScreensharing');
+
 	// screensharing
-	return ["$window", "$q", "$timeout", "chromeExtension", "dialogs", "$templateCache", function($window, $q, $timeout, chromeExtension, dialogs, $templateCache) {
+	return ["$window", "$q", "$timeout", "chromeExtension", "firefoxExtension", "dialogs", "$templateCache", function($window, $q, $timeout, chromeExtension, firefoxExtension, dialogs, $templateCache) {
 
 		$templateCache.put('/dialogs/screensharedialogff.html', screenshareDialogFF);
 
@@ -43,6 +46,18 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 			chromeExtension.e.on("available", _.bind(function() {
 				this.initialize();
 			}, this));
+			firefoxExtension.e.on("available", _.bind(function() {
+				this.initialize();
+			}, this));
+		};
+
+		Screensharing.prototype.globalNotify = {
+			screensharingStart: function() {
+				$window.dispatchEvent(GLOBAL_SCREENSHARING_START_EVENT);
+			},
+			screensharingStop: function() {
+				$window.dispatchEvent(GLOBAL_SCREENSHARING_STOP_EVENT);
+			}
 		};
 
 		Screensharing.prototype.initialize = function() {
@@ -53,6 +68,29 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 			// Define our helpers.
 			this.prepare = null;
 			this.cancel = null;
+			var that = this;
+
+			var selectFirefoxScreenToShare = function(options) {
+				// To work, the current domain must be whitelisted in
+				// media.getusermedia.screensharing.allowed_domains (about:config).
+				// See https://wiki.mozilla.org/Screensharing for reference.
+				that.globalNotify.screensharingStart();
+				var d = $q.defer();
+				var dlg = dialogs.create('/dialogs/screensharedialogff.html', screenshareDialogFFController, {selection: "screen"}, {});
+				dlg.result.then(function(source) {
+					if (source) {
+						var opts = _.extend({
+							mediaSource: source
+						}, options);
+						d.resolve(opts);
+					} else {
+						d.resolve(null);
+					}
+				}, function(err) {
+					d.resolve(null);
+				});
+				return d.promise;
+			};
 
 			// Chrome support.
 			if ($window.webrtcDetectedBrowser === "chrome") {
@@ -133,44 +171,29 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 
 				}
 
-			} else if ($window.webrtcDetectedBrowser === "firefox") {
+			} else if ($window.webrtcDetectedBrowser === "firefox" && $window.webrtcDetectedVersion >= 36) {
 
 				// Firefox 36 got screen sharing support.
 				// See https://bugzilla.mozilla.org/show_bug.cgi?id=923225
-				if ($window.webrtcDetectedVersion >= 36) {
+				this.prepare = function(options) {
+					return selectFirefoxScreenToShare(options);
+				};
+				if (firefoxExtension.available) {
 					this.supported = true;
-					this.prepare = function(options) {
-						// To work, the current domain must be whitelisted in
-						// media.getusermedia.screensharing.allowed_domains (about:config).
-						// See https://wiki.mozilla.org/Screensharing for reference.
-						var d = $q.defer();
-						var dlg = dialogs.create('/dialogs/screensharedialogff.html', screenshareDialogFFController, {selection: "screen"}, {});
-						dlg.result.then(function(source) {
-							if (source) {
-								var opts = _.extend({
-									mediaSource: source
-								}, options);
-								d.resolve(opts);
-							} else {
-								d.resolve(null);
-							}
-						}, function(err) {
-							d.resolve(null);
-						});
-						return d.promise;
-					};
+				} else if (!firefoxExtension.autoinstall.force) {
+					this.supported = true;
 				}
 
 			} else {
 				// No support for screen sharing.
 			}
 
+			var waiting = false;
+			var prepareAlternative = this.prepare;
+
 			// Auto install support.
 			if (!this.supported && chromeExtension.autoinstall.install) {
 				this.supported = this.autoinstall = true;
-				var that = this;
-				var waiting = false;
-				var prepareAlternative = this.prepare;
 				this.prepare = function(options) {
 					var d = $q.defer();
 					var install = chromeExtension.autoinstall.install();
@@ -227,6 +250,46 @@ define(['underscore', 'text!partials/screensharedialogff.html', 'webrtc.adapter'
 				this.cancel = function() {
 					if (chromeExtension.autoinstall.cancel) {
 						chromeExtension.autoinstall.cancel();
+					}
+					waiting = false;
+				};
+			} else if (!this.supported && firefoxExtension.autoinstall.install) {
+				this.supported = this.autoinstall = true;
+				this.prepare = function(options) {
+					var d = $q.defer();
+					var install = firefoxExtension.autoinstall.install();
+					install.then(function() {
+						var starter = function() {
+							var prepare = selectFirefoxScreenToShare(options);
+							prepare.then(function(id) {
+								d.resolve(id);
+							}, function(err) {
+								d.reject(err);
+							});
+						};
+						firefoxExtension.detectInstalled(30000).then(function() {
+							starter();
+						}, function(reason) {
+							d.reject(reason);
+						});
+					}, function(err) {
+						console.log("Auto install of extension failed.", err);
+						if (prepareAlternative) {
+							var alternative = prepareAlternative(options);
+							alternative.then(function(id) {
+								d.resolve(id);
+							}, function() {
+								d.reject(err);
+							});
+						} else {
+							d.reject(err);
+						}
+					});
+					return d.promise;
+				};
+				this.cancel = function() {
+					if (firefoxExtension.autoinstall.cancel) {
+						firefoxExtension.autoinstall.cancel();
 					}
 					waiting = false;
 				};
