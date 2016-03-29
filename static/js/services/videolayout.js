@@ -59,7 +59,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 	var objectFitSupport = Modernizr["object-fit"] && true;
 
 	// videoLayout
-	return ["$window", function($window) {
+	return ["$window", "playPromise", function($window, playPromise) {
 
 		// Invisible layout (essentially shows nothing).
 		var Invisible = function(container, scope, controller) {};
@@ -189,7 +189,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			var $mini = $(scope.mini);
 			this.miniParent = $mini.parent();
 			$mini.prependTo(scope.remoteVideos);
-			$mini.find("video")[0].play();
+			playPromise($mini.find("video")[0]);
 			this.countSelfAsRemote = true;
 		}
 		Democrazy.prototype = Object.create(OnePeople.prototype);
@@ -199,7 +199,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			OnePeople.prototype.close.call(this, container, scope, controller);
 			var $mini = $(scope.mini);
 			$mini.appendTo(this.miniParent);
-			$mini.find("video")[0].play();
+			playPromise($mini.find("video")[0]);
 			this.miniParent = null;
 		};
 
@@ -232,12 +232,12 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			if (this.big) {
 				// Add old video back.
 				this.big.insertAfter(remoteVideo);
-				this.big.find("video")[0].play();
+				playPromise(this.big.find("video")[0]);
 			}
 
 			this.big = remoteVideo;
 			remoteVideo.appendTo(this.bigVideo);
-			remoteVideo.find("video")[0].play();
+			playPromise(remoteVideo.find("video")[0]);
 
 		};
 
@@ -292,7 +292,7 @@ define(["jquery", "underscore", "modernizr", "injectCSS"], function($, _, Modern
 			this.closed = true;
 			if (this.big) {
 				this.remoteVideos.append(this.big);
-				this.big.find("video")[0].play();
+				playPromise(this.big.find("video")[0]);
 			}
 			this.big = null;
 			this.bigVideo.remove()
