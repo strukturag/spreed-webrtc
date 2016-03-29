@@ -1,3 +1,9 @@
+spreed-webrtc-server (0.24.13) trusty; urgency=medium
+
+  * Always disable web worker for PDF.js and no longer rely on PDF.js catching the execption when the worker cannot be started, fixing Firefox 45+.
+
+ -- Simon Eisenmann <simon@struktur.de>  Tue, 29 Mar 2016 13:40:35 +0200
+
 spreed-webrtc-server (0.24.12) trusty; urgency=medium
 
   * Brought back mediaDevices wrapper for gUM for Firefox >= 38 fixing #263 and #264.
