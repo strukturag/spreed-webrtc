@@ -67,10 +67,15 @@
 			pdfScript.onload = function(evt) {
 				pdfjs = that.window.PDFJS;
 				if (PDFJS_WORKER_URL) {
-					// NOTE: the worker script won't actually be run inside a
-					// real Worker object as it can't be loaded cross-domain
-					// from the sandboxed iframe ("data:" vs. "https").
 					pdfjs.workerSrc = PDFJS_WORKER_URL;
+				}
+				if (true) {
+					// We currently cannot use a web worker in a sandboxed iFrame
+					// and in addition to that Firefox 45+ fail with an uncatchable
+					// exception (see https://bugzilla.mozilla.org/show_bug.cgi?id=1260388)
+					// So we always disable the worker for now, making PDF.js running
+					// in fake worker mode.
+					pdfjs.disableWorker = true;
 				}
 				console.log("Using pdf.js " + pdfjs.version + " (build " + pdfjs.build + ")");
 				that._doOpenFile(source);
