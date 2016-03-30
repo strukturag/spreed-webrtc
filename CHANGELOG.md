@@ -1,3 +1,15 @@
+## 0.25.2
+
+  * Support promise based play as defined in Chrome 50 - see https://developers.google.com/web/updates/2016/03/play-returns-promise
+  * Always disable web worker for PDF.js and no longer rely on PDF.js catching the execption when the worker cannot be started, fixing Firefox 45+.
+  * Moved NATS connecting helpers to own submodule.
+  * Added outbound ringer timeout (35s).
+  * Fixed make target name.
+  * Refactored structure of Go source code to module and binary.
+  * Reconnect NATS forever and log NATS connection events.
+  * Implemented service discovery .well-known endpoint at /.well-known/spreed-configuration
+  * Removed obsolete file.
+
 ## 0.25.1
 
   * Use new changelog to retrieve VERSION.
