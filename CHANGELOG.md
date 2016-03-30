@@ -1,3 +1,8 @@
+## 0.25.3
+
+  * Updated change log.
+
+
 ## 0.25.2
 
   * Support promise based play as defined in Chrome 50 - see https://developers.google.com/web/updates/2016/03/play-returns-promise
@@ -9,6 +14,7 @@
   * Reconnect NATS forever and log NATS connection events.
   * Implemented service discovery .well-known endpoint at /.well-known/spreed-configuration
   * Removed obsolete file.
+
 
 ## 0.25.1
 
