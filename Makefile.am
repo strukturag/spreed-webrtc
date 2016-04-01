@@ -29,6 +29,7 @@ CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
+SYSTEM_GOPATH = /usr/share/gocode/src/
 
 BIN ?= @prefix@/sbin
 SHARE ?= @prefix@/share/spreed-webrtc-server
@@ -84,6 +85,11 @@ fmt: gofmt
 test:
 	GOPATH=$(GOPATH) $(GO) test -v $(GOTESTFLAGS) app/... ./go/...
 
+dist_gopath: $(DIST_SRC)
+	find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
+		-exec ln -sf {} $(DIST_SRC) \;
+
+
 assets: javascript fonts
 
 release-assets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
@@ -125,9 +131,10 @@ extract-i18n:
 update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
+release-binary: GOPATH = "$(DIST):$(CURDIR)/vendor:$(CURDIR)"
 release-binary: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
 release-binary: OUTPUT = $(DIST_BIN)
-release-binary: $(DIST_BIN) binary
+release-binary: dist_gopath $(DIST_BIN) binary
 
 release: release-binary release-assets
 
@@ -178,7 +185,7 @@ govendorclean:
 pristine: distclean govendorclean
 	rm -f server.conf
 
-$(DIST):
+$(DIST_SRC):
 	$(MKDIR_P) $@
 
 $(DIST_BIN):
@@ -193,4 +200,4 @@ tarball: distclean release install
 		cp server.conf.in $(TARPATH)/loader
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-.PHONY: clean distclean govendorclean pristine goget gogetupdate build javascript fonts styles release releasetest dist_gopath install install-binary install-assets gopath binary binaryrace binaryall tarball assets dependencies.tsv
+.PHONY: clean distclean govendorclean pristine goget gogetupdate build javascript fonts styles release release-binary dist_gopath install install-binary install-assets gopath binary binaryrace binaryall tarball assets dependencies.tsv
