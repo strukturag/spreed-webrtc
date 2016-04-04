@@ -43,9 +43,11 @@ type Pipeline struct {
 	namespace       string
 	id              string
 	from            *Session
+	to              *Session
 	expires         *time.Time
 	data            []*DataOutgoing
 	sink            Sink
+	recvQueue       chan *DataIncoming
 }
 
 func NewPipeline(manager PipelineManager,
@@ -58,9 +60,25 @@ func NewPipeline(manager PipelineManager,
 		namespace:       namespace,
 		id:              id,
 		from:            from,
+		recvQueue:       make(chan *DataIncoming, 100),
 	}
+	go pipeline.receive()
 	pipeline.Refresh(duration)
 	return pipeline
+}
+
+func (pipeline *Pipeline) receive() {
+	// XXX(longsleep): Make sure this does not leak go routines.
+	// XXX(longsleep): Call to ToSession() should be avoided because it locks.
+	api := pipeline.PipelineManager.GetChannellingAPI()
+	for data := range pipeline.recvQueue {
+		_, err := api.OnIncoming(nil, pipeline.ToSession(), data)
+		if err != nil {
+			// TODO(longsleep): Handle reply and error.
+			log.Println("Pipeline receive incoming error", err)
+		}
+	}
+	log.Println("Pipline receive exit")
 }
 
 func (pipeline *Pipeline) GetID() string {
@@ -75,6 +93,7 @@ func (pipeline *Pipeline) Refresh(duration time.Duration) {
 }
 
 func (pipeline *Pipeline) Add(msg *DataOutgoing) *Pipeline {
+	msg.Pipe = pipeline.id
 	pipeline.mutex.Lock()
 	pipeline.data = append(pipeline.data, msg)
 	pipeline.mutex.Unlock()
@@ -83,13 +102,7 @@ func (pipeline *Pipeline) Add(msg *DataOutgoing) *Pipeline {
 }
 
 func (pipeline *Pipeline) Send(b buffercache.Buffer) {
-	pipeline.mutex.RLock()
-	sink := pipeline.sink
-	pipeline.mutex.RUnlock()
-	if sink != nil {
-		// Send it through sink.
-		sink.Send(b)
-	}
+	// Noop.
 }
 
 func (pipeline *Pipeline) Index() uint64 {
@@ -100,7 +113,6 @@ func (pipeline *Pipeline) Close() {
 	pipeline.mutex.Lock()
 	pipeline.expires = nil
 	if pipeline.sink != nil {
-		pipeline.sink.Close()
 		pipeline.sink = nil
 	}
 	pipeline.mutex.Unlock()
@@ -119,8 +131,16 @@ func (pipeline *Pipeline) Expired() bool {
 	return expired
 }
 
-func (pipeline *Pipeline) Session() *Session {
+func (pipeline *Pipeline) FromSession() *Session {
+	pipeline.mutex.RLock()
+	defer pipeline.mutex.RUnlock()
 	return pipeline.from
+}
+
+func (pipeline *Pipeline) ToSession() *Session {
+	pipeline.mutex.RLock()
+	defer pipeline.mutex.RUnlock()
+	return pipeline.to
 }
 
 func (pipeline *Pipeline) JSONFeed(since, limit int) ([]byte, error) {
@@ -154,7 +174,7 @@ func (pipeline *Pipeline) JSONFeed(since, limit int) ([]byte, error) {
 }
 
 func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outgoing *DataOutgoing) bool {
-	log.Println("Flush outgoing via pipeline", to, client == nil)
+	//log.Println("Flush outgoing via pipeline", to, client == nil)
 	if client == nil {
 		pipeline.Add(outgoing)
 
@@ -167,11 +187,18 @@ func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outg
 			return true
 		}
 
-		sink = pipeline.PipelineManager.FindSink(to)
+		var session *Session
+		sink, session = pipeline.PipelineManager.FindSinkAndSession(to)
 		if sink != nil {
+			pipeline.to = session
 			err := pipeline.attach(sink)
 			if err == nil {
 				pipeline.mutex.Unlock()
+
+				// Create incoming receiver.
+				sink.BindRecvChan(pipeline.recvQueue)
+
+				sink.Write(outgoing)
 				return true
 			}
 		}
@@ -184,7 +211,18 @@ func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outg
 func (pipeline *Pipeline) Attach(sink Sink) error {
 	pipeline.mutex.Lock()
 	defer pipeline.mutex.Unlock()
-	return pipeline.attach(sink)
+
+	// Sink existing data first.
+	log.Println("Attach sink to pipeline", pipeline.id)
+	err := pipeline.attach(sink)
+	if err == nil {
+		for _, msg := range pipeline.data {
+			log.Println("Flushing pipeline to sink after attach", len(pipeline.data))
+			sink.Write(msg)
+		}
+	}
+
+	return err
 }
 
 func (pipeline *Pipeline) attach(sink Sink) error {
@@ -192,12 +230,5 @@ func (pipeline *Pipeline) attach(sink Sink) error {
 		return errors.New("pipeline already attached to sink")
 	}
 	pipeline.sink = sink
-
-	// Sink existing data first.
-	log.Println("Attach sink to pipeline", pipeline.id)
-	for _, msg := range pipeline.data {
-		sink.Write(msg)
-	}
-
 	return nil
 }

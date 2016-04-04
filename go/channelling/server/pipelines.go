@@ -84,10 +84,10 @@ func (pipelines *Pipelines) Post(request *http.Request) (int, interface{}, http.
 	}
 
 	result := &channelling.DataOutgoing{
-		From: pipeline.Session().Id,
+		From: pipeline.FromSession().Id,
 		Iid:  incoming.Iid,
 	}
-	reply, err := pipelines.API.OnIncoming(pipeline, pipeline.Session(), &incoming)
+	reply, err := pipelines.API.OnIncoming(pipeline, pipeline.ToSession(), &incoming)
 	if err == nil {
 		result.Data = reply
 	} else {

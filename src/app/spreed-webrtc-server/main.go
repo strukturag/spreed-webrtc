@@ -258,6 +258,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Prepare services.
+	apiConsumer := channelling.NewChannellingAPIConsumer()
 	buddyImages := channelling.NewImageCache()
 	codec := channelling.NewCodec(incomingCodecLimit)
 	roomManager := channelling.NewRoomManager(config, codec)
@@ -265,9 +266,12 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := channelling.NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
-	busManager := channelling.NewBusManager(natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
+	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
 	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
+
+	// Create API.
 	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
+	apiConsumer.SetChannellingAPI(channellingAPI)
 
 	// Start bus.
 	busManager.Start()

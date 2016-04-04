@@ -22,15 +22,16 @@
 package channelling
 
 import (
-	"github.com/strukturag/spreed-webrtc/go/buffercache"
+	"github.com/nats-io/nats"
 )
 
 // Sink connects a Pipeline with end points in both directions by
 // getting attached to a Pipeline.
 type Sink interface {
-	// Write sends outgoing data on the sink from the
-	Write(interface{})
-	Send(buffercache.Buffer)
+	// Write sends outgoing data on the sink
+	Write(*DataOutgoing) error
 	Enabled() bool
 	Close()
+	Export() *DataSink
+	BindRecvChan(channel interface{}) (*nats.Subscription, error)
 }

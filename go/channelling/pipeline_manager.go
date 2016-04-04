@@ -39,7 +39,7 @@ type PipelineManager interface {
 	SessionCreator
 	GetPipelineByID(id string) (pipeline *Pipeline, ok bool)
 	GetPipeline(namespace string, sender Sender, session *Session, to string) *Pipeline
-	FindSink(to string) Sink
+	FindSinkAndSession(to string) (Sink, *Session)
 }
 
 type pipelineManager struct {
@@ -112,22 +112,28 @@ func (plm *pipelineManager) sessionCreate(subject, reply string, msg *SessionCre
 		sink, _ = plm.sessionSinkTable[session.Id]
 		delete(plm.sessionSinkTable, session.Id)
 		session.Close()
-		if sink != nil {
-			sink.Close()
-		}
 	}
 	session = plm.CreateSession(nil, "")
 	plm.sessionByBusIDTable[msg.Id] = session
 	plm.sessionTable[session.Id] = session
 	if sink == nil {
 		sink = plm.CreateSink(msg.Id)
+		log.Println("Created NATS sink", msg.Id)
+	}
+	if reply != "" {
+		// Always reply with our sink data
+		plm.Publish(reply, sink.Export())
 	}
 	plm.sessionSinkTable[session.Id] = sink
 	plm.mutex.Unlock()
 
-	session.Status = msg.Session.Status
-	session.SetUseridFake(msg.Session.Userid)
-	//pipeline := plm.GetPipeline("", nil, session, "")
+	if msg.Session.Status != nil {
+		session.Status = msg.Session.Status
+	}
+
+	if msg.Session.Userid != "" {
+		session.SetUseridFake(msg.Session.Userid)
+	}
 
 	if msg.Room != nil {
 		room, err := session.JoinRoom(msg.Room.Name, msg.Room.Type, msg.Room.Credentials, nil)
@@ -164,13 +170,6 @@ func (plm *pipelineManager) sessionClose(subject, reply string, id string) {
 func (plm *pipelineManager) GetPipelineByID(id string) (*Pipeline, bool) {
 	plm.mutex.RLock()
 	pipeline, ok := plm.pipelineTable[id]
-	if !ok {
-		// XXX(longsleep): Hack for development
-		for _, pipeline = range plm.pipelineTable {
-			ok = true
-			break
-		}
-	}
 	plm.mutex.RUnlock()
 	return pipeline, ok
 }
@@ -199,18 +198,18 @@ func (plm *pipelineManager) GetPipeline(namespace string, sender Sender, session
 	return pipeline
 }
 
-func (plm *pipelineManager) FindSink(to string) Sink {
-	// It is possible to retrieve the userid for fake sessions here.
+func (plm *pipelineManager) FindSinkAndSession(to string) (Sink, *Session) {
 	plm.mutex.RLock()
 	if sink, found := plm.sessionSinkTable[to]; found {
+		session, _ := plm.sessionTable[to]
 		plm.mutex.RUnlock()
 		if sink.Enabled() {
-			log.Println("Pipeline sink found via manager", sink)
-			return sink
+			//log.Println("Pipeline sink found via manager", sink)
+			return sink, session
 		}
-		return nil
+		return nil, nil
 	}
 
 	plm.mutex.RUnlock()
-	return nil
+	return nil, nil
 }

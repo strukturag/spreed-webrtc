@@ -26,3 +26,8 @@ type SessionCreateRequest struct {
 	Session *DataSession
 	Room    *DataRoom
 }
+
+type DataSink struct {
+	SubjectOut string `json:subject_out"`
+	SubjectIn  string `json:subject_in"`
+}

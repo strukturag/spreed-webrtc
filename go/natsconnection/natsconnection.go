@@ -48,6 +48,9 @@ func NewConnection() (*Connection, error) {
 		ReconnectedCB: func(conn *nats.Conn) {
 			log.Println("NATS reconnected")
 		},
+		AsyncErrorCB: func(conn *nats.Conn, sub *nats.Subscription, err error) {
+			log.Println("NATS async error", sub, err)
+		},
 	}
 
 	nc, err := opts.Connect()
