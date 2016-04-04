@@ -39,6 +39,7 @@ type PipelineManager interface {
 	SessionCreator
 	GetPipelineByID(id string) (pipeline *Pipeline, ok bool)
 	GetPipeline(namespace string, sender Sender, session *Session, to string) *Pipeline
+	FindSink(to string) Sink
 }
 
 type pipelineManager struct {
@@ -46,21 +47,25 @@ type pipelineManager struct {
 	SessionStore
 	UserStore
 	SessionCreator
-	mutex         sync.RWMutex
-	pipelineTable map[string]*Pipeline
-	sessionTable  map[string]*Session
-	duration      time.Duration
+	mutex               sync.RWMutex
+	pipelineTable       map[string]*Pipeline
+	sessionTable        map[string]*Session
+	sessionByBusIDTable map[string]*Session
+	sessionSinkTable    map[string]Sink
+	duration            time.Duration
 }
 
 func NewPipelineManager(busManager BusManager, sessionStore SessionStore, userStore UserStore, sessionCreator SessionCreator) PipelineManager {
 	plm := &pipelineManager{
-		BusManager:     busManager,
-		SessionStore:   sessionStore,
-		UserStore:      userStore,
-		SessionCreator: sessionCreator,
-		pipelineTable:  make(map[string]*Pipeline),
-		sessionTable:   make(map[string]*Session),
-		duration:       30 * time.Minute,
+		BusManager:          busManager,
+		SessionStore:        sessionStore,
+		UserStore:           userStore,
+		SessionCreator:      sessionCreator,
+		pipelineTable:       make(map[string]*Pipeline),
+		sessionTable:        make(map[string]*Session),
+		sessionByBusIDTable: make(map[string]*Session),
+		sessionSinkTable:    make(map[string]Sink),
+		duration:            30 * time.Minute,
 	}
 	plm.start()
 
@@ -97,22 +102,35 @@ func (plm *pipelineManager) sessionCreate(subject, reply string, msg *SessionCre
 		return
 	}
 
+	var sink Sink
+
 	plm.mutex.Lock()
-	session, ok := plm.sessionTable[msg.Id]
+	session, ok := plm.sessionByBusIDTable[msg.Id]
 	if ok {
 		// Remove existing session with same ID.
+		delete(plm.sessionTable, session.Id)
+		sink, _ = plm.sessionSinkTable[session.Id]
+		delete(plm.sessionSinkTable, session.Id)
 		session.Close()
+		if sink != nil {
+			sink.Close()
+		}
 	}
 	session = plm.CreateSession(nil, "")
-	plm.sessionTable[msg.Id] = session
+	plm.sessionByBusIDTable[msg.Id] = session
+	plm.sessionTable[session.Id] = session
+	if sink == nil {
+		sink = plm.CreateSink(msg.Id)
+	}
+	plm.sessionSinkTable[session.Id] = sink
 	plm.mutex.Unlock()
 
 	session.Status = msg.Session.Status
 	session.SetUseridFake(msg.Session.Userid)
-	pipeline := plm.GetPipeline("", nil, session, "")
+	//pipeline := plm.GetPipeline("", nil, session, "")
 
 	if msg.Room != nil {
-		room, err := session.JoinRoom(msg.Room.Name, msg.Room.Type, msg.Room.Credentials, pipeline)
+		room, err := session.JoinRoom(msg.Room.Name, msg.Room.Type, msg.Room.Credentials, nil)
 		log.Println("Joined NATS session to room", room, err)
 	}
 
@@ -127,7 +145,15 @@ func (plm *pipelineManager) sessionClose(subject, reply string, id string) {
 	}
 
 	plm.mutex.Lock()
-	session, ok := plm.sessionTable[id]
+	session, ok := plm.sessionByBusIDTable[id]
+	if ok {
+		delete(plm.sessionByBusIDTable, id)
+		delete(plm.sessionTable, session.Id)
+		if sink, ok := plm.sessionSinkTable[session.Id]; ok {
+			delete(plm.sessionSinkTable, session.Id)
+			sink.Close()
+		}
+	}
 	plm.mutex.Unlock()
 
 	if ok {
@@ -171,4 +197,20 @@ func (plm *pipelineManager) GetPipeline(namespace string, sender Sender, session
 	plm.mutex.Unlock()
 
 	return pipeline
+}
+
+func (plm *pipelineManager) FindSink(to string) Sink {
+	// It is possible to retrieve the userid for fake sessions here.
+	plm.mutex.RLock()
+	if sink, found := plm.sessionSinkTable[to]; found {
+		plm.mutex.RUnlock()
+		if sink.Enabled() {
+			log.Println("Pipeline sink found via manager", sink)
+			return sink
+		}
+		return nil
+	}
+
+	plm.mutex.RUnlock()
+	return nil
 }

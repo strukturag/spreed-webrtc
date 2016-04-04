@@ -31,5 +31,6 @@ type Sink interface {
 	// Write sends outgoing data on the sink from the
 	Write(interface{})
 	Send(buffercache.Buffer)
+	Enabled() bool
 	Close()
 }

@@ -154,26 +154,29 @@ func (pipeline *Pipeline) JSONFeed(since, limit int) ([]byte, error) {
 }
 
 func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outgoing *DataOutgoing) bool {
-	pipeline.mutex.RLock()
 	log.Println("Flush outgoing via pipeline", to, client == nil)
 	if client == nil {
-		sink := pipeline.sink
-		pipeline.mutex.RUnlock()
 		pipeline.Add(outgoing)
 
-		// It is possible to retrieve the userid for fake sessions here.
-		if session, found := pipeline.PipelineManager.GetSession(to); found {
-			log.Println("Pipeline found userid via manager", session.Userid())
-		}
-
-		if sink == nil {
+		pipeline.mutex.Lock()
+		sink := pipeline.sink
+		if sink != nil && sink.Enabled() {
+			// Sink it.
+			pipeline.mutex.Unlock()
+			sink.Write(outgoing)
 			return true
 		}
-		// Sink it.
-		pipeline.sink.Write(outgoing)
-		return true
+
+		sink = pipeline.PipelineManager.FindSink(to)
+		if sink != nil {
+			err := pipeline.attach(sink)
+			if err == nil {
+				pipeline.mutex.Unlock()
+				return true
+			}
+		}
+		pipeline.mutex.Unlock()
 	}
-	pipeline.mutex.RUnlock()
 
 	return false
 }
@@ -181,6 +184,10 @@ func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outg
 func (pipeline *Pipeline) Attach(sink Sink) error {
 	pipeline.mutex.Lock()
 	defer pipeline.mutex.Unlock()
+	return pipeline.attach(sink)
+}
+
+func (pipeline *Pipeline) attach(sink Sink) error {
 	if pipeline.sink != nil {
 		return errors.New("pipeline already attached to sink")
 	}

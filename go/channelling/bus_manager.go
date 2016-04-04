@@ -28,6 +28,8 @@ import (
 	"time"
 
 	"github.com/nats-io/nats"
+
+	"github.com/strukturag/spreed-webrtc/go/buffercache"
 	"github.com/strukturag/spreed-webrtc/go/natsconnection"
 )
 
@@ -43,10 +45,12 @@ const (
 
 // A BusManager provides the API to interact with a bus.
 type BusManager interface {
+	Start()
 	Publish(subject string, v interface{}) error
 	Request(subject string, v interface{}, vPtr interface{}, timeout time.Duration) error
 	Trigger(name, from, payload string, data interface{}, pipeline *Pipeline) error
 	Subscribe(subject string, cb nats.Handler) (*nats.Subscription, error)
+	CreateSink(string) Sink
 }
 
 // A BusTrigger is a container to serialize trigger events
@@ -86,15 +90,16 @@ func NewBusManager(id string, useNats bool, subjectPrefix string) BusManager {
 	} else {
 		b = &noopBus{id}
 	}
-	if err == nil {
-		b.Trigger(BusManagerStartup, id, "", nil, nil)
-	}
 
 	return &busManager{b}
 }
 
 type noopBus struct {
 	id string
+}
+
+func (bus *noopBus) Start() {
+	// noop
 }
 
 func (bus *noopBus) Publish(subject string, v interface{}) error {
@@ -111,6 +116,10 @@ func (bus *noopBus) Trigger(name, from, payload string, data interface{}, pipeli
 
 func (bus *noopBus) Subscribe(subject string, cb nats.Handler) (*nats.Subscription, error) {
 	return nil, nil
+}
+
+func (bus *noopBus) CreateSink(id string) Sink {
+	return nil
 }
 
 type natsBus struct {
@@ -134,6 +143,10 @@ func newNatsBus(id, prefix string) (*natsBus, error) {
 	go chPublish(ec, triggerQueue)
 
 	return &natsBus{id, prefix, ec, triggerQueue}, nil
+}
+
+func (bus *natsBus) Start() {
+	bus.Trigger(BusManagerStartup, bus.id, "", nil, nil)
 }
 
 func (bus *natsBus) Publish(subject string, v interface{}) error {
@@ -171,6 +184,10 @@ func (bus *natsBus) Subscribe(subject string, cb nats.Handler) (*nats.Subscripti
 	return bus.ec.Subscribe(subject, cb)
 }
 
+func (bus *natsBus) CreateSink(id string) Sink {
+	return &natsSink{}
+}
+
 type busQueueEntry struct {
 	subject string
 	data    interface{}
@@ -184,4 +201,20 @@ func chPublish(ec *natsconnection.EncodedConnection, channel chan (*busQueueEntr
 			log.Println("Failed to publish to NATS", entry.subject, err)
 		}
 	}
+}
+
+type natsSink struct {
+}
+
+func (sink *natsSink) Write(data interface{}) {
+}
+
+func (sink *natsSink) Send(b buffercache.Buffer) {
+}
+
+func (sink *natsSink) Enabled() bool {
+	return false
+}
+
+func (sink *natsSink) Close() {
 }
