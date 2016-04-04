@@ -4,7 +4,7 @@
 /src/github.com
 /src/golang.struktur.de
 /*.pprof
-/server.conf
+/server.conf*
 /*.log
 /changelog*.txt
 /src/styles/.sass-cache

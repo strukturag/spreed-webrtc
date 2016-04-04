@@ -21,15 +21,6 @@
 
 package channelling
 
-import (
-	"github.com/strukturag/spreed-webrtc/go/buffercache"
-)
-
-// Sink connects a Pipeline with end points in both directions by
-// getting attached to a Pipeline.
-type Sink interface {
-	// Write sends outgoing data on the sink from the
-	Write(interface{})
-	Send(buffercache.Buffer)
-	Close()
+type SessionCreator interface {
+	CreateSession(st *SessionToken, userid string) *Session
 }

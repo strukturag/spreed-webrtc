@@ -36,6 +36,7 @@ type PipelineManager interface {
 	BusManager
 	SessionStore
 	UserStore
+	SessionCreator
 	GetPipelineByID(id string) (pipeline *Pipeline, ok bool)
 	GetPipeline(namespace string, sender Sender, session *Session, to string) *Pipeline
 }
@@ -44,29 +45,37 @@ type pipelineManager struct {
 	BusManager
 	SessionStore
 	UserStore
-	mutex     sync.RWMutex
-	pipelines map[string]*Pipeline
-	duration  time.Duration
+	SessionCreator
+	mutex         sync.RWMutex
+	pipelineTable map[string]*Pipeline
+	sessionTable  map[string]*Session
+	duration      time.Duration
 }
 
-func NewPipelineManager(busManager BusManager, sessionStore SessionStore, userStore UserStore) PipelineManager {
+func NewPipelineManager(busManager BusManager, sessionStore SessionStore, userStore UserStore, sessionCreator SessionCreator) PipelineManager {
 	plm := &pipelineManager{
-		BusManager:   busManager,
-		SessionStore: sessionStore,
-		UserStore:    userStore,
-		pipelines:    make(map[string]*Pipeline),
-		duration:     30 * time.Minute,
+		BusManager:     busManager,
+		SessionStore:   sessionStore,
+		UserStore:      userStore,
+		SessionCreator: sessionCreator,
+		pipelineTable:  make(map[string]*Pipeline),
+		sessionTable:   make(map[string]*Session),
+		duration:       30 * time.Minute,
 	}
 	plm.start()
+
+	plm.Subscribe("channelling.session.create", plm.sessionCreate)
+	plm.Subscribe("channelling.session.close", plm.sessionClose)
+
 	return plm
 }
 
 func (plm *pipelineManager) cleanup() {
 	plm.mutex.Lock()
-	for id, pipeline := range plm.pipelines {
+	for id, pipeline := range plm.pipelineTable {
 		if pipeline.Expired() {
 			pipeline.Close()
-			delete(plm.pipelines, id)
+			delete(plm.pipelineTable, id)
 		}
 	}
 	plm.mutex.Unlock()
@@ -81,12 +90,57 @@ func (plm *pipelineManager) start() {
 	}()
 }
 
+func (plm *pipelineManager) sessionCreate(subject, reply string, msg *SessionCreateRequest) {
+	log.Println("sessionCreate via NATS", subject, reply, msg)
+
+	if msg.Session == nil || msg.Id == "" {
+		return
+	}
+
+	plm.mutex.Lock()
+	session, ok := plm.sessionTable[msg.Id]
+	if ok {
+		// Remove existing session with same ID.
+		session.Close()
+	}
+	session = plm.CreateSession(nil, "")
+	plm.sessionTable[msg.Id] = session
+	plm.mutex.Unlock()
+
+	session.Status = msg.Session.Status
+	session.SetUseridFake(msg.Session.Userid)
+	pipeline := plm.GetPipeline("", nil, session, "")
+
+	if msg.Room != nil {
+		room, err := session.JoinRoom(msg.Room.Name, msg.Room.Type, msg.Room.Credentials, pipeline)
+		log.Println("Joined NATS session to room", room, err)
+	}
+
+	session.BroadcastStatus()
+}
+
+func (plm *pipelineManager) sessionClose(subject, reply string, id string) {
+	log.Println("sessionClose via NATS", subject, reply, id)
+
+	if id == "" {
+		return
+	}
+
+	plm.mutex.Lock()
+	session, ok := plm.sessionTable[id]
+	plm.mutex.Unlock()
+
+	if ok {
+		session.Close()
+	}
+}
+
 func (plm *pipelineManager) GetPipelineByID(id string) (*Pipeline, bool) {
 	plm.mutex.RLock()
-	pipeline, ok := plm.pipelines[id]
+	pipeline, ok := plm.pipelineTable[id]
 	if !ok {
 		// XXX(longsleep): Hack for development
-		for _, pipeline = range plm.pipelines {
+		for _, pipeline = range plm.pipelineTable {
 			ok = true
 			break
 		}
@@ -103,7 +157,7 @@ func (plm *pipelineManager) GetPipeline(namespace string, sender Sender, session
 	id := plm.PipelineID(namespace, sender, session, to)
 
 	plm.mutex.Lock()
-	pipeline, ok := plm.pipelines[id]
+	pipeline, ok := plm.pipelineTable[id]
 	if ok {
 		// Refresh. We do not care if the pipeline is expired.
 		pipeline.Refresh(plm.duration)
@@ -113,7 +167,7 @@ func (plm *pipelineManager) GetPipeline(namespace string, sender Sender, session
 
 	log.Println("Creating pipeline", namespace, id)
 	pipeline = NewPipeline(plm, namespace, id, session, plm.duration)
-	plm.pipelines[id] = pipeline
+	plm.pipelineTable[id] = pipeline
 	plm.mutex.Unlock()
 
 	return pipeline

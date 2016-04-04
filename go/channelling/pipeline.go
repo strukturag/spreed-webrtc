@@ -83,7 +83,13 @@ func (pipeline *Pipeline) Add(msg *DataOutgoing) *Pipeline {
 }
 
 func (pipeline *Pipeline) Send(b buffercache.Buffer) {
-	// noop for now
+	pipeline.mutex.RLock()
+	sink := pipeline.sink
+	pipeline.mutex.RUnlock()
+	if sink != nil {
+		// Send it through sink.
+		sink.Send(b)
+	}
 }
 
 func (pipeline *Pipeline) Index() uint64 {

@@ -266,7 +266,7 @@ func runner(runtime phoenix.Runtime) error {
 	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
 	busManager := channelling.NewBusManager(natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
-	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager)
+	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
 	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
 
 	// Add handlers.

@@ -37,7 +37,7 @@ type SessionManager interface {
 	UserStats
 	SessionStore
 	UserStore
-	CreateSession(st *SessionToken, userid string) *Session
+	SessionCreator
 	DestroySession(sessionID, userID string)
 	Authenticate(*Session, *SessionToken, string) error
 	GetUserSessions(session *Session, id string) []*DataSession
@@ -115,6 +115,9 @@ func (sessionManager *sessionManager) GetUser(id string) (*User, bool) {
 }
 
 func (sessionManager *sessionManager) CreateSession(st *SessionToken, userid string) *Session {
+	if st == nil {
+		st = sessionManager.DecodeSessionToken("")
+	}
 	session := NewSession(sessionManager, sessionManager.Unicaster, sessionManager.Broadcaster, sessionManager.RoomStatusManager, sessionManager.buddyImages, sessionManager.attestations, st.Id, st.Sid)
 
 	if userid != "" {
