@@ -18,12 +18,12 @@ var DefaultURL = nats.DefaultURL
 
 // Connection implements the wrapped nats.Conn.
 type Connection struct {
-	nats.Conn
+	*nats.Conn
 }
 
 // EncodedConnection implements the wrapped nats.EncodedConn.
 type EncodedConnection struct {
-	nats.EncodedConn
+	*nats.EncodedConn
 }
 
 // NewConnection creates a connetion to the default NATS server
@@ -55,7 +55,7 @@ func NewConnection() (*Connection, error) {
 		return nil, err
 	}
 
-	return &Connection{*nc}, nil
+	return &Connection{nc}, nil
 }
 
 // NewJSONEncodedConnection creates a JSON-encoded connetion to the
@@ -67,11 +67,11 @@ func NewJSONEncodedConnection() (*EncodedConnection, error) {
 	if err != nil {
 		return nil, err
 	}
-	ec, err := nats.NewEncodedConn(&nc.Conn, nats.JSON_ENCODER)
+	ec, err := nats.NewEncodedConn(nc.Conn, nats.JSON_ENCODER)
 	if err != nil {
 		return nil, err
 	}
-	return &EncodedConnection{*ec}, nil
+	return &EncodedConnection{ec}, nil
 }
 
 // EstablishConnection is a blocking way to create and establish
@@ -129,9 +129,9 @@ func EstablishJSONEncodedConnection(timeout *time.Duration) (*EncodedConnection,
 	if err != nil {
 		return nil, err
 	}
-	ec, err := nats.NewEncodedConn(&nc.Conn, nats.JSON_ENCODER)
+	ec, err := nats.NewEncodedConn(nc.Conn, nats.JSON_ENCODER)
 	if err != nil {
 		return nil, err
 	}
-	return &EncodedConnection{*ec}, nil
+	return &EncodedConnection{ec}, nil
 }
