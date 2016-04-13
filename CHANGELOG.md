@@ -1,3 +1,9 @@
+## 0.25.4
+
+  * Wrap nats connections as reference.
+  * Updated release build logic, so it works better with packaging.
+
+
 ## 0.25.3
 
   * Updated change log.
