@@ -80,6 +80,11 @@ func runner(runtime phoenix.Runtime) error {
 		statsEnabled = false
 	}
 
+	pipelinesEnabled, err := runtime.GetBool("http", "pipelines")
+	if err != nil {
+		pipelinesEnabled = false
+	}
+
 	pprofListen, err := runtime.GetString("http", "pprofListen")
 	if err == nil && pprofListen != "" {
 		log.Printf("Starting pprof HTTP server on %s", pprofListen)
@@ -307,7 +312,10 @@ func runner(runtime phoenix.Runtime) error {
 		rest.AddResourceWithWrapper(&server.Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
 	}
-	rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
+	if pipelinesEnabled {
+		rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
+		log.Println("Pipelines are enabled!")
+	}
 
 	// Add extra/static support if configured and exists.
 	if extraFolder != "" {
