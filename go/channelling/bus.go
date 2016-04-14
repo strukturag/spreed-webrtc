@@ -22,9 +22,10 @@
 package channelling
 
 type SessionCreateRequest struct {
-	Id      string
-	Session *DataSession
-	Room    *DataRoom
+	Id           string
+	Session      *DataSession
+	Room         *DataRoom
+	SetAsDefault bool
 }
 
 type DataSink struct {

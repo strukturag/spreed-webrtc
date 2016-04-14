@@ -83,11 +83,14 @@ func (fake *fakeRoomManager) MakeRoomID(roomName, roomType string) string {
 }
 
 func NewTestChannellingAPI() (channelling.ChannellingAPI, *fakeClient, *channelling.Session, *fakeRoomManager) {
+	apiConsumer := channelling.NewChannellingAPIConsumer()
 	client, roomManager := &fakeClient{}, &fakeRoomManager{}
 	sessionNonces := securecookie.New(securecookie.GenerateRandomKey(64), nil)
 	session := channelling.NewSession(nil, nil, roomManager, roomManager, nil, sessionNonces, "", "")
-	busManager := channelling.NewBusManager("", false, "")
-	return New(nil, roomManager, nil, nil, nil, nil, nil, nil, busManager, nil), client, session, roomManager
+	busManager := channelling.NewBusManager(apiConsumer, "", false, "")
+	api := New(nil, roomManager, nil, nil, nil, nil, nil, nil, busManager, nil)
+	apiConsumer.SetChannellingAPI(api)
+	return api, client, session, roomManager
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {

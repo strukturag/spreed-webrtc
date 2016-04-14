@@ -53,6 +53,7 @@ type pipelineManager struct {
 	sessionByBusIDTable map[string]*Session
 	sessionSinkTable    map[string]Sink
 	duration            time.Duration
+	defaultSinkID       string
 }
 
 func NewPipelineManager(busManager BusManager, sessionStore SessionStore, userStore UserStore, sessionCreator SessionCreator) PipelineManager {
@@ -125,6 +126,11 @@ func (plm *pipelineManager) sessionCreate(subject, reply string, msg *SessionCre
 		plm.Publish(reply, sink.Export())
 	}
 	plm.sessionSinkTable[session.Id] = sink
+
+	if msg.SetAsDefault {
+		plm.defaultSinkID = session.Id
+		log.Println("Using NATS sink as default session", session.Id)
+	}
 	plm.mutex.Unlock()
 
 	if msg.Session.Status != nil {
@@ -198,18 +204,31 @@ func (plm *pipelineManager) GetPipeline(namespace string, sender Sender, session
 	return pipeline
 }
 
-func (plm *pipelineManager) FindSinkAndSession(to string) (Sink, *Session) {
+func (plm *pipelineManager) FindSinkAndSession(to string) (sink Sink, session *Session) {
 	plm.mutex.RLock()
-	if sink, found := plm.sessionSinkTable[to]; found {
-		session, _ := plm.sessionTable[to]
+
+	var found bool
+	if sink, found = plm.sessionSinkTable[to]; found {
+		session, _ = plm.sessionTable[to]
 		plm.mutex.RUnlock()
 		if sink.Enabled() {
-			//log.Println("Pipeline sink found via manager", sink)
+			log.Println("Pipeline sink found via manager", sink)
 			return sink, session
 		}
-		return nil, nil
+	} else {
+		plm.mutex.RUnlock()
 	}
 
-	plm.mutex.RUnlock()
+	if plm.defaultSinkID != "" && to != plm.defaultSinkID {
+		// Keep target to while returning a the default sink.
+		log.Println("Find sink via default sink ID", plm.defaultSinkID)
+		sink, _ = plm.FindSinkAndSession(plm.defaultSinkID)
+		if sink != nil {
+			if session, found = plm.GetSession(to); found {
+				return
+			}
+		}
+	}
+
 	return nil, nil
 }
