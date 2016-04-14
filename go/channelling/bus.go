@@ -31,3 +31,10 @@ type DataSink struct {
 	SubjectOut string `json:subject_out"`
 	SubjectIn  string `json:subject_in"`
 }
+
+type DataSinkOutgoing struct {
+	Outgoing   *DataOutgoing
+	ToUserid   string
+	FromUserid string
+	Pipe       string `json:",omitempty"`
+}

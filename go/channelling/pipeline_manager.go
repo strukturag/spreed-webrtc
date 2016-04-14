@@ -65,7 +65,7 @@ func NewPipelineManager(busManager BusManager, sessionStore SessionStore, userSt
 		sessionTable:        make(map[string]*Session),
 		sessionByBusIDTable: make(map[string]*Session),
 		sessionSinkTable:    make(map[string]Sink),
-		duration:            30 * time.Minute,
+		duration:            60 * time.Second,
 	}
 	plm.start()
 

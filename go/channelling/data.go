@@ -203,7 +203,6 @@ type DataOutgoing struct {
 	To   string      `json:",omitempty"`
 	Iid  string      `json:",omitempty"`
 	A    string      `json:",omitempty"`
-	Pipe string      `json:",omitempty"`
 }
 
 type DataSessions struct {

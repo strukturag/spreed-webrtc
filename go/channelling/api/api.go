@@ -124,6 +124,7 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 			break
 		}
 		if _, ok := msg.Answer.Answer["_token"]; !ok {
+			pipeline = api.PipelineManager.GetPipeline(channelling.PipelineNamespaceCall, sender, session, msg.Answer.To)
 			// Trigger answer event when answer has no token. so this is
 			// not triggered for peerxfer and peerscreenshare answers.
 			api.BusManager.Trigger(channelling.BusManagerAnswer, session.Id, msg.Answer.To, nil, pipeline)

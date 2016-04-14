@@ -45,9 +45,10 @@ type Pipeline struct {
 	from            *Session
 	to              *Session
 	expires         *time.Time
-	data            []*DataOutgoing
+	data            []*DataSinkOutgoing
 	sink            Sink
 	recvQueue       chan *DataIncoming
+	closed          bool
 }
 
 func NewPipeline(manager PipelineManager,
@@ -68,8 +69,7 @@ func NewPipeline(manager PipelineManager,
 }
 
 func (pipeline *Pipeline) receive() {
-	// XXX(longsleep): Make sure this does not leak go routines.
-	// XXX(longsleep): Call to ToSession() should be avoided because it locks.
+	// TODO(longsleep): Call to ToSession() should be avoided because it locks.
 	api := pipeline.PipelineManager.GetChannellingAPI()
 	for data := range pipeline.recvQueue {
 		_, err := api.OnIncoming(nil, pipeline.ToSession(), data)
@@ -78,7 +78,7 @@ func (pipeline *Pipeline) receive() {
 			log.Println("Pipeline receive incoming error", err)
 		}
 	}
-	log.Println("Pipline receive exit")
+	log.Println("Pipeline receive done")
 }
 
 func (pipeline *Pipeline) GetID() string {
@@ -87,15 +87,20 @@ func (pipeline *Pipeline) GetID() string {
 
 func (pipeline *Pipeline) Refresh(duration time.Duration) {
 	pipeline.mutex.Lock()
-	expiration := time.Now().Add(duration)
-	pipeline.expires = &expiration
+	pipeline.refresh(duration)
 	pipeline.mutex.Unlock()
 }
 
-func (pipeline *Pipeline) Add(msg *DataOutgoing) *Pipeline {
+func (pipeline *Pipeline) refresh(duration time.Duration) {
+	expiration := time.Now().Add(duration)
+	pipeline.expires = &expiration
+}
+
+func (pipeline *Pipeline) Add(msg *DataSinkOutgoing) *Pipeline {
 	msg.Pipe = pipeline.id
 	pipeline.mutex.Lock()
 	pipeline.data = append(pipeline.data, msg)
+	pipeline.refresh(30 * time.Second)
 	pipeline.mutex.Unlock()
 
 	return pipeline
@@ -111,9 +116,14 @@ func (pipeline *Pipeline) Index() uint64 {
 
 func (pipeline *Pipeline) Close() {
 	pipeline.mutex.Lock()
-	pipeline.expires = nil
-	if pipeline.sink != nil {
-		pipeline.sink = nil
+	if !pipeline.closed {
+		pipeline.expires = nil
+		if pipeline.sink != nil {
+			pipeline.sink = nil
+		}
+		close(pipeline.recvQueue)
+		pipeline.closed = true
+		log.Println("Closed pipeline")
 	}
 	pipeline.mutex.Unlock()
 }
@@ -154,7 +164,7 @@ func (pipeline *Pipeline) JSONFeed(since, limit int) ([]byte, error) {
 	for seq, msg := range data {
 		line = &PipelineFeedLine{
 			Seq: seq + since,
-			Msg: msg,
+			Msg: msg.Outgoing,
 		}
 		lineRaw, err = json.Marshal(line)
 		if err != nil {
@@ -176,33 +186,55 @@ func (pipeline *Pipeline) JSONFeed(since, limit int) ([]byte, error) {
 func (pipeline *Pipeline) FlushOutgoing(hub Hub, client *Client, to string, outgoing *DataOutgoing) bool {
 	//log.Println("Flush outgoing via pipeline", to, client == nil)
 	if client == nil {
-		pipeline.Add(outgoing)
+		sinkOutgoing := &DataSinkOutgoing{
+			Outgoing: outgoing,
+		}
 
 		pipeline.mutex.Lock()
 		sink := pipeline.sink
-		if sink != nil && sink.Enabled() {
-			// Sink it.
+		toSession := pipeline.to
+		fromSession := pipeline.from
+
+		for {
+			if sink != nil && sink.Enabled() {
+				// Sink it.
+				pipeline.mutex.Unlock()
+				break
+			}
+
+			sink, toSession = pipeline.PipelineManager.FindSinkAndSession(to)
+			if sink != nil {
+				pipeline.to = toSession
+				err := pipeline.attach(sink)
+				if err == nil {
+					pipeline.mutex.Unlock()
+
+					// Create incoming receiver.
+					sink.BindRecvChan(pipeline.recvQueue)
+
+					// Sink it.
+					break
+				}
+			}
+
+			// Not pipelined, do nothing.
 			pipeline.mutex.Unlock()
-			sink.Write(outgoing)
+			break
+		}
+
+		if fromSession != nil {
+			sinkOutgoing.FromUserid = fromSession.Userid()
+		}
+		if toSession != nil {
+			sinkOutgoing.ToUserid = toSession.Userid()
+		}
+		pipeline.Add(sinkOutgoing)
+
+		if sink != nil {
+			// Pipelined, sink data.
+			sink.Write(sinkOutgoing)
 			return true
 		}
-
-		var session *Session
-		sink, session = pipeline.PipelineManager.FindSinkAndSession(to)
-		if sink != nil {
-			pipeline.to = session
-			err := pipeline.attach(sink)
-			if err == nil {
-				pipeline.mutex.Unlock()
-
-				// Create incoming receiver.
-				sink.BindRecvChan(pipeline.recvQueue)
-
-				sink.Write(outgoing)
-				return true
-			}
-		}
-		pipeline.mutex.Unlock()
 	}
 
 	return false

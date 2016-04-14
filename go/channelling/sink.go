@@ -29,7 +29,7 @@ import (
 // getting attached to a Pipeline.
 type Sink interface {
 	// Write sends outgoing data on the sink
-	Write(*DataOutgoing) error
+	Write(*DataSinkOutgoing) error
 	Enabled() bool
 	Close()
 	Export() *DataSink

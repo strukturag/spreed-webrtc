@@ -238,7 +238,7 @@ type natsSink struct {
 	SubjectOut string
 	SubjectIn  string
 	sub        *nats.Subscription
-	sendQueue  chan *DataOutgoing
+	sendQueue  chan *DataSinkOutgoing
 }
 
 func newNatsSink(bm BusManager, id string) *natsSink {
@@ -249,13 +249,13 @@ func newNatsSink(bm BusManager, id string) *natsSink {
 		SubjectIn:  bm.PrefixSubject(fmt.Sprintf("sink.%s.in", id)),
 	}
 
-	sink.sendQueue = make(chan *DataOutgoing, 100)
+	sink.sendQueue = make(chan *DataSinkOutgoing, 100)
 	bm.BindSendChan(sink.SubjectOut, sink.sendQueue)
 
 	return sink
 }
 
-func (sink *natsSink) Write(outgoing *DataOutgoing) (err error) {
+func (sink *natsSink) Write(outgoing *DataSinkOutgoing) (err error) {
 	if sink.Enabled() {
 		log.Println("Sending via NATS sink", sink.SubjectOut, outgoing)
 		sink.sendQueue <- outgoing
