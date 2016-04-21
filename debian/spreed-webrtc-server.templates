@@ -1,0 +1,16 @@
+Template: spreed-webrtc-server/http_ip_port
+Type: string
+Default: 127.0.0.1:8080
+Description: HTTP Listener
+ Please enter HTTP listener in format host:port
+ .
+ If this field is left blank, the default value will be used : 127.0.0.1:8080
+
+Template: spreed-webrtc-server/stun_servers
+Type: string
+Description: STUN server(s) URI(s)
+ Please enter STUN server(s) URI(s) in format 'stun:host:port'
+ .
+ You can provide multiple seperated by space. If you do not have one use a
+ public one like stun.spreed.me:443. If you have a TURN server you do not
+ need to set an STUN server as the TURN server will provide STUN services.

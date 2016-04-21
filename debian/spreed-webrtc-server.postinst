@@ -1,0 +1,79 @@
+#!/bin/bash
+# postinst script for spreed-webrtc-server
+#
+# see: dh_installdeb(1)
+
+set -e
+
+CONF_FILE=/etc/spreed-webrtc/server.conf
+DEFAULT_CONF_FILE=/usr/share/doc/spreed-webrtc-server/server.conf.in.gz
+ROOT_DIR=/usr/share/spreed-webrtc-server/www
+LOG_FILE=/var/log/spreed-webrtc-server.log
+
+# Source debconf library.
+if [ -e /usr/share/debconf/confmodule ]; then
+        . /usr/share/debconf/confmodule
+fi
+
+case "$1" in
+    configure)
+        # user spreed-webrtc
+        getent passwd spreed-webrtc >/dev/null
+        if [ $? -ne 0 ]
+        then
+            adduser --quiet \
+                --system \
+                --quiet \
+                --disabled-login \
+                --disabled-password \
+                --home /usr/share/spreed-webrtc-server \
+                --no-create-home \
+                -gecos "Spread WebRTC" \
+                spreed-webrtc
+        fi
+        if [ ! -e /var/log/spreed-webrtc-server.log ]
+        then
+            touch /var/log/spreed-webrtc-server.log
+            chown spreed-webrtc:adm /var/log/spreed-webrtc-server.log
+        fi
+  
+        if [ ! -e $CONF_FILE ]
+        then 
+            # Install example configuration file
+            gzip -k --stdout -d $DEFAULT_CONF_FILE > $CONF_FILE
+
+            # Configure root directory
+            sed -i "s|^[; ]*root = .*$|root = $ROOT_DIR|" $CONF_FILE
+
+            # Configure log file
+            sed -i "s|^[; ]*logfile = .*$|logfile = $LOG_FILE|" $CONF_FILE
+
+            # Configure HTTP Listener
+            db_input medium spreed-webrtc-server/http_ip_port
+            db_go
+            db_get spreed-webrtc-server/http_ip_port
+            if [ -n "$RET" ]
+            then
+                sed -i "s/^[; ]*listen = 127.0.0.1:8080$/listen = $RET/" $CONF_FILE
+            fi
+
+            # Configure STUN servers
+            db_input medium spreed-webrtc-server/stun_servers
+            db_go
+            db_get spreed-webrtc-server/stun_servers
+            if [ -n "$RET" ]
+            then
+                sed -i "s/^\([; ]*stunURIs = .*\)$/\1\nstunURIs = $RET\n/" $CONF_FILE
+            fi
+
+            # Generate random secrets
+            for secret in sessionSecret encryptionSecret serverToken
+            do
+               KEY=$( tr -dc A-Za-z0-9_ < /dev/urandom | head -c32 )
+               sed -i "s/^\([; ]*$secret = .*\)$/\1\n$secret = $KEY\n/" $CONF_FILE
+            done
+        fi
+   ;;
+esac
+
+#DEBHELPER#
