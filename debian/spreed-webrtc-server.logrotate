@@ -5,6 +5,6 @@
 	compress
 	delaycompress
 	notifempty
-	create 0640 spring-webrtc adm
+	create 0640 spreed-webrtc adm
 	sharedscripts
 }
