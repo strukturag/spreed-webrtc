@@ -128,9 +128,14 @@ found in `doc/NGINX.txt`.
 In addion for real world use, one also needs a STUN/TURN server
 configured (with shared secret support).
 
-See https://code.google.com/p/rfc5766-turn-server/ for a free
+See https://github.com/coturn/coturn for a free
 open source TURN server implementation. Make sure to use a recent
-version (We recommend 3.2). Versions below 2.5 are not supported.
+version (we recommend 3.2). Versions below 2.5 are not supported.
+
+For WebRTC usage, be sure to enable long-term credentials,
+fingerprinting, and set the realm. See 
+https://github.com/coturn/coturn/wiki/turnserver#webrtc-usage
+for more information.
 
 
 ## Setup Screensharing
