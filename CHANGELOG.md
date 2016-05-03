@@ -1,3 +1,17 @@
+## 0.25.5
+
+  * Improve misleading log when pipelines API is enabled.
+  * Pipeline API is now optional and disabled by default.
+  * Update to Xenial base and install pinned Go dependencies (fixing #278).
+  * Added default sink.
+  * Added to and from userid to sink/pipeline API.
+  * Hide pipelines web API behind a configuration flag.
+  * Implement NATS sink outbound encoding.
+  * Extended Pipeline manager to support Sink creation.
+  * Implement sessionCreate via NATS.
+  * Implemented pipeline for Offer, Candidate and Bye.
+
+
 ## 0.25.4
 
   * Wrap nats connections as reference.
