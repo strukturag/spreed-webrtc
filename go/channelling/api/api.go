@@ -148,7 +148,9 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 		api.BusManager.Trigger(channelling.BusManagerBye, session.Id, msg.Bye.To, nil, pipeline)
 
 		session.Unicast(msg.Bye.To, msg.Bye, pipeline)
-		pipeline.Close()
+		if pipeline != nil {
+			pipeline.Close()
+		}
 	case "Status":
 		if msg.Status == nil {
 			log.Println("Received invalid status message.", msg)

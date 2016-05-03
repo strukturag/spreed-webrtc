@@ -80,17 +80,17 @@ func runner(runtime phoenix.Runtime) error {
 		statsEnabled = false
 	}
 
-	pipelinesEnabled, err := runtime.GetBool("http", "pipelines")
-	if err != nil {
-		pipelinesEnabled = false
-	}
-
 	pprofListen, err := runtime.GetString("http", "pprofListen")
 	if err == nil && pprofListen != "" {
 		log.Printf("Starting pprof HTTP server on %s", pprofListen)
 		go func() {
 			log.Println(http.ListenAndServe(pprofListen, nil))
 		}()
+	}
+
+	pipelinesEnabled, err := runtime.GetBool("app", "pipelinesEnabled")
+	if err != nil {
+		pipelinesEnabled = false
 	}
 
 	var sessionSecret []byte
@@ -313,8 +313,9 @@ func runner(runtime phoenix.Runtime) error {
 		log.Println("Stats are enabled!")
 	}
 	if pipelinesEnabled {
+		pipelineManager.Start()
 		rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
-		log.Println("Pipelines are enabled!")
+		log.Println("Pipelines RESTful API is enabled!")
 	}
 
 	// Add extra/static support if configured and exists.
