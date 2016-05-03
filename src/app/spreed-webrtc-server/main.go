@@ -315,7 +315,7 @@ func runner(runtime phoenix.Runtime) error {
 	if pipelinesEnabled {
 		pipelineManager.Start()
 		rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
-		log.Println("Pipelines RESTful API is enabled!")
+		log.Println("Pipelines API is enabled!")
 	}
 
 	// Add extra/static support if configured and exists.
