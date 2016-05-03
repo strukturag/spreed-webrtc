@@ -2,7 +2,7 @@
 #
 # To execute it install docker and then run 'sudo docker build .'
 #
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 MAINTAINER Simon Eisenmann <simon@struktur.de>
 
 # Set locale.
@@ -18,11 +18,11 @@ RUN apt-get update -q
 RUN apt-get install -qy golang nodejs build-essential git mercurial automake autoconf
 
 # Add and build Spreed WebRTC server.
-ADD . /srv/spreed-webrtc 
+ADD . /srv/spreed-webrtc
 WORKDIR /srv/spreed-webrtc
 RUN ./autogen.sh
 RUN ./configure
-RUN make pristine && make
+RUN make pristine && make get && make
 
 # Create default config file.
 RUN cp -v /srv/spreed-webrtc/server.conf.in /srv/spreed-webrtc/server.conf && \
