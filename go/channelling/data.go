@@ -182,27 +182,27 @@ type DataAutoCall struct {
 
 type DataIncoming struct {
 	Type           string
-	Hello          *DataHello
-	Offer          *DataOffer
-	Candidate      *DataCandidate
-	Answer         *DataAnswer
-	Bye            *DataBye
-	Status         *DataStatus
-	Chat           *DataChat
-	Conference     *DataConference
-	Alive          *DataAlive
-	Authentication *DataAuthentication
-	Sessions       *DataSessions
-	Room           *DataRoom
-	Iid            string `json:",omitempty"`
+	Hello          *DataHello          `json:",omitempty"`
+	Offer          *DataOffer          `json:",omitempty"`
+	Candidate      *DataCandidate      `json:",omitempty"`
+	Answer         *DataAnswer         `json:",omitempty"`
+	Bye            *DataBye            `json:",omitempty"`
+	Status         *DataStatus         `json:",omitempty"`
+	Chat           *DataChat           `json:",omitempty"`
+	Conference     *DataConference     `json:",omitempty"`
+	Alive          *DataAlive          `json:",omitempty"`
+	Authentication *DataAuthentication `json:",omitempty"`
+	Sessions       *DataSessions       `json:",omitempty"`
+	Room           *DataRoom           `json:",omitempty"`
+	Iid            string              `json:",omitempty"`
 }
 
 type DataOutgoing struct {
-	Data interface{}
-	From string
-	To   string
-	Iid  string `json:",omitempty"`
-	A    string `json:",omitempty"`
+	Data interface{} `json:",omitempty"`
+	From string      `json:",omitempty"`
+	To   string      `json:",omitempty"`
+	Iid  string      `json:",omitempty"`
+	A    string      `json:",omitempty"`
 }
 
 type DataSessions struct {

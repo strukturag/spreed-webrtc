@@ -28,14 +28,15 @@ import (
 )
 
 type Sender interface {
+	Index() uint64
 	Send(buffercache.Buffer)
 }
 
 type Client struct {
-	Codec
-	ChannellingAPI
 	Connection
-	session *Session
+	Codec
+	ChannellingAPI ChannellingAPI
+	session        *Session
 }
 
 func NewClient(codec Codec, api ChannellingAPI, session *Session) *Client {

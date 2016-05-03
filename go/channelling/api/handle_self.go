@@ -47,7 +47,7 @@ func (api *channellingAPI) HandleSelf(session *channelling.Session) (*channellin
 		Turn:       api.TurnDataCreator.CreateTurnData(session),
 		Stun:       api.config.StunURIs,
 	}
-	api.BusManager.Trigger(channelling.BusManagerSession, session.Id, session.Userid(), nil)
+	api.BusManager.Trigger(channelling.BusManagerSession, session.Id, session.Userid(), nil, nil)
 
 	return self, nil
 }

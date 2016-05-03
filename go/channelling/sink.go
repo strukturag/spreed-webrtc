@@ -21,29 +21,17 @@
 
 package channelling
 
-type ChannellingAPI interface {
-	OnConnect(*Client, *Session) (interface{}, error)
-	OnDisconnect(*Client, *Session)
-	OnIncoming(Sender, *Session, *DataIncoming) (interface{}, error)
-}
+import (
+	"github.com/nats-io/nats"
+)
 
-type ChannellingAPIConsumer interface {
-	SetChannellingAPI(ChannellingAPI)
-	GetChannellingAPI() ChannellingAPI
-}
-
-type channellingAPIConsumer struct {
-	ChannellingAPI ChannellingAPI
-}
-
-func NewChannellingAPIConsumer() ChannellingAPIConsumer {
-	return &channellingAPIConsumer{}
-}
-
-func (c *channellingAPIConsumer) SetChannellingAPI(api ChannellingAPI) {
-	c.ChannellingAPI = api
-}
-
-func (c *channellingAPIConsumer) GetChannellingAPI() ChannellingAPI {
-	return c.ChannellingAPI
+// Sink connects a Pipeline with end points in both directions by
+// getting attached to a Pipeline.
+type Sink interface {
+	// Write sends outgoing data on the sink
+	Write(*DataSinkOutgoing) error
+	Enabled() bool
+	Close()
+	Export() *DataSink
+	BindRecvChan(channel interface{}) (*nats.Subscription, error)
 }

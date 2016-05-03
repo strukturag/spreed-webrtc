@@ -37,7 +37,7 @@ func (api *channellingAPI) HandleConference(session *channelling.Session, confer
 	// Send conference update to anyone.
 	for _, id := range conference.Conference {
 		if id != session.Id {
-			session.Unicast(id, conference)
+			session.Unicast(id, conference, nil)
 		}
 	}
 }

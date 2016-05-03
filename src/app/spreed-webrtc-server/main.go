@@ -80,6 +80,11 @@ func runner(runtime phoenix.Runtime) error {
 		statsEnabled = false
 	}
 
+	pipelinesEnabled, err := runtime.GetBool("http", "pipelines")
+	if err != nil {
+		pipelinesEnabled = false
+	}
+
 	pprofListen, err := runtime.GetString("http", "pprofListen")
 	if err == nil && pprofListen != "" {
 		log.Printf("Starting pprof HTTP server on %s", pprofListen)
@@ -258,6 +263,7 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Prepare services.
+	apiConsumer := channelling.NewChannellingAPIConsumer()
 	buddyImages := channelling.NewImageCache()
 	codec := channelling.NewCodec(incomingCodecLimit)
 	roomManager := channelling.NewRoomManager(config, codec)
@@ -265,8 +271,15 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := channelling.NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
-	busManager := channelling.NewBusManager(natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
-	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager)
+	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
+	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
+
+	// Create API.
+	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
+	apiConsumer.SetChannellingAPI(channellingAPI)
+
+	// Start bus.
+	busManager.Start()
 
 	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
@@ -274,11 +287,7 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
-	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
 	r.HandleFunc("/.well-known/spreed-configuration", wellKnownHandler)
-
-	// Simple room handler.
-	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Sandbox handler.
 	r.HandleFunc("/sandbox/{origin_scheme}/{origin_host}/{sandbox}.html", httputils.MakeGzipHandler(sandboxHandler))
@@ -289,9 +298,11 @@ func runner(runtime phoenix.Runtime) error {
 	rest.AddResource(&server.Rooms{}, "/rooms")
 	rest.AddResource(config, "/config")
 	rest.AddResourceWithWrapper(&server.Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+
+	var users *server.Users
 	if config.UsersEnabled {
 		// Create Users handler.
-		users := server.NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
+		users = server.NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
 		rest.AddResource(&server.Sessions{tickets, hub, users}, "/sessions/{id}/")
 		if config.UsersAllowRegistration {
 			rest.AddResource(users, "/users")
@@ -300,6 +311,10 @@ func runner(runtime phoenix.Runtime) error {
 	if statsEnabled {
 		rest.AddResourceWithWrapper(&server.Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
+	}
+	if pipelinesEnabled {
+		rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
+		log.Println("Pipelines are enabled!")
 	}
 
 	// Add extra/static support if configured and exists.
@@ -310,6 +325,12 @@ func runner(runtime phoenix.Runtime) error {
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
 	}
+
+	// Finally add websocket handler.
+	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI, users))
+
+	// Simple room handler.
+	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
 
 	// Map everything else to a room when it is a GET.
 	rooms := r.PathPrefix("/").Methods("GET").Subrouter()

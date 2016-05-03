@@ -225,8 +225,8 @@ func (r *roomWorker) Broadcast(sessionID string, message buffercache.Buffer) {
 	worker := func() {
 		r.mutex.RLock()
 		for id, user := range r.users {
-			if id == sessionID {
-				// Skip broadcast to self.
+			if id == sessionID || user.Sender == nil {
+				// Skip broadcast to self or non existing sender.
 				continue
 			}
 			//fmt.Printf("%s\n", m.Message)

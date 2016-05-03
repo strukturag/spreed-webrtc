@@ -33,30 +33,30 @@ import (
 var sessionNonces *securecookie.SecureCookie
 
 type Session struct {
-	SessionManager
-	Unicaster
-	Broadcaster
-	RoomStatusManager
-	buddyImages   ImageCache
-	Id            string
-	Sid           string
-	Ua            string
-	UpdateRev     uint64
-	Status        interface{}
-	Nonce         string
-	Prio          int
-	Hello         bool
-	Roomid        string
-	mutex         sync.RWMutex
-	userid        string
-	fake          bool
-	stamp         int64
-	attestation   *SessionAttestation
-	attestations  *securecookie.SecureCookie
-	subscriptions map[string]*Session
-	subscribers   map[string]*Session
-	disconnected  bool
-	replaced      bool
+	SessionManager    SessionManager
+	Unicaster         Unicaster
+	Broadcaster       Broadcaster
+	RoomStatusManager RoomStatusManager
+	buddyImages       ImageCache
+	Id                string
+	Sid               string
+	Ua                string
+	UpdateRev         uint64
+	Status            interface{}
+	Nonce             string
+	Prio              int
+	Hello             bool
+	Roomid            string
+	mutex             sync.RWMutex
+	userid            string
+	fake              bool
+	stamp             int64
+	attestation       *SessionAttestation
+	attestations      *securecookie.SecureCookie
+	subscriptions     map[string]*Session
+	subscribers       map[string]*Session
+	disconnected      bool
+	replaced          bool
 }
 
 func NewSession(manager SessionManager,
@@ -194,7 +194,7 @@ func (s *Session) BroadcastStatus() {
 	s.mutex.RUnlock()
 }
 
-func (s *Session) Unicast(to string, m interface{}) {
+func (s *Session) Unicast(to string, m interface{}, pipeline *Pipeline) {
 	s.mutex.RLock()
 	outgoing := &DataOutgoing{
 		From: s.Id,
@@ -204,7 +204,7 @@ func (s *Session) Unicast(to string, m interface{}) {
 	}
 	s.mutex.RUnlock()
 
-	s.Unicaster.Unicast(to, outgoing)
+	s.Unicaster.Unicast(to, outgoing, pipeline)
 }
 
 func (s *Session) Close() {
@@ -235,12 +235,12 @@ func (s *Session) Close() {
 		}
 
 		for _, session := range s.subscribers {
-			s.Unicaster.Unicast(session.Id, outgoing)
+			s.Unicaster.Unicast(session.Id, outgoing, nil)
 		}
 
 		for _, session := range s.subscriptions {
 			session.RemoveSubscriber(s.Id)
-			s.Unicaster.Unicast(session.Id, outgoing)
+			s.Unicaster.Unicast(session.Id, outgoing, nil)
 		}
 
 		s.SessionManager.DestroySession(s.Id, s.userid)

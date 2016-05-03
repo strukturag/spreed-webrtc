@@ -34,7 +34,7 @@ func (api *channellingAPI) HandleChat(session *channelling.Session, chat *channe
 	to := chat.To
 
 	if !msg.NoEcho {
-		session.Unicast(session.Id, chat)
+		session.Unicast(session.Id, chat, nil)
 	}
 	msg.Time = time.Now().Format(time.RFC3339)
 	if to == "" {
@@ -59,10 +59,10 @@ func (api *channellingAPI) HandleChat(session *channelling.Session, chat *channe
 			api.StatsCounter.CountUnicastChat()
 		}
 
-		session.Unicast(to, chat)
+		session.Unicast(to, chat, nil)
 		if msg.Mid != "" {
 			// Send out delivery confirmation status chat message.
-			session.Unicast(session.Id, &channelling.DataChat{To: to, Type: "Chat", Chat: &channelling.DataChatMessage{Mid: msg.Mid, Status: &channelling.DataChatStatus{State: "sent"}}})
+			session.Unicast(session.Id, &channelling.DataChat{To: to, Type: "Chat", Chat: &channelling.DataChatMessage{Mid: msg.Mid, Status: &channelling.DataChatStatus{State: "sent"}}}, nil)
 		}
 	}
 }

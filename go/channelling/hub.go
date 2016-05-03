@@ -155,13 +155,18 @@ func (h *hub) GetClient(sessionID string) (client *Client, ok bool) {
 	return
 }
 
-func (h *hub) Unicast(to string, outgoing *DataOutgoing) {
-	if message, err := h.EncodeOutgoing(outgoing); err == nil {
-		client, ok := h.GetClient(to)
-		if !ok {
-			log.Println("Unicast To not found", to)
+func (h *hub) Unicast(to string, outgoing *DataOutgoing, pipeline *Pipeline) {
+	client, ok := h.GetClient(to)
+	if pipeline != nil {
+		if complete := pipeline.FlushOutgoing(h, client, to, outgoing); complete {
 			return
 		}
+	}
+	if !ok {
+		log.Println("Unicast To not found", to)
+		return
+	}
+	if message, err := h.EncodeOutgoing(outgoing); err == nil {
 		client.Send(message)
 		message.Decref()
 	}

@@ -21,29 +21,21 @@
 
 package channelling
 
-type ChannellingAPI interface {
-	OnConnect(*Client, *Session) (interface{}, error)
-	OnDisconnect(*Client, *Session)
-	OnIncoming(Sender, *Session, *DataIncoming) (interface{}, error)
+type SessionCreateRequest struct {
+	Id           string
+	Session      *DataSession
+	Room         *DataRoom
+	SetAsDefault bool
 }
 
-type ChannellingAPIConsumer interface {
-	SetChannellingAPI(ChannellingAPI)
-	GetChannellingAPI() ChannellingAPI
+type DataSink struct {
+	SubjectOut string `json:subject_out"`
+	SubjectIn  string `json:subject_in"`
 }
 
-type channellingAPIConsumer struct {
-	ChannellingAPI ChannellingAPI
-}
-
-func NewChannellingAPIConsumer() ChannellingAPIConsumer {
-	return &channellingAPIConsumer{}
-}
-
-func (c *channellingAPIConsumer) SetChannellingAPI(api ChannellingAPI) {
-	c.ChannellingAPI = api
-}
-
-func (c *channellingAPIConsumer) GetChannellingAPI() ChannellingAPI {
-	return c.ChannellingAPI
+type DataSinkOutgoing struct {
+	Outgoing   *DataOutgoing
+	ToUserid   string
+	FromUserid string
+	Pipe       string `json:",omitempty"`
 }
