@@ -40,7 +40,7 @@ $ make
   ```
 
 
-## Build seperately
+## Build separately
 
 There are several make targets available. Get Go external dependencies at
 least once with ``make get``, all the other targets depend on this.
@@ -125,7 +125,7 @@ Spreed WebRTC should be run through a SSL frontend proxy with
 support for Websockets. Example configuration for Nginx can be
 found in `doc/NGINX.txt`.
 
-In addion for real world use, one also needs a STUN/TURN server
+In addition, for real world use, one also needs a STUN/TURN server
 configured (with shared secret support).
 
 See https://github.com/coturn/coturn for a free
