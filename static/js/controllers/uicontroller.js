@@ -577,6 +577,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		mediaStream.webrtc.e.on("statechange", function(event, state, currentcall) {
 			console.info("P2P state changed", state, currentcall.id);
 			switch (state) {
+				case "closed":
+					if ($scope.getStatus() === "closed" || $scope.getStatus() === "waiting") {
+						return;
+					}
+					// This changes back from "conference" to "connected" if a
+					// conference is downgraded to p2p call.
+					/* falls through */
 				case "completed":
 				case "connected":
 					if ($scope.conference) {
@@ -672,10 +679,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		}()), true);
 
-		mediaStream.webrtc.e.on("done", function() {
-			if (mediaStream.connector.connected) {
-				$scope.setStatus("waiting");
-			}
+		mediaStream.webrtc.e.on("done stop", function() {
+			safeApply($scope, function(scope) {
+				if (mediaStream.connector.connected) {
+					scope.setStatus("waiting");
+				} else {
+					scope.setStatus("closed");
+				}
+			});
 		});
 
 		mediaStream.webrtc.e.on("busy", function(event, from) {
