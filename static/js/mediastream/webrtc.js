@@ -297,26 +297,21 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					return;
 				}
 				console.log("Bye process.");
-				if (targetcall === this.currentcall) {
-					var newcurrentcall;
-					if (this.currentconference) {
-						// Hand over current call to next conference call.
-						newcurrentcall = this.currentconference.handOver();
-					}
-					if (newcurrentcall) {
+				if (this.currentconference) {
+					// Hand over current call to next conference call.
+					var newcurrentcall = this.currentconference.callClosed(targetcall);
+					targetcall.close()
+					if (newcurrentcall && newcurrentcall != this.currentcall) {
 						this.currentcall = newcurrentcall;
-						targetcall.close()
-						//this.api.sendBye(targetcall.id, null);
 						this.e.triggerHandler("peercall", [newcurrentcall]);
+					}
+					if (this.currentconference && !this.currentconference.checkEmpty()) {
 						this.e.triggerHandler("peerconference", [this.currentconference]);
-					} else {
-						this.doHangup("receivedbye", targetcall.id);
-						this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 					}
 				} else {
 					this.doHangup("receivedbye", targetcall.id);
-					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 				}
+				this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 				break;
 			case "Conference":
 				if (!this.currentcall || data.indexOf(this.currentcall.id) === -1) {

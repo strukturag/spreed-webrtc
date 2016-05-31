@@ -31,12 +31,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 			var streams = {};
 			var calls = {};
 
-			var getStreamId = function(stream, currentcall) {
-				var id = currentcall.id + "-" + stream.id;
-				//console.log("Created stream ID", id);
-				return id;
-			};
-
 			$scope.container = $element[0];
 			$scope.layoutparent = $element.parent();
 
@@ -58,7 +52,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.addRemoteStream = function(stream, currentcall) {
 
-				var id = getStreamId(stream, currentcall);
+				var id = currentcall.getStreamId(stream);
 				console.log("New stream", id);
 
 				if (streams.hasOwnProperty(id)) {
@@ -76,7 +70,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					callscope = calls[currentcall.id];
 					if (callscope.dummy) {
 						// Current call is marked as dummy. Use it directly.
-						var dummyId = getStreamId(callscope.dummy, currentcall);
+						var dummyId = currentcall.getStreamId(callscope.dummy);
 						subscope = streams[dummyId];
 						if (subscope) {
 							subscope.dummy = null;
@@ -198,7 +192,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.removeRemoteStream = function(stream, currentcall) {
 
-				var id = getStreamId(stream, currentcall);
+				var id = currentcall.getStreamId(stream);
 				console.log("Stream removed", id);
 
 				var subscope = streams[id];

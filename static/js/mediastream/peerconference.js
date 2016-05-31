@@ -50,6 +50,16 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	};
 
+	PeerConference.prototype.checkEmpty = function() {
+		if (!_.isEmpty(this.calls)) {
+			return false;
+		}
+
+		console.log("Conference is now empty -> cleaning up.");
+		this.e.triggerHandler("finished");
+		return true;
+	};
+
 	PeerConference.prototype.createCall = function(id, from, to) {
 
 		var currentcall = new PeerCall(this.webrtc, id, from, to);
@@ -59,10 +69,7 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 				delete this.callsIn[id];
 			}
 			console.log("Cleaned up conference call", id);
-			if (_.isEmpty(this.calls)) {
-				console.log("Conference is now empty -> cleaning up.");
-				this.e.triggerHandler("finished");
-			}
+			this.checkEmpty();
 		}, this));
 		currentcall.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
 			this.onConnectionStateChange(iceConnectionState, currentcall);
@@ -113,24 +120,28 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	};
 
-	PeerConference.prototype.handOver = function() {
+	PeerConference.prototype.callClosed = function(call) {
+		if (_.isEmpty(this.callsIn)) {
+			// No more calls in the conference
+			return null;
+		}
 
-		// Use a new call as currentcall and return this one.
-		var calls = _.keys(this.callsIn);
-		if (calls.length) {
+		if (call !== this.currentcall) {
+			// An arbitrary call of the conference hung up.
+			delete this.calls[call.id];
+			delete this.callsIn[call.id];
+			console.log("Conference call closed", call);
+		} else {
+			// The "initiator" call of the conference hung up, promote another
+			// call to "initator" and return it.
+			var calls = _.keys(this.callsIn);
 			var id = calls[0];
-			var currentcall = this.currentcall = this.calls[id];
+			this.currentcall = this.calls[id];
 			delete this.calls[id];
 			delete this.callsIn[id];
-			console.log("Handed over conference to", id, currentcall);
-			if (_.isEmpty(this.calls)) {
-				console.log("Conference is now empty -> cleaning up.");
-				this.e.triggerHandler("finished");
-			}
-			return currentcall;
+			console.log("Handed over conference to", id, this.currentcall);
 		}
-		return null;
-
+		return this.currentcall;
 	};
 
 	PeerConference.prototype.autoAnswer = function(from, rtcsdp) {

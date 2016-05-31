@@ -52,6 +52,18 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		//console.log("Set initiate", this.initiate, this);
 	};
 
+	PeerCall.prototype.getStreamId = function(stream) {
+		var streamid = stream.id;
+		var id = this.id + "-" + streamid;
+		if (!this.stream.hasOwnProperty(streamid) || this.streams[streamid] === stream) {
+			this.streams[streamid] = stream;
+		} else {
+			console.warn("A different stream is already registered, not replacing", stream, this.streams[stream.id])
+		}
+		//console.log("Created stream ID", id);
+		return id;
+	};
+
 	PeerCall.prototype.createPeerConnection = function(success_cb, error_cb) {
 
 		var peerconnection = this.peerconnection = new PeerConnection(this.webrtc, this);
