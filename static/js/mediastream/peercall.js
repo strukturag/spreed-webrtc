@@ -55,10 +55,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	PeerCall.prototype.getStreamId = function(stream) {
 		var streamid = stream.id;
 		var id = this.id + "-" + streamid;
-		if (!this.stream.hasOwnProperty(streamid) || this.streams[streamid] === stream) {
+		if (!this.streams.hasOwnProperty(streamid) || this.streams[streamid] === stream) {
 			this.streams[streamid] = stream;
 		} else {
-			console.warn("A different stream is already registered, not replacing", stream, this.streams[stream.id])
+			console.warn("A different stream is already registered, not replacing", stream, this.streams[streamid])
 		}
 		//console.log("Created stream ID", id);
 		return id;
