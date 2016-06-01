@@ -82,6 +82,10 @@ func (fake *fakeRoomManager) MakeRoomID(roomName, roomType string) string {
 	return fmt.Sprintf("%s:%s", roomType, roomName)
 }
 
+func (fake *fakeRoomManager) Get(roomID string) (room channelling.RoomWorker, ok bool) {
+	return nil, false
+}
+
 func NewTestChannellingAPI() (channelling.ChannellingAPI, *fakeClient, *channelling.Session, *fakeRoomManager) {
 	apiConsumer := channelling.NewChannellingAPIConsumer()
 	client, roomManager := &fakeClient{}, &fakeRoomManager{}
