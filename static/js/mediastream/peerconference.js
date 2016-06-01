@@ -40,6 +40,14 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 			this.id = id;
 		}
 
+		if (!webrtc.usermedia) {
+			// Conference was started without getUM being called before. This
+			// happens for server-manager conference rooms. Create internal
+			// dummy call to trigger getUM, so actual conference calls can
+			// be established.
+			webrtc.doUserMediaWithInternalCall();
+		}
+
 		this.usermedia = webrtc.usermedia;
 		webrtc.e.on("usermedia", _.bind(function(event, um) {
 			console.log("Conference user media changed", um);
@@ -87,7 +95,7 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	PeerConference.prototype.doCall = function(id, autocall) {
 
-		if (id === this.currentcall.id || this.calls.hasOwnProperty(id)) {
+		if ((this.currentcall && id === this.currentcall.id) || this.calls.hasOwnProperty(id)) {
 			// Ignore calls which we already have.
 			//console.debug("Already got a call to this id (doCall)", id, this.calls, this.currentcall);
 			return;
@@ -146,7 +154,7 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	PeerConference.prototype.autoAnswer = function(from, rtcsdp) {
 
-		if (from === this.currentcall.id || this.calls.hasOwnProperty(from)) {
+		if ((this.currentcall && from === this.currentcall.id) || this.calls.hasOwnProperty(from)) {
 			console.warn("Already got a call to this id (autoAnswer)", from, this.calls);
 			return;
 		}
@@ -220,6 +228,10 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 	};
 
 	PeerConference.prototype.pushUpdate = function() {
+		if (this.webrtc.isConferenceRoom()) {
+			// Conference is managed on the server.
+			return;
+		}
 
 		var calls = _.keys(this.callsIn);
 		if (calls) {
