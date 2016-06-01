@@ -219,6 +219,6 @@ enabled = false
 ;   All participants joining the room automatically call each other and are in
 ;   a conference.
 ;
-; Example (all rooms below "/conference/" are conference rooms):
-;^/conference/.+ = Conference
+; Example (all rooms below "conference/" are conference rooms):
+;^conference/.+ = Conference
 ;
