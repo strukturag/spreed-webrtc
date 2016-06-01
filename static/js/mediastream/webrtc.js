@@ -159,6 +159,15 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	WebRTC.prototype.receivedRoom = function(event, room) {
 		this.currentroom = room;
+		if (this.isConferenceRoom()) {
+			if (!this.usermedia) {
+				this.doUserMediaWithInternalCall();
+			}
+		} else {
+			if (this.currentcall && this.currentcall.isinternal) {
+				this.stop();
+			}
+		}
 	};
 
 	WebRTC.prototype.isConferenceRoom = function() {
@@ -440,11 +449,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 	};
 
 	WebRTC.prototype.doUserMediaWithInternalCall = function() {
-		if (this.currentcall) {
-			console.warn("Already have a current call, not doing internal getUM");
+		if (this.currentcall && !this.currentcall.isinternal) {
+			console.warn("Already have a current call, not doing internal getUM", this.currentcall);
 			return;
 		}
 		var currentcall = this.currentcall = new InternalCall(this);
+		this.e.triggerHandler("peercall", [currentcall]);
 		this.doUserMedia(currentcall);
 	};
 

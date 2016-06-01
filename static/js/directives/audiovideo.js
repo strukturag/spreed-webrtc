@@ -289,23 +289,31 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			});
 
-			mediaStream.webrtc.e.on("done", function() {
+			mediaStream.webrtc.e.on("done stop", function(event) {
 
 				$scope.$apply(function() {
+					if (!$scope.isActive) {
+						return;
+					}
 					$scope.hasUsermedia = false;
 					$scope.isActive = false;
 					$scope.peersTalking = {};
 					if (BigScreen.enabled) {
 						BigScreen.exit();
 					}
-					_.delay(function() {
+					var removeVideos = function() {
 						if ($scope.isActive) {
 							return;
 						}
 						$scope.localVideo.src = '';
 						$scope.miniVideo.src = '';
 						$($scope.remoteVideos).children(".remoteVideo").remove();
-					}, 1500);
+					};
+					if (event.type === "stop") {
+						removeVideos();
+					} else {
+						$timeout(removeVideos, 1500);
+					}
 					$($scope.mini).removeClass("visible");
 					$scope.localVideos.style.opacity = 1;
 					$scope.localVideo.style.opacity = 0;

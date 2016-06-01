@@ -200,6 +200,10 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			localStatus.update(status);
 		};
 
+		$scope.isConferenceRoom = function() {
+			return mediaStream.webrtc.isConferenceRoom();
+		};
+
 		$scope.updatePeerFromConference = function() {
 			if (!$scope.conferenceObject) {
 				return;
@@ -229,6 +233,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				$scope.setStatus("conference");
 			} else {
 				$scope.setStatus("connected");
+			}
+		};
+
+		$scope.clearConnectedStatus = function() {
+			if (mediaStream.connector.connected) {
+				$scope.setStatus("waiting");
+			} else {
+				$scope.setStatus("closed");
 			}
 		};
 
@@ -485,6 +497,20 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				scope.conferenceObject = peerconference ? peerconference : null;
 				scope.updatePeerFromConference();
 				scope.setConnectedStatus();
+				if (!peerconference) {
+					scope.peer = null;
+					if (scope.usermedia) {
+						$timeout(function() {
+							scope.usermedia = null;
+							mediaStream.webrtc.stop();
+							if (mediaStream.webrtc.isConferenceRoom()) {
+								mediaStream.webrtc.doUserMediaWithInternalCall();
+							}
+							$scope.layout.buddylist = true;
+							$scope.layout.buddylistAutoHide = false;
+						}, 0);
+					}
+				}
 			});
 		});
 
@@ -714,11 +740,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		mediaStream.webrtc.e.on("done stop", function() {
 			safeApply($scope, function(scope) {
-				if (mediaStream.connector.connected) {
-					scope.setStatus("waiting");
-				} else {
-					scope.setStatus("closed");
-				}
+				scope.clearConnectedStatus();
 			});
 		});
 

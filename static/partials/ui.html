@@ -30,7 +30,7 @@
 	<div id="audiolevel" class="ng-cloak">
 		<div class="audio-level" title="{{_('Your audio level')}}"></div>
 	</div>
-	<div id="audiovideo" class="ng-cloak" ng-show="peer">
+	<div id="audiovideo" class="ng-cloak" ng-show="peer || isConferenceRoom()">
 		<audio-video/>
 	</div>
 	<div id="screenshare" class="ng-cloak mainview">
