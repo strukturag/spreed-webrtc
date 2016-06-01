@@ -208,3 +208,17 @@ enabled = false
 ; Use client_id to distinguish between multipe servers. The value is sent
 ; together with every NATS request. Defaults to empty.
 ;client_id =
+
+[roomtypes]
+; You can define room types that should be used for given room names instead of
+; the default type "Room". Use format "RegularExpression = RoomType" and make
+; sure the regular expression doesn't contain any "=" or ":".
+;
+; Available room types:
+; "Conference"
+;   All participants joining the room automatically call each other and are in
+;   a conference.
+;
+; Example (all rooms below "/conference/" are conference rooms):
+;^/conference/.+ = Conference
+;

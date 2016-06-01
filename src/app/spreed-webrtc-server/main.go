@@ -170,7 +170,10 @@ func runner(runtime phoenix.Runtime) error {
 	natsClientId, _ := runtime.GetString("nats", "client_id")
 
 	// Load remaining configuration items.
-	config = server.NewConfig(runtime, tokenProvider != nil)
+	config, err = server.NewConfig(runtime, tokenProvider != nil)
+	if err != nil {
+		return err
+	}
 
 	// Load templates.
 	templates = template.New("")

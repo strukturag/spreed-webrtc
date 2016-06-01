@@ -24,6 +24,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -32,7 +33,17 @@ import (
 	"github.com/strukturag/phoenix"
 )
 
-func NewConfig(container phoenix.Container, tokens bool) *channelling.Config {
+const (
+	defaultRoomType = "Room"
+)
+
+var (
+	knownRoomTypes = map[string]bool{
+		"Conference": true,
+	}
+)
+
+func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, error) {
 	ver := container.GetStringDefault("app", "ver", "")
 
 	version := container.Version()
@@ -83,6 +94,30 @@ func NewConfig(container phoenix.Container, tokens bool) *channelling.Config {
 	}
 	log.Println("Enabled modules:", modules)
 
+	roomTypes := make(map[*regexp.Regexp]string)
+	if options, _ := container.GetOptions("roomtypes"); len(options) > 0 {
+		for _, option := range options {
+			rt := container.GetStringDefault("roomtypes", option, "")
+			if len(rt) == 0 {
+				continue
+			}
+
+			if rt != defaultRoomType {
+				if !knownRoomTypes[rt] {
+					return nil, fmt.Errorf("Unsupported room type '%s' with expression %s", rt, option)
+				}
+
+				re, err := regexp.Compile(option)
+				if err != nil {
+					return nil, fmt.Errorf("Invalid regular expression '%s' for type %s: %s", option, rt, err)
+				}
+
+				roomTypes[re] = rt
+			}
+			log.Printf("Using room type %s for %s\n", rt, option)
+		}
+	}
+
 	return &channelling.Config{
 		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
 		Ver:                             ver,
@@ -106,8 +141,9 @@ func NewConfig(container phoenix.Container, tokens bool) *channelling.Config {
 		GlobalRoomID:                    container.GetStringDefault("app", "globalRoom", ""),
 		ContentSecurityPolicy:           container.GetStringDefault("app", "contentSecurityPolicy", ""),
 		ContentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
-		RoomTypeDefault:                 "Room",
-	}
+		RoomTypeDefault:                 defaultRoomType,
+		RoomTypes:                       roomTypes,
+	}, nil
 }
 
 // Helper function to clean up string arrays.
