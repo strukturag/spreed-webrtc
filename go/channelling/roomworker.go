@@ -45,6 +45,7 @@ type RoomWorker interface {
 	Broadcast(sessionID string, buf buffercache.Buffer)
 	Join(*DataRoomCredentials, *Session, Sender) (*DataRoom, error)
 	Leave(sessionID string)
+	GetType() string
 }
 
 type roomWorker struct {
@@ -144,6 +145,10 @@ func (r *roomWorker) Users() []*roomUser {
 	}
 
 	return users
+}
+
+func (r *roomWorker) GetType() string {
+	return r.Type
 }
 
 func (r *roomWorker) Run(f func()) bool {

@@ -72,11 +72,13 @@ func (pipeline *Pipeline) receive() {
 	// TODO(longsleep): Call to ToSession() should be avoided because it locks.
 	api := pipeline.PipelineManager.GetChannellingAPI()
 	for data := range pipeline.recvQueue {
-		_, err := api.OnIncoming(nil, pipeline.ToSession(), data)
+		session := pipeline.ToSession()
+		reply, err := api.OnIncoming(nil, session, data)
 		if err != nil {
 			// TODO(longsleep): Handle reply and error.
 			log.Println("Pipeline receive incoming error", err)
 		}
+		api.OnIncomingProcessed(nil, session, data, reply, err)
 	}
 	log.Println("Pipeline receive done")
 }

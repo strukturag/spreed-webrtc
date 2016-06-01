@@ -194,3 +194,10 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 
 	return nil, nil
 }
+
+func (api *channellingAPI) OnIncomingProcessed(sender channelling.Sender, session *channelling.Session, msg *channelling.DataIncoming, reply interface{}, err error) {
+	switch msg.Type {
+	case "Hello":
+		api.HelloProcessed(sender, session, msg, reply, err)
+	}
+}
