@@ -199,5 +199,7 @@ func (api *channellingAPI) OnIncomingProcessed(sender channelling.Sender, sessio
 	switch msg.Type {
 	case "Hello":
 		api.HelloProcessed(sender, session, msg, reply, err)
+	case "Room":
+		api.RoomProcessed(sender, session, msg, reply, err)
 	}
 }
