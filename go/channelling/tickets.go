@@ -34,6 +34,11 @@ import (
 	"github.com/gorilla/securecookie"
 )
 
+var (
+	// Can be set from tests to disable some log outputs.
+	silentOutput = false
+)
+
 type SessionValidator interface {
 	Realm() string
 	ValidateSession(string, string) bool
@@ -77,6 +82,27 @@ func (tickets *tickets) Realm() string {
 	return tickets.realm
 }
 
+func reverseBase64String(s string) (string, error) {
+	decoded, err := base64.URLEncoding.DecodeString(s)
+	if err != nil {
+		return "", err
+	}
+
+	for i, j := 0, len(decoded)-1; i < j; i, j = i+1, j-1 {
+		decoded[i], decoded[j] = decoded[j], decoded[i]
+	}
+	return base64.URLEncoding.EncodeToString(decoded), nil
+}
+
+func (tickets *tickets) reverseSessionId(id string) string {
+	reversedId, err := reverseBase64String(id)
+	if err != nil {
+		// This should never happen
+		panic("Could not reverse " + id)
+	}
+	return reversedId
+}
+
 func (tickets *tickets) DecodeSessionToken(token string) (st *SessionToken) {
 	var err error
 	if token != "" {
@@ -90,8 +116,11 @@ func (tickets *tickets) DecodeSessionToken(token string) (st *SessionToken) {
 	if st == nil || err != nil {
 		sid := randomstring.NewRandomString(32)
 		id, _ := tickets.Encode("id", sid)
+		id = tickets.reverseSessionId(id)
 		st = &SessionToken{Id: id, Sid: sid}
-		log.Println("Created new session id", id)
+		if !silentOutput {
+			log.Println("Created new session id", id)
+		}
 	}
 	return
 }
@@ -99,6 +128,7 @@ func (tickets *tickets) DecodeSessionToken(token string) (st *SessionToken) {
 func (tickets *tickets) FakeSessionToken(userid string) (st *SessionToken) {
 	sid := fmt.Sprintf("fake-%s", randomstring.NewRandomString(27))
 	id, _ := tickets.Encode("id", sid)
+	id = tickets.reverseSessionId(id)
 	st = &SessionToken{Id: id, Sid: sid, Userid: userid}
 	log.Println("Created new fake session id", st.Id)
 	return
@@ -106,12 +136,23 @@ func (tickets *tickets) FakeSessionToken(userid string) (st *SessionToken) {
 
 func (tickets *tickets) ValidateSession(id, sid string) bool {
 	var decoded string
-	if err := tickets.Decode("id", id, &decoded); err != nil {
-		log.Println("Session validation error", err, id, sid)
+	reversedId, err := reverseBase64String(id)
+	if err != nil {
+		if !silentOutput {
+			log.Println("Session format error", err, id, sid)
+		}
+		return false
+	}
+	if err := tickets.Decode("id", reversedId, &decoded); err != nil {
+		if !silentOutput {
+			log.Println("Session validation error", err, reversedId, sid)
+		}
 		return false
 	}
 	if decoded != sid {
-		log.Println("Session validation failed", id, sid)
+		if !silentOutput {
+			log.Println("Session validation failed", reversedId, sid)
+		}
 		return false
 	}
 	return true
