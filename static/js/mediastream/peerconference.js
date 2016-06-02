@@ -59,7 +59,7 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 	};
 
 	PeerConference.prototype.checkEmpty = function() {
-		if (!_.isEmpty(this.calls)) {
+		if (!_.isEmpty(this.calls) || (this.currentcall && this.currentcall.id)) {
 			return false;
 		}
 
@@ -261,7 +261,11 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	PeerConference.prototype.peerIds = function() {
 
-		return _.keys(this.calls);
+		var result = _.keys(this.calls);
+		if (this.currentcall && this.currentcall.id && result.indexOf(this.currentcall.id) === -1) {
+			result.push(this.currentcall.id);
+		}
+		return result;
 
 	};
 

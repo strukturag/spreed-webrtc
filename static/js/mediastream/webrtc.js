@@ -373,6 +373,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					if (newcurrentcall && newcurrentcall != this.currentcall) {
 						this.currentcall = newcurrentcall;
 						this.e.triggerHandler("peercall", [newcurrentcall]);
+					} else if (!newcurrentcall) {
+						this.doHangup("receivedbye", targetcall.id);
 					}
 					if (this.currentconference && !this.currentconference.checkEmpty()) {
 						this.e.triggerHandler("peerconference", [this.currentconference]);
