@@ -262,6 +262,10 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 	PeerConference.prototype.peerIds = function() {
 
 		var result = _.keys(this.calls);
+		// "peerIds" returns the session ids of all participants in the
+		// conference, so we need to add the id of the peer the user called
+		// manually before migrating to a conference (but only if it has an id,
+		// i.e. is not an internal call object).
 		if (this.currentcall && this.currentcall.id && result.indexOf(this.currentcall.id) === -1) {
 			result.push(this.currentcall.id);
 		}
