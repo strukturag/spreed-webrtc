@@ -28,7 +28,7 @@ import (
 )
 
 func (api *channellingAPI) HandleConference(session *channelling.Session, conference *channelling.DataConference) {
-	if room, ok := api.RoomStatusManager.Get(session.Roomid); ok && room.GetType() == "Conference" {
+	if room, ok := api.RoomStatusManager.Get(session.Roomid); ok && room.GetType() == channelling.RoomTypeConference {
 		log.Println("Refusing client-side conference update for server-managed conferences.")
 		return
 	}

@@ -34,12 +34,12 @@ import (
 )
 
 const (
-	defaultRoomType = "Room"
+	defaultRoomType = channelling.RoomTypeRoom
 )
 
 var (
 	knownRoomTypes = map[string]bool{
-		"Conference": true,
+		channelling.RoomTypeConference: true,
 	}
 )
 

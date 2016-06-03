@@ -61,8 +61,8 @@ type roomWorker struct {
 
 	// Metadata.
 	id          string
-	Name        string
-	Type        string
+	name        string
+	roomType    string
 	credentials *DataRoomCredentials
 }
 
@@ -75,13 +75,13 @@ func NewRoomWorker(manager *roomManager, roomID, roomName, roomType string, cred
 	log.Printf("Creating worker for room '%s'\n", roomID)
 
 	r := &roomWorker{
-		manager: manager,
-		id:      roomID,
-		Name:    roomName,
-		Type:    roomType,
-		workers: make(chan func(), roomMaxWorkers),
-		expired: make(chan bool),
-		users:   make(map[string]*roomUser),
+		manager:  manager,
+		id:       roomID,
+		name:     roomName,
+		roomType: roomType,
+		workers:  make(chan func(), roomMaxWorkers),
+		expired:  make(chan bool),
+		users:    make(map[string]*roomUser),
 	}
 
 	if credentials != nil && len(credentials.PIN) > 0 {
@@ -148,7 +148,7 @@ func (r *roomWorker) Users() []*roomUser {
 }
 
 func (r *roomWorker) GetType() string {
-	return r.Type
+	return r.roomType
 }
 
 func (r *roomWorker) Run(f func()) bool {
@@ -166,8 +166,8 @@ func (r *roomWorker) Update(room *DataRoom) error {
 	worker := func() {
 		r.mutex.Lock()
 		// Enforce room type and name.
-		room.Type = r.Type
-		room.Name = r.Name
+		room.Type = r.roomType
+		room.Name = r.name
 		// Update credentials.
 		if room.Credentials != nil {
 			if len(room.Credentials.PIN) > 0 {
@@ -275,7 +275,7 @@ func (r *roomWorker) Join(credentials *DataRoomCredentials, session *Session, se
 		r.users[session.Id] = &roomUser{session, sender}
 		// NOTE(lcooper): Needs to be a copy, else we risk races with
 		// a subsequent modification of room properties.
-		result := joinResult{&DataRoom{Name: r.Name, Type: r.Type}, nil}
+		result := joinResult{&DataRoom{Name: r.name, Type: r.roomType}, nil}
 		r.mutex.Unlock()
 		results <- result
 	}

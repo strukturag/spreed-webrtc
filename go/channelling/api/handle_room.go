@@ -42,7 +42,7 @@ func (api *channellingAPI) RoomProcessed(sender channelling.Sender, session *cha
 
 func (api *channellingAPI) SendConferenceRoomUpdate(session *channelling.Session) {
 	// If user joined a server-managed conference room, send list of session ids to all participants.
-	if room, ok := api.RoomStatusManager.Get(session.Roomid); ok && room.GetType() == "Conference" {
+	if room, ok := api.RoomStatusManager.Get(session.Roomid); ok && room.GetType() == channelling.RoomTypeConference {
 		if sessionids := room.SessionIDs(); len(sessionids) > 1 {
 			cid := session.Roomid
 			session.Broadcaster.Broadcast("", session.Roomid, &channelling.DataOutgoing{

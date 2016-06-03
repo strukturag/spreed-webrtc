@@ -23,11 +23,13 @@ package channelling
 
 import (
 	"testing"
+
+	"github.com/strukturag/spreed-webrtc/go/channelling"
 )
 
 func NewTestRoomManager() (RoomManager, *Config) {
 	config := &Config{
-		RoomTypeDefault: "Room",
+		RoomTypeDefault: channelling.RoomTypeRoom,
 	}
 	return NewRoomManager(config, nil), config
 }
@@ -38,16 +40,16 @@ func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenCreat
 	config.AuthorizeRoomCreation = true
 
 	unauthenticatedSession := &Session{}
-	_, err := roomManager.JoinRoom("Room:foo", "foo", "Room", nil, unauthenticatedSession, false, nil)
+	_, err := roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
 	assertDataError(t, err, "room_join_requires_account")
 
 	authenticatedSession := &Session{userid: "9870457"}
-	_, err = roomManager.JoinRoom("Room:foo", "foo", "Room", nil, authenticatedSession, true, nil)
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, authenticatedSession, true, nil)
 	if err != nil {
 		t.Fatalf("Unexpected error %v joining room while authenticated", err)
 	}
 
-	_, err = roomManager.JoinRoom("Room:foo", "foo", "Room", nil, unauthenticatedSession, false, nil)
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
 	if err != nil {
 		t.Fatalf("Unexpected error %v joining room while unauthenticated", err)
 	}
@@ -59,16 +61,16 @@ func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenJoinR
 	config.AuthorizeRoomJoin = true
 
 	unauthenticatedSession := &Session{}
-	_, err := roomManager.JoinRoom("Room:foo", "foo", "Room", nil, unauthenticatedSession, false, nil)
+	_, err := roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
 	assertDataError(t, err, "room_join_requires_account")
 
 	authenticatedSession := &Session{userid: "9870457"}
-	_, err = roomManager.JoinRoom("Room:foo", "foo", "Room", nil, authenticatedSession, true, nil)
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, authenticatedSession, true, nil)
 	if err != nil {
 		t.Fatalf("Unexpected error %v joining room while authenticated", err)
 	}
 
-	_, err = roomManager.JoinRoom("Room:foo", "foo", "Room", nil, unauthenticatedSession, false, nil)
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
 	assertDataError(t, err, "room_join_requires_account")
 }
 
@@ -81,20 +83,20 @@ func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfNoRoomHasBeenJoined(t *testing.
 
 func Test_RoomManager_UpdateRoom_ReturnsAnErrorIfUpdatingAnUnjoinedRoom(t *testing.T) {
 	roomManager, _ := NewTestRoomManager()
-	session := &Session{Hello: true, Roomid: "Room:foo"}
+	session := &Session{Hello: true, Roomid: channelling.RoomTypeRoom + ":foo"}
 	_, err := roomManager.UpdateRoom(session, &DataRoom{Name: "bar"})
 	assertDataError(t, err, "not_in_room")
 }
 
 func Test_RoomManager_UpdateRoom_ReturnsACorrectlyTypedDocument(t *testing.T) {
 	roomManager, _ := NewTestRoomManager()
-	session := &Session{Hello: true, Roomid: "Room:foo"}
+	session := &Session{Hello: true, Roomid: channelling.RoomTypeRoom + ":foo"}
 	room, err := roomManager.UpdateRoom(session, &DataRoom{Name: "foo"})
 	if err != nil {
 		t.Fatalf("Unexpected error %v updating room", err)
 	}
 
-	if room.Type != "Room" {
-		t.Errorf("Expected document type to be Room, but was %v", room.Type)
+	if room.Type != channelling.RoomTypeRoom {
+		t.Errorf("Expected document type to be %s, but was %v", channelling.RoomTypeRoom, room.Type)
 	}
 }

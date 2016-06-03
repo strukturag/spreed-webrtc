@@ -21,6 +21,11 @@
 
 package channelling
 
+const (
+	RoomTypeConference = "Conference"
+	RoomTypeRoom       = "Room"
+)
+
 type ChannellingAPI interface {
 	OnConnect(*Client, *Session) (interface{}, error)
 	OnDisconnect(*Client, *Session)
