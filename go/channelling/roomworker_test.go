@@ -23,12 +23,14 @@ package channelling
 
 import (
 	"testing"
+
+	"github.com/strukturag/spreed-webrtc/go/channelling"
 )
 
 const (
-	testRoomID   string = "Room:a-room-name"
+	testRoomID   string = channelling.RoomTypeRoom + ":a-room-name"
 	testRoomName string = "a-room-name"
-	testRoomType string = "Room"
+	testRoomType string = channelling.RoomTypeRoom
 )
 
 func NewTestRoomWorker() RoomWorker {

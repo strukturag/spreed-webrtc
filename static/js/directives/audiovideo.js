@@ -289,34 +289,42 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			});
 
-			mediaStream.webrtc.e.on("done", function() {
+			mediaStream.webrtc.e.on("done stop", function(event) {
 
-				$scope.$apply(function() {
-					$scope.hasUsermedia = false;
-					$scope.isActive = false;
-					$scope.peersTalking = {};
+				safeApply($scope, function(scope) {
+					if (!scope.isActive) {
+						return;
+					}
+					scope.hasUsermedia = false;
+					scope.isActive = false;
+					scope.peersTalking = {};
 					if (BigScreen.enabled) {
 						BigScreen.exit();
 					}
-					_.delay(function() {
-						if ($scope.isActive) {
+					var removeVideos = function() {
+						if (scope.isActive) {
 							return;
 						}
-						$scope.localVideo.src = '';
-						$scope.miniVideo.src = '';
-						$($scope.remoteVideos).children(".remoteVideo").remove();
-					}, 1500);
-					$($scope.mini).removeClass("visible");
-					$scope.localVideos.style.opacity = 1;
-					$scope.localVideo.style.opacity = 0;
-					$scope.remoteVideos.style.opacity = 0;
+						scope.localVideo.src = '';
+						scope.miniVideo.src = '';
+						$(scope.remoteVideos).children(".remoteVideo").remove();
+					};
+					if (event.type === "stop") {
+						removeVideos();
+					} else {
+						$timeout(removeVideos, 1500);
+					}
+					$(scope.mini).removeClass("visible");
+					scope.localVideos.style.opacity = 1;
+					scope.localVideo.style.opacity = 0;
+					scope.remoteVideos.style.opacity = 0;
 					$element.removeClass('active');
-					_.each(streams, function(scope, k) {
-						scope.$destroy();
+					_.each(streams, function(streamscope, k) {
+						streamscope.$destroy();
 						delete streams[k];
 					});
-					$scope.rendererName = $scope.defaultRendererName;
-					$scope.haveStreams = false;
+					scope.rendererName = scope.defaultRendererName;
+					scope.haveStreams = false;
 				});
 
 			});

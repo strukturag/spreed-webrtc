@@ -77,9 +77,13 @@ func (fake *fakeRoomManager) UpdateRoom(_ *channelling.Session, _ *channelling.D
 
 func (fake *fakeRoomManager) MakeRoomID(roomName, roomType string) string {
 	if roomType == "" {
-		roomType = "Room"
+		roomType = channelling.RoomTypeRoom
 	}
 	return fmt.Sprintf("%s:%s", roomType, roomName)
+}
+
+func (fake *fakeRoomManager) Get(roomID string) (room channelling.RoomWorker, ok bool) {
+	return nil, false
 }
 
 func NewTestChannellingAPI() (channelling.ChannellingAPI, *fakeClient, *channelling.Session, *fakeRoomManager) {
@@ -94,7 +98,7 @@ func NewTestChannellingAPI() (channelling.ChannellingAPI, *fakeClient, *channell
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing.T) {
-	roomID, roomName, ua := "Room:foobar", "foobar", "unit tests"
+	roomID, roomName, ua := channelling.RoomTypeRoom+":foobar", "foobar", "unit tests"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
 	api.OnIncoming(client, session, &channelling.DataIncoming{Type: "Hello", Hello: &channelling.DataHello{Id: roomName, Ua: ua}})
@@ -118,7 +122,7 @@ func Test_ChannellingAPI_OnIncoming_HelloMessage_JoinsTheSelectedRoom(t *testing
 }
 
 func Test_ChannellingAPI_OnIncoming_HelloMessage_LeavesAnyPreviouslyJoinedRooms(t *testing.T) {
-	roomID, roomName := "Room:foobar", "foobar"
+	roomID, roomName := channelling.RoomTypeRoom+":foobar", "foobar"
 	api, client, session, roomManager := NewTestChannellingAPI()
 
 	api.OnIncoming(client, session, &channelling.DataIncoming{Type: "Hello", Hello: &channelling.DataHello{Id: roomName}})
@@ -200,7 +204,7 @@ func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAndBroadcastsTheUpda
 		t.Fatalf("Unexpected error %v", err)
 	}
 
-	reply, err := api.OnIncoming(client, session, &channelling.DataIncoming{Type: "Room", Room: &channelling.DataRoom{Name: roomName}})
+	reply, err := api.OnIncoming(client, session, &channelling.DataIncoming{Type: channelling.RoomTypeRoom, Room: &channelling.DataRoom{Name: roomName}})
 	if err != nil {
 		t.Fatalf("Unexpected error %v", err)
 	}
@@ -232,7 +236,7 @@ func Test_ChannellingAPI_OnIncoming_RoomMessage_RespondsWithAnErrorIfUpdatingThe
 	if err != nil {
 		t.Fatalf("Unexpected error %v", err)
 	}
-	_, err = api.OnIncoming(client, session, &channelling.DataIncoming{Type: "Room", Room: &channelling.DataRoom{Name: roomName}})
+	_, err = api.OnIncoming(client, session, &channelling.DataIncoming{Type: channelling.RoomTypeRoom, Room: &channelling.DataRoom{Name: roomName}})
 
 	assertDataError(t, err, "a_room_error")
 }

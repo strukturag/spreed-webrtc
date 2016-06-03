@@ -87,12 +87,14 @@ func (pipelines *Pipelines) Post(request *http.Request) (int, interface{}, http.
 		From: pipeline.FromSession().Id,
 		Iid:  incoming.Iid,
 	}
-	reply, err := pipelines.API.OnIncoming(pipeline, pipeline.ToSession(), &incoming)
+	session := pipeline.ToSession()
+	reply, err := pipelines.API.OnIncoming(pipeline, session, &incoming)
 	if err == nil {
 		result.Data = reply
 	} else {
 		result.Data = err
 	}
+	pipelines.API.OnIncomingProcessed(pipeline, session, &incoming, reply, err)
 
 	return http.StatusOK, result, nil
 }

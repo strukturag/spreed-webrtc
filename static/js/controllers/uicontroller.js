@@ -165,6 +165,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.peer = null;
 		$scope.dialing = null;
 		$scope.conference = null;
+		$scope.conferenceObject = null;
 		$scope.conferencePeers = [];
 		$scope.incoming = null;
 		$scope.microphoneMute = false;
@@ -197,6 +198,50 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				localStatus.clear();
 			}
 			localStatus.update(status);
+		};
+
+		$scope.isConferenceRoom = function() {
+			return mediaStream.webrtc.isConferenceRoom();
+		};
+
+		$scope.updatePeerFromConference = function() {
+			if (!$scope.conferenceObject) {
+				return;
+			}
+
+			var peerIds = $scope.conferenceObject.peerIds();
+			if ($scope.peer && peerIds.indexOf($scope.peer) === -1) {
+				$scope.peer = null;
+			}
+			if (!$scope.peer) {
+				$scope.peer = peerIds.length > 0 ? peerIds.shift() : null;
+			} else {
+				peerIds = _.without(peerIds, $scope.peer);
+			}
+			$scope.conferencePeers = peerIds;
+		};
+
+		$scope.setConnectedStatus = function() {
+			// Don't set connected states if no peer is known yet. Otherwise
+			// there would be "Someone" visible in the UI.
+			$scope.updatePeerFromConference();
+			if (!$scope.peer) {
+				return;
+			}
+
+			if ($scope.conference) {
+				$scope.setStatus("conference");
+			} else {
+				$scope.setStatus("connected");
+			}
+		};
+
+		$scope.clearConnectedStatus = function() {
+			if (mediaStream.connector.connected) {
+				$scope.setStatus("waiting");
+			} else {
+				$scope.setStatus("closed");
+			}
 		};
 
 		$scope.refreshWebrtcSettings = function() {
@@ -440,14 +485,32 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 			// Apply peer call to scope.
 			safeApply($scope, function(scope) {
+				// NOTE: the internal call will have a "id" of "null".
 				scope.peer = peercall ? peercall.id : null;
+				scope.setConnectedStatus();
 			});
 		});
 
 		mediaStream.webrtc.e.on("peerconference", function(event, peerconference) {
 			safeApply($scope, function(scope) {
 				scope.conference = peerconference ? peerconference.id : null;
-				scope.conferencePeers = peerconference ? peerconference.peerIds() : [];
+				scope.conferenceObject = peerconference ? peerconference : null;
+				scope.updatePeerFromConference();
+				scope.setConnectedStatus();
+				if (!peerconference) {
+					scope.peer = null;
+					if (scope.usermedia) {
+						$timeout(function() {
+							scope.usermedia = null;
+							mediaStream.webrtc.stop();
+							if (mediaStream.webrtc.isConferenceRoom()) {
+								mediaStream.webrtc.doUserMediaWithInternalCall();
+							}
+							$scope.layout.buddylist = true;
+							$scope.layout.buddylistAutoHide = false;
+						}, 0);
+					}
+				}
 			});
 		});
 
@@ -568,6 +631,10 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		mediaStream.webrtc.e.on("waitforusermedia connecting", function(event, currentcall) {
 			var t = event.type;
+			if (currentcall && currentcall.isinternal && t === "connecting") {
+				// Don't show "Calling Someone" for the internal call.
+				return;
+			}
 			safeApply($scope, function(scope) {
 				scope.dialing = currentcall ? currentcall.id : null;
 				scope.setStatus(t);
@@ -586,11 +653,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 					/* falls through */
 				case "completed":
 				case "connected":
-					if ($scope.conference) {
-						$scope.setStatus('conference');
-					} else {
-						$scope.setStatus('connected');
-					}
+					$scope.setConnectedStatus();
 					break;
 				case "failed":
 					mediaStream.webrtc.doHangup("failed", currentcall.id);
@@ -607,11 +670,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 		$scope.$on("active", function(event, currentcall) {
 
 			console.info("Video state active (assuming connected)", currentcall.id);
-			if ($scope.conference) {
-				$scope.setStatus('conference');
-			} else {
-				$scope.setStatus('connected');
-			}
+			$scope.setConnectedStatus();
 			$timeout(function() {
 				if ($scope.peer) {
 					$scope.layout.buddylist = false;
@@ -681,11 +740,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		mediaStream.webrtc.e.on("done stop", function() {
 			safeApply($scope, function(scope) {
-				if (mediaStream.connector.connected) {
-					scope.setStatus("waiting");
-				} else {
-					scope.setStatus("closed");
-				}
+				scope.clearConnectedStatus();
 			});
 		});
 

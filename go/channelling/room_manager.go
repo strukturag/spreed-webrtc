@@ -33,6 +33,7 @@ type RoomStatusManager interface {
 	LeaveRoom(roomID, sessionID string)
 	UpdateRoom(*Session, *DataRoom) (*DataRoom, error)
 	MakeRoomID(roomName, roomType string) string
+	Get(roomID string) (room RoomWorker, ok bool)
 }
 
 type Broadcaster interface {
@@ -169,6 +170,10 @@ func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credent
 		return room, nil
 	}
 
+	if roomType == "" {
+		roomType = rooms.getConfiguredRoomType(roomName)
+	}
+
 	rooms.Lock()
 	// Need to re-check, another thread might have created the room
 	// while we waited for the lock.
@@ -214,8 +219,18 @@ func (rooms *roomManager) GlobalUsers() []*roomUser {
 
 func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
 	if roomType == "" {
-		roomType = rooms.RoomTypeDefault
+		roomType = rooms.getConfiguredRoomType(roomName)
 	}
 
 	return fmt.Sprintf("%s:%s", roomType, roomName)
+}
+
+func (rooms *roomManager) getConfiguredRoomType(roomName string) string {
+	for re, roomType := range rooms.RoomTypes {
+		if re.MatchString(roomName) {
+			return roomType
+		}
+	}
+
+	return rooms.RoomTypeDefault
 }

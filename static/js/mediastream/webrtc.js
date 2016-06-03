@@ -42,6 +42,45 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		console.log("This seems to be Android");
 	}
 
+	var roomTypeConference = "Conference";
+
+	var InternalPC = function(call) {
+		this.currentcall = call;
+		this.isinternal = true;
+	};
+
+	InternalPC.prototype.close = function() {
+		this.currentcall.e.triggerHandler("connectionStateChange", ["closed", this.currentcall]);
+	};
+
+	InternalPC.prototype.addStream = function() {
+	};
+
+	InternalPC.prototype.negotiationNeeded = function() {
+	};
+
+	var InternalCall = function(webrtc) {
+		this.id = null;
+		this.webrtc = webrtc;
+		this.e = $({});
+		this.isinternal = true;
+		this.pc = new InternalPC(this);
+
+		this.mediaConstraints = $.extend(true, {}, this.webrtc.settings.mediaConstraints);
+	};
+
+	InternalCall.prototype.setInitiate = function(initiate) {
+	};
+
+	InternalCall.prototype.createPeerConnection = function(success_cb, error_cb) {
+		success_cb(this.pc);
+	};
+
+	InternalCall.prototype.close = function() {
+		this.pc.close();
+		this.e.triggerHandler("closed", [this]);
+	};
+
 	var WebRTC = function(api) {
 
 		this.api = api;
@@ -50,6 +89,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		this.currentcall = null;
 		this.currentconference = null;
+		this.currentroom = null;
 		this.msgQueue = [];
 
 		this.started = false;
@@ -116,7 +156,24 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		};
 
 		this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
+		this.api.e.bind("received.room", _.bind(this.receivedRoom, this));
+	};
 
+	WebRTC.prototype.receivedRoom = function(event, room) {
+		this.currentroom = room;
+		if (this.isConferenceRoom()) {
+			if (!this.usermedia) {
+				this.doUserMediaWithInternalCall();
+			}
+		} else {
+			if (this.currentcall && this.currentcall.isinternal) {
+				this.stop();
+			}
+		}
+	};
+
+	WebRTC.prototype.isConferenceRoom = function() {
+		return this.currentroom && this.currentroom.Type === roomTypeConference;
 	};
 
 	WebRTC.prototype.processReceived = function(event, to, data, type, to2, from) {
@@ -137,13 +194,18 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		if (!this.initiator && !this.started) {
 			switch (type) {
 				case "Offer":
-					if (this.currentcall) {
+					if (this.currentcall && !this.currentcall.isinternal) {
 						console.warn("Received Offer while not started and with current call -> busy.", from);
 						this.api.sendBye(from, "busy");
 						this.e.triggerHandler("busy", [from, to2, to]);
 						return;
 					}
 					this.msgQueue.unshift([to, data, type, to2, from]);
+					if (this.currentcall && this.currentcall.isinternal) {
+						// Internal getUM is currently in progress, defer
+						// evaluation of "Offer" until that is completed.
+						return;
+					}
 					// Create call.
 					this.currentcall = this.createCall(from, from, from);
 					// Delegate next steps to UI.
@@ -162,6 +224,15 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					this.doHangup("receivedbye", from);
 					// Delegate bye to UI.
 					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
+					break;
+				case "Conference":
+					// No existing call yet, only supported for server-managed
+					// conference.
+					if (!this.isConferenceRoom()) {
+						console.warn("Received Conference outside call for invalid room type.");
+						return;
+					}
+					this.processReceivedMessage(to, data, type, to2, from);
 					break;
 				default:
 					this.msgQueue.push([to, data, type, to2, from]);
@@ -218,7 +289,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	WebRTC.prototype.processReceivedMessage = function(to, data, type, to2, from) {
 
-		if (!this.started) {
+		if (!this.started && type !== "Conference") {
 			console.log('PeerConnection has not been created yet!');
 			return;
 		}
@@ -304,6 +375,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 					if (newcurrentcall && newcurrentcall != this.currentcall) {
 						this.currentcall = newcurrentcall;
 						this.e.triggerHandler("peercall", [newcurrentcall]);
+					} else if (!newcurrentcall) {
+						this.doHangup("receivedbye", targetcall.id);
 					}
 					if (this.currentconference && !this.currentconference.checkEmpty()) {
 						this.e.triggerHandler("peerconference", [this.currentconference]);
@@ -314,7 +387,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 				this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
 				break;
 			case "Conference":
-				if (!this.currentcall || data.indexOf(this.currentcall.id) === -1) {
+				if ((!this.currentcall || data.indexOf(this.currentcall.id) === -1) && !this.isConferenceRoom()) {
 					console.warn("Received Conference for unknown call -> ignore.", to, data);
 					return;
 				} else {
@@ -377,6 +450,16 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		return currentcall;
 
+	};
+
+	WebRTC.prototype.doUserMediaWithInternalCall = function() {
+		if (this.currentcall && !this.currentcall.isinternal) {
+			console.warn("Already have a current call, not doing internal getUM", this.currentcall);
+			return;
+		}
+		var currentcall = this.currentcall = new InternalCall(this);
+		this.e.triggerHandler("peercall", [currentcall]);
+		this.doUserMedia(currentcall);
 	};
 
 	WebRTC.prototype.doUserMedia = function(currentcall) {

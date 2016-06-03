@@ -28,6 +28,8 @@ define([
 
 	return ["$window", "$location", "$timeout", "$q", "$route", "$rootScope", "$http", "globalContext", "safeApply", "connector", "api", "restURL", "roompin", "appData", "alertify", "translation", "mediaStream", function($window, $location, $timeout, $q, $route, $rootScope, $http, globalContext, safeApply, connector, api, restURL, roompin, appData, alertify, translation, mediaStream) {
 
+		var body = $("body");
+
 		var url = restURL.api("rooms");
 		var requestedRoomName = "";
 		var priorRoomName = null;
@@ -109,11 +111,13 @@ define([
 			var priorRoom = currentRoom;
 			currentRoom = room;
 			if (priorRoom) {
+				body.removeClass("roomType" + priorRoom.Type);
 				priorRoomName = priorRoom.Name;
 				console.log("Left room", [priorRoom.Name]);
 				$rootScope.$broadcast("room.left", priorRoom.Name);
 			}
 			if (currentRoom) {
+				body.addClass("roomType" + currentRoom.Type);
 				console.log("Joined room", [currentRoom.Name]);
 				$rootScope.$broadcast("room.joined", currentRoom.Name);
 			}

@@ -68,11 +68,13 @@ func (client *Client) OnText(b buffercache.Buffer) {
 		return
 	}
 
-	if reply, err := client.ChannellingAPI.OnIncoming(client, client.session, incoming); err != nil {
+	var reply interface{}
+	if reply, err = client.ChannellingAPI.OnIncoming(client, client.session, incoming); err != nil {
 		client.reply(incoming.Iid, err)
 	} else if reply != nil {
 		client.reply(incoming.Iid, reply)
 	}
+	client.ChannellingAPI.OnIncomingProcessed(client, client.session, incoming, reply, err)
 }
 
 func (client *Client) reply(iid string, m interface{}) {
