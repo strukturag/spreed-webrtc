@@ -22,11 +22,14 @@ AUTOMAKE_OPTIONS = -Wno-portability
 ACLOCAL_AMFLAGS = -I m4
 
 EXENAME := spreed-webrtc-server
+GOPKG := github.com/strukturag/spreed-webrtc
+GOPATH := "$(CURDIR)/vendor:$(CURDIR)"
 
 CONFIG_FILE ?= spreed-webrtc-server.conf
 CONFIG_PATH ?= /etc
 GOBUILDFLAGS ?=
 GOTESTFLAGS ?=
+SYSTEM_GOPATH = /usr/share/gocode/src/
 
 BIN ?= @prefix@/sbin
 SHARE ?= @prefix@/share/spreed-webrtc-server
@@ -47,24 +50,26 @@ build: get binary assets
 gopath:
 	@echo GOPATH=$(GOPATH)
 
-if READONLY_VENDOR_GOPATH
-export GOPATH = $(DIST):$(CURDIR)
-get: $(DIST)
-	ln -sf $(VENDOR_GOPATH)/src -t $(DIST)
-else
-export GOPATH = $(VENDOR_GOPATH):$(CURDIR)
-get:
-endif
-	$(GO) get app/...
+goget:
+	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) go get github.com/rogpeppe/godeps; fi
+	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(CURDIR)/vendor/bin/godeps -u dependencies.tsv; fi
+	mkdir -p $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
+	rm -f $(CURDIR)/vendor/src/$(GOPKG)
+	ln -sfn $(PWD) $(CURDIR)/vendor/src/$(GOPKG)
 
-getupdate: vendorclean get
+get: goget
 
-gpm:
-	@if [ "$(GPM)" = "" ]; then echo "Command 'gpm' not found"; exit 1; fi
-	$(GPM) install
+gogetupdate: govendorclean goget
+
+dependencies.tsv:
+	set -e ;\
+	TMP=$$(mktemp -d) ;\
+	cp -r $(CURDIR)/vendor $$TMP ;\
+	GOPATH=$$TMP/vendor:$(CURDIR) $(CURDIR)/vendor/bin/godeps $(GOPKG)/src/app/spreed-webrtc-server ./go/... > $(CURDIR)/dependencies.tsv ;\
+	rm -rf $$TMP
 
 binary:
-	$(GO) build $(GOBUILDFLAGS) -o bin/$(EXENAME) -ldflags '$(LDFLAGS)' app/$(EXENAME)
+	GOPATH=$(GOPATH) $(GO) build $(GOBUILDFLAGS) -o bin/$(EXENAME) -ldflags '$(INTERNALLDFLAGS)' app/$(EXENAME)
 
 binaryrace: GOBUILDFLAGS := $(GOBUILDFLAGS) -race
 binaryrace: binary
@@ -72,16 +77,23 @@ binaryrace: binary
 binaryall: GOBUILDFLAGS := $(GOBUILDFLAGS) -a
 binaryall: binary
 
-fmt:
-	$(GO) fmt app/...
+gofmt:
+	GOPATH=$(GOPATH) $(GO) fmt app/... ./go/...
 
-test: get
-	$(GO) test $(GOTESTFLAGS) app/...
+fmt: gofmt
+
+test:
+	GOPATH=$(GOPATH) $(GO) test -v $(GOTESTFLAGS) app/... ./go/...
+
+dist_gopath: $(DIST_SRC)
+	find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
+		-exec ln -sf {} $(DIST_SRC) \;
+
 
 assets: javascript fonts
 
-releaseassets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
-releaseassets: assets
+release-assets: RJSFLAGS = generateSourceMaps=false preserveLicenseComments=true
+release-assets: assets
 
 fonts:
 	$(MKDIR_P) $(CURDIR)/static/fonts
@@ -119,14 +131,20 @@ extract-i18n:
 update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
-release: LDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
-release: OUTPUT = $(DIST_BIN)
-release: $(DIST_BIN) binary releaseassets
+release-binary: GOPATH = "$(DIST):$(CURDIR)/vendor:$(CURDIR)"
+release-binary: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
+release-binary: OUTPUT = $(DIST_BIN)
+release-binary: dist_gopath $(DIST_BIN) binary
 
-install:
+release: release-binary release-assets
+
+install-binary:
 	@echo "Installing binaries to: $(DESTDIR)$(BIN)"
-	@echo "Installing static resources to: $(DESTDIR)$(SHARE)"
 	$(INSTALL) -d $(DESTDIR)$(BIN)
+	$(INSTALL) bin/$(EXENAME) $(DESTDIR)$(BIN)
+
+install-assets:
+	@echo "Installing static resources to: $(DESTDIR)$(SHARE)"
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/html/sandboxes
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static
@@ -137,7 +155,6 @@ install:
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/css
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/sandboxes
-	$(INSTALL) bin/$(EXENAME) $(DESTDIR)$(BIN)
 	$(INSTALL) html/*.html $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) html/sandboxes/*.html $(DESTDIR)$(SHARE)/www/html/sandboxes
 	$(INSTALL) static/img/* $(DESTDIR)$(SHARE)/www/static/img
@@ -151,6 +168,8 @@ install:
 	$(INSTALL) -D static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs/webodf.js
 	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 
+install: install-binary install-assets
+
 clean:
 	$(GO) clean -i -r app/... 2>/dev/null || true
 	rm -rf $(CURDIR)/static/fonts
@@ -160,13 +179,13 @@ clean:
 distclean: clean
 	rm -rf $(DIST)
 
-vendorclean:
+govendorclean:
 	rm -rf vendor/*
 
-pristine: distclean vendorclean
+pristine: distclean govendorclean
 	rm -f server.conf
 
-$(DIST):
+$(DIST_SRC):
 	$(MKDIR_P) $@
 
 $(DIST_BIN):
@@ -181,4 +200,4 @@ tarball: distclean release install
 		cp server.conf.in $(TARPATH)/loader
 		tar czf $(DIST)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)_$(BUILD_OS)_$(BUILD_ARCH).tar.gz -C $(DIST) $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-.PHONY: clean distclean vendorclean pristine get getupdate build javascript fonts styles release releasetest dist_gopath install gopath binary binaryrace binaryall tarball assets
+.PHONY: clean distclean govendorclean pristine goget gogetupdate build javascript fonts styles release release-binary dist_gopath install install-binary install-assets gopath binary binaryrace binaryall tarball assets dependencies.tsv

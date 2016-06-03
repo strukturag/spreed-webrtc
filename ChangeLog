@@ -1,1 +1,3 @@
-See debian/changelog or https://github.com/strukturag/spreed-webrtc for further information.
+See CHANGELOG.md or https://github.com/strukturag/spreed-webrtc for further information.
+
+The changes are generated with git like `git log v0.24.12..HEAD --no-merges --format="  * %s"` and then manually formatted and added to CHANGELOG.md.

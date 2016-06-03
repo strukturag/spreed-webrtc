@@ -88,6 +88,8 @@ encryptionSecret = tne-default-encryption-block-key
 ; Whether a user account is required to create a room. This only has an effect
 ; if user accounts are enabled. Optional, defaults to false.
 ;authorizeRoomCreation = false
+; Wether the pipelines API should be enabled. Optional, defaults to false.
+;pipelinesEnabled = false
 ; Server token is a public random string which is used to enhance security of
 ; server generated security tokens. When the serverToken is changed all existing
 ; nonces become invalid. Use 32 or 64 characters (eg. 16 or 32 byte hex).
@@ -194,3 +196,15 @@ enabled = false
 ; enable userid creation/registration. Users are created according the settings
 ; of the currently configured mode (see above).
 ;allowRegistration = false
+
+[nats]
+; Set to true, to enable triggering channelling events via NATS
+;channelling_trigger = false
+;channelling_trigger_subject = channelling.trigger
+; NATS server URL
+;url = nats://127.0.0.1:4222
+; NATS connect establish timeout in seconds
+;establishTimeout = 60
+; Use client_id to distinguish between multipe servers. The value is sent
+; together with every NATS request. Defaults to empty.
+;client_id =

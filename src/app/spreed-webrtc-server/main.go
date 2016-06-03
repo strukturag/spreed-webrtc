@@ -22,197 +22,40 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/strukturag/goacceptlanguageparser"
-	"github.com/strukturag/httputils"
-	"github.com/strukturag/phoenix"
-	"github.com/strukturag/sloth"
 	"html/template"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	goruntime "runtime"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/strukturag/spreed-webrtc/go/channelling"
+	"github.com/strukturag/spreed-webrtc/go/channelling/api"
+	"github.com/strukturag/spreed-webrtc/go/channelling/server"
+	"github.com/strukturag/spreed-webrtc/go/natsconnection"
+
+	"github.com/gorilla/mux"
+	"github.com/strukturag/httputils"
+	"github.com/strukturag/phoenix"
+	"github.com/strukturag/sloth"
 )
 
 var version = "unreleased"
 var defaultConfig = "./server.conf"
 
 var templates *template.Template
-var config *Config
-
-// Helper to retrieve languages from request.
-func getRequestLanguages(r *http.Request, supportedLanguages []string) []string {
-
-	acceptLanguageHeader, ok := r.Header["Accept-Language"]
-	var langs []string
-	if ok {
-		langs = goacceptlanguageparser.ParseAcceptLanguage(acceptLanguageHeader[0], supportedLanguages)
-	}
-	return langs
-
-}
-
-func mainHandler(w http.ResponseWriter, r *http.Request) {
-
-	handleRoomView("", w, r)
-
-}
-
-func roomHandler(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	handleRoomView(vars["room"], w, r)
-
-}
-
-func sandboxHandler(w http.ResponseWriter, r *http.Request) {
-
-	vars := mux.Vars(r)
-	// NOTE(longsleep): origin_scheme is window.location.protocol (eg. https:, http:).
-	originURL, err := url.Parse(fmt.Sprintf("%s//%s", vars["origin_scheme"], vars["origin_host"]))
-	if err != nil || originURL.Scheme == "" || originURL.Host == "" {
-		http.Error(w, "Invalid origin path", http.StatusBadRequest)
-		return
-	}
-	origin := fmt.Sprintf("%s://%s", originURL.Scheme, originURL.Host)
-	handleSandboxView(vars["sandbox"], origin, w, r)
-
-}
-
-func makeImageHandler(buddyImages ImageCache, expires time.Duration) http.HandlerFunc {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		vars := mux.Vars(r)
-		image := buddyImages.Get(vars["imageid"])
-		if image == nil {
-			http.Error(w, "Unknown image", http.StatusNotFound)
-			return
-		}
-
-		w.Header().Set("Content-Type", image.mimetype)
-		w.Header().Set("ETag", image.lastChangeId)
-		age := time.Now().Sub(image.lastChange)
-		if age >= time.Second {
-			w.Header().Set("Age", strconv.Itoa(int(age.Seconds())))
-		}
-		if expires >= time.Second {
-			w.Header().Set("Expires", time.Now().Add(expires).Format(time.RFC1123))
-			w.Header().Set("Cache-Control", "public, no-transform, max-age="+strconv.Itoa(int(expires.Seconds())))
-		}
-		http.ServeContent(w, r, "", image.lastChange, bytes.NewReader(image.data))
-	}
-
-}
-
-func handleRoomView(room string, w http.ResponseWriter, r *http.Request) {
-
-	var err error
-
-	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
-	w.Header().Set("Expires", "-1")
-	w.Header().Set("Cache-Control", "private, max-age=0")
-
-	csp := false
-
-	if config.contentSecurityPolicy != "" {
-		w.Header().Set("Content-Security-Policy", config.contentSecurityPolicy)
-		csp = true
-	}
-	if config.contentSecurityPolicyReportOnly != "" {
-		w.Header().Set("Content-Security-Policy-Report-Only", config.contentSecurityPolicyReportOnly)
-		csp = true
-	}
-
-	scheme := "http"
-
-	// Detect if the request was made with SSL.
-	ssl := r.TLS != nil
-	proto, ok := r.Header["X-Forwarded-Proto"]
-	if ok {
-		ssl = proto[0] == "https"
-		scheme = "https"
-	}
-
-	// Get languages from request.
-	langs := getRequestLanguages(r, []string{})
-	if len(langs) == 0 {
-		langs = append(langs, "en")
-	}
-
-	// Prepare context to deliver to HTML..
-	context := &Context{Cfg: config, App: "main", Host: r.Host, Scheme: scheme, Ssl: ssl, Csp: csp, Languages: langs, Room: room}
-
-	// Get URL parameters.
-	r.ParseForm()
-
-	// Check if incoming request is a crawler which supports AJAX crawling.
-	// See https://developers.google.com/webmasters/ajax-crawling/docs/getting-started for details.
-	if _, ok := r.Form["_escaped_fragment_"]; ok {
-		// Render crawlerPage template..
-		err = templates.ExecuteTemplate(w, "crawlerPage", &context)
-	} else {
-		// Render mainPage template.
-		err = templates.ExecuteTemplate(w, "mainPage", &context)
-	}
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-}
-
-func handleSandboxView(sandbox string, origin string, w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
-	w.Header().Set("Expires", "-1")
-	w.Header().Set("Cache-Control", "private, max-age=0")
-
-	sandboxTemplateName := fmt.Sprintf("%s_sandbox.html", sandbox)
-
-	// Prepare context to deliver to HTML..
-	if t := templates.Lookup(sandboxTemplateName); t != nil {
-
-		// CSP support for sandboxes.
-		var csp string
-		switch sandbox {
-		case "odfcanvas":
-			csp = fmt.Sprintf("default-src 'none'; script-src %s; img-src data: blob:; style-src 'unsafe-inline'", origin)
-		case "pdfcanvas":
-			csp = fmt.Sprintf("default-src 'none'; script-src %s 'unsafe-eval'; img-src 'self' data: blob:; style-src 'unsafe-inline'", origin)
-		default:
-			csp = "default-src 'none'"
-		}
-		w.Header().Set("Content-Security-Policy", csp)
-
-		// Prepare context to deliver to HTML..
-		context := &Context{Cfg: config, Origin: origin, Csp: true}
-		err := t.Execute(w, &context)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-	} else {
-		http.Error(w, "404 Unknown Sandbox", http.StatusNotFound)
-	}
-
-}
+var config *channelling.Config
 
 func runner(runtime phoenix.Runtime) error {
-
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
 	rootFolder, err := runtime.GetString("http", "root")
@@ -243,6 +86,11 @@ func runner(runtime phoenix.Runtime) error {
 		go func() {
 			log.Println(http.ListenAndServe(pprofListen, nil))
 		}()
+	}
+
+	pipelinesEnabled, err := runtime.GetBool("app", "pipelinesEnabled")
+	if err != nil {
+		pipelinesEnabled = false
 	}
 
 	var sessionSecret []byte
@@ -300,14 +148,29 @@ func runner(runtime phoenix.Runtime) error {
 		}
 	}
 
-	var tokenProvider TokenProvider
+	var tokenProvider channelling.TokenProvider
 	if tokenFile != "" {
 		log.Printf("Using token authorization from %s\n", tokenFile)
-		tokenProvider = TokenFileProvider(tokenFile)
+		tokenProvider = channelling.TokenFileProvider(tokenFile)
 	}
 
+	// Nats pub/sub supports.
+	natsChannellingTrigger, _ := runtime.GetBool("nats", "channelling_trigger")
+	natsChannellingTriggerSubject, _ := runtime.GetString("nats", "channelling_trigger_subject")
+	if natsURL, err := runtime.GetString("nats", "url"); err == nil {
+		if natsURL != "" {
+			natsconnection.DefaultURL = natsURL
+		}
+	}
+	if natsEstablishTimeout, err := runtime.GetInt("nats", "establishTimeout"); err == nil {
+		if natsEstablishTimeout != 0 {
+			natsconnection.DefaultEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
+		}
+	}
+	natsClientId, _ := runtime.GetString("nats", "client_id")
+
 	// Load remaining configuration items.
-	config = NewConfig(runtime, tokenProvider != nil)
+	config = server.NewConfig(runtime, tokenProvider != nil)
 
 	// Load templates.
 	templates = template.New("")
@@ -400,14 +263,23 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Prepare services.
-	buddyImages := NewImageCache()
-	codec := NewCodec(incomingCodecLimit)
-	roomManager := NewRoomManager(config, codec)
-	hub := NewHub(config, sessionSecret, encryptionSecret, turnSecret, codec)
-	tickets := NewTickets(sessionSecret, encryptionSecret, computedRealm)
-	sessionManager := NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
-	statsManager := NewStatsManager(hub, roomManager, sessionManager)
-	channellingAPI := NewChannellingAPI(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub)
+	apiConsumer := channelling.NewChannellingAPIConsumer()
+	buddyImages := channelling.NewImageCache()
+	codec := channelling.NewCodec(incomingCodecLimit)
+	roomManager := channelling.NewRoomManager(config, codec)
+	hub := channelling.NewHub(config, sessionSecret, encryptionSecret, turnSecret, codec)
+	tickets := channelling.NewTickets(sessionSecret, encryptionSecret, computedRealm)
+	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
+	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
+	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
+	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
+
+	// Create API.
+	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
+	apiConsumer.SetChannellingAPI(channellingAPI)
+
+	// Start bus.
+	busManager.Start()
 
 	// Add handlers.
 	r.HandleFunc("/", httputils.MakeGzipHandler(mainHandler))
@@ -415,31 +287,35 @@ func runner(runtime phoenix.Runtime) error {
 	r.Handle("/static/{path:.*}", http.StripPrefix(config.B, httputils.FileStaticServer(http.Dir(rootFolder))))
 	r.Handle("/robots.txt", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static")))))
 	r.Handle("/favicon.ico", http.StripPrefix(config.B, http.FileServer(http.Dir(path.Join(rootFolder, "static", "img")))))
-	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI))
-
-	// Simple room handler.
-	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
+	r.HandleFunc("/.well-known/spreed-configuration", wellKnownHandler)
 
 	// Sandbox handler.
 	r.HandleFunc("/sandbox/{origin_scheme}/{origin_host}/{sandbox}.html", httputils.MakeGzipHandler(sandboxHandler))
 
-	// Add API end points.
-	api := sloth.NewAPI()
-	api.SetMux(r.PathPrefix("/api/v1/").Subrouter())
-	api.AddResource(&Rooms{}, "/rooms")
-	api.AddResource(config, "/config")
-	api.AddResourceWithWrapper(&Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+	// Add RESTful API end points.
+	rest := sloth.NewAPI()
+	rest.SetMux(r.PathPrefix("/api/v1/").Subrouter())
+	rest.AddResource(&server.Rooms{}, "/rooms")
+	rest.AddResource(config, "/config")
+	rest.AddResourceWithWrapper(&server.Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
+
+	var users *server.Users
 	if config.UsersEnabled {
 		// Create Users handler.
-		users := NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
-		api.AddResource(&Sessions{tickets, hub, users}, "/sessions/{id}/")
+		users = server.NewUsers(hub, tickets, sessionManager, config.UsersMode, serverRealm, runtime)
+		rest.AddResource(&server.Sessions{tickets, hub, users}, "/sessions/{id}/")
 		if config.UsersAllowRegistration {
-			api.AddResource(users, "/users")
+			rest.AddResource(users, "/users")
 		}
 	}
 	if statsEnabled {
-		api.AddResourceWithWrapper(&Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
+		rest.AddResourceWithWrapper(&server.Stats{statsManager}, httputils.MakeGzipHandler, "/stats")
 		log.Println("Stats are enabled!")
+	}
+	if pipelinesEnabled {
+		pipelineManager.Start()
+		rest.AddResource(&server.Pipelines{pipelineManager, channellingAPI}, "/pipelines/{id}")
+		log.Println("Pipelines API is enabled!")
 	}
 
 	// Add extra/static support if configured and exists.
@@ -451,6 +327,12 @@ func runner(runtime phoenix.Runtime) error {
 		}
 	}
 
+	// Finally add websocket handler.
+	r.Handle("/ws", makeWSHandler(statsManager, sessionManager, codec, channellingAPI, users))
+
+	// Simple room handler.
+	r.HandleFunc("/{room}", httputils.MakeGzipHandler(roomHandler))
+
 	// Map everything else to a room when it is a GET.
 	rooms := r.PathPrefix("/").Methods("GET").Subrouter()
 	rooms.HandleFunc("/{room:.*}", httputils.MakeGzipHandler(roomHandler))
@@ -459,7 +341,9 @@ func runner(runtime phoenix.Runtime) error {
 }
 
 func boot() error {
+	defaultConfigPath := flag.String("dc", "", "Default configuration file.")
 	configPath := flag.String("c", defaultConfig, "Configuration file.")
+	overrideConfigPath := flag.String("oc", "", "Override configuration file.")
 	logPath := flag.String("l", "", "Log file, defaults to stderr.")
 	showVersion := flag.Bool("v", false, "Display version number and exit.")
 	memprofile := flag.String("memprofile", "", "Write memory profile to this file.")
@@ -476,7 +360,9 @@ func boot() error {
 	}
 
 	return phoenix.NewServer("server", version).
+		DefaultConfig(defaultConfigPath).
 		Config(configPath).
+		OverrideConfig(overrideConfigPath).
 		Log(logPath).
 		CpuProfile(cpuprofile).
 		MemProfile(memprofile).
