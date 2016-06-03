@@ -1,3 +1,10 @@
+## 0.26.0
+
+  * Remove go-tip from travis until it works again.
+  * Update Dockerfile to Xenial base and install pinned Go dependencies (fixes #278).
+  * Update README.md
+
+
 ## 0.25.5
 
   * Improve misleading log when pipelines API is enabled.
