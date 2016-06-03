@@ -42,6 +42,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		console.log("This seems to be Android");
 	}
 
+	var roomTypeConference = "Conference";
+
 	var InternalPC = function(call) {
 		this.currentcall = call;
 		this.isinternal = true;
@@ -171,7 +173,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 	};
 
 	WebRTC.prototype.isConferenceRoom = function() {
-		return this.currentroom && this.currentroom.Type === "Conference";
+		return this.currentroom && this.currentroom.Type === roomTypeConference;
 	};
 
 	WebRTC.prototype.processReceived = function(event, to, data, type, to2, from) {
