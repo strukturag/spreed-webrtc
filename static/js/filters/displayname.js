@@ -31,7 +31,7 @@ define([], function() {
 		var user_text = translation._("User");
 		var someone_text = translation._("Someone");
 		var me_text = translation._("Me");
-		return function(id, me_ok) {
+		var filter = function(id, me_ok) {
 			if (id === group_chat_id) {
 				return "";
 			}
@@ -62,6 +62,10 @@ define([], function() {
 				return someone;
 			}
 		};
+		// TODO(evan) Improve filter to reduce need for constant calling as name may change but id didn't.
+		// https://github.com/angular/angular.js/commit/fca6be71274e537c7df86ae9e27a3bd1597e9ffa
+		filter.$stateful = true;
+		return filter;
 	}];
 
 });

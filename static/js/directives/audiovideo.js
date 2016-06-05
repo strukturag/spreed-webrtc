@@ -28,7 +28,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var streams = {};
+			var streams = this.streams = {};
 			var calls = {};
 
 			$scope.container = $element[0];
@@ -369,10 +369,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				}
 
 			});
-
-			return {
-				streams: streams
-			};
 
 		}];
 
