@@ -44,19 +44,12 @@
           <div class="form-group profile-yourid">
             <label class="col-xs-4 control-label">{{_('Your ID')}}</label>
             <div ng-switch="withUsersMode">
-              <form ng-switch-when="certificate" class="col-xs-8" target="users_registration_certificate_iframe">
-                <div ng-if="!userid">
-                  <keygen class="hidden" name="pubkey"/>
-                  <label ng-if="!userid && withUsersRegistration && usersettings.registerUserid">
-                    <button class="btn btn-small btn-primary" ng-click="usersettings.registerUserid($event)">{{_('Register')}}</button>
-                  </label>
-                  <iframe class="hidden" name="users_registration_certificate_iframe"></iframe>
-                </div>
+              <div ng-switch-when="certificate" class="col-xs-8">
                 <div ng-if="userid">
                   <p class="form-control-static well well-sm">{{userid|displayUserid}}</p>
                   <p class-"help-block">{{_('Authenticated by certificate. To log out you have to remove your certificate from the browser.')}}</p>
                 </div>
-              </form>
+              </div>
               <div ng-switch-default class="col-xs-8">
                 <div ng-if="!userid && withUsersRegistration">
                   <label ng-if="usersettings.loginUserid">

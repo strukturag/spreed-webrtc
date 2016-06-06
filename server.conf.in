@@ -154,9 +154,7 @@ enabled = false
 ;   The userid is provided as CommonName with a certificate provided with TLS
 ;   client authentication. When you use this with a front end proxy for TLS
 ;   termination, that proxy has to validate the certificate and inject certain
-;   headers into the proxy connection. In certificate mode the server can act as
-;   a signing CA to sign incoming user certificate requests with a private key
-;   when allowRegistration is true. While certificate mode offers the highest
+;   headers into the proxy connection. While certificate mode offers the highest
 ;   security it is currently considered experimental and the user experience
 ;   varies between browsers and platforms.
 ;mode = sharedsecret
