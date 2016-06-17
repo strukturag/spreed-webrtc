@@ -56,6 +56,13 @@ define(['underscore', 'text!partials/buddylist.html'], function(_, template) {
 				$scope.$apply(updateBuddyListVisibility);
 			});
 
+			$scope.$watch("peer", function() {
+				if ($scope.peer) {
+					// Also reset the buddylist if the peer is cleared after the "done" event.
+					updateBuddyListVisibility();
+				}
+			});
+
 			$scope.$on("room.joined", function(ev) {
 				inRoom = true;
 				updateBuddyListVisibility();

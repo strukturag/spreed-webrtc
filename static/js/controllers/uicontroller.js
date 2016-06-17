@@ -206,10 +206,11 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		$scope.updatePeerFromConference = function() {
 			if (!$scope.conferenceObject) {
+				$scope.conferencePeers.length = 0;
 				return;
 			}
 
-			var peerIds = $scope.conferenceObject.peerIds();
+			var peerIds = $scope.conferenceObject.getCallIds();
 			if ($scope.peer && peerIds.indexOf($scope.peer) === -1) {
 				$scope.peer = null;
 			}
@@ -229,7 +230,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				return;
 			}
 
-			if ($scope.conference) {
+			if ($scope.conference || $scope.isConferenceRoom()) {
 				$scope.setStatus("conference");
 			} else {
 				$scope.setStatus("connected");
@@ -473,7 +474,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			$timeout.cancel(pickupTimeout);
 			pickupTimeout = null;
 			// Kill ringer.
-			if (peercall && peercall.from === null) {
+			if (peercall && peercall.isOutgoing()) {
 				dialerEnabled = true;
 			} else {
 				dialerEnabled = false;
@@ -485,7 +486,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 			// Apply peer call to scope.
 			safeApply($scope, function(scope) {
-				// NOTE: the internal call will have a "id" of "null".
 				scope.peer = peercall ? peercall.id : null;
 				scope.setConnectedStatus();
 			});
@@ -497,20 +497,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				scope.conferenceObject = peerconference ? peerconference : null;
 				scope.updatePeerFromConference();
 				scope.setConnectedStatus();
-				if (!peerconference) {
-					scope.peer = null;
-					if (scope.usermedia) {
-						$timeout(function() {
-							scope.usermedia = null;
-							mediaStream.webrtc.stop();
-							if (mediaStream.webrtc.isConferenceRoom()) {
-								mediaStream.webrtc.doUserMediaWithInternalCall();
-							}
-							$scope.layout.buddylist = true;
-							$scope.layout.buddylistAutoHide = false;
-						}, 0);
-					}
-				}
 			});
 		});
 
@@ -520,7 +506,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			});
 			if ($scope.updateAutoAccept(null, from)) {
 				// Auto accept support.
-				mediaStream.webrtc.doAccept();
+				mediaStream.webrtc.doAccept(from);
 				return;
 			}
 			// Start to ring.
@@ -533,7 +519,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			// Start accept timeout.
 			pickupTimeout = $timeout(function() {
 				console.log("Pickup timeout reached.");
-				mediaStream.webrtc.doHangup("pickuptimeout");
+				mediaStream.webrtc.doHangup("pickuptimeout", from);
 				$scope.$emit("notification", "incomingpickuptimeout", {
 					reason: 'pickuptimeout',
 					from: from
@@ -631,10 +617,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		mediaStream.webrtc.e.on("waitforusermedia connecting", function(event, currentcall) {
 			var t = event.type;
-			if (currentcall && currentcall.isinternal && t === "connecting") {
-				// Don't show "Calling Someone" for the internal call.
-				return;
-			}
 			safeApply($scope, function(scope) {
 				scope.dialing = currentcall ? currentcall.id : null;
 				scope.setStatus(t);

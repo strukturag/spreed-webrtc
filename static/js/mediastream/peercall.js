@@ -38,6 +38,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		this.offerOptions = $.extend(true, {}, this.webrtc.settings.offerOptions);
 
 		this.peerconnection = null;
+		this.pendingCandidates = [];
 		this.datachannels = {};
 		this.streams = {};
 
@@ -45,6 +46,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		this.initiate = false;
 		this.closed = false;
 
+	};
+
+	PeerCall.prototype.isOutgoing = function() {
+		return !!this.from;
 	};
 
 	PeerCall.prototype.setInitiate = function(initiate) {
@@ -74,6 +79,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 			// TODO(longsleep): Check if this can happen?
 			error_cb(peerconnection);
 		}
+		while (this.pendingCandidates.length > 0) {
+			var candidate = this.pendingCandidates.shift();
+			this.addIceCandidate(candidate);
+		}
 		return peerconnection;
 
 	};
@@ -95,6 +104,12 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	};
 
 	PeerCall.prototype.onCreateAnswerOffer = function(cb, sessionDescription) {
+
+		if (sessionDescription.type === "answer") {
+			// We processed the incoming Offer by creating an answer, so it's safe
+			// to create own Offers to perform renegotiation.
+			this.peerconnection.setReadyForRenegotiation(true);
+		}
 
 		this.setLocalSdp(sessionDescription);
 
@@ -130,6 +145,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 		console.error("Failed to create answer/offer", event);
 
+		// Even though the Offer/Answer could not be created, we now allow
+		// to create own Offers to perform renegotiation again.
+		this.peerconnection.setReadyForRenegotiation(true);
+
 	};
 
 	PeerCall.prototype.setRemoteDescription = function(sessionDescription, cb) {
@@ -141,6 +160,12 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 		}
 
 		this.setRemoteSdp(sessionDescription);
+
+		if (sessionDescription.type === "offer") {
+			// Prevent creation of Offer messages to renegotiate streams while the
+			// remote Offer is being processed.
+			peerconnection.setReadyForRenegotiation(false);
+		}
 
 		peerconnection.setRemoteDescription(sessionDescription, _.bind(function() {
 			console.log("Set remote session description.", sessionDescription, this);
@@ -255,6 +280,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	};
 
 	PeerCall.prototype.onNegotiationNeeded = function() {
+		if (!this.peerconnection.readyForRenegotiation) {
+			console.log("PeerConnection is not ready for renegotiation yet", this);
+			return;
+		}
 
 		if (!this.negotiationNeeded) {
 			this.negotiationNeeded = true;
@@ -268,6 +297,10 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 
 		if (this.closed) {
 			// Avoid errors when still receiving candidates but closed.
+			return;
+		}
+		if (!this.peerconnection) {
+			this.pendingCandidates.push(candidate);
 			return;
 		}
 		this.peerconnection.addIceCandidate(candidate, function() {
