@@ -154,6 +154,7 @@ func (s *Session) JoinRoom(roomName, roomType string, credentials *DataRoomCrede
 				Userid: s.userid,
 				Ua:     s.Ua,
 				Prio:   s.Prio,
+				Status: s.Status,
 			},
 		})
 	} else {
