@@ -638,8 +638,11 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 					$scope.setConnectedStatus();
 					break;
 				case "failed":
+					var wasConnected = !currentcall.closed;
 					mediaStream.webrtc.doHangup("failed", currentcall.id);
-					alertify.dialog.alert(translation._("Peer connection failed. Check your settings."));
+					if (!wasConnected) {
+						alertify.dialog.alert(translation._("Peer connection failed. Check your settings."));
+					}
 					break;
 			}
 		});
