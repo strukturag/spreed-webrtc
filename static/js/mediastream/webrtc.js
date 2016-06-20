@@ -95,6 +95,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		this.msgQueues = {};
 		this.usermediaReady = false;
 		this.pendingMediaCalls = [];
+		this.pendingMessages = [];
 
 		this.usermedia = null;
 		this.audioMute = false;
@@ -174,6 +175,16 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 		if (this.isConferenceRoom()) {
 			// Switching from a conference room closes all current connections.
+			this.leavingConference = true;
+			this.e.one("stop", _.bind(function() {
+				_.defer(_.bind(function() {
+					this.leavingConference = false;
+					while (this.pendingMessages.length) {
+						var args = this.pendingMessages.shift();
+						this.processReceivedMessage.apply(this, args);
+					}
+				}, this));
+			}, this));
 			_.defer(_.bind(function() {
 				this.doHangup();
 			}, this));
@@ -217,6 +228,13 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			delete data._id;
 			// TODO(longsleep): Check if that really needs to be in another file.
 			tokens.processReceivedMessage(this, token, id, to, data, type, to2, from);
+			return;
+		}
+
+		if (this.leavingConference) {
+			// Defer evaluating of messages until the previous conference room
+			// has been left.
+			this.pendingMessages.push([to, data, type, to2, from]);
 			return;
 		}
 
