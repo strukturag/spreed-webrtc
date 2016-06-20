@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"log"
 	"sync"
+
+	"github.com/nats-io/nats"
 )
 
 type RoomStatusManager interface {
@@ -48,15 +50,24 @@ type RoomManager interface {
 	RoomStatusManager
 	Broadcaster
 	RoomStats
+	SetBusManager(bus BusManager) error
 }
 
 type roomManager struct {
 	sync.RWMutex
 	*Config
 	OutgoingEncoder
-	roomTable     map[string]RoomWorker
-	globalRoomID  string
-	defaultRoomID string
+	BusManager
+	roomTypeSubscription *nats.Subscription
+	roomTable            map[string]RoomWorker
+	roomTypes            map[string]string
+	globalRoomID         string
+	defaultRoomID        string
+}
+
+type roomTypeMessage struct {
+	Path string `json:"path"`
+	Type string `json:"type"`
 }
 
 func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
@@ -65,12 +76,43 @@ func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 		Config:          config,
 		OutgoingEncoder: encoder,
 		roomTable:       make(map[string]RoomWorker),
+		roomTypes:       make(map[string]string),
 	}
 	if config.GlobalRoomID != "" {
 		rm.globalRoomID = rm.MakeRoomID(config.GlobalRoomID, "")
 	}
 	rm.defaultRoomID = rm.MakeRoomID("", "")
 	return rm
+}
+
+func (rooms *roomManager) SetBusManager(BusManager BusManager) error {
+	if rooms.roomTypeSubscription != nil {
+		rooms.roomTypeSubscription.Unsubscribe()
+		rooms.roomTypeSubscription = nil
+	}
+	rooms.BusManager = BusManager
+	if rooms.BusManager != nil {
+		sub, err := rooms.Subscribe("channelling.config.roomtype", rooms.setNatsRoomType)
+		if err != nil {
+			return err
+		}
+		rooms.roomTypeSubscription = sub
+	}
+	return nil
+}
+
+func (rooms *roomManager) setNatsRoomType(msg *roomTypeMessage) {
+	if msg == nil {
+		return
+	}
+
+	if msg.Type != "" {
+		log.Printf("Setting room type for %s to %s\n", msg.Path, msg.Type)
+		rooms.roomTypes[msg.Path] = msg.Type
+	} else {
+		log.Printf("Clearing room type for %s\n", msg.Path)
+		delete(rooms.roomTypes, msg.Path)
+	}
 }
 
 func (rooms *roomManager) RoomUsers(session *Session) []*DataSession {
@@ -226,6 +268,11 @@ func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
 }
 
 func (rooms *roomManager) getConfiguredRoomType(roomName string) string {
+	if roomType, found := rooms.roomTypes[roomName]; found {
+		// Type of this room was overwritten through NATS.
+		return roomType
+	}
+
 	for re, roomType := range rooms.RoomTypes {
 		if re.MatchString(roomName) {
 			return roomType

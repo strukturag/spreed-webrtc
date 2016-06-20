@@ -276,6 +276,9 @@ func runner(runtime phoenix.Runtime) error {
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
 	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
 	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
+	if err := roomManager.SetBusManager(busManager); err != nil {
+		return err
+	}
 
 	// Create API.
 	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
