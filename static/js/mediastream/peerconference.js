@@ -36,6 +36,9 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		this.callsCount = 0;
 		this.callStates = {};
 		this.connectedCalls = {};
+		// Ids of calls that "seem" to be disconnected (i.e. had a p2p state
+		// change of "disconnected" without a "Bye").
+		this.disconnectedCalls = {};
 		this.conferenceMode = false;
 
 		this.e = $({});
@@ -70,9 +73,13 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 	};
 
 	PeerConference.prototype._addCallWithState = function(id, call, state) {
-		if (this.calls.hasOwnProperty(id)) {
-			console.warn("Already has a call for", id);
-			return false;
+		var oldcall = this.calls[id];
+		if (oldcall) {
+			if (!this.disconnectedCalls[id]) {
+				console.warn("Already has a call for", id);
+				return false;
+			}
+			oldcall.close();  // This will remove the call from the conference.
 		}
 
 		this.calls[id] = call;
@@ -101,6 +108,9 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 	};
 
 	PeerConference.prototype.getCall = function(id) {
+		if (this.disconnectedCalls[id]) {
+			return null;
+		}
 		return this.calls[id] || null;
 	};
 
@@ -121,8 +131,21 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 		delete this.calls[id];
 		delete this.callStates[id];
 		delete this.connectedCalls[id];
+		delete this.disconnectedCalls[id];
 		this.callsCount -= 1;
 		return call;
+	};
+
+	PeerConference.prototype.markDisconnected = function(id) {
+		this.disconnectedCalls[id] = true;
+	};
+
+	PeerConference.prototype.isDisconnected = function(id) {
+		return this.disconnectedCalls[id] || false;
+	};
+
+	PeerConference.prototype.getDisconnectedIds = function(id) {
+		return _.keys(this.disconnectedCalls);
 	};
 
 	PeerConference.prototype.close = function() {
@@ -161,13 +184,18 @@ define(['jquery', 'underscore', 'mediastream/peercall'], function($, _, PeerCall
 
 	};
 
-	PeerConference.prototype.pushUpdate = function() {
+	PeerConference.prototype.pushUpdate = function(forceAll) {
 		if (this.webrtc.isConferenceRoom()) {
 			// Conference is managed on the server.
 			return;
 		}
 
 		var ids = _.keys(this.connectedCalls);
+		if (forceAll) {
+			// Include "disconnected" calls to try to recover from a previous
+			// lost connection.
+			ids = _.union(ids, this.getDisconnectedIds());
+		}
 		if (ids.length > 1) {
 			ids.push(this.webrtc.api.id);
 			console.log("Calls in conference:", ids);

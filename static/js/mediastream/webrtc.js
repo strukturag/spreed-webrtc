@@ -95,6 +95,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		this.msgQueues = {};
 		this.usermediaReady = false;
 		this.pendingMediaCalls = [];
+		this.pendingMessages = [];
 
 		this.usermedia = null;
 		this.audioMute = false;
@@ -161,8 +162,29 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 	};
 
 	WebRTC.prototype.receivedRoom = function(event, room) {
+		if (this.currentroom && room && this.currentroom.Name == room.Name) {
+			// No room change, usually happens on reconnect.
+			var ids = this.conference.getDisconnectedIds();
+			if (ids.length > 1 && this.conference.id) {
+				// User was in a conference before, try to re-establish.
+				console.log("Re-establishing conference", this.conference.id, ids);
+				this.conference.pushUpdate(true);
+			}
+			return;
+		}
+
 		if (this.isConferenceRoom()) {
 			// Switching from a conference room closes all current connections.
+			this.leavingConference = true;
+			this.e.one("stop", _.bind(function() {
+				_.defer(_.bind(function() {
+					this.leavingConference = false;
+					while (this.pendingMessages.length) {
+						var args = this.pendingMessages.shift();
+						this.processReceivedMessage.apply(this, args);
+					}
+				}, this));
+			}, this));
 			_.defer(_.bind(function() {
 				this.doHangup();
 			}, this));
@@ -206,6 +228,13 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			delete data._id;
 			// TODO(longsleep): Check if that really needs to be in another file.
 			tokens.processReceivedMessage(this, token, id, to, data, type, to2, from);
+			return;
+		}
+
+		if (this.leavingConference) {
+			// Defer evaluating of messages until the previous conference room
+			// has been left.
+			this.pendingMessages.push([to, data, type, to2, from]);
 			return;
 		}
 
@@ -288,7 +317,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			// Clean own internal data before feeding into browser.
 			delete data._conference;
 			autoaccept = true;
-		} else if (this.conference.hasCalls()) {
+		} else if (this.conference.hasCalls() && !this.conference.isDisconnected(from)) {
 			// TODO(fancycode): support joining callers to currently active conference.
 			console.warn("Received Offer while already in a call -> busy.", from);
 			this.api.sendBye(from, "busy");
@@ -360,8 +389,11 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			console.warn("Received Conference for unknown call -> ignore.", to, data);
 			return;
 		} else if (ids.length == 1) {
-			// Peer-to-peer call will be upgraded to conference.
-			if (data.indexOf(ids[0]) === -1) {
+			// Peer-to-peer call will be upgraded to conference. Only is allowed
+			// if currently active call is in the list of conference participants
+			// and the "Conference" is received from him. Upgrading is always
+			// allowed for server-managed conference rooms.
+			if ((from !== ids[0] || data.indexOf(ids[0]) === -1) && !this.isConferenceRoom()) {
 				console.warn("Received Conference for unknown call -> ignore.", to, data);
 				return;
 			}
@@ -449,6 +481,14 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		}, this));
 		call.e.on("closed", _.bind(function() {
 			this.conference.removeCall(id);
+		}, this));
+		call.e.on("connectionStateChange", _.bind(function(event, state, currentcall) {
+			switch (state) {
+			case "disconnected":
+			case "failed":
+				this.conference.markDisconnected(currentcall.id);
+				break;
+			}
 		}, this));
 		return call;
 	};
@@ -755,6 +795,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			}, this));
 			this.stop();
 		} else if (calls.length === 1) {
+			// Downgraded to peer-to-peer again.
+			this.conference.id = null;
 			this.e.triggerHandler("peerconference", [null]);
 			this.e.triggerHandler("peercall", [calls[0]]);
 		}

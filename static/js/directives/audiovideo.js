@@ -354,7 +354,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			mediaStream.webrtc.e.on("statechange", function(event, iceConnectionState, currentcall) {
 
-				if (!$scope.haveStreams) {
+				if (!$scope.haveStreams || currentcall.closed) {
 					return;
 				}
 
