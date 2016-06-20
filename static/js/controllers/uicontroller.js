@@ -588,10 +588,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		};
 
-		$scope.$on("room.joined", function(ev) {
-			$scope.updateStatus(true);
-		});
-
 		mediaStream.connector.e.on("open error close", function(event) {
 			$timeout.cancel(ttlTimeout);
 			$scope.userid = $scope.suserid = null;
