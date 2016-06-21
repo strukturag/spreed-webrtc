@@ -100,3 +100,19 @@ func Test_RoomManager_UpdateRoom_ReturnsACorrectlyTypedDocument(t *testing.T) {
 		t.Errorf("Expected document type to be %s, but was %v", channelling.RoomTypeRoom, room.Type)
 	}
 }
+
+func Test_RoomManager_TypeThroughNats(t *testing.T) {
+	theRoomManager, _ := NewTestRoomManager()
+	rm := theRoomManager.(*roomManager)
+	if rt := rm.getConfiguredRoomType("foo"); rt != channelling.RoomTypeRoom {
+		t.Errorf("Expected room type to be %s, but was %v", channelling.RoomTypeRoom, rt)
+	}
+	rm.setNatsRoomType(&roomTypeMessage{Path: "foo", Type: "Conference"})
+	if rt := rm.getConfiguredRoomType("foo"); rt != "Conference" {
+		t.Errorf("Expected room type to be %s, but was %v", "Conference", rt)
+	}
+	rm.setNatsRoomType(&roomTypeMessage{Path: "foo", Type: ""})
+	if rt := rm.getConfiguredRoomType("foo"); rt != channelling.RoomTypeRoom {
+		t.Errorf("Expected room type to be %s, but was %v", channelling.RoomTypeRoom, rt)
+	}
+}
