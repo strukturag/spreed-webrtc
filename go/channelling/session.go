@@ -129,16 +129,7 @@ func (s *Session) JoinRoom(roomName, roomType string, credentials *DataRoomCrede
 	defer s.mutex.Unlock()
 
 	if s.Hello && s.Roomid != roomID {
-		s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
-		s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
-			From: s.Id,
-			A:    s.attestation.Token(),
-			Data: &DataSession{
-				Type:   "Left",
-				Id:     s.Id,
-				Status: "soft",
-			},
-		})
+		s.doLeaveRoom("soft")
 	}
 
 	room, err := s.RoomStatusManager.JoinRoom(roomID, roomName, roomType, credentials, s, s.authenticated(), sender)
@@ -162,6 +153,31 @@ func (s *Session) JoinRoom(roomName, roomType string, credentials *DataRoomCrede
 	}
 
 	return room, err
+}
+
+func (s *Session) doLeaveRoom(status string) {
+	s.RoomStatusManager.LeaveRoom(s.Roomid, s.Id)
+	s.Broadcaster.Broadcast(s.Id, s.Roomid, &DataOutgoing{
+		From: s.Id,
+		A:    s.attestation.Token(),
+		Data: &DataSession{
+			Type:   "Left",
+			Id:     s.Id,
+			Status: status,
+		},
+	})
+	s.Hello = false
+}
+
+func (s *Session) LeaveRoom() {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	if !s.Hello {
+		return
+	}
+
+	s.doLeaveRoom("hard")
 }
 
 func (s *Session) Broadcast(m interface{}) {
