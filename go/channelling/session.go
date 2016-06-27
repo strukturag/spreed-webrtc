@@ -177,7 +177,7 @@ func (s *Session) LeaveRoom() {
 		return
 	}
 
-	s.doLeaveRoom("hard")
+	s.doLeaveRoom("soft")
 }
 
 func (s *Session) Broadcast(m interface{}) {
