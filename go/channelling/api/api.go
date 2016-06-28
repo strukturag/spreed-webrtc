@@ -188,6 +188,11 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 		}
 
 		return api.HandleRoom(session, msg.Room)
+	case "Leave":
+		if err := api.HandleLeave(session); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}

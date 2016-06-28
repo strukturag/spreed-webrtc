@@ -248,6 +248,20 @@ Special purpose documents for channling
             themselves. Note that acceptable characters for this field may be
             constrained by the server based upon its configuration.
 
+  Leave
+
+    {
+        Type: "Leave",
+        Leave: {...}
+    }
+
+    A Leave document is to be sent by the client if a previously room should be
+    left. Note that no confirmation will be returned by the server.
+
+    Keys under Leave:
+
+      Currently none.
+
   Room
 
     {
