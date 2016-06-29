@@ -28,7 +28,6 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -36,6 +35,7 @@ import (
 	"path"
 	"path/filepath"
 	goruntime "runtime"
+	"sort"
 	"strings"
 	"syscall"
 	"time"
@@ -216,39 +216,12 @@ func runner(runtime phoenix.Runtime) error {
 	extraDFolder, err := runtime.GetString("app", "extra.d")
 	if err == nil {
 		if !httputils.HasDirPath(extraFolder) {
-			return fmt.Errorf("Configured extra '%s' is not a directory.", extraFolder)
+			return fmt.Errorf("Configured extra.d '%s' is not a directory.", extraFolder)
 		}
-		var headBuf bytes.Buffer
-		var bodyBuf bytes.Buffer
-		context := &channelling.Context{
-			Cfg: config,
+		err = loadExtraD(extraDFolder)
+		if err != nil {
+			return fmt.Errorf("Failed to process extra.d folder: %s", error)
 		}
-		if extras, err := ioutil.ReadDir(extraDFolder); err == nil {
-			// ioutil.ReadDir is sorted by name which is what we want here.
-			for _, extra := range extras {
-				if !extra.IsDir() {
-					continue
-				}
-				context.S = fmt.Sprintf("extra.d/%s/%s", config.S, extra.Name())
-				extraDTemplates := template.New("")
-				extraDTemplates.Delims("<%", "%>")
-				extraBase := path.Join(extraDFolder, extra.Name())
-				extraDTemplates.ParseFiles(path.Join(extraBase, "head.html"), path.Join(extraBase, "body.html"))
-				if headTemplate := extraDTemplates.Lookup("head.html"); headTemplate != nil {
-					if err := headTemplate.Execute(&headBuf, context); err != nil {
-						log.Println("Failed to parse extra.d template", extraBase, "head.html", err)
-					}
-
-				}
-				if bodyTemplate := extraDTemplates.Lookup("body.html"); bodyTemplate != nil {
-					if err := bodyTemplate.Execute(&bodyBuf, context); err != nil {
-						log.Println("Failed to parse extra.d template", extraBase, "body.html", err)
-					}
-				}
-			}
-		}
-		templatesExtraDHead = template.HTML(headBuf.String())
-		templatesExtraDBody = template.HTML(bodyBuf.String())
 	}
 
 	// Define incoming channeling API limit it byte. Larger messages will be discarded.
@@ -394,6 +367,61 @@ func runner(runtime phoenix.Runtime) error {
 	rooms.HandleFunc("/{room:.*}", httputils.MakeGzipHandler(roomHandler))
 
 	return runtime.Start()
+}
+
+func loadExtraD(extraDFolder string) error {
+	f, err := os.Open(extraDFolder)
+	if err != nil {
+		return err
+	}
+
+	extras, err := f.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	f.Close()
+
+	// Sort by name.
+	sort.Strings(extras)
+
+	var headBuf bytes.Buffer
+	var bodyBuf bytes.Buffer
+	context := &channelling.Context{
+		Cfg: config,
+	}
+
+	for _, extra := range extras {
+		info, err := os.Stat(filepath.Join(extraDFolder, extra))
+		if err != nil {
+			log.Println("Failed to add extra.d folder", extra, err)
+			continue
+		}
+		if !info.IsDir() {
+			continue
+		}
+
+		context.S = fmt.Sprintf("extra.d/%s/%s", config.S, extra)
+		extraDTemplates := template.New("")
+		extraDTemplates.Delims("<%", "%>")
+		extraBase := path.Join(extraDFolder, extra)
+		extraDTemplates.ParseFiles(path.Join(extraBase, "head.html"), path.Join(extraBase, "body.html"))
+		if headTemplate := extraDTemplates.Lookup("head.html"); headTemplate != nil {
+			if err := headTemplate.Execute(&headBuf, context); err != nil {
+				log.Println("Failed to parse extra.d template", extraBase, "head.html", err)
+			}
+
+		}
+		if bodyTemplate := extraDTemplates.Lookup("body.html"); bodyTemplate != nil {
+			if err := bodyTemplate.Execute(&bodyBuf, context); err != nil {
+				log.Println("Failed to parse extra.d template", extraBase, "body.html", err)
+			}
+		}
+	}
+
+	templatesExtraDHead = template.HTML(headBuf.String())
+	templatesExtraDBody = template.HTML(bodyBuf.String())
+
+	return nil
 }
 
 func boot() error {
