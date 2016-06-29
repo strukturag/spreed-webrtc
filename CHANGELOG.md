@@ -1,3 +1,43 @@
+## 0.27.0
+
+  * Stop to use window.alert() for load errors
+  * Add support for extra.d directory
+  * Hide "call" button when in conference rooms. In conference rooms, everybody automatically calls each other, so there is no need for an explicit "Call" button.
+  * Only install git hook if cloned from git. For source tarballs, the `.git/hooks` folder does not exist, so an error is shown when running `autogen.sh`. With this change, the hook is not installed in such cases.
+  * Added API to leave a room. Previously it was only possible to leave a room by switching to another room. This change allows explicitly leaving a room without re-joining.
+  * Make the room type configurable through NATS.
+  * Include user status in "Joined" event. Previously, each user broadcasted the status after a "Room" event was received. This caused a short time for all other participants where the buddy list showed "Participant X" instead of the real user name.
+  * Fix moving between conference rooms.
+  * Try to recover from (some) lost p2p connection state. When the ICE connection state changes to "disconnected"/"failed", these calls are marked and get re-called for conferences once the connection is back and are allowed to send an "Offer" again. This works in cases where the complete connectivity is lost for one client while being in a conference once it comes back afterwards for him. Doesn't work reliably on Firefox as no "disconnected"/"failed" is triggered there.
+  * Don't add dummy remote streams if call is closed.
+  * Don't show "failed" error if connection was established before.
+  * Major refactoring of call / conference handling. Removed difference between single peer-to-peer calls and conferences with multiple peers. There is only a single code path now that creates calls and stores them in a conference (which holds all active calls). With this also fixed some timing issues that could cause conference peers to not send or receive media streams.
+  * Remove keygen usage from web client, effectlively removing certificate creation through web client (fixes #274).
+  * Update AngularJS to 1.5.6
+  * Update angular-ui-bootstrap to 0.13.4.
+  * Update angular.js to 1.4.6.
+  * Moved room type name to variable.
+  * Move room type names to constants and don't expose roomworker properties.
+  * Reverse data in session ids.
+  * Also send "Conference" message after "Room" messages.
+  * Don't send "Conference" event if user couldn't join room.
+  * Use "safeApply" when handling webrtc done/stop events.
+  * Always show own video when in conference room.
+  * Also hide other hangup buttons in conference rooms.
+  * Hide "Hangup" button in conferences.
+  * Implement new API for tests.
+  * Updated evaluation of Conference messages to support serverside conferences.
+  * Add CSS class with current room type to body including helpers to show/hide elements.
+  * Evaluate room type mapping and send Conference messages for conference rooms. The messages are trigger whenever a new user joins a conference room. For such rooms, clientside Conference messages are ignored.
+  * Make mapping of room name to room type configurable.
+  * Fixed wrong attribute name. Also use cached variable instead of performing attribute lookup.
+  * Fixed updating state if a conference gets downgraded to p2p.
+  * Fixed inconsistent PeerConference creation. There was a case where a three-party conference got downgraded to a p2p session and then upgraded to a three-party conference again, that the two remaining participants created their own PeerConference object resulting in a "split-brain" conference.
+  * Move stream id creation to PeerCall. That way the streams can be registered internally and properly cleaned up on hangup.
+  * spelling
+  * Added translation for Russian
+
+
 ## 0.26.0
 
   * Remove go-tip from travis until it works again.
