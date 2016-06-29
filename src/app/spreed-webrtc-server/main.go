@@ -22,11 +22,13 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -53,6 +55,8 @@ var version = "unreleased"
 var defaultConfig = "./server.conf"
 
 var templates *template.Template
+var templatesExtraDHead template.HTML
+var templatesExtraDBody template.HTML
 var config *channelling.Config
 
 func runner(runtime phoenix.Runtime) error {
@@ -208,6 +212,45 @@ func runner(runtime phoenix.Runtime) error {
 		log.Printf("Loaded extra templates from: %s", extraFolder)
 	}
 
+	// Load extra.d folder
+	extraDFolder, err := runtime.GetString("app", "extra.d")
+	if err == nil {
+		if !httputils.HasDirPath(extraFolder) {
+			return fmt.Errorf("Configured extra '%s' is not a directory.", extraFolder)
+		}
+		var headBuf bytes.Buffer
+		var bodyBuf bytes.Buffer
+		context := &channelling.Context{
+			Cfg: config,
+		}
+		if extras, err := ioutil.ReadDir(extraDFolder); err == nil {
+			// ioutil.ReadDir is sorted by name which is what we want here.
+			for _, extra := range extras {
+				if !extra.IsDir() {
+					continue
+				}
+				context.S = fmt.Sprintf("extra.d/%s/%s", config.S, extra.Name())
+				extraDTemplates := template.New("")
+				extraDTemplates.Delims("<%", "%>")
+				extraBase := path.Join(extraDFolder, extra.Name())
+				extraDTemplates.ParseFiles(path.Join(extraBase, "head.html"), path.Join(extraBase, "body.html"))
+				if headTemplate := extraDTemplates.Lookup("head.html"); headTemplate != nil {
+					if err := headTemplate.Execute(&headBuf, context); err != nil {
+						log.Println("Failed to parse extra.d template", extraBase, "head.html", err)
+					}
+
+				}
+				if bodyTemplate := extraDTemplates.Lookup("body.html"); bodyTemplate != nil {
+					if err := bodyTemplate.Execute(&bodyBuf, context); err != nil {
+						log.Println("Failed to parse extra.d template", extraBase, "body.html", err)
+					}
+				}
+			}
+		}
+		templatesExtraDHead = template.HTML(headBuf.String())
+		templatesExtraDBody = template.HTML(bodyBuf.String())
+	}
+
 	// Define incoming channeling API limit it byte. Larger messages will be discarded.
 	incomingCodecLimit := 1024 * 1024 // 1MB
 
@@ -326,11 +369,18 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Add extra/static support if configured and exists.
 	if extraFolder != "" {
-		extraFolderStatic := path.Join(extraFolder, "static")
+		extraFolderStatic, _ := filepath.Abs(path.Join(extraFolder, "static"))
 		if _, err = os.Stat(extraFolderStatic); err == nil {
 			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", config.B), httputils.FileStaticServer(http.Dir(extraFolder))))
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
+	}
+
+	// Add extra.d/static support if configured.
+	if extraDFolder != "" {
+		extraDFolderStatic, _ := filepath.Abs(extraDFolder)
+		r.Handle("/extra.d/static/{ver}/{extra}/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra.d/static", config.B), rewriteExtraDUrl(httputils.FileStaticServer(http.Dir(extraDFolderStatic)))))
+		log.Printf("Added URL handler /extra.d/static/... for static files in %s/.../static/... \n", extraDFolderStatic)
 	}
 
 	// Finally add websocket handler.

@@ -19,6 +19,7 @@ vendor/*
 /build/out/
 /.sass-cache
 /extra
+/extra.d
 /src/i18n/*.mo
 server.key
 server.csr
