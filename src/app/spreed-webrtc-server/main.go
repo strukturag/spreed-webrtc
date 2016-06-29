@@ -220,7 +220,7 @@ func runner(runtime phoenix.Runtime) error {
 		}
 		err = loadExtraD(extraDFolder)
 		if err != nil {
-			return fmt.Errorf("Failed to process extra.d folder: %s", error)
+			return fmt.Errorf("Failed to process extra.d folder: %s", err)
 		}
 	}
 
