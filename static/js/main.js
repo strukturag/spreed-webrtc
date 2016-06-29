@@ -148,17 +148,21 @@ require.config({
 	window.debug(debugDefault && true);
 }());
 
+function fakeAlert(text) {
+	var loader = document.getElementById("loader");
+	loader.className = "fake-alert";
+	if (loader) {
+		loader.innerHTML = text;
+	} else {
+		window.alert(text);
+	}
+}
+
 require.onError = (function() {
-	var retrying = false;
 	return function(err) {
-		if (retrying) {
-			console.error("Error while loading " + err.requireType, err.requireModules);
-			return;
-		}
 		if (err.requireType === "timeout" || err.requireType === "scripterror") {
-			window.alert('Failed to load application. Confirm to retry.');
-			retrying = true;
-			document.location.reload(true);
+			console.error("Error while loading " + err.requireType, err.requireModules);
+			fakeAlert('Failed to load app!');
 		} else {
 			throw err;
 		}
@@ -293,5 +297,5 @@ if (Object.create) {
 	});
 
 } else {
-	window.alert("Your browser does not support this application. Please update your browser to the latest version.");
+	fakeAlert("Your browser does not support this application. Please update your browser to the latest version.");
 }

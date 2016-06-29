@@ -36,6 +36,15 @@
   transition-property: opacity;
   z-index: 20000;
 
+  &.fake-alert {
+    background: none;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: 1.1em;
+  }
+
   &.done {
     opacity: 0;
   }
