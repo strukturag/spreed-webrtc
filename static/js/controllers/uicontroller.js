@@ -690,6 +690,10 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		});
 
+		$scope.$on("room.updated", function(event, room) {
+			$scope.roomType = room ? room.Type : null;
+		});
+
 		// Apply all layout stuff as classes to our element.
 		$scope.$watch("layout", (function() {
 			var makeName = function(prefix, n) {
