@@ -215,8 +215,8 @@ func runner(runtime phoenix.Runtime) error {
 	// Load extra.d folder
 	extraDFolder, err := runtime.GetString("app", "extra.d")
 	if err == nil {
-		if !httputils.HasDirPath(extraFolder) {
-			return fmt.Errorf("Configured extra.d '%s' is not a directory.", extraFolder)
+		if !httputils.HasDirPath(extraDFolder) {
+			return fmt.Errorf("Configured extra.d '%s' is not a directory.", extraDFolder)
 		}
 		err = loadExtraD(extraDFolder)
 		if err != nil {
