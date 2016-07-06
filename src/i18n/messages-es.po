@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
 "POT-Creation-Date: 2016-07-02 14:57-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: JHON FELIPE URREGO MEJIA <ingenierofelipeurrego@gmail.com>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,11 +22,11 @@ msgstr ""
 
 #, python-format
 msgid "and %s"
-msgstr "Y %s"
+msgstr "y %s"
 
 #, python-format
 msgid "and %d others"
-msgstr "Y %d otros"
+msgstr "y %d otros"
 
 msgid "User"
 msgstr "Usuario"
@@ -44,10 +44,10 @@ msgid "Peer to peer chat is now off."
 msgstr "Chat abierto de igual a igual ahora está apagado"
 
 msgid " is now offline."
-msgstr " Ahora está desconectado."
+msgstr " ahora está desconectado."
 
 msgid " is now online."
-msgstr " Está ahora en línea"
+msgstr " está ahora en línea"
 
 msgid "You share file:"
 msgstr "Compartir archivo:"
@@ -121,7 +121,7 @@ msgid "User hung up because of error."
 msgstr "Usuario colgó por error"
 
 msgid " is busy. Try again later."
-msgstr " Está ocupado. Vuelva a intentarlo más tarde"
+msgstr " está ocupado. Vuelva a intentarlo más tarde"
 
 msgid " rejected your call."
 msgstr " rechazó su llamada"
@@ -424,7 +424,7 @@ msgid "Share screen"
 msgstr "Compartir pantalla"
 
 msgid "Please select what to share."
-msgstr "\"Seleccione qué comparti"
+msgstr "Seleccione qué compartir"
 
 msgid "Screen"
 msgstr "Pantalla"
@@ -877,5 +877,5 @@ msgstr ""
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
 "Formato URL desconocido. Por favor, asegúrese de escribir una dirección "
-"URL válida de YouTube\""
+"URL válida de YouTube"
 
