@@ -1,3 +1,11 @@
+## 0.27.1
+
+  * Compute 'extra.d' relative URL
+  * Compare HMACs in constant time to mitigate timing attack
+  * Use proper variable for extra.d folder detection
+  * Add support for symlinks inside extra.d
+
+
 ## 0.27.0
 
   * Stop to use window.alert() for load errors
