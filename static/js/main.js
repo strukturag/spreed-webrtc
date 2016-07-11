@@ -56,9 +56,7 @@ require.config({
 
 		'partials': '../partials',
 		'sounds': '../sounds',
-		'translation': '../translation',
-
-		'extra.d': '../../../extra.d'
+		'translation': '../translation'
 	},
 	shim: {
 		'modernizr': {
