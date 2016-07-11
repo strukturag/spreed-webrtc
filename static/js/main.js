@@ -122,6 +122,18 @@ require.config({
 });
 
 (function() {
+	// Dynamic extraD, go up all segments from our current app.
+	var extraD = require.toUrl('extra.d').split('/');
+	for (var i = 0; i < extraD.length - 1; i++) {
+		extraD[i] = '..'
+	}
+	extraD = extraD.join('/');
+	require.config({
+		'extra.d': extraD
+	});
+}());
+
+(function() {
 	var debugDefault = window.location.href.match(/(\?|&)debug($|&|=)/);
 	// Overwrite console to not log stuff per default.
 	// Write debug(true) in console to enable or start with ?debug parameter.
