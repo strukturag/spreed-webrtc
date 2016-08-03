@@ -5,7 +5,7 @@ github.com/gorilla/securecookie	git	aeade84400a85c6875264ae51c7a56ecdcb61751	201
 github.com/gorilla/websocket	git	a69d25be2fe2923a97c2af6849b2f52426f68fc0	2016-08-02T13:32:03Z
 github.com/longsleep/pkac	git	68bf8859f58dd84332ee41c07eba357fb3818ba3	2014-05-01T18:13:13Z
 github.com/nats-io/nats	git	355b5b97e0842dc94f1106729aa88e33e06317ca	2015-12-09T21:13:14Z
-github.com/satori/go.uuid	git	afe1e2ddf0f05b7c29d388a3f8e76cb15c2231ca	2015-06-15T02:45:37Z
+github.com/satori/go.uuid	git	879c5887cd475cd7864858769793b2ceb0d44feb	2016-06-07T14:43:47Z
 github.com/strukturag/goacceptlanguageparser	git	68066e68c2940059aadc6e19661610cf428b6647	2014-02-13T13:31:23Z
 github.com/strukturag/httputils	git	afbf05c71ac03ee7989c96d033a9571ba4ded468	2014-07-02T01:35:33Z
 github.com/strukturag/phoenix	git	31b7f25f4815e6e0b8e7c4010f6e9a71c4165b19	2016-06-01T11:34:58Z
