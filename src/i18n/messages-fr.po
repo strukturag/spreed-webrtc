@@ -865,7 +865,7 @@ msgid "and %d others"
 msgstr "et %d autres"
 
 msgid "User"
-msgstr "Participa,t"
+msgstr "Participant"
 
 msgid "Someone"
 msgstr "Quelqu'un"
