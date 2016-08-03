@@ -6,6 +6,11 @@ go:
   - 1.4
   - 1.5
   - 1.6
+  - tip
+
+matrix:
+  allow_failures:
+    - go: tip
 
 env:
   - GEM_HOME=/var/lib/gems/1.9.1
