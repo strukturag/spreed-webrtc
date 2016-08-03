@@ -9,7 +9,7 @@ The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/s
 
 ## Build prerequisites
 
-  - [Go](http://golang.org) >= 1.3.0
+  - [Go](http://golang.org) >= 1.4.0
   - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
@@ -133,7 +133,7 @@ open source TURN server implementation. Make sure to use a recent
 version (we recommend 3.2). Versions below 2.5 are not supported.
 
 For WebRTC usage, be sure to enable long-term credentials,
-fingerprinting, and set the realm. See 
+fingerprinting, and set the realm. See
 https://github.com/coturn/coturn/wiki/turnserver#webrtc-usage
 for more information.
 
