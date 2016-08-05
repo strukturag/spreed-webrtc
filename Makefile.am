@@ -21,6 +21,9 @@
 AUTOMAKE_OPTIONS = -Wno-portability
 ACLOCAL_AMFLAGS = -I m4
 
+unexport GOROOT
+unexport GOBIN
+
 EXENAME := spreed-webrtc-server
 GOPKG := github.com/strukturag/spreed-webrtc
 GOPATH := "$(CURDIR)/vendor:$(CURDIR)"
