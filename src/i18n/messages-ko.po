@@ -583,10 +583,10 @@ msgid "Peer to peer chat is now off."
 msgstr "일대일 대화 꺼짐"
 
 msgid " is now offline."
-msgstr "현재 오프라인 상태"
+msgstr " 현재 오프라인 상태"
 
 msgid " is now online."
-msgstr "현재 온라인 상태"
+msgstr " 현재 온라인 상태"
 
 msgid "You share file:"
 msgstr "공유 화일:"
@@ -652,21 +652,21 @@ msgid "User hung up because of error."
 msgstr "오류로 인해 사용자 끊어짐"
 
 msgid " is busy. Try again later."
-msgstr "통화중. 다시 시도 하세요."
+msgstr " 통화중. 다시 시도 하세요."
 
 msgid " rejected your call."
-msgstr "전화가 거부 되었습니다."
+msgstr " 전화가 거부 되었습니다."
 
 msgid " does not pick up."
-msgstr "전화를 받지 않습니다."
+msgstr " 전화를 받지 않습니다."
 
 #, fuzzy
 msgid " tried to call you"
-msgstr "연결을 시도 중입니다"
+msgstr " 연결을 시도 중입니다"
 
 #, fuzzy
 msgid " called you"
-msgstr "전화 드렸습니다."
+msgstr " 전화 드렸습니다."
 
 #, fuzzy
 msgid "Your browser is not supported. Please upgrade to a current version."

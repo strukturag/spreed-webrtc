@@ -583,10 +583,10 @@ msgid "Peer to peer chat is now off."
 msgstr "ピア・ツー・ピア・チャットがオフです."
 
 msgid " is now offline."
-msgstr "は今オフラインです"
+msgstr " は今オフラインです"
 
 msgid " is now online."
-msgstr "は今オンラインです"
+msgstr " は今オンラインです"
 
 msgid "You share file:"
 msgstr "あなたの共有ファイル:"
@@ -652,21 +652,21 @@ msgid "User hung up because of error."
 msgstr "エラーのため切断しました."
 
 msgid " is busy. Try again later."
-msgstr "は話中です.後で掛けなおしてください."
+msgstr " は話中です.後で掛けなおしてください."
 
 msgid " rejected your call."
-msgstr "着信拒否されました."
+msgstr " 着信拒否されました."
 
 msgid " does not pick up."
-msgstr "は電話にでません."
+msgstr " は電話にでません."
 
 #, fuzzy
 msgid " tried to call you"
-msgstr "は電話しようとしました."
+msgstr " は電話しようとしました."
 
 #, fuzzy
 msgid " called you"
-msgstr "から電話がありました."
+msgstr " から電話がありました."
 
 #, fuzzy
 msgid "Your browser is not supported. Please upgrade to a current version."
