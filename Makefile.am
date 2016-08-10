@@ -134,7 +134,7 @@ update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
 release-binary: GOPATH = "$(DIST):$(CURDIR)/vendor:$(CURDIR)"
-release-binary: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
+release-binary: INTERNALLDFLAGS = -X main.version=$(PACKAGE_VERSION) -X main.defaultConfig=$(CONFIG_PATH)/$(CONFIG_FILE)
 release-binary: OUTPUT = $(DIST_BIN)
 release-binary: dist_gopath $(DIST_BIN) binary
 
