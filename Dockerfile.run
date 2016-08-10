@@ -1,9 +1,21 @@
-# Spreed WebRTC server in Docker (for development)
+# Spreed WebRTC server in minimal Docker (for production)
 #
-# This Dockerfile creates a container which runs Spreed WebRTC as found in the
-# current folder. It is intended for development.
+# This Dockerfile creates a container which builds Spreed WebRTC as piped in
+# on stdin using another Docker container defined in `Dockerfile.build`.
 #
-# Install docker and then run `docker build -t spreed-webrtc .` to build the
+# First create the builder image:
+#
+#   ```
+#   docker build -t spreed-webrtc-builder -f Dockerfile.build .
+#   ```
+#
+# Next run the builder container, piping its output into the creation of the
+# runner container:
+#
+#   ```
+#   docker run --rm spreed-webrtc-builder | docker build -t spreed-webrtc -f Dockerfile.run -
+#   ```
+#
 # image. Afterwards run the container like this:
 #
 #   ```
@@ -34,49 +46,37 @@
 # `--rm` parameter in the example from above in that case.
 #
 
-FROM ubuntu:xenial
+FROM frolvlad/alpine-glibc:alpine-3.3_glibc-2.23
 MAINTAINER Simon Eisenmann <simon@struktur.de>
 
-# Set locale.
-RUN locale-gen --no-purge en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG=C.UTF-8
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Base build dependencies.
-RUN apt-get update && apt-get install -qy \
-	golang \
-	nodejs \
-	build-essential \
-	git \
-	automake \
-	autoconf
-
-# Add and build Spreed WebRTC server.
-ADD . /srv/spreed-webrtc
-WORKDIR /srv/spreed-webrtc
-RUN ./autogen.sh && \
-	./configure && \
-	make pristine && \
-	make get && \
-	make
-
-# Add runtime dependencies.
-RUN apt-get update && apt-get install -qy \
-	bsdmainutils \
+# Add dependencies.
+RUN apk add --no-cache \
 	openssl
 
-# Add entrypoint.
-COPY scripts/docker_entrypoint.sh /srv/entrypoint.sh
+# Add Spreed WebRTC as provided by Dockerfile.run.
+COPY srv/ /srv
 
-# Create default config file.
+# Move around stuff from tarball to their expected locations.
+RUN mv /srv/spreed-webrtc/dist/loader/* /srv/spreed-webrtc && \
+	mv /srv/spreed-webrtc/dist/www/html /srv/spreed-webrtc && \
+	mv /srv/spreed-webrtc/dist/www/static /srv/spreed-webrtc
+
+# Add entrypoint.
+COPY docker_entrypoint.sh /srv/entrypoint.sh
+
+# Create default config.
 RUN cp -v /srv/spreed-webrtc/server.conf.in /srv/spreed-webrtc/default.conf && \
 	sed -i 's|listen = 127.0.0.1:8080|listen = 0.0.0.0:8080|' /srv/spreed-webrtc/default.conf && \
 	sed -i 's|;root = .*|root = /srv/spreed-webrtc|' /srv/spreed-webrtc/default.conf && \
 	sed -i 's|;listen = 127.0.0.1:8443|listen = 0.0.0.0:8443|' /srv/spreed-webrtc/default.conf && \
 	sed -i 's|;certificate = .*|certificate = /srv/cert.pem|' /srv/spreed-webrtc/default.conf && \
-	sed -i 's|;key = .*|key = /srv/privkey.pem|' /srv/spreed-webrtc/default.conf
-RUN touch /srv/spreed-webrtc/server.conf
+	sed -i 's|;key = .*|key = /srv/privkey.pem|' /srv/spreed-webrtc/default.conf && \
+	touch /etc/spreed-webrtc-server.conf
+
+# Cleanup.
+RUN rm -rf /tmp/* /var/cache/apk/*
 
 # Add mount point for extra things.
 RUN mkdir /srv/extra
@@ -88,4 +88,4 @@ EXPOSE 8443
 
 # Define entry point with default command.
 ENTRYPOINT ["/bin/sh", "/srv/entrypoint.sh", "-dc", "/srv/spreed-webrtc/default.conf"]
-CMD ["-c", "/srv/spreed-webrtc/server.conf"]
+CMD ["-c", "/etc/spreed-webrtc-server.conf"]

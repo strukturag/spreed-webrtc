@@ -138,6 +138,20 @@ https://github.com/coturn/coturn/wiki/turnserver#webrtc-usage
 for more information.
 
 
+## Running with Docker
+
+We provide official Docker images at https://hub.docker.com/r/spreed/webrtc/. Of
+course you can build the Docker image yourself as well. Check the Dockerfiles in
+this repository for details and instructions.
+
+Use the following command to run a Spreed WebRTC Docker container with the
+default settings from our official Spreed WebRTC Docker image.
+
+```
+docker run --rm --name my-spreed-webrtc -p 8080:8080 -p 8443:8443 \
+    -v `pwd`:/srv/extra -i -t spreed/webrtc
+```
+
 ## Setup Screensharing
 
 ### Chrome
