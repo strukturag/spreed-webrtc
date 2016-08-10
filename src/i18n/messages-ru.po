@@ -109,7 +109,7 @@ msgid "has stopped typing..."
 msgstr "перестал печатать..."
 
 msgid "Type here to chat..."
-msgstr "Введите здесь сообщения"
+msgstr "Введите здесь сообщения..."
 
 msgid "Send"
 msgstr "Отправить"
@@ -244,13 +244,13 @@ msgid "Screen sharing options"
 msgstr "Парамеры совместного использования экрана"
 
 msgid "Fit screen."
-msgstr "Разместить в экран"
+msgstr "Разместить в экран."
 
 msgid "Share screen"
 msgstr "Поделиться экраном"
 
 msgid "Please select what to share."
-msgstr "Пожалуйста выберите чем поделиться"
+msgstr "Пожалуйста выберите чем поделиться."
 
 msgid "Screen"
 msgstr "Экран"
@@ -359,7 +359,7 @@ msgid "Language"
 msgstr "Язык"
 
 msgid "Language changes become active on reload."
-msgstr "Изменение язака становится активным при перезагрузке"
+msgstr "Изменение язака становится активным при перезагрузке."
 
 msgid "Default room"
 msgstr "Комната по умолчанию"
@@ -589,10 +589,10 @@ msgid "YouTube video to share"
 msgstr "Видео YouTube, чтобы поделиться"
 
 msgid "Peer to peer chat active."
-msgstr "Пиринговый чат активен"
+msgstr "Пиринговый чат активен."
 
 msgid "Peer to peer chat is now off."
-msgstr "Пиринговый чат теперь выключена"
+msgstr "Пиринговый чат теперь выключена."
 
 msgid " is now offline."
 msgstr " вышел."

@@ -26,6 +26,7 @@ build: LANGUAGES = $(shell $(FIND) ./ -iname '*.po' -printf '%f\n' | $(SED) 's/\
 build: update
 	@if [ "$(NODEJS_SUPPORT_PO2JSON)" = "no" ]; then echo "Node.js module 'po2json' not found, required when building i18n"; exit 1; fi
 	@if [ "$(PYTHON)" = "" ]; then echo "Command 'python' not found, required when building i18n"; exit 1; fi
+	$(PYTHON) "$(CURDIR)/helpers/polint.py"
 	for lang in $(LANGUAGES) ; do \
 		$(NODEJS) "$(CURDIR)/helpers/po2json" "$(CURDIR)/messages-$$lang.po" "$(ROOT)/static/translation/messages-$$lang.json" ; \
 	done

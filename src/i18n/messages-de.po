@@ -101,10 +101,10 @@ msgid "Clear chat"
 msgstr "Chat löschen"
 
 msgid "is typing..."
-msgstr " schreibt gerade..."
+msgstr "schreibt gerade..."
 
 msgid "has stopped typing..."
-msgstr " schreibt nicht mehr..."
+msgstr "schreibt nicht mehr..."
 
 msgid "Type here to chat..."
 msgstr "Nachricht hier eingeben..."
@@ -366,7 +366,7 @@ msgid "Default room"
 msgstr "Standard Raum"
 
 msgid "Set alternative room to join at start."
-msgstr " Raum wird beim Start automatisch betreten."
+msgstr "Raum wird beim Start automatisch betreten."
 
 msgid "Notifications"
 msgstr "Benachrichtigungen"
@@ -645,7 +645,7 @@ msgstr "Kontakte"
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""
-"Es stehen Updates zur Verfügung. Klicken Sie Ok um die Anwendung  neu zu "
+"Es stehen Updates zur Verfügung. Klicken Sie Ok um die Anwendung neu zu "
 "starten."
 
 msgid "Failed to access camera/microphone."
