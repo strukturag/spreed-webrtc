@@ -1,3 +1,20 @@
+## 0.27.2
+
+  * Update -X arguments syntax
+  * Add Docker instructions to README.md
+  * Add Dockerfiles to build minimal Docker
+  * Check .po files before committing.
+  * Added script to check style of .po files.
+  * Fixed various style issues in .po files.
+  * Allow custom GOROOT to make Travis happy
+  * Unset GOROOT and GOBIN in Makefile
+  * Update Dockerfile to make sense
+  * Bump go.uuid to 1.1.0
+  * Add Go tip to travis (allowed to fail)
+  * Bump Go requirement to 1.4
+  * Update gorilla websocket build dependency
+
+
 ## 0.27.1
 
   * Compute 'extra.d' relative URL
@@ -687,5 +704,3 @@
 ## 0.15.0
 
   * Initial public release.
-
-
