@@ -90,7 +90,7 @@ test:
 dist_gopath: $(DIST_SRC)
 	[ -d $(SYSTEM_GOPATH) ] && \
 		find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
-			-exec ln -sf {} $(DIST_SRC) \;
+			-exec ln -sf {} $(DIST_SRC) \; || true
 
 assets: javascript fonts
 
