@@ -62,8 +62,11 @@ def parsepo(fn):
             msgstr = None
         elif line.startswith("msgstr"):
             msgstr = line.strip()[8:-1]
-        elif line.startswith('"') and msgstr is not None and msgid is not None:
-            msgstr += line.strip()[1:-1]
+        elif line.startswith('"'):
+            if msgstr is None:
+                msgid += line.strip()[1:-1]
+            elif msgstr is not None:
+                msgstr += line.strip()[1:-1]
         elif line.startswith("#. Default: "):
             default = line.strip()[13:-1]
         elif line.startswith("#"):
@@ -184,13 +187,28 @@ def main():
     _, POT_DATA, _ = parsepo(os.path.join(ROOT, 'messages.pot'))
 
     errors = 0
-    filenames = sys.argv[1:]
+    try:
+        sys.argv.remove('--hook')
+    except ValueError:
+        is_hook = False
+    else:
+        is_hook = True
+
+    if is_hook:
+        filename, orig_filename = sys.argv[1:]
+        filenames = [filename]
+    else:
+        orig_filename = None
+        filenames = sys.argv[1:]
     show_filenames = False
     if not filenames:
         filenames = glob.glob(os.path.join(ROOT, 'messages-*.po'))
         show_filenames = True
     for filename in filenames:
-        language = os.path.basename(filename)[9:-3]
+        if orig_filename:
+            language = os.path.basename(orig_filename)[9:-3]
+        else:
+            language = os.path.basename(filename)[9:-3]
         if show_filenames:
             print 'Checking %s (%s)' % (filename, language)
         try:
