@@ -88,9 +88,9 @@ test:
 	GOPATH=$(GOPATH) $(GO) test -v $(GOTESTFLAGS) app/... ./go/...
 
 dist_gopath: $(DIST_SRC)
-	find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
-		-exec ln -sf {} $(DIST_SRC) \;
-
+	[ -d $(SYSTEM_GOPATH) ] && \
+		find $(SYSTEM_GOPATH) -mindepth 1 -maxdepth 1 -type d \
+			-exec ln -sf {} $(DIST_SRC) \;
 
 assets: javascript fonts
 
