@@ -62,8 +62,11 @@ def parsepo(fn):
             msgstr = None
         elif line.startswith("msgstr"):
             msgstr = line.strip()[8:-1]
-        elif line.startswith('"') and msgstr is not None and msgid is not None:
-            msgstr += line.strip()[1:-1]
+        elif line.startswith('"'):
+            if msgstr is None:
+                msgid += line.strip()[1:-1]
+            elif msgstr is not None:
+                msgstr += line.strip()[1:-1]
         elif line.startswith("#. Default: "):
             default = line.strip()[13:-1]
         elif line.startswith("#"):
