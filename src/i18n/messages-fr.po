@@ -67,10 +67,10 @@ msgid "Picture"
 msgstr "Avatar"
 
 msgid "The file couldn't be read."
-msgstr "Le fichier ne peux pas être lu"
+msgstr "Le fichier ne peux pas être lu."
 
 msgid "The file is not an image."
-msgstr "Le fichier n'est pas une image"
+msgstr "Le fichier n'est pas une image."
 
 #, python-format
 msgid "The file is too large. Max. %d MB."
@@ -241,13 +241,13 @@ msgid "Screen sharing options"
 msgstr "Options de partage d'écran"
 
 msgid "Fit screen."
-msgstr "Adapter à l'écran"
+msgstr "Adapter à l'écran."
 
 msgid "Share screen"
 msgstr "Partager mon écran"
 
 msgid "Please select what to share."
-msgstr "Merci de choisir l'écran à partager"
+msgstr "Merci de choisir l'écran à partager."
 
 msgid "Screen"
 msgstr "Moniteur"
@@ -261,10 +261,8 @@ msgstr "Application"
 msgid "Share the whole screen. Click share to select the screen."
 msgstr "Partager tout le moniteur. Cliquez pour choisir le moniteur."
 
-
 msgid "Share a single window. Click share to select the window."
 msgstr "Partager une seule fenêtre. Cliquez pour choisir la fenêtre."
-
 
 msgid ""
 "Share all windows of a application. This can leak content behind windows "
@@ -272,7 +270,7 @@ msgid ""
 msgstr ""
 "Partager toutes les fenêtres d'une application. Ceci peux amener à montrer "
 " du contenu situé derrière une fenêtre lorsqu'elle est déplacée. Cliquez pour"
-" sélectionner l'application"
+" sélectionner l'application."
 
 msgid "Share"
 msgstr "Partager"
@@ -300,7 +298,7 @@ msgid ""
 "and rooms."
 msgstr ""
 "Votre avatar, nom et état d'esprit servent à vous identifier dans les "
-"appels, chat et salle"
+"appels, chat et salle."
 
 msgid "Your ID"
 msgstr "Votre ID"
@@ -313,7 +311,7 @@ msgid ""
 "certificate from the browser."
 msgstr ""
 "Authentifié par certificat. Vous devrez effacer le certificat de "
-"de votre navigateur pour vous déconnecter."
+"votre navigateur pour vous déconnecter."
 
 msgid "Sign in"
 msgstr "Connnexion"
@@ -364,7 +362,7 @@ msgid "Default room"
 msgstr "Salle par défaut"
 
 msgid "Set alternative room to join at start."
-msgstr "Nom de la salle à rejoindre à la connexion"
+msgstr "Nom de la salle à rejoindre à la connexion."
 
 msgid "Notifications"
 msgstr "Notifications"
@@ -576,7 +574,7 @@ msgid ""
 "settings."
 msgstr ""
 "Impossible de charger le lecteur de video Youtube. Merci de vérifier vos"
-" paramètres de réseau et firewall"
+" paramètres de réseau et pare-feu."
 
 msgid "Currently playing"
 msgstr "Lecture en cours"
@@ -692,7 +690,7 @@ msgstr "Message de "
 
 #, python-format
 msgid "You are now in room %s ..."
-msgstr "Vous avez rejoint la salle  %s ..."
+msgstr "Vous avez rejoint la salle %s ..."
 
 msgid "Your browser does not support file transfer."
 msgstr "Votre navigateur ne supporte pas les transferts de fichier."
@@ -703,7 +701,7 @@ msgstr ""
 "sélectionné un PDF."
 
 msgid "Could not load PDF: Missing PDF file."
-msgstr "Impossible de charger le PDF: le fichier PDF est manquant"
+msgstr "Impossible de charger le PDF: le fichier PDF est manquant."
 
 #, python-format
 msgid "An error occurred while loading the PDF (%s)."
@@ -729,7 +727,7 @@ msgstr "Une erreur inconnue est survenue lors du rendu du PDF."
 msgid "Only PDF documents and OpenDocument files can be shared at this time."
 msgstr ""
 "Pour l'instant, seuls les documents au format PDF et open documents peuvent "
-" être partagés."
+"être partagés."
 
 #, python-format
 msgid "Failed to start screen sharing (%s)."
@@ -742,7 +740,7 @@ msgid ""
 "flag on top. Then restart the browser and you are ready to go."
 msgstr ""
 "La permission de démarrer le partage d'écran a été refusée. Soyez sûr "
-" que vous avez activez le partage pour votre navigateur. Copiez chrome://flags/#enable-"
+"que vous avez activez le partage pour votre navigateur. Copiez chrome://flags/#enable-"
 "usermedia-screen-capture dans votre barre d'adresse et activez le, puis "
 "redémarrez votre navigateur."
 
@@ -763,7 +761,7 @@ msgid ""
 "the video you want to share and try again."
 msgstr ""
 "La requête contient des paramètres invalides. Merci de vérifier l'URL "
-" de la vidéo que vous voulez partager."
+"de la vidéo que vous voulez partager."
 
 msgid ""
 "The requested content cannot be played in an HTML5 player or another "
