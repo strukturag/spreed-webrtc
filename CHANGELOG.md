@@ -1,6 +1,7 @@
 ## 0.28.0
 
-  * Release 0.27.2 as stable
+  * Update Git hooks, to auto check translations
+  * Fix a bunch of translations, after checks found issues
 
 
 ## 0.27.2
