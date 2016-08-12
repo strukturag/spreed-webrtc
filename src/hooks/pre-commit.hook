@@ -78,7 +78,7 @@ fi
 for file in `git diff-index --cached --name-only HEAD --diff-filter=ACMR| grep "\.po$"` ; do
     echo "Checking ${file}"
     nf=`git checkout-index --temp ${file} | cut -f 1`
-    ./src/i18n/helpers/polint.py "${nf}"
+    ./src/i18n/helpers/polint.py --hook "${nf}" "${file}"
     r=$?
     rm "${nf}"
     if [ $r != 0 ] ; then
