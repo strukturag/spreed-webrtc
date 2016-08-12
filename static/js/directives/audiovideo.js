@@ -28,14 +28,8 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 		var controller = ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
 
-			var streams = {};
+			var streams = this.streams = {};
 			var calls = {};
-
-			var getStreamId = function(stream, currentcall) {
-				var id = currentcall.id + "-" + stream.id;
-				//console.log("Created stream ID", id);
-				return id;
-			};
 
 			$scope.container = $element[0];
 			$scope.layoutparent = $element.parent();
@@ -58,7 +52,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.addRemoteStream = function(stream, currentcall) {
 
-				var id = getStreamId(stream, currentcall);
+				var id = currentcall.getStreamId(stream);
 				console.log("New stream", id);
 
 				if (streams.hasOwnProperty(id)) {
@@ -76,7 +70,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 					callscope = calls[currentcall.id];
 					if (callscope.dummy) {
 						// Current call is marked as dummy. Use it directly.
-						var dummyId = getStreamId(callscope.dummy, currentcall);
+						var dummyId = currentcall.getStreamId(callscope.dummy);
 						subscope = streams[dummyId];
 						if (subscope) {
 							subscope.dummy = null;
@@ -198,7 +192,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.removeRemoteStream = function(stream, currentcall) {
 
-				var id = getStreamId(stream, currentcall);
+				var id = currentcall.getStreamId(stream);
 				console.log("Stream removed", id);
 
 				var subscope = streams[id];
@@ -295,34 +289,42 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			});
 
-			mediaStream.webrtc.e.on("done", function() {
+			mediaStream.webrtc.e.on("done stop", function(event) {
 
-				$scope.$apply(function() {
-					$scope.hasUsermedia = false;
-					$scope.isActive = false;
-					$scope.peersTalking = {};
+				safeApply($scope, function(scope) {
+					if (!scope.isActive) {
+						return;
+					}
+					scope.hasUsermedia = false;
+					scope.isActive = false;
+					scope.peersTalking = {};
 					if (BigScreen.enabled) {
 						BigScreen.exit();
 					}
-					_.delay(function() {
-						if ($scope.isActive) {
+					var removeVideos = function() {
+						if (scope.isActive) {
 							return;
 						}
-						$scope.localVideo.src = '';
-						$scope.miniVideo.src = '';
-						$($scope.remoteVideos).children(".remoteVideo").remove();
-					}, 1500);
-					$($scope.mini).removeClass("visible");
-					$scope.localVideos.style.opacity = 1;
-					$scope.localVideo.style.opacity = 0;
-					$scope.remoteVideos.style.opacity = 0;
+						scope.localVideo.src = '';
+						scope.miniVideo.src = '';
+						$(scope.remoteVideos).children(".remoteVideo").remove();
+					};
+					if (event.type === "stop") {
+						removeVideos();
+					} else {
+						$timeout(removeVideos, 1500);
+					}
+					$(scope.mini).removeClass("visible");
+					scope.localVideos.style.opacity = 1;
+					scope.localVideo.style.opacity = 0;
+					scope.remoteVideos.style.opacity = 0;
 					$element.removeClass('active');
-					_.each(streams, function(scope, k) {
-						scope.$destroy();
+					_.each(streams, function(streamscope, k) {
+						streamscope.$destroy();
 						delete streams[k];
 					});
-					$scope.rendererName = $scope.defaultRendererName;
-					$scope.haveStreams = false;
+					scope.rendererName = scope.defaultRendererName;
+					scope.haveStreams = false;
 				});
 
 			});
@@ -352,7 +354,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			mediaStream.webrtc.e.on("statechange", function(event, iceConnectionState, currentcall) {
 
-				if (!$scope.haveStreams) {
+				if (!$scope.haveStreams || currentcall.closed) {
 					return;
 				}
 
@@ -367,10 +369,6 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 				}
 
 			});
-
-			return {
-				streams: streams
-			};
 
 		}];
 

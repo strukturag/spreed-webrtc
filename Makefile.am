@@ -21,6 +21,8 @@
 AUTOMAKE_OPTIONS = -Wno-portability
 ACLOCAL_AMFLAGS = -I m4
 
+unexport GOBIN
+
 EXENAME := spreed-webrtc-server
 GOPKG := github.com/strukturag/spreed-webrtc
 GOPATH := "$(CURDIR)/vendor:$(CURDIR)"
@@ -132,7 +134,7 @@ update-i18n:
 	cd $(CURDIR)/src/i18n && $(MAKE) update
 
 release-binary: GOPATH = "$(DIST):$(CURDIR)/vendor:$(CURDIR)"
-release-binary: INTERNALLDFLAGS = -X main.version $(PACKAGE_VERSION) -X main.defaultConfig $(CONFIG_PATH)/$(CONFIG_FILE)
+release-binary: INTERNALLDFLAGS = -X main.version=$(PACKAGE_VERSION) -X main.defaultConfig=$(CONFIG_PATH)/$(CONFIG_FILE)
 release-binary: OUTPUT = $(DIST_BIN)
 release-binary: dist_gopath $(DIST_BIN) binary
 

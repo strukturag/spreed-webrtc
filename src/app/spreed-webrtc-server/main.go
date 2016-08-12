@@ -22,6 +22,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
@@ -34,6 +35,7 @@ import (
 	"path"
 	"path/filepath"
 	goruntime "runtime"
+	"sort"
 	"strings"
 	"syscall"
 	"time"
@@ -53,6 +55,8 @@ var version = "unreleased"
 var defaultConfig = "./server.conf"
 
 var templates *template.Template
+var templatesExtraDHead template.HTML
+var templatesExtraDBody template.HTML
 var config *channelling.Config
 
 func runner(runtime phoenix.Runtime) error {
@@ -170,7 +174,10 @@ func runner(runtime phoenix.Runtime) error {
 	natsClientId, _ := runtime.GetString("nats", "client_id")
 
 	// Load remaining configuration items.
-	config = server.NewConfig(runtime, tokenProvider != nil)
+	config, err = server.NewConfig(runtime, tokenProvider != nil)
+	if err != nil {
+		return err
+	}
 
 	// Load templates.
 	templates = template.New("")
@@ -203,6 +210,18 @@ func runner(runtime phoenix.Runtime) error {
 			return fmt.Errorf("Failed to load extra templates: %s", err)
 		}
 		log.Printf("Loaded extra templates from: %s", extraFolder)
+	}
+
+	// Load extra.d folder
+	extraDFolder, err := runtime.GetString("app", "extra.d")
+	if err == nil {
+		if !httputils.HasDirPath(extraDFolder) {
+			return fmt.Errorf("Configured extra.d '%s' is not a directory.", extraDFolder)
+		}
+		err = loadExtraD(extraDFolder)
+		if err != nil {
+			return fmt.Errorf("Failed to process extra.d folder: %s", err)
+		}
 	}
 
 	// Define incoming channeling API limit it byte. Larger messages will be discarded.
@@ -273,6 +292,9 @@ func runner(runtime phoenix.Runtime) error {
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
 	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
 	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
+	if err := roomManager.SetBusManager(busManager); err != nil {
+		return err
+	}
 
 	// Create API.
 	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
@@ -320,11 +342,18 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Add extra/static support if configured and exists.
 	if extraFolder != "" {
-		extraFolderStatic := path.Join(extraFolder, "static")
+		extraFolderStatic, _ := filepath.Abs(path.Join(extraFolder, "static"))
 		if _, err = os.Stat(extraFolderStatic); err == nil {
 			r.Handle("/extra/static/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra", config.B), httputils.FileStaticServer(http.Dir(extraFolder))))
 			log.Printf("Added URL handler /extra/static/... for static files in %s/...\n", extraFolderStatic)
 		}
+	}
+
+	// Add extra.d/static support if configured.
+	if extraDFolder != "" {
+		extraDFolderStatic, _ := filepath.Abs(extraDFolder)
+		r.Handle("/extra.d/static/{ver}/{extra}/{path:.*}", http.StripPrefix(fmt.Sprintf("%sextra.d/static", config.B), rewriteExtraDUrl(httputils.FileStaticServer(http.Dir(extraDFolderStatic)))))
+		log.Printf("Added URL handler /extra.d/static/... for static files in %s/.../static/... \n", extraDFolderStatic)
 	}
 
 	// Finally add websocket handler.
@@ -338,6 +367,61 @@ func runner(runtime phoenix.Runtime) error {
 	rooms.HandleFunc("/{room:.*}", httputils.MakeGzipHandler(roomHandler))
 
 	return runtime.Start()
+}
+
+func loadExtraD(extraDFolder string) error {
+	f, err := os.Open(extraDFolder)
+	if err != nil {
+		return err
+	}
+
+	extras, err := f.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	f.Close()
+
+	// Sort by name.
+	sort.Strings(extras)
+
+	var headBuf bytes.Buffer
+	var bodyBuf bytes.Buffer
+	context := &channelling.Context{
+		Cfg: config,
+	}
+
+	for _, extra := range extras {
+		info, err := os.Stat(filepath.Join(extraDFolder, extra))
+		if err != nil {
+			log.Println("Failed to add extra.d folder", extra, err)
+			continue
+		}
+		if !info.IsDir() {
+			continue
+		}
+
+		context.S = fmt.Sprintf("extra.d/%s/%s", config.S, extra)
+		extraDTemplates := template.New("")
+		extraDTemplates.Delims("<%", "%>")
+		extraBase := path.Join(extraDFolder, extra)
+		extraDTemplates.ParseFiles(path.Join(extraBase, "head.html"), path.Join(extraBase, "body.html"))
+		if headTemplate := extraDTemplates.Lookup("head.html"); headTemplate != nil {
+			if err := headTemplate.Execute(&headBuf, context); err != nil {
+				log.Println("Failed to parse extra.d template", extraBase, "head.html", err)
+			}
+
+		}
+		if bodyTemplate := extraDTemplates.Lookup("body.html"); bodyTemplate != nil {
+			if err := bodyTemplate.Execute(&bodyBuf, context); err != nil {
+				log.Println("Failed to parse extra.d template", extraBase, "body.html", err)
+			}
+		}
+	}
+
+	templatesExtraDHead = template.HTML(headBuf.String())
+	templatesExtraDBody = template.HTML(bodyBuf.String())
+
+	return nil
 }
 
 func boot() error {

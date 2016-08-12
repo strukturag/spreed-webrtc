@@ -46,3 +46,9 @@ func (api *channellingAPI) HandleHello(session *channelling.Session, hello *chan
 		Users: api.RoomStatusManager.RoomUsers(session),
 	}, nil
 }
+
+func (api *channellingAPI) HelloProcessed(sender channelling.Sender, session *channelling.Session, msg *channelling.DataIncoming, reply interface{}, err error) {
+	if err == nil {
+		api.SendConferenceRoomUpdate(session)
+	}
+}

@@ -1,0 +1,880 @@
+# Russian translations for Spreed WebRTC.
+# Copyright (C) 2016 struktur AG
+# This file is distributed under the same license as the Spreed WebRTC
+# project.
+# Irek Zaripov <iazaripov@gmail.com> , 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed WebRTC 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2016-02-17 14:15+0100\n"
+"PO-Revision-Date: 2016-02-18 16:03+0500\n"
+"Last-Translator: Irek Zaripov <iazaripov@gmail.com>\n"
+"Language-Team: ru <>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+msgid "Standard view"
+msgstr "Стандартный вид"
+
+msgid "Large view"
+msgstr "Увеличенный вид"
+
+msgid "Kiosk view"
+msgstr "Мобильный вид"
+
+msgid "Auditorium"
+msgstr "Актовый зал"
+
+msgid "Start chat"
+msgstr "Начать чат"
+
+msgid "Start video call"
+msgstr "Начать видео вызов"
+
+msgid "Start audio conference"
+msgstr "Начать аудио конференцию"
+
+msgid "No one else here"
+msgstr "Никого здесь нет"
+
+msgid "Take"
+msgstr "Снять"
+
+msgid "Retake"
+msgstr "Снять заново"
+
+msgid "Cancel"
+msgstr "Отменить"
+
+msgid "Set as Profile Picture"
+msgstr "Установить как фото в профиль"
+
+msgid "Take picture"
+msgstr "Сделать фотографию"
+
+msgid "Upload picture"
+msgstr "Загрузить фотографию"
+
+msgid "Waiting for camera"
+msgstr "Ожидание камеры"
+
+msgid "Picture"
+msgstr "Фото"
+
+msgid "The file couldn't be read."
+msgstr "Файл не может быть прочитан."
+
+msgid "The file is not an image."
+msgstr "Файл не является рисунком."
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr "Файл слишком велик. Макс. %d МБ."
+
+msgid "Select file"
+msgstr "Выберите файл"
+
+msgid "Chat sessions"
+msgstr "Чаты"
+
+msgid "Room chat"
+msgstr "Чат комнаты"
+
+msgid "Peer to peer"
+msgstr "Пиринговый"
+
+msgid "Close chat"
+msgstr "Закрыть чат"
+
+msgid "Upload files"
+msgstr "Загрузить файлы"
+
+msgid "Share my location"
+msgstr "Доступ к местоположению"
+
+msgid "Clear chat"
+msgstr "Очистить чат"
+
+msgid "is typing..."
+msgstr "печатает..."
+
+msgid "has stopped typing..."
+msgstr "перестал печатать..."
+
+msgid "Type here to chat..."
+msgstr "Введите здесь сообщения..."
+
+msgid "Send"
+msgstr "Отправить"
+
+msgid "Accept"
+msgstr "Принять"
+
+msgid "Reject"
+msgstr "Отклонить"
+
+msgid "You have no contacts."
+msgstr "У вас нет контактов."
+
+msgid ""
+"To add new contacts, join a room and create a contact add request by "
+"clicking on the star icon next to a user entry."
+msgstr ""
+"Для того, чтобы добавить новые контакты, присоединиться к комнате и "
+"создать контакт добавьте запрос нажав на значок звездочки рядом с "
+"элементом пользовательского."
+
+msgid "Edit contact"
+msgstr "Редактировать контакт"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "Refresh"
+msgstr "Обновить"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "File sharing"
+msgstr "Общий доступ к файлам"
+
+msgid "File is no longer available"
+msgstr "Файл больше недоступна"
+
+msgid "Download"
+msgstr "Загрузить"
+
+msgid "Open"
+msgstr "Открыть"
+
+msgid "Unshare"
+msgstr "Убрать из открытого доступа"
+
+msgid "Retry"
+msgstr "Повторить"
+
+msgid "Download failed."
+msgstr "Ошибка загрузки."
+
+msgid "Share a YouTube video"
+msgstr "Поделиться c видео YouTube"
+
+msgid "Share a file as presentation"
+msgstr "Поделиться с файлом презентации"
+
+msgid "Share your screen"
+msgstr "Поделиться со своим экраном"
+
+msgid "Chat"
+msgstr "Чат"
+
+msgid "Contacts"
+msgstr "Контакты"
+
+msgid "Mute microphone"
+msgstr "Отключение микрофона"
+
+msgid "Turn camera off"
+msgstr "Выключить камеру"
+
+msgid "Settings"
+msgstr "Установки"
+
+msgid "Loading presentation ..."
+msgstr "Загрузка презентации ..."
+
+msgid "Please upload a document"
+msgstr "Пожалуйста, загрузите документ"
+
+msgid ""
+"Documents are shared with everyone in this call. The supported file types"
+" are PDF and OpenDocument files."
+msgstr ""
+"Документы являются общими со всеми в этом вызове. Поддерживаются "
+"следующие типы файлов PDF и OpenDocument файлы."
+
+msgid "Upload"
+msgstr "Загрузить"
+
+msgid "You can drag files here too."
+msgstr "Вы также можете перетаскивать файлы сюда."
+
+msgid "Presentation controls"
+msgstr "Управление презентацией"
+
+msgid "Prev"
+msgstr "Пред."
+
+msgid "Next"
+msgstr "След."
+
+msgid "Change room"
+msgstr "Сменить комнату"
+
+msgid "Room"
+msgstr "Комната"
+
+msgid "Leave room"
+msgstr "Оставить комнату"
+
+msgid "Main"
+msgstr "Главная"
+
+msgid "Current room"
+msgstr "Текущая комната"
+
+msgid "Screen sharing options"
+msgstr "Парамеры совместного использования экрана"
+
+msgid "Fit screen."
+msgstr "Разместить в экран."
+
+msgid "Share screen"
+msgstr "Поделиться экраном"
+
+msgid "Please select what to share."
+msgstr "Пожалуйста выберите чем поделиться."
+
+msgid "Screen"
+msgstr "Экран"
+
+msgid "Window"
+msgstr "Окно"
+
+msgid "Application"
+msgstr "Приложение"
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr "Поделиться полным экраном. Нажмите поделиться, чтобы выбрать экран."
+
+msgid "Share a single window. Click share to select the window."
+msgstr "Поделиться одним окном. Нажмите поделиться, чтобы выбрать окно."
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+"Поделиться со всеми окнами приложения. Это может привести к утечке "
+"содержимого за окна когда окна перемещаются. Нажмите поделиться, чтобы "
+"выбрать приложение."
+
+msgid "Share"
+msgstr "Поделиться"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Your name"
+msgstr "Ваше имя"
+
+msgid "Your picture"
+msgstr "Ваше фото"
+
+msgid "Status message"
+msgstr "Сообщение о статусе"
+
+msgid "What's on your mind?"
+msgstr "О чем ты думаешь?"
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr ""
+"Ваше фото, имя и сообщение о статусе идентифицируют вас в вызовах, чатах "
+"и комнатах."
+
+msgid "Your ID"
+msgstr "Ваш ID"
+
+msgid "Register"
+msgstr "Отметить"
+
+msgid ""
+"Authenticated by certificate. To log out you have to remove your "
+"certificate from the browser."
+msgstr ""
+"Удостоверен сертификатом. Чтобы выйти вы должны удалить ваш сертификат от"
+" браузера."
+
+msgid "Sign in"
+msgstr "Войти в систему"
+
+msgid "Create an account"
+msgstr "Завести аккаунт"
+
+msgid "Sign out"
+msgstr "Выйти"
+
+msgid "Manage account"
+msgstr "Управлять аккаунтом"
+
+msgid "Media"
+msgstr "Медиа"
+
+msgid "Microphone"
+msgstr "Микрофон"
+
+msgid "Camera"
+msgstr "Камера"
+
+msgid "Video quality"
+msgstr "Качество видео"
+
+msgid "Low"
+msgstr "Низкое"
+
+msgid "High"
+msgstr "Высокое"
+
+msgid "HD"
+msgstr "HD"
+
+msgid "Full HD"
+msgstr "Полное HD"
+
+msgid "General"
+msgstr "Общие"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Language changes become active on reload."
+msgstr "Изменение язака становится активным при перезагрузке."
+
+msgid "Default room"
+msgstr "Комната по умолчанию"
+
+msgid "Set alternative room to join at start."
+msgstr "Установить альтернативный номер, чтобы присоединиться в начале."
+
+msgid "Notifications"
+msgstr "Уведомления"
+
+msgid "Desktop notification"
+msgstr "уведомление рабочего стола"
+
+msgid "Enable"
+msgstr "Включить"
+
+msgid "Denied - check your browser settings"
+msgstr "Запрещено - проверьте настройки Вашего браузера"
+
+msgid "Allowed"
+msgstr "Разрешено"
+
+msgid "Sounds for incoming messages"
+msgstr "Звуки для входящих сообщений"
+
+msgid "Ring on incoming calls"
+msgstr "Звонок на входящие звонки"
+
+msgid "Sounds for users in current room"
+msgstr "Звуки для пользователей в текущей комнате"
+
+msgid "Advanced settings"
+msgstr "Расширенные настройки"
+
+msgid "Play audio on same device as selected microphone"
+msgstr "Воспроизведение аудио на одном устройстве, как выбрано микрофон"
+
+msgid "Experimental AEC"
+msgstr "Экспериментальное AEC"
+
+msgid "Experimental AGC"
+msgstr "Экспериментальное AGC"
+
+msgid "Experimental noise suppression"
+msgstr "Экспериментальное подавление шума"
+
+msgid "Max video frame rate"
+msgstr "Максимальная частота кадров видео"
+
+msgid "auto"
+msgstr "авто"
+
+msgid "Send stereo audio"
+msgstr "Использовать стереозвук"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr ""
+"Использование стереозвука отключает подавление эха. Включить только если "
+"у вас есть стерео вход."
+
+msgid "Detect CPU over use"
+msgstr "Обнаружение перегрузки процессора"
+
+msgid "Automatically reduces video quality as needed."
+msgstr "Автоматически уменьшить качество видео по мере необходимости."
+
+msgid "Optimize for high resolution video"
+msgstr "Оптимизировать для видео высокого разрешения"
+
+msgid "Reduce video noise"
+msgstr "Уменьшить уровень шума видеоизображения"
+
+msgid "Prefer VP9 video codec"
+msgstr "Предпочесть видео кодек VP9"
+
+msgid "Enable experiments"
+msgstr "Разрешить эксперименты"
+
+msgid "Show advanced settings"
+msgstr "Показать дополнительные настройки"
+
+msgid "Hide advanced settings"
+msgstr "Скрыть дополнительные параметры"
+
+msgid "Remember settings"
+msgstr "Запомнить настройки"
+
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr ""
+"Ваш ID-прежнему будут храниться - нажмите кнопку выхода из системы выше, "
+"чтобы удалить ID."
+
+msgid "Room link"
+msgstr "Ссылка комнаты"
+
+msgid "Invite by Email"
+msgstr "Пригласить по электронной почте"
+
+msgid "Invite with Facebook"
+msgstr "Пригласить с Facebook"
+
+msgid "Invite with Twitter"
+msgstr "Пригласить с Twitter"
+
+msgid "Invite with Google Plus"
+msgstr "Пригласить с Google Plus"
+
+msgid "Invite with XING"
+msgstr "Пригласить с XING"
+
+msgid "Initializing"
+msgstr "Инициализация"
+
+msgid "Online"
+msgstr "В сети"
+
+msgid "Calling"
+msgstr "Вызывает"
+
+msgid "Hangup"
+msgstr "Сбросить"
+
+msgid "In call with"
+msgstr "В разговоре с"
+
+msgid "Conference with"
+msgstr "Конференция с"
+
+msgid "Your are offline"
+msgstr "Вы не в сети"
+
+msgid "Go online"
+msgstr "Войти в онлайн"
+
+msgid "Connection interrupted"
+msgstr "Подключение прервано"
+
+msgid "An error occured"
+msgstr "Произошла ошибка"
+
+msgid "Incoming call"
+msgstr "Входящий звонок"
+
+msgid "from"
+msgstr "от"
+
+msgid "Accept call"
+msgstr "Принять вызов"
+
+msgid "Waiting for camera/microphone access"
+msgstr "Ожидание камеры/микрофона"
+
+msgid "Your audio level"
+msgstr "Ваш уровень звука"
+
+msgid "Checking camera and microphone access."
+msgstr "Проверка доступа камеры и микрофона."
+
+msgid "Please allow access to your camera and microphone."
+msgstr "Пожалуйста разрешите доступ к камере и микрофону."
+
+msgid "Camera / microphone access required."
+msgstr "Требуется доступ камеры / микрофона."
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access"
+" for this site."
+msgstr ""
+"Пожалуйста, проверьте настройки Вашего браузера и разрешите доступ к "
+"камере и микрофону для этого сайта."
+
+msgid "Skip check"
+msgstr "Пропустить проверку"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "Нажмите здесь для помощи (Google Chrome)."
+
+msgid "Please set your user details and settings."
+msgstr "Пожалуйста, установите свои пользовательские данные и настройки."
+
+msgid "Enter a room name"
+msgstr "Введите название комнаты"
+
+msgid "Random room name"
+msgstr "Случайное имя комнаты"
+
+msgid "Enter room"
+msgstr "Войти в комнату"
+
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr ""
+"Введите имя существующей комнаты. Вы можете создавать новые номера, когда"
+" вы вошли."
+
+msgid "Room history"
+msgstr "История комнат"
+
+msgid "Please sign in."
+msgstr "Пожалуйста войдите."
+
+msgid "Videos play simultaneously for everyone in this call."
+msgstr "Видео проигрывается одновременно для всех в этом вызове."
+
+msgid "YouTube URL"
+msgstr "URL YouTube"
+
+msgid ""
+"Could not load YouTube player API, please check your network / firewall "
+"settings."
+msgstr ""
+"Не удалось загрузить API проигрывателя YouTube, пожалуйста, проверьте "
+"настройки своей сети / файрволла."
+
+msgid "Currently playing"
+msgstr "Сейчас проигрывает"
+
+msgid "YouTube controls"
+msgstr "управления YouTube"
+
+msgid "YouTube video to share"
+msgstr "Видео YouTube, чтобы поделиться"
+
+msgid "Peer to peer chat active."
+msgstr "Пиринговый чат активен."
+
+msgid "Peer to peer chat is now off."
+msgstr "Пиринговый чат теперь выключена."
+
+msgid " is now offline."
+msgstr " вышел."
+
+msgid " is now online."
+msgstr " вошел."
+
+msgid "You share file:"
+msgstr "Вы делитесь файлом:"
+
+msgid "Incoming file:"
+msgstr "Входящий файл:"
+
+msgid "You shared your location:"
+msgstr "Вы поделились своим местоположением:"
+
+msgid "Location received:"
+msgstr "Местоположение получено:"
+
+msgid "You accepted the contact request."
+msgstr "Вы приняли запрос контакта."
+
+msgid "You rejected the contact request."
+msgstr "Вы отклонил запрос контакта."
+
+msgid "You sent a contact request."
+msgstr "Вы отправили запрос на получение контакта."
+
+msgid "Your contact request was accepted."
+msgstr "Ваш запрос на контакт был принят."
+
+msgid "Incoming contact request."
+msgstr "Входящий на запрос контакт."
+
+msgid "Your contact request was rejected."
+msgstr "Ваш запрос на контакт был отклонен."
+
+msgid "Edit Contact"
+msgstr "Редактировать контакт"
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "Ваш браузер не поддерживает WebRTC. Вызовы не возможны."
+
+msgid "Close this window and disconnect?"
+msgstr "Закрыть это окно отключиться?"
+
+msgid "Contacts Manager"
+msgstr "Менеджер конактов"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr ""
+"Требуется перезапуск для применения обновлений. Нажмите кнопку ОК, чтобы "
+"перезапустить сейчас."
+
+msgid "Failed to access camera/microphone."
+msgstr "Не удалось получить доступ к камере/микрофону."
+
+msgid "Failed to establish peer connection."
+msgstr "Не удалось установить пиринговое соединение."
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "Извините, но что-то пошло не так. Ай-Ай."
+
+msgid "Oops"
+msgstr "Ой"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "Пиринговое соединение не удалось. Проверьте настройки."
+
+msgid "User hung up because of error."
+msgstr "Пользователь сбросил из-за ошибки."
+
+msgid " is busy. Try again later."
+msgstr " занят. Попробуйте позже."
+
+msgid " rejected your call."
+msgstr " отклонил вызов."
+
+msgid " does not pick up."
+msgstr " не берет."
+
+msgid " tried to call you"
+msgstr " пытался звонить вам"
+
+msgid " called you"
+msgstr " звонил вам"
+
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr "Ваш браузер не поддерживается. Обновите до текущей версии."
+
+msgid "Chat with"
+msgstr "Чат с"
+
+msgid "Message from "
+msgstr "Сообщение от "
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "Теперь вы находитесь в комнате %s ..."
+
+msgid "Your browser does not support file transfer."
+msgstr "Ваш браузер не поддерживает передачу файлов."
+
+msgid "Could not load PDF: Please make sure to select a PDF document."
+msgstr ""
+"Не удалось загрузить PDF: Пожалуйста, убедитесь, чтобы выбрать PDF "
+"документ."
+
+msgid "Could not load PDF: Missing PDF file."
+msgstr "Не удалось загрузить PDF: Отсутствует файл PDF."
+
+#, python-format
+msgid "An error occurred while loading the PDF (%s)."
+msgstr "Произошла ошибка при загрузке PDF (%s)."
+
+msgid "An unknown error occurred while loading the PDF."
+msgstr "Произошла неизвестная ошибка при загрузке PDF."
+
+#, python-format
+msgid "An error occurred while loading the PDF page (%s)."
+msgstr "Произошла ошибка при загрузке страницы PDF (%s)."
+
+msgid "An unknown error occurred while loading the PDF page."
+msgstr "Произошла неизвестная ошибка при загрузке страницы PDF."
+
+#, python-format
+msgid "An error occurred while rendering the PDF page (%s)."
+msgstr "Произошла ошибка при обработке страницы PDF (%s)."
+
+msgid "An unknown error occurred while rendering the PDF page."
+msgstr "При обработке страницы PDF произошла неизвестная ошибка."
+
+msgid "Only PDF documents and OpenDocument files can be shared at this time."
+msgstr ""
+"Только PDF документы и OpenDocument файлы могут быть выставлены на общий "
+"доступ."
+
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr "Не удалось запустить общий экран (%s)."
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr ""
+"Было отказано в запуске общего экрана. Убедитесь, что включили доступ для"
+" совместного использования экрана для вашего браузера. Скопируйте "
+"chrome://flags/#enable-usermedia-screen-capture и откройте его в вашем "
+"браузере и включите флаг на верху. Затем перезапустить браузер, и вы "
+"готовы к работе."
+
+msgid "Permission to start screen sharing was denied."
+msgstr "Было отказано в запуске общего экрана."
+
+msgid "Use browser language"
+msgstr "Использовать язык браузера"
+
+msgid "Meet with me here:"
+msgstr "Встретиться со мной здесь:"
+
+msgid "Room name"
+msgstr "Имя комнаты"
+
+msgid ""
+"The request contains an invalid parameter value. Please check the URL of "
+"the video you want to share and try again."
+msgstr ""
+"Запрос содержит недопустимое значение параметра. Пожалуйста, проверьте "
+"URL видео, с которым вы хотите поделиться, и повторите попытку."
+
+msgid ""
+"The requested content cannot be played in an HTML5 player or another "
+"error related to the HTML5 player has occurred. Please try again later."
+msgstr ""
+"Запрашиваемое содержание не может быть воспроизведено в проигрывателе "
+"HTML5 или произошла ошибка, связанная с плеером HTML5. Пожалуйста, "
+"повторите попытку позже."
+
+msgid ""
+"The video requested was not found. Please check the URL of the video you "
+"want to share and try again."
+msgstr ""
+"Запрашиваемое видео не было найдено. Пожалуйста, проверьте URL видео, с "
+"которым вы хотите поделиться и повторите попытку."
+
+msgid ""
+"The owner of the requested video does not allow it to be played in "
+"embedded players."
+msgstr ""
+"Владелец запрашиваемого видео не позволяет его воспроизвести ввстроенном "
+"проигрывателе."
+
+#, python-format
+msgid ""
+"An unknown error occurred while playing back the video (%s). Please try "
+"again later."
+msgstr ""
+"Произошла неизвестная ошибка при воспроизведении видео (%s). Пожалуйста, "
+"позже попробуйте снова."
+
+msgid ""
+"An unknown error occurred while playing back the video. Please try again "
+"later."
+msgstr ""
+"Произошла неизвестная ошибка при воспроизведении видео. Пожалуйста, позже"
+" попробуйте снова."
+
+msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
+msgstr ""
+"Неизвестный формат URL. Пожалуйста, убедитесь, что действительно ввели "
+"URL YouTube."
+
+msgid "Error"
+msgstr "Ошибка"
+
+msgid "Hint"
+msgstr "Подсказка"
+
+msgid "Please confirm"
+msgstr "Пожалуйста подтвердите"
+
+msgid "More information required"
+msgstr "Требуется больше информации"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+" screen sharing extension to Chrome and try again."
+msgstr ""
+"Совместное использование экрана требует расширение для браузера. "
+"Пожалуйста, добавьте расширение Spreed WebRTC в Chrome и повторите "
+"попытку."
+
+msgid "Access code required"
+msgstr "требуется код доступа"
+
+msgid "Access denied"
+msgstr "Доступ закрыт"
+
+msgid "Please provide a valid access code."
+msgstr "Укажите действительный код доступа."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try "
+"again."
+msgstr ""
+"Не удалось проверить код доступа. Проверьте подключение к Интернету и "
+"попробуйте еще раз."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "PIN для комнаты %s теперь '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "Замок с PIN был удален от комнаты %s."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "Введите PIN для комнаты %s"
+
+msgid "Please sign in to create rooms."
+msgstr "Пожалуйста, войдите, чтобы создавать комнаты."
+
+#, python-format
+msgid "and %s"
+msgstr "и %s"
+
+#, python-format
+msgid "and %d others"
+msgstr "и %d других "
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "Someone"
+msgstr "Кто то"
+
+msgid "Me"
+msgstr "Я"
+

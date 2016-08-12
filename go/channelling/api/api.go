@@ -188,9 +188,23 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 		}
 
 		return api.HandleRoom(session, msg.Room)
+	case "Leave":
+		if err := api.HandleLeave(session); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	default:
 		log.Println("OnText unhandled message type", msg.Type)
 	}
 
 	return nil, nil
+}
+
+func (api *channellingAPI) OnIncomingProcessed(sender channelling.Sender, session *channelling.Session, msg *channelling.DataIncoming, reply interface{}, err error) {
+	switch msg.Type {
+	case "Hello":
+		api.HelloProcessed(sender, session, msg, reply, err)
+	case "Room":
+		api.RoomProcessed(sender, session, msg, reply, err)
+	}
 }

@@ -28,6 +28,11 @@ import (
 )
 
 func (api *channellingAPI) HandleConference(session *channelling.Session, conference *channelling.DataConference) {
+	if room, ok := api.RoomStatusManager.Get(session.Roomid); ok && room.GetType() == channelling.RoomTypeConference {
+		log.Println("Refusing client-side conference update for server-managed conferences.")
+		return
+	}
+
 	// Check conference maximum size.
 	if len(conference.Conference) > maxConferenceSize {
 		log.Println("Refusing to create conference above limit.", len(conference.Conference))

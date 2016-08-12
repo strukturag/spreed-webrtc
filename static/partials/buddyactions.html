@@ -1,7 +1,7 @@
 <div class="buddyhover">
 	<div class="buddyactions active">
 		<div class="btn-group">
-			<a class="btn btn-primary" data-action="call" title="{{_('Start video call')}}"><i class="fa fa-phone"></i></a>
+			<a class="btn btn-primary" ng-if="roomType!='Conference'" data-action="call" title="{{_('Start video call')}}"><i class="fa fa-phone"></i></a>
 			<a class="btn btn-primary" data-action="chat" title="{{_('Start chat')}}"><i class="fa fa-comments-o"></i></a>
 		</div>
 	</div>
@@ -12,7 +12,7 @@
 					<div class="buddyPicture buddyPictureSmall"><i class="fa fa-user"/><img ng-show="s.Status.buddyPicture" alt ng-src="{{s.Id|buddyImageSrc:s.Status}}"/></div>
 					<div class="buddy3" title="{{s.Status.message}}">{{s.Status.displayName|displayNameForSession:s.Id}}<span ng-show="s.Status.message">, {{s.Status.message}}</span></div>
 					<div class="btn-group">
-						<a class="btn btn-sm btn-primary" title="{{_('Start video call')}}" ng-click="doCall(s.Id); $event.stopPropagation()"><i class="fa fa-phone"></i></a>
+						<a class="btn btn-sm btn-primary" ng-if="roomType!='Conference'" title="{{_('Start video call')}}" ng-click="doCall(s.Id); $event.stopPropagation()"><i class="fa fa-phone"></i></a>
 						<a class="btn btn-sm btn-primary" title="{{_('Start chat')}}" ng-click="doChat(s.Id); $event.stopPropagation()"><i class="fa fa-comments-o"></i></a>
 					</div>
 				</span>

@@ -33,11 +33,16 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		this.pc = null;
 		this.datachannel = null;
 		this.datachannelReady = false;
+		this.readyForRenegotiation = true;
 
 		if (currentcall) {
 			this.createPeerConnection(currentcall);
 		}
 
+	};
+
+	PeerConnection.prototype.setReadyForRenegotiation = function(ready) {
+		this.readyForRenegotiation = !!ready;
 	};
 
 	PeerConnection.prototype.createPeerConnection = function(currentcall) {
@@ -318,7 +323,6 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 	};
 
 	PeerConnection.prototype.createAnswer = function() {
-
 		return this.pc.createAnswer.apply(this.pc, arguments);
 
 	};

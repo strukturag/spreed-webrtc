@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2015 struktur AG
+ * Copyright (C) 2013-2016 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,22 +19,14 @@
  *
  */
 
-@charset "UTF-8";
+package api
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
-.ng-cloak, .x-ng-cloak,
-.ng-hide:not(.ng-hide-animate) {
-  display: none !important;
-}
+import (
+	"github.com/strukturag/spreed-webrtc/go/channelling"
+)
 
-ng\:form {
-  display: block;
-}
+func (api *channellingAPI) HandleLeave(session *channelling.Session) error {
+	session.LeaveRoom()
 
-.ng-animate-shim {
-  visibility:hidden;
-}
-
-.ng-anchor {
-  position:absolute;
+	return nil
 }

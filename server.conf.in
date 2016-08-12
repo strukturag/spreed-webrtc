@@ -101,14 +101,20 @@ serverRealm = local
 ; Full path to an extra templates directory. Templates in this directory ending
 ; with .html will be parsed on startup and can be used to fill the supported
 ; extra-* template slots. If the extra folder has a sub folder "static", the
-; resources in this static folder will be available as /extra/static/filename
+; resources in this static folder will be available as /extra/static/...
 ; relative to your servers base URL.
 ;extra = /usr/share/spreed-webrtc-server/extra
+; Full path to an extra.d directory. Subfolders in this directory will be
+; searched for head.html and body.html on startup. If found, those templates
+; will be automatically included for the web client. In addition,
+; sub-folder/static will be made available by URL at /extra.d/static/<n>/...
+; relative to your servers base URL.
 ; URL relative to the servers base path for a plugin javascript file which is
 ; automatically loaded on web client start for all users. You can put your
 ; plugin in the extra/static folder (see above) or provide another folder using
 ; a front end webserver. Check the doc folder for more info about plugins and
 ; examples.
+;extra.d = /usr/share/spreed-webrtc-server/extra.d
 ;plugin = extra/static/myplugin.js
 ; Content-Security-Policy HTTP response header value.
 ; Spreed WebRTC requires inline styles, WebSocket connection to itself and
@@ -154,9 +160,7 @@ enabled = false
 ;   The userid is provided as CommonName with a certificate provided with TLS
 ;   client authentication. When you use this with a front end proxy for TLS
 ;   termination, that proxy has to validate the certificate and inject certain
-;   headers into the proxy connection. In certificate mode the server can act as
-;   a signing CA to sign incoming user certificate requests with a private key
-;   when allowRegistration is true. While certificate mode offers the highest
+;   headers into the proxy connection. While certificate mode offers the highest
 ;   security it is currently considered experimental and the user experience
 ;   varies between browsers and platforms.
 ;mode = sharedsecret
@@ -208,3 +212,17 @@ enabled = false
 ; Use client_id to distinguish between multipe servers. The value is sent
 ; together with every NATS request. Defaults to empty.
 ;client_id =
+
+[roomtypes]
+; You can define room types that should be used for given room names instead of
+; the default type "Room". Use format "RegularExpression = RoomType" and make
+; sure the regular expression doesn't contain any "=" or ":".
+;
+; Available room types:
+; "Conference"
+;   All participants joining the room automatically call each other and are in
+;   a conference.
+;
+; Example (all rooms below "conference/" are conference rooms):
+;^conference/.+ = Conference
+;

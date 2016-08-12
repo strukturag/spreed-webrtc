@@ -9,7 +9,7 @@ The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/s
 
 ## Build prerequisites
 
-  - [Go](http://golang.org) >= 1.3.0
+  - [Go](http://golang.org) >= 1.4.0
   - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
@@ -40,7 +40,7 @@ $ make
   ```
 
 
-## Build seperately
+## Build separately
 
 There are several make targets available. Get Go external dependencies at
 least once with ``make get``, all the other targets depend on this.
@@ -125,7 +125,7 @@ Spreed WebRTC should be run through a SSL frontend proxy with
 support for Websockets. Example configuration for Nginx can be
 found in `doc/NGINX.txt`.
 
-In addion for real world use, one also needs a STUN/TURN server
+In addition, for real world use, one also needs a STUN/TURN server
 configured (with shared secret support).
 
 See https://github.com/coturn/coturn for a free
@@ -133,10 +133,24 @@ open source TURN server implementation. Make sure to use a recent
 version (we recommend 3.2). Versions below 2.5 are not supported.
 
 For WebRTC usage, be sure to enable long-term credentials,
-fingerprinting, and set the realm. See 
+fingerprinting, and set the realm. See
 https://github.com/coturn/coturn/wiki/turnserver#webrtc-usage
 for more information.
 
+
+## Running with Docker
+
+We provide official Docker images at https://hub.docker.com/r/spreed/webrtc/. Of
+course you can build the Docker image yourself as well. Check the Dockerfiles in
+this repository for details and instructions.
+
+Use the following command to run a Spreed WebRTC Docker container with the
+default settings from our official Spreed WebRTC Docker image.
+
+```
+docker run --rm --name my-spreed-webrtc -p 8080:8080 -p 8443:8443 \
+    -v `pwd`:/srv/extra -i -t spreed/webrtc
+```
 
 ## Setup Screensharing
 

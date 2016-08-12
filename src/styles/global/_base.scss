@@ -80,3 +80,27 @@ a {
 :fullscreen {
   background: #000;
 }
+
+.visibleRoomTypeRoom {
+  display: none;
+}
+
+.roomTypeRoom .visibleRoomTypeRoom {
+  display: block;
+}
+
+.roomTypeRoom .hiddenRoomTypeRoom {
+  display: none;
+}
+
+.visibleRoomTypeConference {
+  display: none;
+}
+
+.roomTypeConference .visibleRoomTypeConference {
+  display: block;
+}
+
+.roomTypeConference .hiddenRoomTypeConference {
+  display: none;
+}

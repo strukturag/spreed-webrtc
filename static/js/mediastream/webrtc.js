@@ -42,18 +42,60 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		console.log("This seems to be Android");
 	}
 
+	var roomTypeConference = "Conference";
+
+	var InternalPC = function(call) {
+		this.currentcall = call;
+		this.isinternal = true;
+	};
+
+	InternalPC.prototype.close = function() {
+		this.currentcall.e.triggerHandler("connectionStateChange", ["closed", this.currentcall]);
+	};
+
+	InternalPC.prototype.addStream = function() {
+	};
+
+	InternalPC.prototype.removeStream = function() {
+	};
+
+	InternalPC.prototype.negotiationNeeded = function() {
+	};
+
+	var InternalCall = function(webrtc) {
+		this.id = null;
+		this.webrtc = webrtc;
+		this.e = $({});
+		this.isinternal = true;
+		this.pc = new InternalPC(this);
+
+		this.mediaConstraints = $.extend(true, {}, this.webrtc.settings.mediaConstraints);
+	};
+
+	InternalCall.prototype.setInitiate = function(initiate) {
+	};
+
+	InternalCall.prototype.createPeerConnection = function(success_cb, error_cb) {
+		success_cb(this.pc);
+	};
+
+	InternalCall.prototype.close = function() {
+		this.pc.close();
+		this.e.triggerHandler("closed", [this]);
+	};
+
 	var WebRTC = function(api) {
 
 		this.api = api;
 
 		this.e = $({});
 
-		this.currentcall = null;
-		this.currentconference = null;
-		this.msgQueue = [];
-
-		this.started = false;
-		this.initiator = null;
+		this.conference = new PeerConference(this);
+		this.currentroom = null;
+		this.msgQueues = {};
+		this.usermediaReady = false;
+		this.pendingMediaCalls = [];
+		this.pendingMessages = [];
 
 		this.usermedia = null;
 		this.audioMute = false;
@@ -116,7 +158,62 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		};
 
 		this.api.e.bind("received.offer received.candidate received.answer received.bye received.conference", _.bind(this.processReceived, this));
+		this.api.e.bind("received.room", _.bind(this.receivedRoom, this));
+	};
 
+	WebRTC.prototype.receivedRoom = function(event, room) {
+		if (this.currentroom && room && this.currentroom.Name == room.Name) {
+			// No room change, usually happens on reconnect.
+			var ids = this.conference.getDisconnectedIds();
+			if (ids.length > 1 && this.conference.id) {
+				// User was in a conference before, try to re-establish.
+				console.log("Re-establishing conference", this.conference.id, ids);
+				this.conference.pushUpdate(true);
+			}
+			return;
+		}
+
+		if (this.isConferenceRoom()) {
+			// Switching from a conference room closes all current connections.
+			this.leavingConference = true;
+			this.e.one("stop", _.bind(function() {
+				_.defer(_.bind(function() {
+					this.leavingConference = false;
+					while (this.pendingMessages.length) {
+						var args = this.pendingMessages.shift();
+						this.processReceivedMessage.apply(this, args);
+					}
+				}, this));
+			}, this));
+			_.defer(_.bind(function() {
+				this.doHangup();
+			}, this));
+		}
+		console.log("Joined room", room, this.api.id);
+		this.currentroom = room;
+		_.defer(_.bind(function() {
+			this.maybeStartLocalVideo();
+		}, this), 100);
+	};
+
+	WebRTC.prototype.isConferenceRoom = function() {
+		return this.currentroom && this.currentroom.Type === roomTypeConference;
+	};
+
+	WebRTC.prototype.maybeStartLocalVideo = function() {
+		if (!this.isConferenceRoom()) {
+			return;
+		}
+
+		console.log("Start local video");
+		var call = new InternalCall(this);
+		this._doCallUserMedia(call);
+	};
+
+	WebRTC.prototype.stopLocalVideo = function() {
+		if (this.usermedia) {
+			this.usermedia.stop();
+		}
 	};
 
 	WebRTC.prototype.processReceived = function(event, to, data, type, to2, from) {
@@ -134,216 +231,220 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 			return;
 		}
 
-		if (!this.initiator && !this.started) {
-			switch (type) {
-				case "Offer":
-					if (this.currentcall) {
-						console.warn("Received Offer while not started and with current call -> busy.", from);
-						this.api.sendBye(from, "busy");
-						this.e.triggerHandler("busy", [from, to2, to]);
-						return;
-					}
-					this.msgQueue.unshift([to, data, type, to2, from]);
-					// Create call.
-					this.currentcall = this.createCall(from, from, from);
-					// Delegate next steps to UI.
-					this.e.triggerHandler("offer", [from, to2, to]);
-					break;
-				case "Bye":
-					if (!this.currentcall) {
-						console.warn("Received Bye while without currentcall -> ignore.", from);
-						return;
-					}
-					if (this.currentcall.from !== from) {
-						console.warn("Received Bye from another id -> ignore.", from);
-						return;
-					}
-					console.log("Bye process (started false)");
-					this.doHangup("receivedbye", from);
-					// Delegate bye to UI.
-					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
-					break;
-				default:
-					this.msgQueue.push([to, data, type, to2, from]);
-					break;
-			}
-		} else {
-			this.processReceivedMessage(to, data, type, to2, from);
-		}
-
-	};
-
-	WebRTC.prototype.findTargetCall = function(id) {
-
-		var targetcall = null;
-		if (this.currentcall) {
-			do {
-				if (this.initiator && this.currentcall.to === id) {
-					targetcall = this.currentcall;
-					break;
-				}
-				if (!this.initiator && this.currentcall.from === id) {
-					targetcall = this.currentcall;
-					break;
-				}
-				if (this.currentcall.id === id) {
-					targetcall = this.currentcall;
-					break;
-				}
-				if (this.currentconference) {
-					targetcall = this.currentconference.getCall(id)
-				}
-			} while (false);
-		}
-		return targetcall;
-
-	};
-
-	WebRTC.prototype.callForEachCall = function(fn) {
-
-		var count = 0;
-		if (this.currentcall) {
-			fn(this.currentcall, count);
-			count++;
-			if (this.currentconference) {
-				_.each(this.currentconference.calls, function(v, count) {
-					fn(v);
-					count++;
-				});
-			}
-		}
-		return count;
-
-	};
-
-	WebRTC.prototype.processReceivedMessage = function(to, data, type, to2, from) {
-
-		if (!this.started) {
-			console.log('PeerConnection has not been created yet!');
+		if (this.leavingConference) {
+			// Defer evaluating of messages until the previous conference room
+			// has been left.
+			this.pendingMessages.push([to, data, type, to2, from]);
 			return;
 		}
 
-		var targetcall;
+		this.processReceivedMessage(to, data, type, to2, from);
+	};
 
+	WebRTC.prototype.findTargetCall = function(id) {
+		return this.conference.getCall(id);
+	};
+
+	WebRTC.prototype.callForEachCall = function(fn) {
+		var calls = this.conference.getCalls();
+		if (!calls.length) {
+			return 0;
+		}
+		_.map(calls, fn);
+		return calls.length;
+	};
+
+	WebRTC.prototype._getMessageQueue = function(id, create) {
+		var queue = this.msgQueues[id] || null;
+		if (queue === null && create) {
+			queue = this.msgQueues[id] = [];
+		}
+		return queue;
+	};
+
+	WebRTC.prototype.pushBackMessage = function(id, message) {
+		this._getMessageQueue(id, true).push(message);
+	};
+
+	WebRTC.prototype.pushFrontMessage = function(id, message) {
+		this._getMessageQueue(id, true).unshift(message);
+	};
+
+	WebRTC.prototype.popFrontMessage = function(id) {
+		var queue = this._getMessageQueue(id);
+		if (!queue) {
+			return null;
+		}
+		var message = queue.shift();
+		if (!queue.length) {
+			delete this.msgQueues[id];
+		}
+		return message;
+	};
+
+	WebRTC.prototype._processOffer = function(to, data, type, to2, from) {
+		console.log("Offer process.");
+		var call = this.conference.getCall(from);
+		if (call) {
+			// Remote peer is trying to renegotiate media.
+			if (!this.settings.renegotiation && call.peerconnection && call.peerconnection.hasRemoteDescription()) {
+				// Call replace support without renegotiation.
+				this.doHangup("unsupported", from);
+				console.error("Processing new offers is not implemented without renegotiation.");
+				return;
+			}
+
+			call.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
+				this.e.triggerHandler("peercall", [currentcall]);
+				currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
+					console.log("Sending answer", sessionDescription, currentcall.id);
+					this.api.sendAnswer(currentcall.id, sessionDescription);
+				}, this));
+			}, this));
+			return;
+		}
+
+		var autoaccept = false;
+		if (data._conference) {
+			if (this.conference.id !== data._conference) {
+				console.warn("Received Offer for unknown conference -> busy.", from);
+				this.api.sendBye(from, "busy");
+				this.e.triggerHandler("busy", [from, to2, to]);
+				return;
+			}
+
+			console.log("Received conference Offer -> auto.", from, data._conference);
+			// Clean own internal data before feeding into browser.
+			delete data._conference;
+			autoaccept = true;
+		} else if (this.conference.hasCalls() && !this.conference.isDisconnected(from)) {
+			// TODO(fancycode): support joining callers to currently active conference.
+			console.warn("Received Offer while already in a call -> busy.", from);
+			this.api.sendBye(from, "busy");
+			this.e.triggerHandler("busy", [from, to2, to]);
+			return;
+		}
+
+		call = this.createCall(from, this.api.id, from);
+		if (!this.conference.addIncoming(from, call)) {
+			console.warn("Already got a call, not processing Offer", from, autoaccept);
+			return;
+		}
+
+		this.pushFrontMessage(from, [to, data, type, to2, from]);
+		if (autoaccept) {
+			if (!this.doAccept(call, true)) {
+				this.popFrontMessage(from);
+			}
+			return;
+		}
+
+		// Delegate next steps to UI.
+		this.e.triggerHandler("offer", [from, to2, to]);
+	};
+
+	WebRTC.prototype._processCandidate = function(to, data, type, to2, from) {
+		var call = this.conference.getCall(from);
+		if (!call) {
+			console.warn("Received Candidate for unknown id -> ignore.", from);
+			return;
+		}
+
+		var candidate = new window.RTCIceCandidate({
+			sdpMLineIndex: data.sdpMLineIndex,
+			sdpMid: data.sdpMid,
+			candidate: data.candidate
+		});
+		call.addIceCandidate(candidate);
+		//console.log("Got candidate", data.sdpMid, data.sdpMLineIndex, data.candidate);
+	};
+
+	WebRTC.prototype._processAnswer = function(to, data, type, to2, from) {
+		var call = this.conference.getCall(from);
+		if (!call) {
+			console.warn("Received Answer from unknown id -> ignore", from);
+			return;
+		}
+
+		console.log("Answer process.");
+		this.conference.setCallActive(call.id);
+		// TODO(longsleep): In case of negotiation this could switch offer and answer
+		// and result in a offer sdp sent as answer data. We need to handle this.
+		call.setRemoteDescription(new window.RTCSessionDescription(data), function() {
+			// Received remote description as answer.
+			console.log("Received answer after we sent offer", data);
+		});
+	};
+
+	WebRTC.prototype._processBye = function(to, data, type, to2, from) {
+		console.log("Bye process.");
+		this.doHangup("receivedbye", from);
+		// Delegate bye to UI.
+		this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
+	};
+
+	WebRTC.prototype._processConference = function(to, data, type, to2, from) {
+		var ids = this.conference.getCallIds();
+		if (!ids.length && !this.isConferenceRoom()) {
+			console.warn("Received Conference for unknown call -> ignore.", to, data);
+			return;
+		} else if (ids.length == 1) {
+			// Peer-to-peer call will be upgraded to conference. Only is allowed
+			// if currently active call is in the list of conference participants
+			// and the "Conference" is received from him. Upgrading is always
+			// allowed for server-managed conference rooms.
+			if ((from !== ids[0] || data.indexOf(ids[0]) === -1) && !this.isConferenceRoom()) {
+				console.warn("Received Conference for unknown call -> ignore.", to, data);
+				return;
+			}
+			this.conference.id = to;
+		} else if (this.conference.id && this.conference.id !== to) {
+			console.warn("Received Conference for wrong id -> ignore.", to, this.conference);
+			return;
+		}
+
+		if (!this.conference.id) {
+			if (!this.isConferenceRoom()) {
+				console.warn("Received initial Conference for non-conference room -> ignore.", to, this.conference);
+				return;
+			}
+			this.conference.id = to;
+			console.log("Setting received conference id", to);
+		}
+
+		console.log("Applying conference update", data);
+		var myid = this.api.id;
+		_.each(data, _.bind(function(id) {
+			var res = myid < id ? -1 : myid > id ? 1 : 0;
+			console.log("Considering conference peers to call", res, id);
+			if (res === -1) {
+				this.doCall(id, true);
+			}
+		}, this));
+		this.e.triggerHandler("peerconference", [this.conference]);
+	};
+
+	WebRTC.prototype.processReceivedMessage = function(to, data, type, to2, from) {
 		switch (type) {
 			case "Offer":
-				console.log("Offer process.");
-				targetcall = this.findTargetCall(from);
-				if (targetcall) {
-					if (!this.settings.renegotiation && targetcall.peerconnection && targetcall.peerconnection.hasRemoteDescription()) {
-						// Call replace support without renegotiation.
-						this.doHangup("unsupported", from);
-						console.error("Processing new offers is not implemented without renegotiation.");
-						return;
-					}
-					// Hey we know this call.
-					targetcall.setRemoteDescription(new window.RTCSessionDescription(data), _.bind(function(sessionDescription, currentcall) {
-						if (currentcall === this.currentcall) {
-							// Main call.
-							this.e.triggerHandler("peercall", [this.currentcall]);
-						}
-						currentcall.createAnswer(_.bind(function(sessionDescription, currentcall) {
-							console.log("Sending answer", sessionDescription, currentcall.id);
-							this.api.sendAnswer(currentcall.id, sessionDescription);
-						}, this));
-					}, this));
-				} else {
-					// No target call. Check conference auto answer support.
-					if (this.currentconference && this.currentconference.id === data._conference) {
-						console.log("Received conference Offer -> auto.", from, data._conference);
-						// Clean own internal data before feeding into browser.
-						delete data._conference;
-						this.currentconference.autoAnswer(from, new window.RTCSessionDescription(data));
-						break;
-					}
-					// Cannot do anything with this offer, reply with busy.
-					console.log("Received Offer from unknown id -> busy.", from);
-					this.api.sendBye(from, "busy");
-					this.e.triggerHandler("busy", [from, to2, to]);
-				}
+				this._processOffer(to, data, type, to2, from);
 				break;
 			case "Candidate":
-				targetcall = this.findTargetCall(from);
-				if (!targetcall) {
-					console.warn("Received Candidate for unknown id -> ignore.", from);
-					return;
-				}
-				var candidate = new window.RTCIceCandidate({
-					sdpMLineIndex: data.sdpMLineIndex,
-					sdpMid: data.sdpMid,
-					candidate: data.candidate
-				});
-				targetcall.addIceCandidate(candidate);
-				//console.log("Got candidate", data.sdpMid, data.sdpMLineIndex, data.candidate);
+				this._processCandidate(to, data, type, to2, from);
 				break;
 			case "Answer":
-				targetcall = this.findTargetCall(from);
-				if (!targetcall) {
-					console.warn("Received Answer from unknown id -> ignore", from);
-					return;
-				}
-				console.log("Answer process.");
-				// TODO(longsleep): In case of negotiation this could switch offer and answer
-				// and result in a offer sdp sent as answer data. We need to handle this.
-				targetcall.setRemoteDescription(new window.RTCSessionDescription(data), function() {
-					// Received remote description as answer.
-					console.log("Received answer after we sent offer", data);
-				});
+				this._processAnswer(to, data, type, to2, from);
 				break;
 			case "Bye":
-				targetcall = this.findTargetCall(from);
-				if (!targetcall) {
-					console.warn("Received Bye from unknown id -> ignore.", from);
-					return;
-				}
-				console.log("Bye process.");
-				if (targetcall === this.currentcall) {
-					var newcurrentcall;
-					if (this.currentconference) {
-						// Hand over current call to next conference call.
-						newcurrentcall = this.currentconference.handOver();
-					}
-					if (newcurrentcall) {
-						this.currentcall = newcurrentcall;
-						targetcall.close()
-						//this.api.sendBye(targetcall.id, null);
-						this.e.triggerHandler("peercall", [newcurrentcall]);
-						this.e.triggerHandler("peerconference", [this.currentconference]);
-					} else {
-						this.doHangup("receivedbye", targetcall.id);
-						this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
-					}
-				} else {
-					this.doHangup("receivedbye", targetcall.id);
-					this.e.triggerHandler("bye", [data.Reason, from, to, to2]);
-				}
+				this._processBye(to, data, type, to2, from);
 				break;
 			case "Conference":
-				if (!this.currentcall || data.indexOf(this.currentcall.id) === -1) {
-					console.warn("Received Conference for unknown call -> ignore.", to, data);
-					return;
-				} else {
-					var currentconference = this.currentconference;
-					if (!currentconference) {
-						currentconference = this.currentconference = new PeerConference(this, this.currentcall, to);
-						currentconference.e.one("finished", _.bind(function() {
-							this.currentconference = null;
-							this.e.triggerHandler("peerconference", [null]);
-						}, this));
-					} else {
-						if (currentconference.id !== to) {
-							console.warn("Received Conference for wrong id -> ignore.", to, currentconference);
-							return;
-						}
-					}
-					currentconference.applyUpdate(data);
-					this.e.triggerHandler("peerconference", [currentconference]);
-				}
+				this._processConference(to, data, type, to2, from);
 				break;
 			default:
 				console.log("Unhandled message type", type, data);
+				break;
 		}
-
 	};
 
 	WebRTC.prototype.testMediaAccess = function(cb) {
@@ -351,40 +452,54 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		var success = function(stream) {
 			console.info("testMediaAccess success");
 			cb(true);
-		}
+		};
 		var failed = function() {
 			console.info("testMediaAccess failed");
 			cb(false);
-		}
+		};
 		UserMedia.testGetUserMedia(success, failed);
 
 	};
 
 	WebRTC.prototype.createCall = function(id, from, to) {
-
-		var currentcall = new PeerCall(this, id, from, to);
-		currentcall.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
+		var call = new PeerCall(this, id, from, to);
+		call.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
 			this.onConnectionStateChange(iceConnectionState, currentcall);
 		}, this));
-		currentcall.e.on("remoteStreamAdded", _.bind(function(event, stream, currentcall) {
+		call.e.on("remoteStreamAdded", _.bind(function(event, stream, currentcall) {
 			this.onRemoteStreamAdded(stream, currentcall);
 		}, this));
-		currentcall.e.on("remoteStreamRemoved", _.bind(function(event, stream, currentcall) {
+		call.e.on("remoteStreamRemoved", _.bind(function(event, stream, currentcall) {
 			this.onRemoteStreamRemoved(stream, currentcall);
 		}, this));
-		currentcall.e.on("error", _.bind(function(event, id, message) {
-			if (!id) {
-				id = "failed_peerconnection";
+		call.e.on("error", _.bind(function(event, error_id, message) {
+			if (!error_id) {
+				error_id = "failed_peerconnection";
 			}
-			this.e.triggerHandler("error", [message, id]);
-			_.defer(_.bind(this.doHangup, this), "error", currentcall.id); // Hangup on error is good yes??
+			this.e.triggerHandler("error", [message, error_id]);
+			_.defer(_.bind(this.doHangup, this), "error", id); // Hangup on error is good yes??
 		}, this));
-
-		return currentcall;
-
+		call.e.on("closed", _.bind(function() {
+			this.conference.removeCall(id);
+		}, this));
+		call.e.on("connectionStateChange", _.bind(function(event, state, currentcall) {
+			switch (state) {
+			case "disconnected":
+			case "failed":
+				this.conference.markDisconnected(currentcall.id);
+				break;
+			}
+		}, this));
+		return call;
 	};
 
-	WebRTC.prototype.doUserMedia = function(currentcall) {
+	WebRTC.prototype.doUserMedia = function(call) {
+
+		if (this.usermedia) {
+			// We should not create a new UserMedia object while the current one
+			// is still being used.
+			console.error("UserMedia already created, check caller");
+		}
 
 		// Create default media (audio/video).
 		var usermedia = new UserMedia({
@@ -394,8 +509,12 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		});
 		usermedia.e.on("mediasuccess mediaerror", _.bind(function(event, um) {
 			this.e.triggerHandler("usermedia", [um]);
+			this.usermediaReady = true;
 			// Start always, no matter what.
-			this.maybeStart(um);
+			while (this.pendingMediaCalls.length > 0) {
+				var c = this.pendingMediaCalls.shift();
+				this.maybeStart(um, c);
+			}
 		}, this));
 		usermedia.e.on("mediachanged", _.bind(function(event, um) {
 			// Propagate media change events.
@@ -404,7 +523,9 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		usermedia.e.on("stopped", _.bind(function(event, um) {
 			if (um === this.usermedia) {
 				this.e.triggerHandler("usermedia", [null]);
+				this.usermediaReady = false;
 				this.usermedia = null;
+				this.maybeStartLocalVideo();
 			}
 		}, this));
 		this.e.one("stop", function() {
@@ -412,55 +533,99 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		});
 		this.usermedia = usermedia;
 		this.e.triggerHandler("usermedia", [usermedia]);
+		this.pendingMediaCalls.push(call);
 
-		return usermedia.doGetUserMedia(currentcall);
+		return usermedia.doGetUserMedia(call);
 
 	};
 
-	WebRTC.prototype.doCall = function(id) {
-
-		if (this.currentcall) {
-			// Conference mode.
-			var currentconference = this.currentconference;
-			if (!currentconference) {
-				currentconference = this.currentconference = new PeerConference(this, this.currentcall);
-				currentconference.e.one("finished", _.bind(function() {
-					this.currentconference = null;
-					this.e.triggerHandler("peerconference", [null]);
-				}, this));
-			}
-			currentconference.doCall(id);
-			this.e.triggerHandler("peerconference", [currentconference]);
-		} else {
-			var currentcall = this.currentcall = this.createCall(id, null, id);
-			this.e.triggerHandler("peercall", [currentcall]);
-			var ok = this.doUserMedia(currentcall);
-			if (ok) {
-				this.e.triggerHandler("waitforusermedia", [currentcall]);
+	WebRTC.prototype._doCallUserMedia = function(call) {
+		if (this.usermedia) {
+			if (!this.usermediaReady) {
+				this.pendingMediaCalls.push(call);
 			} else {
-				this.e.triggerHandler("error", ["Failed to access camera/microphone.", "failed_getusermedia"]);
-				return this.doHangup();
+				this.maybeStart(this.usermedia, call);
 			}
-			this.initiator = true;
+			return true;
 		}
+
+		var ok = this.doUserMedia(call);
+		if (ok) {
+			this.e.triggerHandler("waitforusermedia", [call]);
+			return true;
+		}
+
+		this.e.triggerHandler("error", ["Failed to access camera/microphone.", "failed_getusermedia"]);
+		if (call.id) {
+			this.doHangup("usermedia", call.id);
+		}
+		return false;
 	};
 
-	WebRTC.prototype.doAccept = function() {
+	WebRTC.prototype._doAutoStartCall = function(call) {
+		if (!this.usermedia) {
+			return false;
+		}
 
-		//NOTE(longsleep): currentcall was created as early as possible to be able to process incoming candidates.
-		var currentcall = this.currentcall;
-		if (!currentcall) {
-			console.warn("Trying to accept without a call.", currentcall);
+		if (!this.usermediaReady) {
+			// getUserMedia is still pending, defer starting of call.
+			this.pendingMediaCalls.push(call);
+		} else {
+			this.maybeStart(this.usermedia, call, true);
+		}
+		return true;
+	};
+
+	WebRTC.prototype.doCall = function(id, autocall) {
+		var call = this.createCall(id, null, id);
+		call.setInitiate(true);
+		var count = this.conference.getCallsCount();
+		if (!this.conference.addOutgoing(id, call)) {
+			console.log("Already has a call with", id);
 			return;
 		}
-		var ok = this.doUserMedia(currentcall);
-		if (ok) {
-			this.e.triggerHandler("waitforusermedia", [currentcall]);
-		} else {
-			this.e.triggerHandler("error", ["Failed to access camera/microphone.", "failed_getusermedia"]);
-			return this.doHangup();
+		this.e.triggerHandler("peercall", [call]);
+		if (!autocall) {
+			this.e.triggerHandler("connecting", [call]);
+		}
+		if ((autocall && count > 0) || this.isConferenceRoom()) {
+			call.e.on("sessiondescription", _.bind(function(event, sessionDescription) {
+				var cid = this.conference.getOrCreateId();
+				console.log("Injected conference id into sessionDescription", cid);
+				sessionDescription._conference = cid;
+			}, this));
+		}
+		if (count > 0) {
+			if (count === 1) {
+				// Notify UI that it's a conference now.
+				this.e.triggerHandler("peerconference", [this.conference]);
+			}
+			if (this._doAutoStartCall(call)) {
+				return;
+			}
 		}
 
+		if (!this._doCallUserMedia(call)) {
+			return;
+		}
+	};
+
+	WebRTC.prototype.doAccept = function(call, autoanswer) {
+		if (typeof call === "string") {
+			var id = call;
+			call = this.conference.getCall(id);
+			if (!call) {
+				console.warn("Trying to accept unknown call.", id);
+				return false;
+			}
+		}
+
+		this.conference.setCallActive(call.id);
+		if (autoanswer && this._doAutoStartCall(call)) {
+			return true;
+		}
+
+		return this._doCallUserMedia(call);
 	};
 
 	WebRTC.prototype.doXfer = function(id, token, options) {
@@ -592,99 +757,96 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	WebRTC.prototype.stop = function() {
 
-		if (this.currentconference) {
-			this.currentconference.close();
-			this.currentconference = null;
-		}
-		if (this.currentcall) {
-			this.currentcall.close();
-			this.currentcall = null;
-		}
+		this.conference.close();
 		this.e.triggerHandler("peerconference", [null]);
 		this.e.triggerHandler("peercall", [null]);
 		this.e.triggerHandler("stop");
-		this.msgQueue.length = 0;
-		this.initiator = null;
-		this.started = false;
+		this.msgQueues = {};
 
 	}
 
 	WebRTC.prototype.doHangup = function(reason, id) {
 
-		console.log("Hanging up.", id);
-		if (id) {
-			var currentcall = this.findTargetCall(id);
-			if (!currentcall) {
-				console.warn("Tried to hangup unknown call.", reason, id);
-				return;
-			}
-			if (currentcall !== this.currentcall) {
-				currentcall.close();
-				if (reason !== "receivedbye") {
-					this.api.sendBye(id, reason);
-				}
-				_.defer(_.bind(function() {
-					if (this.currentcall && currentcall) {
-						this.e.triggerHandler("statechange", ["connected", this.currentcall]);
-					} else {
-						this.e.triggerHandler("done", [reason]);
-					}
-				}, this));
-				return;
-			}
+		if (!id) {
+			console.log("Closing all calls")
+			_.each(this.conference.getCallIds(), _.bind(function(callid) {
+				this.doHangup(reason, callid);
+			}, this));
+			this.stop();
+			return true;
 		}
-		if (this.currentcall) {
-			id = this.currentcall.id;
+
+		console.log("Hanging up.", id);
+		var call = this.conference.removeCall(id);
+		if (!call) {
+			console.warn("Tried to hangup unknown call.", reason, id);
+			return false;
+		}
+		call.close();
+		if (reason !== "receivedbye") {
+			this.api.sendBye(id, reason);
+		}
+		var calls = this.conference.getCalls();
+		if (!calls.length) {
+			// Last peer disconnected, perform cleanup.
+			this.e.triggerHandler("peercall", [null]);
 			_.defer(_.bind(function() {
 				this.e.triggerHandler("done", [reason]);
 			}, this));
+			this.stop();
+		} else if (calls.length === 1) {
+			// Downgraded to peer-to-peer again.
+			this.conference.id = null;
+			this.e.triggerHandler("peerconference", [null]);
+			this.e.triggerHandler("peercall", [calls[0]]);
 		}
-		this.stop();
-		if (id) {
-			if (reason !== "receivedbye") {
-				this.api.sendBye(id, reason);
-			}
-		}
-
+		return true;
 	}
 
-	WebRTC.prototype.maybeStart = function(usermedia) {
+	WebRTC.prototype.maybeStart = function(usermedia, call, autocall) {
 
-		//console.log("maybeStart", this.started);
-		if (!this.started) {
-
-			var currentcall = this.currentcall;
-			currentcall.setInitiate(this.initiator);
-			this.e.triggerHandler("connecting", [currentcall]);
-			console.log('Creating PeerConnection.', currentcall);
-			currentcall.createPeerConnection(_.bind(function(peerconnection) {
-				// Success call.
-				usermedia.addToPeerConnection(peerconnection);
-				this.started = true;
-				if (!this.initiator) {
-					this.calleeStart();
-				}
-				currentcall.e.on("negotiationNeeded", _.bind(function(event, currentcall) {
-					this.sendOfferWhenNegotiationNeeded(currentcall);
-				}, this));
-			}, this), _.bind(function() {
-				// Error call.
-				this.e.triggerHandler("error", ["Failed to create peer connection. See log for details."]);
-				this.doHangup();
-			}, this));
-
+		//console.log("maybeStart", call);
+		if (call.peerconnection) {
+			console.log("Already started", call);
+			return;
 		}
+
+		if (!autocall) {
+			if (!call.isinternal) {
+				this.e.triggerHandler("connecting", [call]);
+			} else if (!this.conference.hasCalls()) {
+				// Signal UI that media access has been granted.
+				this.e.triggerHandler("done");
+			}
+		}
+		console.log('Creating PeerConnection.', call);
+		call.createPeerConnection(_.bind(function(peerconnection) {
+			// Success call.
+			usermedia.addToPeerConnection(peerconnection);
+			if (!call.initiate) {
+				this.processPendingMessages(call.id);
+			}
+			call.e.on("negotiationNeeded", _.bind(function(event, call) {
+				this.sendOfferWhenNegotiationNeeded(call);
+			}, this));
+		}, this), _.bind(function() {
+			// Error call.
+			this.e.triggerHandler("error", ["Failed to create peer connection. See log for details."]);
+			if (call.id) {
+				this.doHangup("failed", call.id);
+			}
+		}, this));
 
 	};
 
-	WebRTC.prototype.calleeStart = function() {
-
-		var args;
-		while (this.msgQueue.length > 0) {
-			args = this.msgQueue.shift();
-			this.processReceivedMessage.apply(this, args);
-		}
-
+	WebRTC.prototype.processPendingMessages = function(id) {
+		do {
+			var message = this.popFrontMessage(id);
+			if (!message) {
+				break;
+			}
+			this.processReceivedMessage.apply(this, message);
+		} while (true);
 	};
 
 	WebRTC.prototype.sendOfferWhenNegotiationNeeded = function(currentcall, to) {

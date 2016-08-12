@@ -26,6 +26,7 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/subtle"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -95,7 +96,7 @@ func (uh *UsersSharedsecretHandler) Validate(snr *SessionNonceRequest, request *
 	}
 
 	secret := uh.createHMAC(snr.UseridCombo)
-	if snr.Secret != secret {
+	if subtle.ConstantTimeCompare([]byte(snr.Secret), []byte(secret)) != 1 {
 		return "", errors.New("invalid secret")
 	}
 
