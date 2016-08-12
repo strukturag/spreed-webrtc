@@ -38,3 +38,4 @@ script:
   - make test
   - make binary
   - make build-i18n
+  - make tarball
