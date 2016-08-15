@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-02-17 14:15+0100\n"
+"POT-Creation-Date: 2016-08-15 14:06+0200\n"
 "PO-Revision-Date: 2014-05-21 09:54+0800\n"
 "Last-Translator: Michael P.\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -299,9 +299,6 @@ msgid ""
 msgstr ""
 
 msgid "Your ID"
-msgstr ""
-
-msgid "Register"
 msgstr ""
 
 msgid ""
@@ -840,4 +837,7 @@ msgstr "某人"
 
 msgid "Me"
 msgstr "我"
+
+#~ msgid "Register"
+#~ msgstr ""
 

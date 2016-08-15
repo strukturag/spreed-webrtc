@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-02-17 14:15+0100\n"
+"POT-Creation-Date: 2016-08-15 14:06+0200\n"
 "PO-Revision-Date: 2016-02-17 14:16+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
@@ -306,9 +306,6 @@ msgstr ""
 
 msgid "Your ID"
 msgstr "Ihre ID"
-
-msgid "Register"
-msgstr "Registrieren"
 
 msgid ""
 "Authenticated by certificate. To log out you have to remove your "
@@ -876,4 +873,7 @@ msgstr "Unbekannt"
 
 msgid "Me"
 msgstr "Ich"
+
+#~ msgid "Register"
+#~ msgstr "Registrieren"
 
