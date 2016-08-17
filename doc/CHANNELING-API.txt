@@ -122,11 +122,11 @@ Special purpose documents for channling
           "username": "turn-username",
           "password": "turn-password",
           "ttl": 3600
-          "urls": {
+          "urls": [
             "turn:213.203.211.154:3478?transport=udp",
             "turn:213.203.211.154:3479?transport=tcp",
             "turns:213.203.211.154:443?transport=tcp"
-          }
+          ]
         },
         "Stun": [
           "stun:213.203.211.154:443"
