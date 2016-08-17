@@ -20,6 +20,10 @@
  */
 
 .#{$fa-css-prefix} {
+  &.pin {
+    color: $social-email-color;
+  }
+
   &.link {
     color: $social-email-color;
   }
