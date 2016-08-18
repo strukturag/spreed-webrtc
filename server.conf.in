@@ -139,6 +139,7 @@ serverRealm = local
 ;youtube = true
 ;presentation = true
 ;contacts = true
+;roomlocking = true
 
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log
