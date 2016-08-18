@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-08-15 14:06+0200\n"
-"PO-Revision-Date: 2016-02-17 14:16+0100\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
+"PO-Revision-Date: 2016-08-18 18:24+0100\n"
 "Last-Translator: Simon Eisenmann <simon@struktur.de>\n"
 "Language-Team: struktur AG <opensource@struktur.de>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -454,6 +454,9 @@ msgstr ""
 "Ihre ID bleibt dennoch gespeichert. Klicken Sie Ausloggen weiter oben um "
 "die ID zu löschen."
 
+msgid "Room PIN"
+msgstr "Raum-PIN"
+
 msgid "Room link"
 msgstr "Raum-Link"
 
@@ -755,6 +758,12 @@ msgstr "Browsereinstellung"
 
 msgid "Meet with me here:"
 msgstr "Meeting:"
+
+msgid "Please enter a new Room PIN to lock the room"
+msgstr "Bitte geben Sie eine neue Raum-PIN ein um diesen Raum abzuschliessen"
+
+msgid "Do you want to unlock the room?"
+msgstr "Möchten Sie diesen Raum aufschliessen?"
 
 msgid "Room name"
 msgstr "Raum-Name"
