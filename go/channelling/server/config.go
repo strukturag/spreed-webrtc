@@ -83,6 +83,7 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		"youtube":       true,
 		"presentation":  true,
 		"contacts":      true,
+		"roomlocking":   true,
 	}
 	modules := []string{}
 	for module := range modulesTable {
