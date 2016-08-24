@@ -27,7 +27,7 @@ import (
 	"github.com/strukturag/spreed-webrtc/go/channelling"
 )
 
-func (api *channellingAPI) HandleSelf(session *channelling.Session) (*channelling.DataSelf, error) {
+func (api *channellingAPI) HandleSelf(sender channelling.Sender, session *channelling.Session) (*channelling.DataSelf, error) {
 	token, err := api.SessionEncoder.EncodeSessionToken(session)
 	if err != nil {
 		log.Println("Error in OnRegister", err)
@@ -44,7 +44,7 @@ func (api *channellingAPI) HandleSelf(session *channelling.Session) (*channellin
 		Token:      token,
 		Version:    api.config.Version,
 		ApiVersion: apiVersion,
-		Turn:       api.TurnDataCreator.CreateTurnData(session),
+		Turn:       api.TurnDataCreator.CreateTurnData(sender, session),
 		Stun:       api.config.StunURIs,
 	}
 	api.BusManager.Trigger(channelling.BusManagerSession, session.Id, session.Userid(), nil, nil)

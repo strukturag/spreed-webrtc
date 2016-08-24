@@ -112,6 +112,10 @@ func (pipeline *Pipeline) Send(b buffercache.Buffer) {
 	// Noop.
 }
 
+func (pipeline *Pipeline) Outgoing(m interface{}) {
+	// Noop.
+}
+
 func (pipeline *Pipeline) Index() uint64 {
 	return 0
 }

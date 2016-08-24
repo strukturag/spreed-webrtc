@@ -159,6 +159,10 @@ define(['jquery', 'underscore', 'ua-parser'], function($, _, uaparser) {
 				this.sid = data.Sid;
 				this.e.triggerHandler("received.self", [data]);
 				break;
+			case "TurnUpdate":
+				//console.log("TURN update received", data);
+				this.e.triggerHandler("received.turnUpdate", [data]);
+				break;
 			case "Offer":
 				//console.log("Offer received", data.To, data.Offer);
 				this.e.triggerHandler("received.offer", [data.To, data.Offer, data.Type, d.To, d.From]);
