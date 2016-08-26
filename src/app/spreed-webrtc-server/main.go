@@ -296,8 +296,18 @@ func runner(runtime phoenix.Runtime) error {
 		return err
 	}
 
+	// TURN data support.
+	var turnDataCreator channelling.TurnDataCreator
+	if turnServiceURI, _ := runtime.GetString("turnService", "turnServiceURI"); turnServiceURI != "" {
+		log.Printf("Using TURN service: %s\n", turnServiceURI)
+		turnServiceManager := channelling.NewTURNServiceManager(turnServiceURI, runtime.GetStringDefault("turnService", "turnServiceAccessToken", ""), runtime.GetStringDefault("turnService", "turnServiceClientID", ""))
+		turnDataCreator = turnServiceManager
+	} else {
+		turnDataCreator = hub
+	}
+
 	// Create API.
-	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, hub, hub, busManager, pipelineManager)
+	channellingAPI := api.New(config, roomManager, tickets, sessionManager, statsManager, hub, turnDataCreator, hub, busManager, pipelineManager)
 	apiConsumer.SetChannellingAPI(channellingAPI)
 
 	// Start bus.

@@ -21,6 +21,10 @@
 
 package channelling
 
+import (
+	"github.com/strukturag/spreed-turnservicecli/turnservicecli"
+)
+
 type DataError struct {
 	Type    string
 	Code    string
@@ -91,11 +95,18 @@ type DataSelf struct {
 	Stun       []string
 }
 
+type DataTurnUpdate struct {
+	Type string
+	Turn *DataTurn
+}
+
 type DataTurn struct {
-	Username string   `json:"username"`
-	Password string   `json:"password"`
-	Ttl      int      `json:"ttl"`
-	Urls     []string `json:"urls"`
+	Username string                       `json:"username"`
+	Password string                       `json:"password"`
+	Ttl      int                          `json:"ttl"`
+	Urls     []string                     `json:"urls,omitempty"`
+	Servers  []*turnservicecli.URNsWithID `json:"servers,omitempty"`
+	GeoURI   string                       `json:"geo_uri,omitempty"`
 }
 
 type DataSession struct {

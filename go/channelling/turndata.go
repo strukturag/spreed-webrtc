@@ -22,5 +22,5 @@
 package channelling
 
 type TurnDataCreator interface {
-	CreateTurnData(*Session) *DataTurn
+	CreateTurnData(Sender, *Session) *DataTurn
 }

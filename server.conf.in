@@ -227,3 +227,14 @@ enabled = false
 ; Example (all rooms below "conference/" are conference rooms):
 ;^conference/.+ = Conference
 ;
+
+[turnService]
+; To avoid the setup of a self-owned TURN server, a TURN service can be used.
+; When a turnServiceURI is set, TurnURIs in the [app] section are ignored.
+;turnServiceURI = https://turnservice.spreed.me
+; Access token for the TURN service. This is usually required and provided with
+; your TURN service subscription.
+;turnServiceAccessToken = some-secret-value
+; The ClientID can be used to specify additional credentials if required
+; by the TURN service. If empty, the value of turnServiceAccessToken is used.
+;turnServiceClientID =
