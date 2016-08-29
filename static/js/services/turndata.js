@@ -24,6 +24,7 @@ define(["jquery"], function($) {
 	var geoRequestTimeout = 30000; // Timeout for geo requests in milliseconds.
 	var geoFastRetryTimeout = 45000; // Refresh timer in milliseconds, after which GEO requests should be retried if failed before.
 	var refreshPercentile = 90; // Percent of the TTL when TURN credentials should be refreshed.
+	var refreshMinimumInterval = 30000; // Minimal TURN refresh interval in milliseconds.
 
 	// turnData
 	return ["$timeout", "$http", "api", "randomGen", "appData", "translationLanguage", function($timeout, $http, api, randomGen, appData, translationLanguage) {
@@ -190,10 +191,14 @@ define(["jquery"], function($) {
 
 			// Support to refresh TURN data when ttl was reached.
 			if (turn.ttl) {
+				var timer = turn.ttl * 0.01 * refreshPercentile * 1000;
+				if (timer < refreshMinimumInterval) {
+					timer = refreshMinimumInterval;
+				}
 				ttlTimeout = $timeout(function() {
 					console.log("TURN TTL reached - sending refresh request.");
 					api.sendSelf();
-				}, turn.ttl * 0.01 * refreshPercentile * 1000);
+				}, timer);
 			}
 		};
 
