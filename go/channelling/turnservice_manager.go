@@ -97,6 +97,13 @@ func (mgr *turnServiceManager) turnData(credentials *turnservicecli.CachedCreden
 			turn.Servers = credentials.Turn.Servers
 			turn.Ttl = int(ttl)
 			turn.GeoURI = credentials.Turn.GeoURI
+
+			if len(turn.Servers) > 0 {
+				// For backwards compatibility with clients which do not
+				// understand turn.Servers, directly deliver the first TURN
+				// server zone URNs.
+				turn.Urls = turn.Servers[0].URNs
+			}
 		}
 	}
 
