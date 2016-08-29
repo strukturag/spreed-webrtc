@@ -24,9 +24,10 @@ define(["jquery"], function($) {
 	var geoRequestTimeout = 30000; // Timeout for geo requests in milliseconds.
 	var geoFastRetryTimeout = 45000; // Refresh timer in milliseconds, after which GEO requests should be retried if failed before.
 	var refreshPercentile = 90; // Percent of the TTL when TURN credentials should be refreshed.
+	var refreshMinimumInterval = 30000; // Minimal TURN refresh interval in milliseconds.
 
 	// turnData
-	return ["$timeout", "$http", "api", "randomGen", "appData", function($timeout, $http, api, randomGen, appData) {
+	return ["$timeout", "$http", "api", "randomGen", "appData", "translationLanguage", function($timeout, $http, api, randomGen, appData, translationLanguage) {
 		var ttlTimeout = null;
 		var geoRefresh = null;
 		var geoPreferred = null;
@@ -44,24 +45,52 @@ define(["jquery"], function($) {
 			};
 			if (turn && turn.servers) {
 				// Multiple options, need to sort and use settings.
+				var i;
 				if (!turn.serverMap) {
 					var servers = {};
+					var serversSelectable = [];
+					// Sort for prio.
 					turn.servers.sort(function(a, b) {
 						servers[a.id] = a;
 						servers[b.id] = b;
 						return (a.prio > b.prio) ? 1 : ((a.prio < b.prio) ? -1 : 0);
 					});
 					turn.first = turn.servers[0];
-					if (turn.geo_uri) {
-						turn.servers.unshift({
-							"id": "auto"
+					// Create selectable servers.
+					var lang = translationLanguage.lang;
+					for (i=0; i<turn.servers.length; i++) {
+						var label = turn.servers[i].label;
+						if (turn.servers[i].i18n && turn.servers[i].i18n[lang]) {
+							label = turn.servers[i].label = turn.servers[i].i18n[lang];
+						}
+
+						if (label === "hidden") {
+							continue;
+						}
+						if (!label) {
+							// Use id as label.
+							label = turn.servers[i].label = turn.servers[i].id;
+						}
+						if (!label) {
+							// Use index as label.
+							label = turn.servers[i].label = ''+i;
+						}
+						serversSelectable.push(turn.servers[i]);
+					}
+					// Add auto zone if geo URI and available zones.
+					if (turn.geo_uri && turn.servers.length > 0) {
+						serversSelectable.unshift({
+							"id": "auto",
+							"label": "auto"
 						})
 					}
+					// Make created data available.
 					turn.serverMap = servers;
+					turn.serversSelectable = serversSelectable;
 				}
 				var urls;
 				if (turn.preferred) {
-					for (var i=0; i<turn.preferred.length; i++) {
+					for (i=0; i<turn.preferred.length; i++) {
 						if (turn.serverMap.hasOwnProperty(turn.preferred[i])) {
 							urls = turn.serverMap[turn.preferred[i]].urns;
 							break;
@@ -79,7 +108,7 @@ define(["jquery"], function($) {
 				// Unknown data.
 				turnData.urls = [];
 			}
-			console.log("TURN servers selected: ", turnData.urls, turn.preferred || null);
+			console.log("TURN servers selected: ", turnData.urls, turnData.ttl, turn.preferred || null);
 			service.e.triggerHandler("apply", [turnData]);
 
 			return turnData;
@@ -162,10 +191,14 @@ define(["jquery"], function($) {
 
 			// Support to refresh TURN data when ttl was reached.
 			if (turn.ttl) {
+				var timer = turn.ttl * 0.01 * refreshPercentile * 1000;
+				if (timer < refreshMinimumInterval) {
+					timer = refreshMinimumInterval;
+				}
 				ttlTimeout = $timeout(function() {
 					console.log("TURN TTL reached - sending refresh request.");
 					api.sendSelf();
-				}, turn.ttl * 0.01 * refreshPercentile * 1000);
+				}, timer);
 			}
 		};
 
