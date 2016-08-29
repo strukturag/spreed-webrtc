@@ -9,196 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-07-02 14:57-0500\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Jhon Felipe Urrego Mejia <ingenierofelipeurrego@gmail.com>\n"
-"Language: es\n"
+"Last-Translator: Jhon Felipe Urrego Mejia "
+"<ingenierofelipeurrego@gmail.com>\n"
 "Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.3.4\n"
-
-#, python-format
-msgid "and %s"
-msgstr "y %s"
-
-#, python-format
-msgid "and %d others"
-msgstr "y %d otros"
-
-msgid "User"
-msgstr "Usuario"
-
-msgid "Someone"
-msgstr "Alguien"
-
-msgid "Me"
-msgstr "Yo"
-
-msgid "Peer to peer chat active."
-msgstr "Chat P2P activo."
-
-msgid "Peer to peer chat is now off."
-msgstr "Chat P2P está ahora desactivado."
-
-msgid " is now offline."
-msgstr " está ahora desconectado."
-
-msgid " is now online."
-msgstr " está ahora en línea."
-
-msgid "You share file:"
-msgstr "Compartir archivo:"
-
-msgid "Incoming file:"
-msgstr "Archivo entrante:"
-
-msgid "You shared your location:"
-msgstr "Ha compartido su ubicación:"
-
-msgid "Location received:"
-msgstr "Ubicación recibida:"
-
-msgid "You accepted the contact request."
-msgstr "Ha aceptado la solicitud de contacto."
-
-msgid "You rejected the contact request."
-msgstr "Ha rechazado la solicitud de contacto."
-
-msgid "You sent a contact request."
-msgstr "Ha enviado una solicitud de contacto."
-
-msgid "Your contact request was accepted."
-msgstr "Su solicitud de contacto fue aceptada."
-
-msgid "Incoming contact request."
-msgstr "Solicitud de contacto entrante."
-
-msgid "Your contact request was rejected."
-msgstr "Fue rechazada su solicitud de contacto."
-
-msgid "Edit Contact"
-msgstr "Editar contacto"
-
-msgid "Your browser does not support WebRTC. No calls possible."
-msgstr "Su explorador no soporta WebRTC. No hay posibilidad de realizar llamadas."
-
-msgid "Close this window and disconnect?"
-msgstr "Cerrar esta ventana y desconectar?"
-
-msgid "Contacts Manager"
-msgstr "Administrador de contactos"
-
-msgid "Restart required to apply updates. Click ok to restart now."
-msgstr ""
-"Es necesario reiniciar para aplicar las actualizaciones. Haga clic en "
-"Aceptar para reiniciar el sistema ahora."
-
-msgid "Incoming call"
-msgstr "Llamada entrante"
-
-msgid "from"
-msgstr "desde"
-
-msgid "Failed to access camera/microphone."
-msgstr "Error al acceder a la cámara/micrófono."
-
-msgid "Failed to establish peer connection."
-msgstr "Error al establecer conexión P2P."
-
-msgid "We are sorry but something went wrong. Boo boo."
-msgstr "Lo sentimos, pero algo salió mal. AHHHHHHH."
-
-msgid "Oops"
-msgstr "Ooops"
-
-msgid "Peer connection failed. Check your settings."
-msgstr "Conexión P2P fallida. Compruebe su configuración."
-
-msgid "User hung up because of error."
-msgstr "Usuario colgó debido a un error."
-
-msgid " is busy. Try again later."
-msgstr " está ocupado. Vuelva a intentarlo más tarde."
-
-msgid " rejected your call."
-msgstr " rechazó su llamada."
-
-msgid " does not pick up."
-msgstr " no contesta."
-
-msgid " tried to call you"
-msgstr " intentó llamarte"
-
-msgid " called you"
-msgstr " le llamó"
-
-msgid "Your browser is not supported. Please upgrade to a current version."
-msgstr "Su navegador no es compatible. Actualice a una versión actual."
-
-msgid "Error"
-msgstr "Error"
-
-msgid "Hint"
-msgstr "Sugerencia"
-
-msgid "Please confirm"
-msgstr "Confirme"
-
-msgid "More information required"
-msgstr "Se necesita más información"
-
-msgid "Ok"
-msgstr "Ok"
-
-msgid "Cancel"
-msgstr "Cancelar"
-
-msgid "Close"
-msgstr "Cerrar"
-
-msgid ""
-"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
-" screen sharing extension to Chrome and try again."
-msgstr ""
-"Se requiere una extensión del navegador para Compartir Pantalla. Por favor, "
-"añada la extensión Spreed WebRTC screen sharing a Chrome e inténtelo de nuevo."
-
-msgid "Your browser does not support file transfer."
-msgstr "Tu navegador no soporta transferencia de archivos."
-
-msgid "Access code required"
-msgstr "Código de acceso requerido"
-
-msgid "Access denied"
-msgstr "Acceso denegado"
-
-msgid "Please provide a valid access code."
-msgstr "Proporcione un código de acceso válido."
-
-msgid ""
-"Failed to verify access code. Check your Internet connection and try "
-"again."
-msgstr ""
-"No se ha podido verificar el código de acceso. Compruebe su conexión a "
-"Internet e intente una vez más."
-
-#, python-format
-msgid "PIN for room %s is now '%s'."
-msgstr "PIN de sala %s es ahora '%s'."
-
-#, python-format
-msgid "PIN lock has been removed from room %s."
-msgstr "bloqueo de PIN se ha eliminado desde la sala %s."
-
-#, python-format
-msgid "Enter the PIN for room %s"
-msgstr "Introducir el PIN para sala %s"
-
-msgid "Please sign in to create rooms."
-msgstr "Inicie sesión para crear nuevas salas."
+"Generated-By: Babel 1.3\n"
 
 msgid "Standard view"
 msgstr "Vista estándar"
@@ -229,6 +49,9 @@ msgstr "Tomar"
 
 msgid "Retake"
 msgstr "Repetir"
+
+msgid "Cancel"
+msgstr "Cancelar"
 
 msgid "Set as Profile Picture"
 msgstr "Establecer como imagen de perfil"
@@ -304,9 +127,9 @@ msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
 msgstr ""
-"Para agregar nuevos contactos, unirse a una sala y crear una "
-"solicitud de contacto al hacer click en el icono de la estrella junto"
-" al nombre del usuario."
+"Para agregar nuevos contactos, unirse a una sala y crear una solicitud de"
+" contacto al hacer click en el icono de la estrella junto al nombre del "
+"usuario."
 
 msgid "Edit contact"
 msgstr "Editar contacto"
@@ -325,6 +148,9 @@ msgstr "Refrescar"
 
 msgid "Save"
 msgstr "Guardar"
+
+msgid "Close"
+msgstr "Cerrar"
 
 msgid "File sharing"
 msgstr "Compartir archivos"
@@ -436,9 +262,9 @@ msgid "Application"
 msgstr "Aplicación"
 
 msgid "Share the whole screen. Click share to select the screen."
-msgstr "Compartir toda la pantalla. Haga clic en Compartir para seleccionar la pantalla."
-
-
+msgstr ""
+"Compartir toda la pantalla. Haga clic en Compartir para seleccionar la "
+"pantalla."
 
 msgid "Share a single window. Click share to select the window."
 msgstr ""
@@ -484,15 +310,12 @@ msgstr ""
 msgid "Your ID"
 msgstr "Su ID"
 
-msgid "Register"
-msgstr "Registrar"
-
 msgid ""
 "Authenticated by certificate. To log out you have to remove your "
 "certificate from the browser."
 msgstr ""
-"Autentificado por certificado. Para cerrar su sesión tendrá que quitar el "
-"certificado de su navegador."
+"Autentificado por certificado. Para cerrar su sesión tendrá que quitar el"
+" certificado de su navegador."
 
 msgid "Sign in"
 msgstr "Iniciar sesión"
@@ -634,6 +457,10 @@ msgstr ""
 "Su ID será conservada - Pulse el botón Cerrar sesión anterior para "
 "eliminar el ID."
 
+#, fuzzy
+msgid "Room PIN"
+msgstr "Link de Sala"
+
 msgid "Room link"
 msgstr "Link de Sala"
 
@@ -681,6 +508,12 @@ msgstr "Conexión interrumpida"
 
 msgid "An error occured"
 msgstr "Un error ha ocurrido"
+
+msgid "Incoming call"
+msgstr "Llamada entrante"
+
+msgid "from"
+msgstr "desde"
 
 msgid "Accept call"
 msgstr "Aceptar llamada"
@@ -748,7 +581,7 @@ msgid ""
 "Could not load YouTube player API, please check your network / firewall "
 "settings."
 msgstr ""
-"No se pudo cargar API del reproductor de YouTube , compruebe la red / "
+"No se pudo cargar API del reproductor de YouTube, compruebe la red / "
 "firewall Ajustes."
 
 msgid "Currently playing"
@@ -760,6 +593,101 @@ msgstr "Controles en YouTube"
 msgid "YouTube video to share"
 msgstr "Compartir video YouTube"
 
+msgid "Peer to peer chat active."
+msgstr "Chat P2P activo."
+
+msgid "Peer to peer chat is now off."
+msgstr "Chat P2P está ahora desactivado."
+
+msgid " is now offline."
+msgstr " está ahora desconectado."
+
+msgid " is now online."
+msgstr " está ahora en línea."
+
+msgid "You share file:"
+msgstr "Compartir archivo:"
+
+msgid "Incoming file:"
+msgstr "Archivo entrante:"
+
+msgid "You shared your location:"
+msgstr "Ha compartido su ubicación:"
+
+msgid "Location received:"
+msgstr "Ubicación recibida:"
+
+msgid "You accepted the contact request."
+msgstr "Ha aceptado la solicitud de contacto."
+
+msgid "You rejected the contact request."
+msgstr "Ha rechazado la solicitud de contacto."
+
+msgid "You sent a contact request."
+msgstr "Ha enviado una solicitud de contacto."
+
+msgid "Your contact request was accepted."
+msgstr "Su solicitud de contacto fue aceptada."
+
+msgid "Incoming contact request."
+msgstr "Solicitud de contacto entrante."
+
+msgid "Your contact request was rejected."
+msgstr "Fue rechazada su solicitud de contacto."
+
+msgid "Edit Contact"
+msgstr "Editar contacto"
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "Su explorador no soporta WebRTC. No hay posibilidad de realizar llamadas."
+
+msgid "Close this window and disconnect?"
+msgstr "Cerrar esta ventana y desconectar?"
+
+msgid "Contacts Manager"
+msgstr "Administrador de contactos"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr ""
+"Es necesario reiniciar para aplicar las actualizaciones. Haga clic en "
+"Aceptar para reiniciar el sistema ahora."
+
+msgid "Failed to access camera/microphone."
+msgstr "Error al acceder a la cámara/micrófono."
+
+msgid "Failed to establish peer connection."
+msgstr "Error al establecer conexión P2P."
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "Lo sentimos, pero algo salió mal. AHHHHHHH."
+
+msgid "Oops"
+msgstr "Ooops"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "Conexión P2P fallida. Compruebe su configuración."
+
+msgid "User hung up because of error."
+msgstr "Usuario colgó debido a un error."
+
+msgid " is busy. Try again later."
+msgstr " está ocupado. Vuelva a intentarlo más tarde."
+
+msgid " rejected your call."
+msgstr " rechazó su llamada."
+
+msgid " does not pick up."
+msgstr " no contesta."
+
+msgid " tried to call you"
+msgstr " intentó llamarte"
+
+msgid " called you"
+msgstr " le llamó"
+
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr "Su navegador no es compatible. Actualice a una versión actual."
+
 msgid "Chat with"
 msgstr "Chatear con"
 
@@ -769,6 +697,9 @@ msgstr "Mensaje de "
 #, python-format
 msgid "You are now in room %s ..."
 msgstr "Ahora estás en la sala %s ..."
+
+msgid "Your browser does not support file transfer."
+msgstr "Tu navegador no soporta transferencia de archivos."
 
 msgid "Could not load PDF: Please make sure to select a PDF document."
 msgstr "No se pudo cargar el PDF: asegúrese de seleccionar un documento PDF."
@@ -795,7 +726,7 @@ msgid "An error occurred while rendering the PDF page (%s)."
 msgstr "Se ha producido un error al procesar la página PDF (%s)."
 
 msgid "An unknown error occurred while rendering the PDF page."
-msgstr "Se ha producido un error desconocido al procesar la página PDF"
+msgstr "Se ha producido un error desconocido al procesar la página PDF."
 
 msgid "Only PDF documents and OpenDocument files can be shared at this time."
 msgstr ""
@@ -826,6 +757,12 @@ msgstr "Utilizar el idioma del navegador"
 
 msgid "Meet with me here:"
 msgstr "Reunirse conmigo aquí:"
+
+msgid "Please enter a new Room PIN to lock the room"
+msgstr ""
+
+msgid "Do you want to unlock the room?"
+msgstr ""
 
 msgid "Room name"
 msgstr "Nombre de sala"
@@ -878,4 +815,78 @@ msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
 "Formato URL desconocido. Por favor, asegúrese de escribir una dirección "
 "URL válida de YouTube."
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Hint"
+msgstr "Sugerencia"
+
+msgid "Please confirm"
+msgstr "Confirme"
+
+msgid "More information required"
+msgstr "Se necesita más información"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+" screen sharing extension to Chrome and try again."
+msgstr ""
+"Se requiere una extensión del navegador para Compartir Pantalla. Por "
+"favor, añada la extensión Spreed WebRTC screen sharing a Chrome e "
+"inténtelo de nuevo."
+
+msgid "Access code required"
+msgstr "Código de acceso requerido"
+
+msgid "Access denied"
+msgstr "Acceso denegado"
+
+msgid "Please provide a valid access code."
+msgstr "Proporcione un código de acceso válido."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try "
+"again."
+msgstr ""
+"No se ha podido verificar el código de acceso. Compruebe su conexión a "
+"Internet e intente una vez más."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "PIN de sala %s es ahora '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "bloqueo de PIN se ha eliminado desde la sala %s."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "Introducir el PIN para sala %s"
+
+msgid "Please sign in to create rooms."
+msgstr "Inicie sesión para crear nuevas salas."
+
+#, python-format
+msgid "and %s"
+msgstr "y %s"
+
+#, python-format
+msgid "and %d others"
+msgstr "y %d otros"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "Someone"
+msgstr "Alguien"
+
+msgid "Me"
+msgstr "Yo"
+
+#~ msgid "Register"
+#~ msgstr "Registrar"
 
