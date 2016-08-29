@@ -1,3 +1,21 @@
+## 0.29.0
+
+  * Add Spanish translation (#307)
+  * Add minimal TURN refresh interval
+  * Add script to block UDP for TURN testing
+  * Implement TURN service client
+  * Add french translation (#325)
+  * Make room locking configurable
+  * Add UI to lock/unlock a room (#239)
+  * Fix syntax error in example
+  * Bump minimal Go version
+  * Fix Go 1.4 release target
+  * Check if system GOPATH exists
+  * Allow dist_gopath to fail
+  * Add make tarball to travis
+  * Allow specifying docker secrets with enviroment variables
+
+
 ## 0.28.0
 
   * Update Git hooks, to auto check translations
