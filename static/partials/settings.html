@@ -239,11 +239,10 @@
             </div>
           </div>
 
-          <div class="form-group" ng-show="turnData.data.servers">
-            <label class="col-xs-4 control-label">{{_('TURN region')}}</label>
+          <div class="form-group" ng-show="turnData.data.serversSelectable">
+            <label class="col-xs-4 control-label">{{_('TURN')}}</label>
             <div class="col-xs-8">
-              <select class="form-control" ng-model="user.settings.turn.selectedRegion" ng-options="region.id as region.id for region in turnData.data.servers"></select>
-              <span class="help-block">{{_('Geographic region for TURN service.')}}</span>
+              <select class="form-control" ng-model="user.settings.turn.selectedRegion" ng-options="region.id as region.label for region in turnData.data.serversSelectable"></select>
             </div>
           </div>
 
