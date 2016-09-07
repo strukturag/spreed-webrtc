@@ -16,6 +16,17 @@
   * Allow specifying docker secrets with enviroment variables
 
 
+## 0.28.1
+
+  * Filter rtx support from remote SDP for Chrome <= 38
+  * Fix Go 1.4 detection for minor versions
+  * Bump minimal Go version
+  * Fix Go 1.4 release target
+  * Allow dist_gopath to fail
+  * Check if system GOPATH exists
+  * Add make tarball to travis
+
+
 ## 0.28.0
 
   * Update Git hooks, to auto check translations
