@@ -1,3 +1,9 @@
+## 0.29.1
+
+  * Filter rtx support from remote SDP for Chrone <= 38
+  * Fix Go 1.4 detection for minor versions
+
+
 ## 0.29.0
 
   * Add Spanish translation (#307)
