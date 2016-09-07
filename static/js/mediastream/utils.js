@@ -447,6 +447,11 @@ define([], function() {
         // This change breaks very old versions of WebRTC. So we change it back locally
         // for Chrome <= 38 which makes things work fine again.
         sdp = sdp.replace(/UDP\/TLS\/RTP\/SAVPF/g, "RTP/SAVPF")
+
+        // Remove all rtx support from remote sdp, which is geneated by
+        // Chrome 48+ but does not work with <= 38.
+        sdp = sdp.replace(/a=rtpmap:\d+ rtx\/\d+\r\n/i, "");
+        sdp = sdp.replace(/a=fmtp:\d+ apt=\d+\r\n/i, "");
       }
       return sdp;
     }
