@@ -47,7 +47,10 @@ DIST_BIN := $(DIST)/bin
 
 all: build
 
-build: get binary assets
+build: 
+	$(MAKE) get
+	$(MAKE) binary
+	$(MAKE) assets
 
 gopath:
 	@echo GOPATH=$(GOPATH)
