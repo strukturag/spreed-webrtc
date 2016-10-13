@@ -30,6 +30,7 @@ type Config struct {
 	ContentSecurityPolicyReportOnly string                    `json:"-"` // HTML content security policy in report only mode
 	RoomTypeDefault                 string                    `json:"-"` // New rooms default to this type
 	RoomTypes                       map[*regexp.Regexp]string `json:"-"` // Map of regular expression -> room type
+	RoomNameCaseSensitive           bool                      // Wether the room names are case sensitive.
 }
 
 func (config *Config) WithModule(m string) bool {
