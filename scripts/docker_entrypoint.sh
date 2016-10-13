@@ -6,7 +6,7 @@ randomhex() {
 	if [ -z "${size}" ]; then
 		size=32
 	fi
-	local val=$(hexdump -e '4/4 "%08x"' -n${size} /dev/random)
+	local val=$(hexdump -e '4/4 "%08x"' -n${size} /dev/urandom)
 	echo ${val}
 }
 
