@@ -1,3 +1,14 @@
+## 0.29.2
+
+  * Honor case insensitive config for auto generated room names
+  * Do not encode the body of a desktop notification
+  * Make room names case insensitive by default
+  * Update dependencies to phoenix with Update support
+  * Implement config loading via NATS
+  * Don`t run target binary before get is run
+  * Docker: Use /dev/urandom instead of /dev/random
+
+
 ## 0.29.1
 
   * Filter rtx support from remote SDP for Chrone <= 38
