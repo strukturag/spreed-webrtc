@@ -62,6 +62,49 @@ var config *channelling.Config
 func runner(runtime phoenix.Runtime) error {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
 
+	// Nats pub/sub supports.
+	useNats := runtime.GetBoolDefault("nats", "useNATS", false)
+	if useNats {
+		if natsURL, err := runtime.GetString("nats", "url"); err == nil {
+			if natsURL != "" {
+				natsconnection.DefaultURL = natsURL
+			}
+		}
+		if natsEstablishTimeout, err := runtime.GetInt("nats", "establishTimeout"); err == nil {
+			if natsEstablishTimeout != 0 {
+				natsconnection.DefaultEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
+			}
+		}
+	}
+	natsClientId := runtime.GetStringDefault("nats", "client_id", "")
+	var natsChannellingTriggerSubject string
+	if runtime.GetBoolDefault("nats", "channelling_trigger", false) {
+		natsChannellingTriggerSubject = runtime.GetStringDefault("nats", "channelling_trigger_subject", "channelling.trigger")
+	}
+
+	// Base services.
+	apiConsumer := channelling.NewChannellingAPIConsumer()
+	busManager := channelling.NewBusManager(apiConsumer, natsClientId, useNats, natsChannellingTriggerSubject)
+
+	// Update configuration from NATS.
+	if useNats && runtime.GetBoolDefault("nats", "configFromNATS", false) {
+		log.Println("Fetching configuration from NATS")
+		configFromNATSSubject := runtime.GetStringDefault("nats", "configFromNATSSubject", "spreed-webrtc.config.get")
+		configFromNATSTimeout := time.Duration(runtime.GetIntDefault("nats", "configFromNATSTimeout", 0)) * time.Second
+		// Receive config from bus.
+		var req = &channelling.BusRequest{}
+		var res map[string]map[string]string
+		if err := busManager.BusRequestWithRetry(configFromNATSSubject, req, &res, configFromNATSTimeout, nil); err == nil {
+			if updateErr := runtime.Update(res); updateErr == nil {
+				log.Println("Updated configuration from NATS")
+			} else {
+				log.Println("Failed to update config with NATS updates", updateErr)
+			}
+		} else {
+			log.Println("Failed to fetch config from NATS", err)
+		}
+	}
+
 	rootFolder, err := runtime.GetString("http", "root")
 	if err != nil {
 		cwd, err2 := os.Getwd()
@@ -157,21 +200,6 @@ func runner(runtime phoenix.Runtime) error {
 		log.Printf("Using token authorization from %s\n", tokenFile)
 		tokenProvider = channelling.TokenFileProvider(tokenFile)
 	}
-
-	// Nats pub/sub supports.
-	natsChannellingTrigger, _ := runtime.GetBool("nats", "channelling_trigger")
-	natsChannellingTriggerSubject, _ := runtime.GetString("nats", "channelling_trigger_subject")
-	if natsURL, err := runtime.GetString("nats", "url"); err == nil {
-		if natsURL != "" {
-			natsconnection.DefaultURL = natsURL
-		}
-	}
-	if natsEstablishTimeout, err := runtime.GetInt("nats", "establishTimeout"); err == nil {
-		if natsEstablishTimeout != 0 {
-			natsconnection.DefaultEstablishTimeout = time.Duration(natsEstablishTimeout) * time.Second
-		}
-	}
-	natsClientId, _ := runtime.GetString("nats", "client_id")
 
 	// Load remaining configuration items.
 	config, err = server.NewConfig(runtime, tokenProvider != nil)
@@ -282,7 +310,6 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Prepare services.
-	apiConsumer := channelling.NewChannellingAPIConsumer()
 	buddyImages := channelling.NewImageCache()
 	codec := channelling.NewCodec(incomingCodecLimit)
 	roomManager := channelling.NewRoomManager(config, codec)
@@ -290,7 +317,6 @@ func runner(runtime phoenix.Runtime) error {
 	tickets := channelling.NewTickets(sessionSecret, encryptionSecret, computedRealm)
 	sessionManager := channelling.NewSessionManager(config, tickets, hub, roomManager, roomManager, buddyImages, sessionSecret)
 	statsManager := channelling.NewStatsManager(hub, roomManager, sessionManager)
-	busManager := channelling.NewBusManager(apiConsumer, natsClientId, natsChannellingTrigger, natsChannellingTriggerSubject)
 	pipelineManager := channelling.NewPipelineManager(busManager, sessionManager, sessionManager, sessionManager)
 	if err := roomManager.SetBusManager(busManager); err != nil {
 		return err
