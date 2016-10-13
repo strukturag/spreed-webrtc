@@ -24,6 +24,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/strukturag/spreed-webrtc/go/randomstring"
 )
@@ -34,11 +35,16 @@ type Room struct {
 }
 
 type Rooms struct {
+	CaseSensitive bool
 }
 
 func (rooms *Rooms) Post(request *http.Request) (int, interface{}, http.Header) {
 
 	name := randomstring.NewRandomString(11)
+	if !rooms.CaseSensitive {
+		name = strings.ToLower(name)
+	}
+
 	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
 
 }

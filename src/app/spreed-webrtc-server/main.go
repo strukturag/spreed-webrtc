@@ -353,7 +353,7 @@ func runner(runtime phoenix.Runtime) error {
 	// Add RESTful API end points.
 	rest := sloth.NewAPI()
 	rest.SetMux(r.PathPrefix("/api/v1/").Subrouter())
-	rest.AddResource(&server.Rooms{}, "/rooms")
+	rest.AddResource(&server.Rooms{config.RoomNameCaseSensitive}, "/rooms")
 	rest.AddResource(config, "/config")
 	rest.AddResourceWithWrapper(&server.Tokens{tokenProvider}, httputils.MakeGzipHandler, "/tokens")
 
