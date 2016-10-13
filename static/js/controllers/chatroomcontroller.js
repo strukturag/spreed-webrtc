@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html', 'text!partials/picturehover.html'], function($, _, moment, templateFileInfo, templateContactRequest, templateGeolocation, templatePictureHover) {
+define(['angular', 'jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!partials/contactrequest.html', 'text!partials/geolocation.html', 'text!partials/picturehover.html'], function(angular, $, _, moment, templateFileInfo, templateContactRequest, templateGeolocation, templatePictureHover) {
 
 	// ChatroomController
 	return ["$scope", "$element", "$window", "safeMessage", "safeDisplayName", "$compile", "$filter", "translation", "mediaStream", function($scope, $element, $window, safeMessage, safeDisplayName, $compile, $filter, translation, mediaStream) {
@@ -220,6 +220,9 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 			var element;
 			var scroll = this.canScroll();
 			lastMessageContainer = null;
+			if (angular.isString(s)) {
+				s = safeMessage(s);
+			}
 
 			if (!extra_css) {
 				extra_css = "";
@@ -547,7 +550,7 @@ define(['jquery', 'underscore', 'moment', 'text!partials/fileinfo.html', 'text!p
 					if (!noop) {
 						// Default handling is to use full message with security in place.
 						if (message === null && nodes === null && data.Message && typeof data.Message == "string") {
-							message = safeMessage(data.Message);
+							message = data.Message;
 						}
 						// Show the beast.
 						element = $scope.showmessage(from, timestamp, message, nodes);
