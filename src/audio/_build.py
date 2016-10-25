@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import audioop
 import wave
 import os
 import glob
@@ -8,6 +9,11 @@ import math
 
 silenceDuration = 0.05  # Seconds of silence between merged files
 outfile = "sprite1.wav"  # Output file. Will be saved in the path below.
+
+# Map containing volume adjustments for some of the files.
+AUDIO_FACTORS = {
+    'end1.wav': 0.5,
+}
 
 def main(folder="./files"):
 
@@ -18,7 +24,7 @@ def main(folder="./files"):
     output = wave.open(outfile, 'wb')
     
     # Loop through files in folder and append to outfile
-    for i, infile in enumerate(glob.glob(os.path.join(folder, '*.wav'))):
+    for i, infile in enumerate(sorted(glob.glob(os.path.join(folder, '*.wav')))):
     
         # Open file and get info
         w = wave.open(infile, 'rb')
@@ -32,7 +38,11 @@ def main(folder="./files"):
             silenceFrames = "".join(wave.struct.pack('h', item) for item in silenceData)
 
         # Output sound + silence to file
-        output.writeframes(w.readframes(w.getnframes()))
+        samples = w.readframes(w.getnframes())
+        factor = AUDIO_FACTORS.get(os.path.basename(infile), None)
+        if factor is not None:
+            samples = audioop.mul(samples, w.getsampwidth(), factor)
+        output.writeframes(samples)
         output.writeframes(silenceFrames)
         w.close()
 
