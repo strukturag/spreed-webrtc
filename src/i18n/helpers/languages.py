@@ -12,6 +12,7 @@ LANGUAGES = {
 	"ja": "日本語",
 	"ru": "Русский",
 	"es": "Español",
+	"it": "Italiano",
 }
 
 import json
