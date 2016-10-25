@@ -20,7 +20,7 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
+define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'text!sounds/sprite1.json', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr, sprite1Definition) {
 
 	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", "turnData", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints, turnData) {
 
@@ -98,43 +98,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		};
 
+		if (typeof(sprite1Definition) === "string") {
+			sprite1Definition = JSON.parse(sprite1Definition);
+		}
+
 		// Load default sounds.
 		playSound.initialize({
 			urls: ['sounds/sprite1.ogg', 'sounds/sprite1.mp3'],
-			sprite: {
-				"connect1": [
-					0,
-					5179
-				],
-				"end1": [
-					5228,
-					6199
-				],
-				"entry1": [
-					11476,
-					3000
-				],
-				"leaving1": [
-					14526,
-					2126
-				],
-				"message1": [
-					16701,
-					816
-				],
-				"question1": [
-					17567,
-					3313
-				],
-				"ringtone1": [
-					20929,
-					935
-				],
-				"whistle1": [
-					21913,
-					1405
-				]
-			}
+			sprite: sprite1Definition
 		}, null, {
 			"ring": "whistle1",
 			"joined": "entry1",
