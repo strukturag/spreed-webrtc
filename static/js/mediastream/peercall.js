@@ -22,12 +22,13 @@
 "use strict";
 define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection'], function($, _, utils, PeerConnection) {
 
-	var PeerCall = function(webrtc, id, from, to) {
+	var PeerCall = function(webrtc, id, from, to, outgoing) {
 
 		this.webrtc = webrtc;
 		this.id = id;
 		this.from = from;
 		this.to = to;
+		this.outgoing = !!outgoing;
 
 		this.e = $({}) // events
 
@@ -49,7 +50,7 @@ define(['jquery', 'underscore', 'mediastream/utils', 'mediastream/peerconnection
 	};
 
 	PeerCall.prototype.isOutgoing = function() {
-		return !!this.from;
+		return this.outgoing;
 	};
 
 	PeerCall.prototype.setInitiate = function(initiate) {
