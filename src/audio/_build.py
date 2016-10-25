@@ -22,10 +22,10 @@ def main(folder="./files"):
 
     # Open output file
     output = wave.open(outfile, 'wb')
-    
+
     # Loop through files in folder and append to outfile
     for i, infile in enumerate(sorted(glob.glob(os.path.join(folder, '*.wav')))):
-    
+
         # Open file and get info
         w = wave.open(infile, 'rb')
         soundDuration = w.getnframes() / float(w.getframerate())
@@ -57,7 +57,9 @@ def main(folder="./files"):
     output.close()
 
     # Output howler sprite data
-    print json.dumps(sprite, sort_keys=True, indent=4, separators=(',', ': '))
-        
+    sprites = json.dumps(sprite, sort_keys=True, indent=4, separators=(',', ': '))
+    sprites = '\n'.join([x.rstrip() for x in sprites.split('\n')]) + '\n'
+    file('sprite1.json', 'wb').write(sprites)
+
 if __name__ == "__main__":
     main()
