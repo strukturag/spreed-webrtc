@@ -10,6 +10,7 @@ LANGUAGES = {
 	"ko": "한국어",
 	"ja": "日本語",
 	"ru": "Русский",
+	"it": "Italiano",
 }
 
 import json
