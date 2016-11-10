@@ -39,6 +39,9 @@ $ ./configure
 $ make
   ```
 
+On FreeBSD, the default `make` has a different syntax, so `gmake` must be used
+there.
+
 
 ## Build separately
 
