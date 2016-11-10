@@ -13,6 +13,7 @@ The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/s
   - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
+  - [git](https://git-scm.com/)
 
 
 ## Runtime dependencies
