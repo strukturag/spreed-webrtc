@@ -1,3 +1,11 @@
+## 0.29.3
+
+  * Added Italian translation (#382)
+  * Fix XSS in room PIN dialog (#386)
+  * Reduce volume of "end1" sound by 50% (#379)
+  * Fix missing ringing sound / timeout on outgoing calls (#377/#378)
+
+
 ## 0.29.2
 
   * Honor case insensitive config for auto generated room names
