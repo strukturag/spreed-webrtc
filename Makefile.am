@@ -163,6 +163,7 @@ install-assets:
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/translation
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/css
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/require
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 	$(INSTALL) html/*.html $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) html/sandboxes/*.html $(DESTDIR)$(SHARE)/www/html/sandboxes
@@ -171,10 +172,10 @@ install-assets:
 	$(INSTALL) static/fonts/* $(DESTDIR)$(SHARE)/www/static/fonts
 	$(INSTALL) static/translation/* $(DESTDIR)$(SHARE)/www/static/translation
 	$(INSTALL) static/css/* $(DESTDIR)$(SHARE)/www/static/css
-	$(INSTALL) -D static/js/libs/require/require.js $(DESTDIR)$(SHARE)/www/static/js/libs/require/require.js
+	$(INSTALL) static/js/libs/require/require.js $(DESTDIR)$(SHARE)/www/static/js/libs/require
 	$(INSTALL) $(OUTPUT_JS)/*.js $(DESTDIR)$(SHARE)/www/static/js
 	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
-	$(INSTALL) -D static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs/webodf.js
+	$(INSTALL) static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs
 	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 
 install: install-binary install-assets
