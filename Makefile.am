@@ -40,7 +40,7 @@ OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
 
 BUILD_ARCH := $(shell $(GO) env GOARCH)
-BUILD_OS := $(shell go env GOOS)
+BUILD_OS := $(shell $(GO) env GOOS)
 DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
@@ -56,7 +56,7 @@ gopath:
 	@echo GOPATH=$(GOPATH)
 
 goget:
-	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) go get github.com/rogpeppe/godeps; fi
+	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(GO) get github.com/rogpeppe/godeps; fi
 	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(CURDIR)/vendor/bin/godeps -u dependencies.tsv; fi
 	$(MKDIR_P) $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
 	rm -f $(CURDIR)/vendor/src/$(GOPKG)
