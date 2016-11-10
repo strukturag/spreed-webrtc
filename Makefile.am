@@ -58,7 +58,7 @@ gopath:
 goget:
 	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) go get github.com/rogpeppe/godeps; fi
 	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(CURDIR)/vendor/bin/godeps -u dependencies.tsv; fi
-	mkdir -p $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
+	$(MKDIR_P) $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
 	rm -f $(CURDIR)/vendor/src/$(GOPKG)
 	ln -sfn $(PWD) $(CURDIR)/vendor/src/$(GOPKG)
 
