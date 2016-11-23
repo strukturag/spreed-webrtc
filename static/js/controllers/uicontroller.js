@@ -757,7 +757,7 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 		});
 
 		$scope.$on("status", function(event, status) {
-			if (status === "connecting" && dialerEnabled) {
+			if (status === "connecting" && dialerEnabled && !$scope.isConferenceRoom()) {
 				dialer.start();
 				// Start accept timeout.
 				ringerTimeout = $timeout(function() {
