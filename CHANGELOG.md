@@ -1,3 +1,12 @@
+## 0.29.4
+
+  * Fixed regression introduced in 0.29.3 that could trigger a ring timeout in conference rooms.
+  * Handle getUserMedia failures on FF 49 and newer when no audio or video device is available (#394).
+  * Update spreed-turnservercli to return credentials that are about to expire (but not expired yet).
+  * Update Italian translation.
+  * Improve support for building on FreeBSD.
+
+
 ## 0.29.3
 
   * Added Italian translation (#382)
