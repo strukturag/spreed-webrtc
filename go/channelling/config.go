@@ -14,6 +14,8 @@ type Config struct {
 	Renegotiation                   bool                      // Renegotiation flag
 	StunURIs                        []string                  // STUN server URIs
 	TurnURIs                        []string                  // TURN server URIs
+	TurnUsername                    string                    // Username for TURN server
+	TurnPassword                    string                    // Password for TURN server
 	Tokens                          bool                      // True when we got a tokens file
 	Version                         string                    // Server version number
 	UsersEnabled                    bool                      // Flag if users are enabled
