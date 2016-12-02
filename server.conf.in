@@ -57,6 +57,12 @@ listen = 127.0.0.1:8080
 ; See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00 for details.
 ; A supported TURN server is https://code.google.com/p/rfc5766-turn-server/.
 ;turnSecret = the-default-turn-shared-secret-do-not-keep
+; Fixed username/password credentials to be used for the TURN server.
+; IMPORTANT: This will give all users connected to the spreed-webrtc service
+; access to the credentials, so in almost all cases the shared secret mode
+; should be used instead!!
+;turnUsername = the-turn-username
+;turnPassword = the-turn-secret
 ; Enable renegotiation support. Set to true to tell clients that they can
 ; renegotiate peer connections when required. Firefox support is not complete,
 ; so do not enable if you want compatibility with Firefox clients.

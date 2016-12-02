@@ -128,6 +128,8 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		Renegotiation:                   container.GetBoolDefault("app", "renegotiation", false),
 		StunURIs:                        stunURIs,
 		TurnURIs:                        turnURIs,
+		TurnUsername:                    container.GetStringDefault("app", "turnUsername", ""),
+		TurnPassword:                    container.GetStringDefault("app", "turnPassword", ""),
 		Tokens:                          tokens,
 		Version:                         version,
 		UsersEnabled:                    container.GetBoolDefault("users", "enabled", false),
