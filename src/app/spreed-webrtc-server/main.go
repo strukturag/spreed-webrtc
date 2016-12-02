@@ -25,7 +25,6 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
@@ -209,17 +208,8 @@ func runner(runtime phoenix.Runtime) error {
 	}
 
 	// Load templates.
-	templateFuncMap := template.FuncMap{
-		"json": func(obj interface{}) (template.HTML, error) {
-			data, err := json.Marshal(obj)
-			if err != nil {
-				return "", err
-			}
-			return template.HTML(data), nil
-		},
-	}
 	templates = template.New("")
-	templates.Delims("<%", "%>").Funcs(templateFuncMap)
+	templates.Delims("<%", "%>").Funcs(templateFuncMap())
 
 	// Load html templates folder
 	err = filepath.Walk(path.Join(rootFolder, "html"), func(path string, info os.FileInfo, err error) error {
