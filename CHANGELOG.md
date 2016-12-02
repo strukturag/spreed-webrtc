@@ -1,3 +1,9 @@
+## 0.29.5
+
+  * Support fixed username/password TURN credentials.
+  * Travis: Add Go 1.7
+
+
 ## 0.29.4
 
   * Fixed regression introduced in 0.29.3 that could trigger a ring timeout in conference rooms.
