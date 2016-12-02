@@ -210,12 +210,12 @@ func runner(runtime phoenix.Runtime) error {
 
 	// Load templates.
 	templateFuncMap := template.FuncMap{
-		"json": func(obj interface{}) (template.HTML, error) {
+		"json": func(obj interface{}) (template.JS, error) {
 			data, err := json.Marshal(obj)
 			if err != nil {
 				return "", err
 			}
-			return template.HTML(data), nil
+			return template.JS(data), nil
 		},
 	}
 	templates = template.New("")
