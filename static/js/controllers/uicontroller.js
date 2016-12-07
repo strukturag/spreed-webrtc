@@ -119,6 +119,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 
 		var displayName = safeDisplayName;
 
+		var roomTypeConference = "Conference";
+
 		// Init STUN from server config.
 		(function() {
 			var stun = mediaStream.config.StunURIs || [];
@@ -667,7 +669,23 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 		});
 
 		$scope.$on("room.updated", function(event, room) {
+			var oldType = $scope.roomType;
 			$scope.roomType = room ? room.Type : null;
+			if (oldType !== roomTypeConference && $scope.roomType == roomTypeConference) {
+				// Switched to conference more, start calls muted by default.
+				$scope.resetAutoMuteState = {
+					"cameraMute": $scope.cameraMute,
+					"microphoneMute": $scope.microphoneMute
+				};
+				$scope.cameraMute = true;
+				$scope.microphoneMute = true;
+			} else if (oldType === roomTypeConference && $scope.roomType !== roomTypeConference) {
+				// No longer in conference room, reset mute state to previous settings.
+				_.each($scope.resetAutoMuteState, function(v, k) {
+					$scope[k] = v;
+				});
+				$scope.resetAutoMuteState = {};
+			}
 		});
 
 		// Apply all layout stuff as classes to our element.
