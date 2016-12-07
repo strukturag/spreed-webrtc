@@ -319,8 +319,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 			mediaStream.webrtc.setVideoMute(cameraMute);
 		});
 
-		$scope.$watch("microphoneMute", function(cameraMute) {
-			mediaStream.webrtc.setAudioMute(cameraMute);
+		$scope.$watch("microphoneMute", function(microphoneMute) {
+			mediaStream.webrtc.setAudioMute(microphoneMute);
 		});
 
 		$scope.$watch("peer", function(c, o) {
