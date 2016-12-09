@@ -100,9 +100,17 @@ func (mgr *turnServiceManager) turnData(credentials *turnservicecli.CachedCreden
 
 			if len(turn.Servers) > 0 {
 				// For backwards compatibility with clients which do not
-				// understand turn.Servers, directly deliver the first TURN
-				// server zone URNs.
-				turn.Urls = turn.Servers[0].URNs
+				// understand turn.Servers, directly deliver the TURN
+				// server zone URNs with the lowest priority.
+				minPrio := 0
+				minPrioIdx := -1
+				for idx, server := range turn.Servers {
+					if minPrioIdx == -1 || server.Prio < minPrio {
+						minPrio = server.Prio
+						minPrioIdx = idx
+					}
+				}
+				turn.Urls = turn.Servers[minPrioIdx].URNs
 			}
 		}
 	}
