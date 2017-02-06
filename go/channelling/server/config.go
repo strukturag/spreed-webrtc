@@ -147,6 +147,7 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		RoomTypeDefault:                 defaultRoomType,
 		RoomTypes:                       roomTypes,
 		RoomNameCaseSensitive:           container.GetBoolDefault("app", "caseSensitiveRooms", false),
+		LockedRoomJoinableWithPIN:       container.GetBoolDefault("app", "lockedRoomJoinableWithPIN", true),
 	}, nil
 }
 
