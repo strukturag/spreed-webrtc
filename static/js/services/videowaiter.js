@@ -36,6 +36,7 @@ define(["underscore"], function(_) {
 				}
 				return;
 			}
+			var recheck = _.bind(this.start, this, video, stream, cb, err_cb);
 			var videoTracks = stream && stream.getVideoTracks() || [];
 			//console.log("wait for video", videoTracks.length, video.currentTime, video.videoHeight, video);
 			if (videoTracks.length === 0 && this.count >= 10) {
@@ -46,13 +47,17 @@ define(["underscore"], function(_) {
 				if (videoTracks.length > 0 && this.count >= 10) {
 					var videoTrack = videoTracks[0];
 					if (videoTrack.enabled === true && videoTrack.muted === true) {
+						videoTrack.onunmute = function() {
+							videoTrack.onunmute = undefined;
+							recheck();
+						};
 						cb(false, video, stream);
 						return;
 					}
 				}
 				this.count++;
 				if (this.count < this.retries) {
-					$window.setTimeout(_.bind(this.start, this, video, stream, cb, err_cb), 100);
+					$window.setTimeout(recheck, 100);
 				} else {
 					if (err_cb) {
 						err_cb(video, stream);
