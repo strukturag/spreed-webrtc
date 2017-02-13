@@ -93,7 +93,9 @@ define(["underscore"], function(_) {
 				_.defer(function() {
 					waiter.start();
 				});
-				return waiter;
+				return {
+					stop: waiter.stop,
+				};
 			}
 		}
 
