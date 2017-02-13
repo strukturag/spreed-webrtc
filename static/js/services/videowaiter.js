@@ -49,7 +49,7 @@ define(["underscore"], function(_) {
 					if (videoTrack.enabled === true && videoTrack.muted === true) {
 						videoTrack.onunmute = function() {
 							videoTrack.onunmute = undefined;
-							recheck();
+							_.defer(recheck);
 						};
 						cb(false, video, stream);
 						return;
