@@ -35,7 +35,7 @@ type TURNServiceManager interface {
 
 type turnServiceManager struct {
 	sync.Mutex
-	pleaders map[uint64]Sender // Mapping of clients waiting to receive TURN data.
+	pleaders map[uint64]TurnDataReceiver // Mapping of clients waiting to receive TURN data.
 
 	uri         string
 	accessToken string
@@ -51,7 +51,7 @@ func NewTURNServiceManager(uri string, accessToken string, clientID string) TURN
 		clientID:    clientID,
 
 		turnService: turnService,
-		pleaders:    make(map[uint64]Sender),
+		pleaders:    make(map[uint64]TurnDataReceiver),
 	}
 
 	turnService.Open(accessToken, clientID, "")
@@ -71,14 +71,16 @@ func NewTURNServiceManager(uri string, accessToken string, clientID string) TURN
 	return mgr
 }
 
-func (mgr *turnServiceManager) CreateTurnData(sender Sender, session *Session) *DataTurn {
+func (mgr *turnServiceManager) CreateTurnData(sessionId string, receiver TurnDataReceiver) *DataTurn {
 	credentials := mgr.turnService.Credentials(false)
 	turn, err := mgr.turnData(credentials)
 	if err != nil || turn.Ttl == 0 {
 		// When no data was return from service, refresh quickly.
-		mgr.Lock()
-		mgr.pleaders[sender.Index()] = sender
-		mgr.Unlock()
+		if receiver != nil {
+			mgr.Lock()
+			mgr.pleaders[receiver.Index()] = receiver
+			mgr.Unlock()
+		}
 
 		// Have client come back early.
 		turn.Ttl = 300
@@ -129,12 +131,9 @@ func (mgr *turnServiceManager) onCredentials(credentials *turnservicecli.CachedC
 	mgr.Lock()
 	for _, sender := range mgr.pleaders {
 		if turn, err := mgr.turnData(credentials); err == nil {
-			sender.Outgoing(&DataTurnUpdate{
-				Type: "TurnUpdate",
-				Turn: turn,
-			})
+			sender.TurnDataAvailable(turn)
 		}
 	}
-	mgr.pleaders = make(map[uint64]Sender) // Clear.
+	mgr.pleaders = make(map[uint64]TurnDataReceiver) // Clear.
 	mgr.Unlock()
 }

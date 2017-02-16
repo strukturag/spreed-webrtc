@@ -28,7 +28,8 @@ import (
 )
 
 type Sender interface {
-	Index() uint64
+	TurnDataReceiver
+
 	Send(buffercache.Buffer)
 	Outgoing(interface{})
 }
@@ -105,4 +106,11 @@ func (client *Client) ReplaceAndClose(oldClient *Client) {
 		oldSession.Close()
 		oldClient.Close()
 	}()
+}
+
+func (client *Client) TurnDataAvailable(turn *DataTurn) {
+	client.Outgoing(&DataTurnUpdate{
+		Type: "TurnUpdate",
+		Turn: turn,
+	})
 }

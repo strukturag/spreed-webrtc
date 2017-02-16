@@ -270,3 +270,10 @@ func (pipeline *Pipeline) attach(sink Sink) error {
 	pipeline.sink = sink
 	return nil
 }
+
+func (pipeline *Pipeline) TurnDataAvailable(turn *DataTurn) {
+	pipeline.Outgoing(&DataTurnUpdate{
+		Type: "TurnUpdate",
+		Turn: turn,
+	})
+}

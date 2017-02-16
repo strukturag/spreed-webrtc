@@ -45,6 +45,9 @@ func (fake *fakeClient) Send(_ buffercache.Buffer) {
 func (fake *fakeClient) Outgoing(_ interface{}) {
 }
 
+func (fake *fakeClient) TurnDataAvailable(_ *channelling.DataTurn) {
+}
+
 type fakeRoomManager struct {
 	joinedRoomID string
 	leftRoomID   string
