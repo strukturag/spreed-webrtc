@@ -3,7 +3,7 @@ github.com/gorilla/context	git	215affda49addc4c8ef7e2534915df2c8c35c6cd	2014-12-
 github.com/gorilla/mux	git	ba336c9cfb43552c90de6cb2ceedd3271c747558	2015-07-17T15:03:03Z
 github.com/gorilla/securecookie	git	aeade84400a85c6875264ae51c7a56ecdcb61751	2015-07-16T23:32:44Z
 github.com/gorilla/websocket	git	a69d25be2fe2923a97c2af6849b2f52426f68fc0	2016-08-02T13:32:03Z
-github.com/longsleep/pkac	git	68bf8859f58dd84332ee41c07eba357fb3818ba3	2014-05-01T18:13:13Z
+github.com/longsleep/pkac	git	302922ac7627196c8cf9e4384cccadf9aa008b3e	2017-02-16T19:00:44Z
 github.com/nats-io/nats	git	355b5b97e0842dc94f1106729aa88e33e06317ca	2015-12-09T21:13:14Z
 github.com/satori/go.uuid	git	879c5887cd475cd7864858769793b2ceb0d44feb	2016-06-07T14:43:47Z
 github.com/strukturag/goacceptlanguageparser	git	68066e68c2940059aadc6e19661610cf428b6647	2014-02-13T13:31:23Z
