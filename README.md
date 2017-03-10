@@ -159,7 +159,9 @@ docker run --rm --name my-spreed-webrtc -p 8080:8080 -p 8443:8443 \
 ## Setup Screensharing
 
 ### Chrome
-Chrome should work out of the box.
+
+Chromium-based browsers (e.g. Google Chrome) require the [Spreed.ME screen sharing
+extension](https://www.spreed.me/extension/).
 
 ### Firefox
 
