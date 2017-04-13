@@ -38,6 +38,8 @@ FROM ubuntu:xenial
 MAINTAINER Simon Eisenmann <simon@struktur.de>
 
 # Set locale.
+RUN apt-get clean && apt-get update
+RUN apt-get install locales
 RUN locale-gen --no-purge en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
