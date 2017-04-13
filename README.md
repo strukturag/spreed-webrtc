@@ -165,9 +165,10 @@ extension](https://www.spreed.me/extension/).
 
 ### Firefox
 
-As of Firefox >= 36 you must append the domain being used to the allowed domains
-to access your screen. You do this by navigating to `about:config`, search for
-'media.getusermedia.screensharing.allowed_domains', and append the domain
+Screensharing with Firefox >= 52 should work out of the box.
+When using Firefox 36 – 51 you must append the domain being used to the allowed
+domains to access your screen. You do this by navigating to `about:config`, search
+for 'media.getusermedia.screensharing.allowed_domains', and append the domain
 to the list of strings. You can edit the field simply by double clicking on it.
 Ensure that you follow the syntax rules of the field. If you are using an `ip:port`
 url, simply append `ip` to the list. Also ensure that you are using `https`,
