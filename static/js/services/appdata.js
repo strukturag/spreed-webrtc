@@ -48,6 +48,16 @@ define(["jquery"], function($) {
 	//     loaded (bool)    : True if something was loaded, else false.
 	//     user_settings (map) : User map which was loaded.
 	//
+	// - presentationEnabled(event, enabled)
+	//     enabled (bool)   : True if presentation mode is enabled, else false.
+	//
+	// - presentationSelected(event, presentation)
+	//     presentation (object) : Currently active presentation, `null` if none
+	//                             is active.
+	//
+	// - presentationPageChanged(event, page)
+	//     page (number)    : Currently active page in the presentation.
+	//
 	// Other appData properties:
 	//
 	// - language (string) : ISO language code of active language.
