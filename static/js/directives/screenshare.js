@@ -172,6 +172,7 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 				}
 
 				$scope.layout.screenshare = true;
+				screensharing.globalNotify().screensharingStart();
 				screensharing.getScreen().then(function(options) {
 					if (options) {
 						$scope.startScreenshare(options);
@@ -306,6 +307,8 @@ define(['jquery', 'underscore', 'text!partials/screenshare.html', 'text!partials
 					screensharing.cancelGetScreen();
 					$scope.layout.screenshare = false;
 				}
+
+				screensharing.globalNotify().screensharingStop();
 
 			};
 
