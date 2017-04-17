@@ -240,8 +240,13 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 
 			$scope.toggleFullscreen = function() {
 				//console.log("Toggle full screen", BigScreen.enabled, $scope.isActive, $scope.hasUsermedia);
+				var target = $scope.layoutparent[0];
+				// Display whole page in fullscreen when in specific layout modes
+				if ($scope.layout.presentation || $scope.layout.youtubevideo) {
+					target = null;
+				}
 				if (BigScreen.enabled && ($scope.isActive || $scope.hasUsermedia)) {
-					BigScreen.toggle($scope.layoutparent[0], function() {
+					BigScreen.toggle(target, function() {
 						// onEnter
 						$scope.layoutparent.addClass("fullscreen");
 					}, function() {
