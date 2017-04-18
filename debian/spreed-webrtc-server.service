@@ -1,0 +1,11 @@
+[Unit]
+Description=Spreed WebRTC server
+After=network.target
+
+[Service]
+User=spreed-webrtc
+WorkingDirectory=/usr/share/spreed-webrtc-server/www
+ExecStart=/usr/sbin/spreed-webrtc-server -c=/etc/spreed-webrtc/server.conf
+
+[Install]
+WantedBy=multi-user.target

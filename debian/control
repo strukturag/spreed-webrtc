@@ -1,0 +1,15 @@
+Source: spreed-webrtc-server
+Section: admin
+Priority: optional
+Maintainer: Benjamin Renard <brenard@easter-eggs.com>
+Build-Depends: debhelper (>= 5.0.0)
+Build-Depends-Indep: automake, autogen, autoconf, golang, nodejs, ruby-compass
+Standards-Version: 3.8.0
+
+Package: spreed-webrtc-server
+Section: admin
+Priority: standard
+Architecture: all
+Depends: sed
+Description: Spreed WebRTC server
+ This package provide Spreed WebRTC server.

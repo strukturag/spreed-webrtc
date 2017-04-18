@@ -1,0 +1,10 @@
+/var/log/spreed-webrtc-server.log {
+	weekly
+	missingok
+	rotate 4
+	compress
+	delaycompress
+	notifempty
+	create 0640 spreed-webrtc adm
+	sharedscripts
+}
