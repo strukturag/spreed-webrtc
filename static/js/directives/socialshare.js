@@ -26,7 +26,6 @@ define(['text!partials/socialshare.html'], function(template) {
 		email: "mailto:?subject=_TEXT_%20_URL_",
 		facebook: "https://www.facebook.com/sharer.php?u=_URL_&t=_TEXT_",
 		twitter: "https://twitter.com/share?url=_URL_&text=_TEXT_&via=_SITE_",
-		google: "https://plus.google.com/share?url=_URL_",
 		xing: "https://www.xing.com/app/user?op=share;url=_URL_"
 	};
 
