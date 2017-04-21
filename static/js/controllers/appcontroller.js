@@ -57,6 +57,9 @@ define(["jquery", "angular", "underscore"], function($, angular, _) {
 					videoNoiseReduction: false,
 					preferVideoSendCodecVP9: false
 				},
+				turn: {
+					selectedRegion: null
+				},
 				sound: {
 					incomingMessages: true,
 					incomingCall: true,

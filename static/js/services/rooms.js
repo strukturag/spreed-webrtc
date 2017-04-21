@@ -260,12 +260,13 @@ define([
 					console.log("Failed to set room PIN", error);
 					return $q.reject(error);
 				});
+			},
+			isLocked: function(room) {
+				room = room || currentRoom.Name
+				return roompin.get(room) !== null;
 			}
 		};
 
-		// NOTE(lcooper): For debugging only, do not use this on production.
-		$window.setRoomPIN = rooms.setPIN;
-
 		return rooms;
-    }];
+	}];
 });

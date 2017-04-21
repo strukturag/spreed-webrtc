@@ -91,7 +91,7 @@ func (h *hub) ClientInfo(details bool) (clientCount int, sessions map[string]*Da
 	return
 }
 
-func (h *hub) CreateTurnData(session *Session) *DataTurn {
+func (h *hub) CreateTurnData(sender Sender, session *Session) *DataTurn {
 	// Create turn data credentials for shared secret auth with TURN
 	// server. See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
 	// and https://code.google.com/p/rfc5766-turn-server/ REST API auth
@@ -109,7 +109,12 @@ func (h *hub) CreateTurnData(session *Session) *DataTurn {
 	foo.Write([]byte(user))
 	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
 
-	return &DataTurn{user, password, turnTTL, h.config.TurnURIs}
+	return &DataTurn{
+		Username: user,
+		Password: password,
+		Ttl:      turnTTL,
+		Urls:     h.config.TurnURIs,
+	}
 }
 
 func (h *hub) GetSession(id string) (session *Session, ok bool) {

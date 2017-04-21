@@ -49,6 +49,7 @@ define(['text!partials/socialshare.html'], function(template) {
 			replace: true,
 			link: function($scope, $element, $attr) {
 				$scope.$on("room.updated", function(ev, room) {
+					$scope.isRoomLocked = rooms.isLocked();
 					$scope.roomlink = rooms.link(room);
 				});
 				$scope.$on("room.left", function(ev) {
@@ -69,6 +70,22 @@ define(['text!partials/socialshare.html'], function(template) {
 						if (nw === "link") {
 							//$window.alert("Room link: " + $scope.roomlink);
 							alertify.dialog.notify(translation._("Room link"), '<a href="'+$scope.roomlink+'" rel="external" target="_blank">'+$scope.roomlink+'</a>');
+						} else if (nw === "pin") {
+							if (!$scope.isRoomLocked) {
+								// Lock
+								alertify.dialog.prompt(translation._("Please enter a new Room PIN to lock the room"), function(pin) {
+									rooms.setPIN(pin);
+								}, function() {
+									// Do nothing
+								});
+							} else {
+								// Unlock
+								alertify.dialog.confirm(translation._("Do you want to unlock the room?"), function() {
+									rooms.setPIN("");
+								}, function() {
+									// Do nothing
+								});
+							}
 						}
 					}
 				});

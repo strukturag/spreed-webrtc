@@ -23,7 +23,7 @@
 define([
 ], function() {
 
-	return ["$window", "$q", "alertify", "translation", function($window, $q, alertify, translation) {
+	return ["$window", "$q", "alertify", "translation", "safeMessage", function($window, $q, alertify, translation, safeMessage) {
 
 		var pinCache = {};
 		var roompin = {
@@ -38,15 +38,15 @@ define([
 			update: function(roomName, pin) {
 				if (pin) {
 					pinCache[roomName] = pin;
-					alertify.dialog.alert(translation._("PIN for room %s is now '%s'.", roomName, pin));
+					alertify.dialog.alert(translation._("PIN for room %s is now '%s'.", safeMessage(roomName), safeMessage(pin)));
 				} else {
 					roompin.clear(roomName);
-					alertify.dialog.alert(translation._("PIN lock has been removed from room %s.", roomName));
+					alertify.dialog.alert(translation._("PIN lock has been removed from room %s.", safeMessage(roomName)));
 				}
 			},
 			requestInteractively: function(roomName) {
 				var deferred = $q.defer();
-				alertify.dialog.prompt(translation._("Enter the PIN for room %s", roomName), function(pin) {
+				alertify.dialog.prompt(translation._("Enter the PIN for room %s", safeMessage(roomName)), function(pin) {
 					if (pin) {
 						pinCache[roomName] = pin;
 						deferred.resolve();

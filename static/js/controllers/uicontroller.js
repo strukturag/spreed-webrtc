@@ -20,9 +20,9 @@
  */
 
 "use strict";
-define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr) {
+define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'text!sounds/sprite1.json', 'webrtc.adapter'], function($, _, BigScreen, moment, sjcl, Modernizr, sprite1Definition) {
 
-	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints) {
+	return ["$scope", "$rootScope", "$element", "$window", "$timeout", "safeDisplayName", "safeApply", "mediaStream", "appData", "playSound", "desktopNotify", "alertify", "toastr", "translation", "fileDownload", "localStorage", "screensharing", "localStatus", "dialogs", "rooms", "constraints", "turnData", function($scope, $rootScope, $element, $window, $timeout, safeDisplayName, safeApply, mediaStream, appData, playSound, desktopNotify, alertify, toastr, translation, fileDownload, localStorage, screensharing, localStatus, dialogs, rooms, constraints, turnData) {
 
 		alertify.dialog.registerCustom({
 			baseType: 'notify',
@@ -98,35 +98,14 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		};
 
+		if (typeof(sprite1Definition) === "string") {
+			sprite1Definition = JSON.parse(sprite1Definition);
+		}
+
 		// Load default sounds.
 		playSound.initialize({
 			urls: ['sounds/sprite1.ogg', 'sounds/sprite1.mp3'],
-			sprite: {
-				"connect1": [
-				0,
-				5179],
-				"end1": [
-				12892,
-				6199],
-				"entry1": [
-				8387,
-				3000],
-				"leaving1": [
-				5228,
-				2126],
-				"message1": [
-				19140,
-				816],
-				"question1": [
-				20006,
-				3313],
-				"ringtone1": [
-				7403,
-				935],
-				"whistle1": [
-				11437,
-				1405]
-			}
+			sprite: sprite1Definition
 		}, null, {
 			"ring": "whistle1",
 			"joined": "entry1",
@@ -364,7 +343,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 
 		mediaStream.api.e.on("received.self", function(event, data) {
 
-			$timeout.cancel(ttlTimeout);
 			safeApply($scope, function(scope) {
 				scope.id = scope.myid = data.Id;
 				scope.userid = scope.myuserid = data.Userid ? data.Userid : null;
@@ -372,8 +350,8 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			});
 
 			// Set TURN and STUN data and refresh webrtc settings.
-			constraints.turn(data.Turn);
 			constraints.stun(data.Stun);
+			turnData.update(data.Turn);
 			$scope.refreshWebrtcSettings();
 
 			if (data.Version !== mediaStream.version) {
@@ -408,14 +386,6 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				} else {
 					$scope.loadedUserlogin = false;
 				}
-			}
-
-			// Support to upgrade stuff when ttl was reached.
-			if (data.Turn.ttl) {
-				ttlTimeout = $timeout(function() {
-					console.log("Ttl reached - sending refresh request.");
-					mediaStream.api.sendSelf();
-				}, data.Turn.ttl / 100 * 90 * 1000);
 			}
 
 			// Support resurrection shrine.
@@ -466,6 +436,12 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 				rooms.joinByName($scope.master.settings.defaultRoom, true);
 			}
 
+		});
+
+		mediaStream.api.e.on("received.turnUpdate", function(event, data) {
+			// Set TURN data and refresh webrtc settings.
+			turnData.update(data.Turn);
+			$scope.refreshWebrtcSettings();
 		});
 
 		mediaStream.webrtc.e.on("peercall", function(event, peercall) {
@@ -775,8 +751,13 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'web
 			}
 		});
 
+		turnData.e.on("apply", function(event, turnData) {
+			constraints.turn(turnData);
+			$scope.refreshWebrtcSettings()
+		});
+
 		$scope.$on("status", function(event, status) {
-			if (status === "connecting" && dialerEnabled) {
+			if (status === "connecting" && dialerEnabled && !$scope.isConferenceRoom()) {
 				dialer.start();
 				// Start accept timeout.
 				ringerTimeout = $timeout(function() {

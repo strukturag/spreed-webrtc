@@ -1,4 +1,5 @@
 <div class="socialshare btn-group" ng-show="roomlink">
+	<a ng-show="withModule('roomlocking')" title="{{_('Room PIN')}}" class="btn btn-link btn-sm" data-nw="pin"><i class="fa fa-lg pin" ng-class="isRoomLocked ? 'fa-lock' : 'fa-unlock'"></i></a>
 	<a title="{{_('Room link')}}" target="_blank" rel="external" href="{{roomlink}}" class="btn btn-link btn-sm" data-nw="link"><i class="fa fa-link fa-lg link"></i></a>
 	<a title="{{_('Invite by Email')}}" class="btn btn-link btn-sm" data-nw="email"><i class="fa fa-envelope fa-lg email"></i></a>
 	<a title="{{_('Invite with Facebook')}}" class="btn btn-link btn-sm" data-nw="facebook"><i class="fa fa-facebook fa-lg facebook"></i></a>

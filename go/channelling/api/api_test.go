@@ -42,6 +42,9 @@ func (fake *fakeClient) Index() uint64 {
 func (fake *fakeClient) Send(_ buffercache.Buffer) {
 }
 
+func (fake *fakeClient) Outgoing(_ interface{}) {
+}
+
 type fakeRoomManager struct {
 	joinedRoomID string
 	leftRoomID   string

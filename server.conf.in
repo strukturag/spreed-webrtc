@@ -82,6 +82,9 @@ encryptionSecret = tne-default-encryption-block-key
 ; all users will join this room if enabled. If it is disabled then a room join
 ; form will be shown instead.
 ;defaultRoomEnabled = true
+; Whether the room names are case sensitive. If enabled, different casing
+; of room names are different rooms. Optional. Defaults to false.
+;caseSensitiveRooms = false
 ; Whether a user account is required to join a room. This only has an effect
 ; if user accounts are enabled. Optional, defaults to false.
 ;authorizeRoomJoin = false
@@ -139,6 +142,7 @@ serverRealm = local
 ;youtube = true
 ;presentation = true
 ;contacts = true
+;roomlocking = true
 
 [log]
 ;logfile = /var/log/spreed-webrtc-server.log
@@ -202,16 +206,29 @@ enabled = false
 ;allowRegistration = false
 
 [nats]
+; Set to true, to connect to NATS on startup. If false, all other settins in the
+; [nats] section are ignored. Defaults to false.
+;useNATS = false
 ; Set to true, to enable triggering channelling events via NATS
 ;channelling_trigger = false
+; NATS channel trigger subject. Defaults to 'channelling.trigger'.
 ;channelling_trigger_subject = channelling.trigger
-; NATS server URL
+; NATS server URL.
 ;url = nats://127.0.0.1:4222
-; NATS connect establish timeout in seconds
+; NATS connect establish timeout in seconds.
 ;establishTimeout = 60
 ; Use client_id to distinguish between multipe servers. The value is sent
 ; together with every NATS request. Defaults to empty.
 ;client_id =
+; Set to true, to load additional configuration settings via NATS. The config
+; loaded is applied after loading the [nats] section and all entries extend the
+; configuration files with overwrite. Only takes effect when a NATS server URL
+; is configured. Defaults to false.
+;configFromNATS = false
+;configFromNATSSubject = spreed-webrtc.config.get
+; NATS config load timeout. If 0, then it waits forever, blocking the startup
+; until the configuration was loaded from NATS. Defaults to 0.
+;configFromNATSTimeout = 0
 
 [roomtypes]
 ; You can define room types that should be used for given room names instead of
@@ -226,3 +243,14 @@ enabled = false
 ; Example (all rooms below "conference/" are conference rooms):
 ;^conference/.+ = Conference
 ;
+
+[turnService]
+; To avoid the setup of a self-owned TURN server, a TURN service can be used.
+; When a turnServiceURI is set, TurnURIs in the [app] section are ignored.
+;turnServiceURI = https://turnservice.spreed.me
+; Access token for the TURN service. This is usually required and provided with
+; your TURN service subscription.
+;turnServiceAccessToken = some-secret-value
+; The ClientID can be used to specify additional credentials if required
+; by the TURN service. If empty, the value of turnServiceAccessToken is used.
+;turnServiceClientID =

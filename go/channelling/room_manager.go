@@ -24,6 +24,7 @@ package channelling
 import (
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/nats-io/nats"
@@ -63,6 +64,7 @@ type roomManager struct {
 	roomTypes            map[string]string
 	globalRoomID         string
 	defaultRoomID        string
+	caseSensitive        bool
 }
 
 type roomTypeMessage struct {
@@ -77,6 +79,7 @@ func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 		OutgoingEncoder: encoder,
 		roomTable:       make(map[string]RoomWorker),
 		roomTypes:       make(map[string]string),
+		caseSensitive:   config.RoomNameCaseSensitive,
 	}
 	if config.GlobalRoomID != "" {
 		rm.globalRoomID = rm.MakeRoomID(config.GlobalRoomID, "")
@@ -264,6 +267,9 @@ func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
 		roomType = rooms.getConfiguredRoomType(roomName)
 	}
 
+	if !rooms.caseSensitive {
+		roomName = strings.ToLower(roomName)
+	}
 	return fmt.Sprintf("%s:%s", roomType, roomName)
 }
 
