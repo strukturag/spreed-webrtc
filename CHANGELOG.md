@@ -1,3 +1,16 @@
+## 0.29.6
+
+  * README: Update Screensharing guide for Chromium-based browsers
+  * README: Update Screensharing guide for Firefox 52
+  * Upgrade to "pkac" 0.1.0
+  * VideoWaiter: Only return relevant stuff
+  * VideoWaiter should re-check availability of video if video gets unmuted
+  * Allow to lock rooms without specifying a password (FS#4015)
+  * Fixed calling wrong parent method in "getLocalStreams".
+  * Prevent data race when getting room type that was set through NATS.
+  * Use TURN service URNs with lowest priority instead of first in list.
+
+
 ## 0.29.5
 
   * Support fixed username/password TURN credentials.
