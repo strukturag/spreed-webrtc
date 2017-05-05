@@ -97,7 +97,10 @@ encryptionSecret = tne-default-encryption-block-key
 ; Whether a user account is required to create a room. This only has an effect
 ; if user accounts are enabled. Optional, defaults to false.
 ;authorizeRoomCreation = false
-; Wether the pipelines API should be enabled. Optional, defaults to false.
+; Whether locked rooms should be joinable by providing the PIN the room was
+; locked with. Optional, defaults to true.
+;lockedRoomJoinableWithPIN = true
+; Whether the pipelines API should be enabled. Optional, defaults to false.
 ;pipelinesEnabled = false
 ; Server token is a public random string which is used to enhance security of
 ; server generated security tokens. When the serverToken is changed all existing

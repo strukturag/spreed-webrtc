@@ -109,6 +109,9 @@ func (rooms *roomManager) setNatsRoomType(msg *roomTypeMessage) {
 		return
 	}
 
+	// TODO(fancycode): Should we use a separate mutex for this?
+	rooms.Lock()
+	defer rooms.Unlock()
 	if msg.Type != "" {
 		log.Printf("Setting room type for %s to %s\n", msg.Path, msg.Type)
 		rooms.roomTypes[msg.Path] = msg.Type
@@ -274,7 +277,11 @@ func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
 }
 
 func (rooms *roomManager) getConfiguredRoomType(roomName string) string {
-	if roomType, found := rooms.roomTypes[roomName]; found {
+	// TODO(fancycode): Should we use a separate mutex for this?
+	rooms.RLock()
+	roomType, found := rooms.roomTypes[roomName]
+	rooms.RUnlock()
+	if found {
 		// Type of this room was overwritten through NATS.
 		return roomType
 	}

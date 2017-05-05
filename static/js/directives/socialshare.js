@@ -31,7 +31,7 @@ define(['text!partials/socialshare.html'], function(template) {
 	};
 
 	// socialShare
-	return ["$window", "translation", "rooms", "alertify", function($window, translation, rooms, alertify) {
+	return ["$window", "translation", "rooms", "roompin", "alertify", function($window, translation, rooms, roompin, alertify) {
 
 		var title = $window.encodeURIComponent($window.document.title);
 		var makeUrl = function(nw, target) {
@@ -71,21 +71,7 @@ define(['text!partials/socialshare.html'], function(template) {
 							//$window.alert("Room link: " + $scope.roomlink);
 							alertify.dialog.notify(translation._("Room link"), '<a href="'+$scope.roomlink+'" rel="external" target="_blank">'+$scope.roomlink+'</a>');
 						} else if (nw === "pin") {
-							if (!$scope.isRoomLocked) {
-								// Lock
-								alertify.dialog.prompt(translation._("Please enter a new Room PIN to lock the room"), function(pin) {
-									rooms.setPIN(pin);
-								}, function() {
-									// Do nothing
-								});
-							} else {
-								// Unlock
-								alertify.dialog.confirm(translation._("Do you want to unlock the room?"), function() {
-									rooms.setPIN("");
-								}, function() {
-									// Do nothing
-								});
-							}
+							roompin.toggleCurrentRoomState(rooms);
 						}
 					}
 				});
