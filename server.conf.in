@@ -27,7 +27,7 @@ listen = 127.0.0.1:8080
 ; Full path to PEM encoded private key.
 ;key = server.key
 ; Mimimal supported encryption standard (SSLv3, TLSv1, TLSv1.1 or TLSv1.2).
-;minVersion = SSLv3
+;minVersion = TLSv1.2
 ; HTTPS socket read timeout in seconds.
 ;readtimeout = 10
 ; HTTPS socket write timeout in seconds.
