@@ -100,6 +100,10 @@ encryptionSecret = tne-default-encryption-block-key
 ; Whether locked rooms should be joinable by providing the PIN the room was
 ; locked with. Optional, defaults to true.
 ;lockedRoomJoinableWithPIN = true
+; Regular expression specifying room names that can be created / joined without
+; a valid user account (even if "authorizeRoomJoin" or "authorizeRoomCreation"
+; is enabled).
+;publicRooms =
 ; Whether the pipelines API should be enabled. Optional, defaults to false.
 ;pipelinesEnabled = false
 ; Server token is a public random string which is used to enhance security of
