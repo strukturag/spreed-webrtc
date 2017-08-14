@@ -8,7 +8,7 @@
 					<a ng-repeat="room in getVisibleRooms()" ng-click="activateRoom(room.id, true, true)" class="list-group-item" ng-class="{newmessage: room.pending, disabled: !room.enabled}">
 						<span class="badge" ng-show="room.pending">{{room.pending}}</span>
                         <span ng-if="room.id !== ''">{{room.id|displayName}}</span>
-                        <span ng-if="room.id === ''">{{_("Room chat")}} {{currentRoomName}}</span>
+                        <span ng-if="room.id === ''">{{_("Room chat %1$s", currentRoomName)}}</span>
 						<button ng-if="room.id !== ''" class="btn btn-sm btn-default" ng-click="hideRoom(room.id)">
 							<i class="fa fa-trash-o"></i>
 						</button>

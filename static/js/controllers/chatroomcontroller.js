@@ -46,6 +46,8 @@ define(['angular', 'jquery', 'underscore', 'moment', 'text!partials/fileinfo.htm
 		}, 100));
 
 		var displayName = safeDisplayName;
+		// To be used by chatroom.html partial.
+		$scope.displayName = displayName;
 		var buddyImageSrc = $filter("buddyImageSrc");
 		var fileInfo = $compile(templateFileInfo);
 		var contactRequest = $compile(templateContactRequest);
@@ -418,9 +420,9 @@ define(['angular', 'jquery', 'underscore', 'moment', 'text!partials/fileinfo.htm
 				case "LeftOrJoined":
 					$scope.showtime(new Date());
 					if (data.LeftOrJoined === "left") {
-						$scope.display(null, $("<i>" + displayName(from) + translation._(" is now offline.") + "</i>"));
+						$scope.display(null, $("<i>" + translation._("%1$s is now offline.", displayName(from)) + "</i>"));
 					} else {
-						$scope.display(null, $("<i>" + displayName(from) + translation._(" is now online.") + "</i>"));
+						$scope.display(null, $("<i>" + translation._("%1$s is now online.", displayName(from)) + "</i>"));
 					}
 					break;
 				case "Log":

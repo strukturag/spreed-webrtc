@@ -23,7 +23,10 @@
 define([], function() {
 
 	// StatusmessageController
-	return ["$scope", "mediaStream", function($scope, mediaStream) {
+	return ["$scope", "mediaStream", "safeDisplayName", function($scope, mediaStream, safeDisplayName) {
+
+		// To be used by statusmessage.html partial.
+		$scope.displayName = safeDisplayName;
 
 		$scope.doHangup = function(reason, id) {
 			mediaStream.webrtc.doHangup(reason, id);

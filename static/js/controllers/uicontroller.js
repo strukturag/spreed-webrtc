@@ -488,7 +488,9 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 			// Start to ring.
 			ringer.start();
 			// Show incoming call notification.
-			notification = desktopNotify.notify(translation._("Incoming call"), translation._("from") + " " + displayName(from), {
+			// TODO: This might not be correct in some languages where the
+			//       name must come first.
+			notification = desktopNotify.notify(translation._("Incoming call"), translation._("from %1$s", displayName(from)), {
 				timeout: null
 			});
 			$scope.$emit("status", "ringing");
@@ -789,21 +791,21 @@ define(['jquery', 'underscore', 'bigscreen', 'moment', 'sjcl', 'modernizr', 'tex
 			var message = null;
 			switch (type) {
 				case "busy":
-					message = displayName(details.from) + translation._(" is busy. Try again later.");
+					message = translation._("%1$s is busy. Try again later.", displayName(details.from));
 					break;
 				case "reject":
-					message = displayName(details.from) + translation._(" rejected your call.");
+					message = translation._("%1$s rejected your call.", displayName(details.from));
 					break;
 				case "pickuptimeout":
-					message = displayName(details.from) + translation._(" does not pick up.");
+					message = translation._("%1$s does not pick up.", displayName(details.from));
 					break;
 				case "incomingbusy":
-					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" tried to call you"));
+					toastr.info(moment().format("lll"), translation._("%1$s tried to call you", displayName(details.from)));
 					break;
 				case "abortbeforepickup":
 					// Fall through
 				case "incomingpickuptimeout":
-					toastr.info(moment().format("lll"), displayName(details.from) + translation._(" called you"));
+					toastr.info(moment().format("lll"), translation._("%1$s called you", displayName(details.from)));
 					break;
 			}
 			if (message) {
