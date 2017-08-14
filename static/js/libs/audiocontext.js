@@ -23,6 +23,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+ // Version 6ffd3f2917d32c28a6651644843edb979b42c3f0
 (function(name, definition) {
     if (typeof exports === "object") {
         module.exports = definition();

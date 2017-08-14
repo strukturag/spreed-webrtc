@@ -4,6 +4,8 @@
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
 
 // MIT license
+// Version 682e5c880c92b445650c4880a6bf9f3897ec1c5b
+// Repo https://gist.github.com/paulirish/1579671/682e5c880c92b445650c4880a6bf9f3897ec1c5b
 
 (function() {
     var lastTime = 0;

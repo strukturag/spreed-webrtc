@@ -29,6 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+// Version 5b271d2cf71dd21805b7dc0ded7ef97ac764307e
 
 /* More information about these options at jshint.com/docs/options */
 /* jshint browser: true, camelcase: true, curly: true, devel: true,

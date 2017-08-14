@@ -11,6 +11,7 @@
  * @author Mike Hamburg
  * @author Dan Boneh
  */
+// Version 1.0.2
 
 "use strict";
 /*jslint indent: 2, bitwise: false, nomen: false, plusplus: false, white: false, regexp: false */

@@ -10,6 +10,7 @@
  *
  * Project: https://github.com/CodeSeven/toastr
  */
+// Version 2.1.0
 ; (function (define) {
     define(['jquery'], function ($) {
         return (function () {
