@@ -22,7 +22,7 @@
 "use strict";
 define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatroom.html'], function($, _, templateChat, templateChatroom) {
 
-	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation) {
+	return ["$compile", "safeDisplayName", "mediaStream", "safeApply", "desktopNotify", "translation", "playSound", "fileUpload", "randomGen", "buddyData", "appData", "$timeout", "geolocation", "contacts", function($compile, safeDisplayName, mediaStream, safeApply, desktopNotify, translation, playSound, fileUpload, randomGen, buddyData, appData, $timeout, geolocation, contacts) {
 
 		var displayName = safeDisplayName;
 		var groupChatId = "";
@@ -198,6 +198,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 					var index = controller.visibleRooms.length;
 					if (!subscope) {
 						console.log("Create new chatroom", [id]);
+						var buddy = buddyData.lookup(id);
 						if (settings.group) {
 							controller.visibleRooms.unshift(id);
 						} else {
@@ -205,6 +206,7 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						}
 						subscope = controller.rooms[id] = scope.$new();
 						translation.inject(subscope);
+						subscope.contact = {};
 						subscope.id = id;
 						subscope.isgroupchat = !!settings.group;
 						subscope.index = index;
@@ -217,6 +219,31 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.p2pstate = false;
 						subscope.active = false;
 						subscope.pending = 0;
+						var handleContactFunctionality = function(buddy) {
+							var buddyId = buddy && buddy.session && buddy.session.Userid;
+							var myId = appData.get().userid;
+							var isAnotherUser = buddyId && myId !== buddyId;
+							subscope.contact.isContact = !!(buddy && buddy.contact);
+							subscope.contact.disableContact = !myId || !isAnotherUser;
+							subscope.contact.showContact = !subscope.isgroupchat && buddyId;
+							safeApply(subscope);
+						};
+						handleContactFunctionality(buddy);
+						// Update chatter
+						appData.e.on('authenticationChanged', function() {
+							handleContactFunctionality(buddy);
+						});
+						// Update chattee
+						mediaStream.api.e.on("received.status", function(event, data) {
+							if (!id && !data) {
+								return;
+							}
+							// Chattee status changed - logged in
+							var bd = buddyData.lookup(id);
+							if ((bd && bd.session.Userid) === data.Userid) {
+								handleContactFunctionality(buddyData.lookup(data.Id));
+							}
+						});
 						if (!subscope.isgroupchat) {
 							buddyData.push(id);
 						}
@@ -333,6 +360,24 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						subscope.doClear = function() {
 							subscope.$broadcast("clear");
 						};
+						subscope.addContact = function() {
+							subscope.$emit("requestcontact", subscope.id, {
+								restore: true
+							});
+						};
+						subscope.removeContact = function() {
+							contacts.remove(buddyData.lookup(id).contact.Userid);
+						};
+						subscope.updateContactStatus = function(event, data) {
+							var userid = buddy && buddy.session && buddy.session.Userid;
+							if (userid !== data.Userid) {
+								return;
+							}
+							subscope.contact.isContact = event.type === "contactadded";
+							safeApply(subscope);
+						};
+						contacts.e.on("contactadded", subscope.updateContactStatus);
+						contacts.e.on("contactremoved", subscope.updateContactStatus);
 						//console.log("Creating new chat room", controller, subscope, index);
 						subscope.$on("submit", function(event, input) {
 							subscope.seen();
@@ -509,6 +554,8 @@ define(['jquery', 'underscore', 'text!partials/chat.html', 'text!partials/chatro
 						return;
 					}
 					delete controller.rooms[id];
+					contacts.e.off("contactadded", subscope.updateContactStatus);
+					contacts.e.off("contactremoved", subscope.updateContactStatus);
 					$timeout(function() {
 						subscope.$destroy();
 					}, 0);
