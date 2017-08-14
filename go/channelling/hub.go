@@ -91,13 +91,13 @@ func (h *hub) ClientInfo(details bool) (clientCount int, sessions map[string]*Da
 	return
 }
 
-func (h *hub) CreateTurnData(sender Sender, session *Session) *DataTurn {
+func (h *hub) CreateTurnData(sessionId string, receiver TurnDataReceiver) *DataTurn {
 	if len(h.turnSecret) > 0 {
 		// Create turn data credentials for shared secret auth with TURN
 		// server. See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
 		// and https://code.google.com/p/rfc5766-turn-server/ REST API auth
 		// and set shared secret in TURN server with static-auth-secret.
-		id := session.Id
+		id := sessionId
 		bar := sha256.New()
 		bar.Write([]byte(id))
 		id = base64.StdEncoding.EncodeToString(bar.Sum(nil))

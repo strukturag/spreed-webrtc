@@ -21,6 +21,18 @@
 
 package channelling
 
+type TurnDataReceiver interface {
+	Index() uint64
+
+	TurnDataAvailable(*DataTurn)
+}
+
 type TurnDataCreator interface {
-	CreateTurnData(Sender, *Session) *DataTurn
+	/*
+		First parameter is the id of the session that requests the TURN data.
+		Second parameter will be notified when TURN data become available if none
+		were ready at the time the method was called (can be nil if no notification
+		is required).
+	*/
+	CreateTurnData(string, TurnDataReceiver) *DataTurn
 }
