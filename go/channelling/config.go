@@ -34,6 +34,7 @@ type Config struct {
 	RoomTypes                       map[*regexp.Regexp]string `json:"-"` // Map of regular expression -> room type
 	RoomNameCaseSensitive           bool                      // Whether the room names are case sensitive.
 	LockedRoomJoinableWithPIN       bool                      // Whether locked rooms should be joinable by providing the PIN the room was locked with
+	PublicRoomNames                 *regexp.Regexp            `json:"-"` // Regular expression that specifies room paths that may be created/joined without a user account.
 }
 
 func (config *Config) WithModule(m string) bool {

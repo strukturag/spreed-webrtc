@@ -209,9 +209,17 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	return
 }
 
+func (rooms *roomManager) isPublicRoom(roomName string) bool {
+	return rooms.PublicRoomNames != nil &&
+		rooms.PublicRoomNames.MatchString(roomName)
+}
+
 func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+	isPublic := false
 	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
-		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+		if isPublic = rooms.isPublicRoom(roomName); !isPublic {
+			return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+		}
 	}
 
 	if room, ok := rooms.Get(roomID); ok {
@@ -231,8 +239,13 @@ func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credent
 	}
 
 	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !sessionAuthenticated {
-		rooms.Unlock()
-		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
+		// Only need to check for public room if not checked above.
+		if !isPublic {
+			if isPublic = rooms.isPublicRoom(roomName); !isPublic {
+				rooms.Unlock()
+				return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
+			}
+		}
 	}
 
 	room := NewRoomWorker(rooms, roomID, roomName, roomType, credentials)
