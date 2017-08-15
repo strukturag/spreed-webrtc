@@ -119,6 +119,16 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		}
 	}
 
+	publicRoomNamesString := container.GetStringDefault("app", "publicRooms", "")
+	var publicRoomNames *regexp.Regexp
+	if publicRoomNamesString != "" {
+		var err error
+		if publicRoomNames, err = regexp.Compile(publicRoomNamesString); err != nil {
+			return nil, fmt.Errorf("Invalid regular expression '%s': %s", publicRoomNamesString, err)
+		}
+		log.Printf("Allowed public rooms: %s\n", publicRoomNamesString)
+	}
+
 	return &channelling.Config{
 		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
 		Ver:                             ver,
@@ -148,6 +158,7 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		RoomTypes:                       roomTypes,
 		RoomNameCaseSensitive:           container.GetBoolDefault("app", "caseSensitiveRooms", false),
 		LockedRoomJoinableWithPIN:       container.GetBoolDefault("app", "lockedRoomJoinableWithPIN", true),
+		PublicRoomNames:                 publicRoomNames,
 	}, nil
 }
 
