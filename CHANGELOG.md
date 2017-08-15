@@ -1,3 +1,8 @@
+## 0.29.7
+
+  * Add option to specify a regular expression for public rooms.
+
+
 ## 0.29.6
 
   * README: Update Screensharing guide for Chromium-based browsers
