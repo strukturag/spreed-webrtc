@@ -484,7 +484,6 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 		}, this));
 		call.e.on("connectionStateChange", _.bind(function(event, state, currentcall) {
 			switch (state) {
-			case "disconnected":
 			case "failed":
 				this.conference.markDisconnected(currentcall.id);
 				break;
