@@ -5,6 +5,7 @@
 LANGUAGES = {
 	"en": "English",
 	"de": "Deutsch",
+	"fr": "Français",
 	"zh-cn": "中文（简体）",
 	"zh-tw": "繁體中文",
 	"ko": "한국어",
