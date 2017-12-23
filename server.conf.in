@@ -41,8 +41,9 @@ listen = 127.0.0.1:8080
 ; long cached static resources.
 ;ver = 1234
 ; STUN server URIs in format host:port. You can provide multiple seperated by
-; space. If you do not have one use a public one like stun.spreed.me:443. If
-; you have a TURN server you do not need to set an STUN server as the TURN
+; space. If you do not have one use a public one like stun.spreed.me:443. For
+; suggestions on public STUN servers see gist.github.com/mondain/b0ec1cf5f60ae726202e
+; If you have a TURN server you do not need to set an STUN server as the TURN
 ; server will provide STUN services.
 ;stunURIs = stun:stun.spreed.me:443
 ; TURN server URIs in format host:port?transport=udp|tcp. You can provide
