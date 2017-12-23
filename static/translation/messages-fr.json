@@ -226,7 +226,7 @@
             "Only PDF documents and OpenDocument files can be shared at this time.":["Seuls les fichiers PDF ou OpenDocument peuvent etre partager dans cet instant."],
             "Failed to start screen sharing (%s).":["Echec de partager l'ecran (%s)."],
             "Permission to start screen sharing was denied. Make sure to have enabled screen sharing access for your browser. Copy chrome://flags/#enable-usermedia-screen-capture and open it with your browser and enable the flag on top. Then restart the browser and you are ready to go.":["L'autorisation de partage l'ecran refusee. Assurez-vous d'avoir active l'access au partage d'ecran pour votre navigateur. Suivez chrome://flags/#enable-usermedia-screen-capture avec votre navigateur et activez l'option en haut. Vous serez tout pret apres vous redemarrez votre navigateur."],
-            "Permission to start screen sharing was denied.":[L'autorisation de partage l'ecran refusee"],
+            "Permission to start screen sharing was denied.":["L'autorisation de partager l'ecran refusee"],
             "Use browser language":["Langue du navigateur"],
             "Meet with me here:":["Rencontrons-nous ici:"],
             "Room name":["Nom de salle"],
