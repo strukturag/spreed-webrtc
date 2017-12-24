@@ -74,13 +74,13 @@ msgstr "Le fichier n'est pas une image."
 
 #, python-format
 msgid "The file is too large. Max. %d MB."
-msgstr "Le ficheir est trop gros. Max. %d MB."
+msgstr "Le fichier est trop gros. Max. %d Mo."
 
 msgid "Select file"
 msgstr "Choisir un fichier"
 
 msgid "Chat sessions"
-msgstr "Session de chat"
+msgstr "Sessions de chat"
 
 msgid "Room chat"
 msgstr "Chat de cette salle"
