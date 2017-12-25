@@ -28,10 +28,10 @@ openssl x509 -in /srv/cert.pem -text
 if [ "$NEWSECRETS" = "1" -o ! -s /srv/secrets.conf ]; then
 	echo "Creating new server secrets ..."
 	rm -f /srv/secrets.conf.tmp
-	echo "SESSION_SECRET=$(randomhex 32)" >>/srv/secrets.conf.tmp
-	echo "ENCRYPTION_SECRET=$(randomhex 32)" >>/srv/secrets.conf.tmp
-	echo "SERVER_TOKEN=$(randomhex 32)" >>/srv/secrets.conf.tmp
-	echo "SHARED_SECRET=$(randomhex 32)" >>/srv/secrets.conf.tmp
+	echo "SESSION_SECRET=${SESSION_SECRET:-$(randomhex 32)}" >>/srv/secrets.conf.tmp
+	echo "ENCRYPTION_SECRET=${ENCRYPTION_SECRET:-$(randomhex 32)}" >>/srv/secrets.conf.tmp
+	echo "SERVER_TOKEN=${SERVER_TOKEN:-$(randomhex 32)}" >>/srv/secrets.conf.tmp
+	echo "SHARED_SECRET=${SHARED_SECRET:-$(randomhex 32)}" >>/srv/secrets.conf.tmp
 	. /srv/secrets.conf.tmp
 	sed -i -e "s/sessionSecret =.*/sessionSecret = $SESSION_SECRET/" /srv/spreed-webrtc/default.conf
 	sed -i -e "s/encryptionSecret =.*/encryptionSecret = $ENCRYPTION_SECRET/" /srv/spreed-webrtc/default.conf

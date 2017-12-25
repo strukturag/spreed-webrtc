@@ -7,4 +7,4 @@ avconv -y -i .tmp-sprite1.wav -aq 2 -acodec libvorbis sprite1.ogg
 
 rm -f .tmp-sprite1.wav
 
-cp -fv sprite1.{mp3,ogg} ../../static/sounds
+cp -fv sprite1.{json,mp3,ogg} ../../static/sounds

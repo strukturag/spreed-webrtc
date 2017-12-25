@@ -91,25 +91,39 @@ func (h *hub) ClientInfo(details bool) (clientCount int, sessions map[string]*Da
 	return
 }
 
-func (h *hub) CreateTurnData(session *Session) *DataTurn {
-	// Create turn data credentials for shared secret auth with TURN
-	// server. See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
-	// and https://code.google.com/p/rfc5766-turn-server/ REST API auth
-	// and set shared secret in TURN server with static-auth-secret.
-	if len(h.turnSecret) == 0 {
-		return &DataTurn{}
-	}
-	id := session.Id
-	bar := sha256.New()
-	bar.Write([]byte(id))
-	id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
-	foo := hmac.New(sha1.New, h.turnSecret)
-	expiration := int32(time.Now().Unix()) + turnTTL
-	user := fmt.Sprintf("%d:%s", expiration, id)
-	foo.Write([]byte(user))
-	password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
+func (h *hub) CreateTurnData(sender Sender, session *Session) *DataTurn {
+	if len(h.turnSecret) > 0 {
+		// Create turn data credentials for shared secret auth with TURN
+		// server. See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+		// and https://code.google.com/p/rfc5766-turn-server/ REST API auth
+		// and set shared secret in TURN server with static-auth-secret.
+		id := session.Id
+		bar := sha256.New()
+		bar.Write([]byte(id))
+		id = base64.StdEncoding.EncodeToString(bar.Sum(nil))
+		foo := hmac.New(sha1.New, h.turnSecret)
+		expiration := int32(time.Now().Unix()) + turnTTL
+		user := fmt.Sprintf("%d:%s", expiration, id)
+		foo.Write([]byte(user))
+		password := base64.StdEncoding.EncodeToString(foo.Sum(nil))
 
-	return &DataTurn{user, password, turnTTL, h.config.TurnURIs}
+		return &DataTurn{
+			Username: user,
+			Password: password,
+			Ttl:      turnTTL,
+			Urls:     h.config.TurnURIs,
+		}
+	}
+
+	if h.config.TurnUsername != "" && h.config.TurnPassword != "" {
+		return &DataTurn{
+			Username: h.config.TurnUsername,
+			Password: h.config.TurnPassword,
+			Urls:     h.config.TurnURIs,
+		}
+	}
+
+	return &DataTurn{}
 }
 
 func (h *hub) GetSession(id string) (session *Session, ok bool) {

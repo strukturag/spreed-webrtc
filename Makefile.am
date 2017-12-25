@@ -40,7 +40,7 @@ OUTPUT := $(CURDIR)/bin
 OUTPUT_JS := $(CURDIR)/build/out
 
 BUILD_ARCH := $(shell $(GO) env GOARCH)
-BUILD_OS := $(shell go env GOOS)
+BUILD_OS := $(shell $(GO) env GOOS)
 DIST := $(CURDIR)/dist_$(BUILD_ARCH)
 DIST_SRC := $(DIST)/src
 DIST_BIN := $(DIST)/bin
@@ -56,9 +56,9 @@ gopath:
 	@echo GOPATH=$(GOPATH)
 
 goget:
-	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) go get github.com/rogpeppe/godeps; fi
+	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(GO) get github.com/rogpeppe/godeps; fi
 	if [ -z "$(DEB_BUILDING)" ]; then GOPATH=$(GOPATH) $(CURDIR)/vendor/bin/godeps -u dependencies.tsv; fi
-	mkdir -p $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
+	$(MKDIR_P) $(shell dirname "$(CURDIR)/vendor/src/$(GOPKG)")
 	rm -f $(CURDIR)/vendor/src/$(GOPKG)
 	ln -sfn $(PWD) $(CURDIR)/vendor/src/$(GOPKG)
 
@@ -163,6 +163,7 @@ install-assets:
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/translation
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/css
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
+	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/libs/require
 	$(INSTALL) -d $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 	$(INSTALL) html/*.html $(DESTDIR)$(SHARE)/www/html
 	$(INSTALL) html/sandboxes/*.html $(DESTDIR)$(SHARE)/www/html/sandboxes
@@ -171,10 +172,10 @@ install-assets:
 	$(INSTALL) static/fonts/* $(DESTDIR)$(SHARE)/www/static/fonts
 	$(INSTALL) static/translation/* $(DESTDIR)$(SHARE)/www/static/translation
 	$(INSTALL) static/css/* $(DESTDIR)$(SHARE)/www/static/css
-	$(INSTALL) -D static/js/libs/require/require.js $(DESTDIR)$(SHARE)/www/static/js/libs/require/require.js
+	$(INSTALL) static/js/libs/require/require.js $(DESTDIR)$(SHARE)/www/static/js/libs/require
 	$(INSTALL) $(OUTPUT_JS)/*.js $(DESTDIR)$(SHARE)/www/static/js
 	$(INSTALL) $(OUTPUT_JS)/libs/pdf/*.js $(DESTDIR)$(SHARE)/www/static/js/libs/pdf
-	$(INSTALL) -D static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs/webodf.js
+	$(INSTALL) static/js/libs/webodf.js $(DESTDIR)$(SHARE)/www/static/js/libs
 	$(INSTALL) $(OUTPUT_JS)/sandboxes/*.js $(DESTDIR)$(SHARE)/www/static/js/sandboxes
 
 install: install-binary install-assets

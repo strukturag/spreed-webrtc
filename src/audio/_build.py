@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import audioop
 import wave
 import os
 import glob
@@ -9,6 +10,11 @@ import math
 silenceDuration = 0.05  # Seconds of silence between merged files
 outfile = "sprite1.wav"  # Output file. Will be saved in the path below.
 
+# Map containing volume adjustments for some of the files.
+AUDIO_FACTORS = {
+    'end1.wav': 0.5,
+}
+
 def main(folder="./files"):
 
     currentTime = 0
@@ -16,10 +22,10 @@ def main(folder="./files"):
 
     # Open output file
     output = wave.open(outfile, 'wb')
-    
+
     # Loop through files in folder and append to outfile
-    for i, infile in enumerate(glob.glob(os.path.join(folder, '*.wav'))):
-    
+    for i, infile in enumerate(sorted(glob.glob(os.path.join(folder, '*.wav')))):
+
         # Open file and get info
         w = wave.open(infile, 'rb')
         soundDuration = w.getnframes() / float(w.getframerate())
@@ -32,7 +38,11 @@ def main(folder="./files"):
             silenceFrames = "".join(wave.struct.pack('h', item) for item in silenceData)
 
         # Output sound + silence to file
-        output.writeframes(w.readframes(w.getnframes()))
+        samples = w.readframes(w.getnframes())
+        factor = AUDIO_FACTORS.get(os.path.basename(infile), None)
+        if factor is not None:
+            samples = audioop.mul(samples, w.getsampwidth(), factor)
+        output.writeframes(samples)
         output.writeframes(silenceFrames)
         w.close()
 
@@ -47,7 +57,9 @@ def main(folder="./files"):
     output.close()
 
     # Output howler sprite data
-    print json.dumps(sprite, sort_keys=True, indent=4, separators=(',', ': '))
-        
+    sprites = json.dumps(sprite, sort_keys=True, indent=4, separators=(',', ': '))
+    sprites = '\n'.join([x.rstrip() for x in sprites.split('\n')]) + '\n'
+    file('sprite1.json', 'wb').write(sprites)
+
 if __name__ == "__main__":
     main()

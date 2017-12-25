@@ -98,7 +98,52 @@ define(['jquery', 'underscore', 'audiocontext', 'mediastream/dummystream', 'webr
 				var c = {audio: convertConstraints(constraints.audio), video: convertConstraints(constraints.video)};
 				// mediaDevices API returns a promise.
 				console.log("Constraints for mediaDevices", c);
-				window.navigator.mediaDevices.getUserMedia(c).then(success).catch(error);
+				window.navigator.mediaDevices.getUserMedia(c).then(success).catch(function(err) {
+					if (!navigator.mediaDevices.enumerateDevices) {
+						// Don't know how to check for available devices.
+						error(err);
+						return;
+					}
+
+					// gUM fails if one of audio/video is not available, check which devices are
+					// available and retry with updated constraints.
+					console.log("getUserMedia with audio/video contraints failed", err);
+					navigator.mediaDevices.enumerateDevices().then(function(devices) {
+						var has_audio = false;
+						var has_video = false;
+						console.log("Available devices", devices);
+						_.each(devices, function(device) {
+							switch (device.kind) {
+								case "audioinput":
+									has_audio = true;
+									break;
+								case "videoinput":
+									has_video = true;
+									break;
+								default:
+									break;
+							}
+						});
+						if (!has_audio && !has_video) {
+							// No audio or video device found, no need to retry gUM.
+							error(err);
+							return;
+						}
+
+						if (!has_audio) {
+							delete c.audio;
+						}
+						if (!has_video) {
+							delete c.video;
+						}
+						console.log("Retry getUserMedia with updated constraints", c);
+						window.navigator.mediaDevices.getUserMedia(c).then(success).catch(error);
+					}).catch(function(devicesError) {
+						console.log("Could not enumerate devices", devicesError);
+						// Fail initial gUM
+						error(err);
+					});
+				});
 			}
 		} else {
 			// Use existing adapter.

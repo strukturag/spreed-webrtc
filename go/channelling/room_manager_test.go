@@ -22,6 +22,7 @@
 package channelling
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/strukturag/spreed-webrtc/go/channelling"
@@ -71,6 +72,55 @@ func Test_RoomManager_JoinRoom_ReturnsAnErrorForUnauthenticatedSessionsWhenJoinR
 	}
 
 	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":foo", "foo", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+}
+
+func Test_RoomManager_JoinPublicRoom_ForUnauthenticatedSessionsWhenCreationRequiresAnAccount(t *testing.T) {
+	roomManager, config := NewTestRoomManager()
+	config.UsersEnabled = true
+	config.AuthorizeRoomCreation = true
+
+	unauthenticatedSession := &Session{}
+	_, err := roomManager.JoinRoom(channelling.RoomTypeRoom+":public", "public", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+
+	config.PublicRoomNames = regexp.MustCompile("^public$")
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":public", "public", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining public room", err)
+	}
+
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":private", "private", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+}
+
+func Test_RoomManager_JoinPublicRoom_ForUnauthenticatedSessionsWhenJoinRequiresAnAccount(t *testing.T) {
+	roomManager, config := NewTestRoomManager()
+	config.UsersEnabled = true
+	config.AuthorizeRoomJoin = true
+
+	authenticatedSession := &Session{userid: "9870457"}
+	_, err := roomManager.JoinRoom(channelling.RoomTypeRoom+":public", "public", channelling.RoomTypeRoom, nil, authenticatedSession, true, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining room while authenticated", err)
+	}
+
+	unauthenticatedSession := &Session{}
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":public", "public", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	assertDataError(t, err, "room_join_requires_account")
+
+	config.PublicRoomNames = regexp.MustCompile("^public$")
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":public", "public", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining public room", err)
+	}
+
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":private", "private", channelling.RoomTypeRoom, nil, authenticatedSession, true, nil)
+	if err != nil {
+		t.Fatalf("Unexpected error %v joining room while authenticated", err)
+	}
+
+	_, err = roomManager.JoinRoom(channelling.RoomTypeRoom+":private", "private", channelling.RoomTypeRoom, nil, unauthenticatedSession, false, nil)
 	assertDataError(t, err, "room_join_requires_account")
 }
 

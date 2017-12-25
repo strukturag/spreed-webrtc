@@ -30,6 +30,7 @@ import (
 type Sender interface {
 	Index() uint64
 	Send(buffercache.Buffer)
+	Outgoing(interface{})
 }
 
 type Client struct {
@@ -50,7 +51,7 @@ func NewClient(codec Codec, api ChannellingAPI, session *Session) *Client {
 func (client *Client) OnConnect(conn Connection) {
 	client.Connection = conn
 	if reply, err := client.ChannellingAPI.OnConnect(client, client.session); err == nil {
-		client.reply("", reply)
+		client.Outgoing(reply)
 	} else {
 		log.Println("OnConnect error", err)
 	}
@@ -83,6 +84,10 @@ func (client *Client) reply(iid string, m interface{}) {
 		client.Connection.Send(b)
 		b.Decref()
 	}
+}
+
+func (client *Client) Outgoing(m interface{}) {
+	client.reply("", m)
 }
 
 func (client *Client) Session() *Session {

@@ -31,7 +31,7 @@ define(['text!partials/socialshare.html'], function(template) {
 	};
 
 	// socialShare
-	return ["$window", "translation", "rooms", "alertify", function($window, translation, rooms, alertify) {
+	return ["$window", "translation", "rooms", "roompin", "alertify", function($window, translation, rooms, roompin, alertify) {
 
 		var title = $window.encodeURIComponent($window.document.title);
 		var makeUrl = function(nw, target) {
@@ -49,6 +49,7 @@ define(['text!partials/socialshare.html'], function(template) {
 			replace: true,
 			link: function($scope, $element, $attr) {
 				$scope.$on("room.updated", function(ev, room) {
+					$scope.isRoomLocked = rooms.isLocked();
 					$scope.roomlink = rooms.link(room);
 				});
 				$scope.$on("room.left", function(ev) {
@@ -69,6 +70,8 @@ define(['text!partials/socialshare.html'], function(template) {
 						if (nw === "link") {
 							//$window.alert("Room link: " + $scope.roomlink);
 							alertify.dialog.notify(translation._("Room link"), '<a href="'+$scope.roomlink+'" rel="external" target="_blank">'+$scope.roomlink+'</a>');
+						} else if (nw === "pin") {
+							roompin.toggleCurrentRoomState(rooms);
 						}
 					}
 				});

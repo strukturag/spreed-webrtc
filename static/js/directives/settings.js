@@ -55,7 +55,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 
 	return ["$compile", "mediaStream", function($compile, mediaStream) {
 
-		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout) {
+		var controller = ['$scope', 'desktopNotify', 'mediaSources', 'safeApply', 'availableLanguages', 'translation', 'localStorage', 'userSettingsData', 'constraints', 'appData', '$timeout', 'turnData', function($scope, desktopNotify, mediaSources, safeApply, availableLanguages, translation, localStorage, userSettingsData, constraints, appData, $timeout, turnData) {
 
 			$scope.layout.settings = false;
 			$scope.showAdvancedSettings = true;
@@ -63,6 +63,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 			$scope.rememberSettings = true;
 			$scope.desktopNotify = desktopNotify;
 			$scope.mediaSources = mediaSources;
+			$scope.turnData = turnData;
 			$scope.availableLanguages = [{
 				code: "",
 				name: translation._("Use browser language")
@@ -90,6 +91,7 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				if (form.$valid && form.$dirty) {
 					var user = $scope.user;
 					$scope.update(user);
+					$scope.turnData.refresh();
 					if ($scope.rememberSettings) {
 						userSettingsData.save(user);
 						localStorage.setItem("mediastream-language", user.settings.language || "");
@@ -148,6 +150,9 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 						});
 						$scope.refreshWebrtcSettings();
 					});
+					if ($scope.user.settings.turn.selectedRegion === null && $scope.turnData.data.geo_uri) {
+						$scope.user.settings.turn.selectedRegion = "auto";
+					}
 				} else if (!showSettings && oldValue) {
 					$scope.saveSettings();
 				}
@@ -171,8 +176,19 @@ define(['jquery', 'underscore', 'text!partials/settings.html'], function($, _, t
 				$timeout($scope.maybeShowSettings);
 			});
 
-			constraints.e.on("refresh", function(event, c) {
+			turnData.e.on("refresh", function(event, turn) {
+				var settings = $scope.master.settings;
 
+				if (turn && turn.servers) {
+					var selected = settings.turn.selectedRegion;
+					if (turn.geo_uri && selected === null) {
+						selected = "auto";
+					}
+					turn.selected = selected;
+				}
+			});
+
+			constraints.e.on("refresh", function(event, c) {
 				var settings = $scope.master.settings;
 
 				// Assert that selected devices are there.

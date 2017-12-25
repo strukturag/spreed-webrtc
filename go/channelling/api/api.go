@@ -74,7 +74,7 @@ func New(config *channelling.Config,
 
 func (api *channellingAPI) OnConnect(client *channelling.Client, session *channelling.Session) (interface{}, error) {
 	api.Unicaster.OnConnect(client, session)
-	self, err := api.HandleSelf(session)
+	self, err := api.HandleSelf(client, session)
 	if err == nil {
 		api.BusManager.Trigger(channelling.BusManagerConnect, session.Id, "", nil, nil)
 	}
@@ -90,7 +90,7 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 	var pipeline *channelling.Pipeline
 	switch msg.Type {
 	case "Self":
-		return api.HandleSelf(session)
+		return api.HandleSelf(sender, session)
 	case "Hello":
 		if msg.Hello == nil {
 			return nil, channelling.NewDataError("bad_request", "message did not contain Hello")
@@ -138,7 +138,7 @@ func (api *channellingAPI) OnIncoming(sender channelling.Sender, session *channe
 			return nil, channelling.NewDataError("bad_request", "message did not contain Authentication")
 		}
 
-		return api.HandleAuthentication(session, msg.Authentication.Authentication)
+		return api.HandleAuthentication(sender, session, msg.Authentication.Authentication)
 	case "Bye":
 		if msg.Bye == nil {
 			log.Println("Received invalid bye message.", msg)

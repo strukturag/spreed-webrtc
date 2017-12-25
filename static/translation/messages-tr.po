@@ -1,0 +1,853 @@
+# Turkish translations for Spreed WebRTC.
+# Copyright (C) 2017
+# This file is distributed under the same license as the Spreed WebRTC
+# project.
+#
+#, fuzzy
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed WebRTC 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "Standard view"
+msgstr "Standart görünüm"
+
+msgid "Large view"
+msgstr "Büyük görüntüler"
+
+msgid "Kiosk view"
+msgstr "Kiosk görünümü"
+
+msgid "Auditorium"
+msgstr "Toplantı görünümü"
+
+msgid "Start chat"
+msgstr "Chate başla"
+
+msgid "Start video call"
+msgstr "Görüntülü arama"
+
+msgid "Start audio conference"
+msgstr "Sesli arama"
+
+msgid "No one else here"
+msgstr "Burada başka kimse yok"
+
+msgid "Take"
+msgstr "Cevapla"
+
+msgid "Retake"
+msgstr "Tekrar"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Set as Profile Picture"
+msgstr "Profil görüntüsü yap"
+
+msgid "Take picture"
+msgstr "Resim çek"
+
+msgid "Upload picture"
+msgstr "Resim yükle"
+
+msgid "Waiting for camera"
+msgstr "Kamerayı bekliyor"
+
+msgid "Picture"
+msgstr "Resim"
+
+msgid "The file couldn't be read."
+msgstr "Dosya okunamadı."
+
+msgid "The file is not an image."
+msgstr "Bu bir resim dosyası değil."
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr "Dosya çok büyükç Maksç %d MB"
+
+msgid "Select file"
+msgstr "Dosya seç"
+
+msgid "Chat sessions"
+msgstr "Chat oturumları"
+
+msgid "Room chat"
+msgstr "Chat odası"
+
+msgid "Peer to peer"
+msgstr "peer-to-peer"
+
+msgid "Close chat"
+msgstr "Chati sonlandır"
+
+msgid "Upload files"
+msgstr "Dosya yükle"
+
+msgid "Share my location"
+msgstr "Konumumu paylaş"
+
+msgid "Clear chat"
+msgstr "Geçmiş yazıları sil"
+
+msgid "is typing..."
+msgstr "yazıyor..."
+
+msgid "has stopped typing..."
+msgstr "yazmayı bitirdi..."
+
+msgid "Type here to chat..."
+msgstr "Chatleşmek için buraya yazın..."
+
+msgid "Send"
+msgstr "Gönder"
+
+msgid "Accept"
+msgstr "Kabul et"
+
+msgid "Reject"
+msgstr "Reddet"
+
+msgid "You have no contacts."
+msgstr "Hiç tanıdığınız yok"
+
+msgid ""
+"To add new contacts, join a room and create a contact add request by "
+"clicking on the star icon next to a user entry."
+msgstr "Yeni tanıdıklar eklemek için bir odaya girin ve kullanıcının girdisinin yanındaki yıldıza basarak tanışma istemi gönderin. "
+
+msgid "Edit contact"
+msgstr "Tanıdığı değiştir"
+
+msgid "Edit"
+msgstr "Değiştir"
+
+msgid "Name"
+msgstr "Ad"
+
+msgid "Remove"
+msgstr "Sil"
+
+msgid "Refresh"
+msgstr "Güncelle"
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Close"
+msgstr "Kapat"
+
+msgid "File sharing"
+msgstr "Dosya paylaşımı"
+
+msgid "File is no longer available"
+msgstr "Bu dosya artık kullanılabilir değil"
+
+msgid "Download"
+msgstr "İndir"
+
+msgid "Open"
+msgstr "Aç"
+
+msgid "Unshare"
+msgstr "Paylaşmayı bırak"
+
+msgid "Retry"
+msgstr "Tekrar dene"
+
+msgid "Download failed."
+msgstr "İndirme başarısız."
+
+msgid "Share a YouTube video"
+msgstr "YouTube videosu paylaş"
+
+msgid "Share a file as presentation"
+msgstr "Bir dosyadan sunum yap"
+
+msgid "Share your screen"
+msgstr "Ekranı paylaş"
+
+msgid "Chat"
+msgstr "Chat"
+
+msgid "Contacts"
+msgstr "Tanıdıklar"
+
+msgid "Mute microphone"
+msgstr "Mikrofonu kapat"
+
+msgid "Turn camera off"
+msgstr "Kamerayı kapat"
+
+msgid "Settings"
+msgstr "Ayarlar"
+
+msgid "Loading presentation ..."
+msgstr "Sunum yükleniyor..."
+
+msgid "Please upload a document"
+msgstr "Lütfen bir dosya yükleyin"
+
+msgid ""
+"Documents are shared with everyone in this call. The supported file types"
+" are PDF and OpenDocument files."
+msgstr "Dosyalar bu oturumdaki herkesle paylaşılacak. Desteklenen dosya türleri: PDF ve OpenDocument."
+
+msgid "Upload"
+msgstr "Yükle"
+
+msgid "You can drag files here too."
+msgstr "Dosyaları buraya sürükleyebilirisiniz de."
+
+msgid "Presentation controls"
+msgstr "Sunum kontrolleri"
+
+msgid "Prev"
+msgstr "Önceki"
+
+msgid "Next"
+msgstr "Sonraki"
+
+msgid "Change room"
+msgstr "Odayı değiştir"
+
+msgid "Room"
+msgstr "Oda"
+
+msgid "Leave room"
+msgstr "Odadan çık"
+
+msgid "Main"
+msgstr "Ana oda"
+
+msgid "Current room"
+msgstr "Şu anki oda"
+
+msgid "Screen sharing options"
+msgstr "Ekran paylaşım seçenekleri"
+
+msgid "Fit screen."
+msgstr "Ekrana sığdır"
+
+msgid "Share screen"
+msgstr "Ekranı paylaş"
+
+msgid "Please select what to share."
+msgstr "Paylaşmak istediğinizi seçin."
+
+msgid "Screen"
+msgstr "Ekran"
+
+msgid "Window"
+msgstr "Pencere"
+
+msgid "Application"
+msgstr "Uygulama"
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr "Tüm ekranı paylaş. Seçmek için paylaşa basın."
+
+msgid "Share a single window. Click share to select the window."
+msgstr "Sadece bir pencereyi paylaş. Seçmek için paylaşa basın."
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr "Bir uygulamanın tüm pencerelerini paylaş. Bu seçim pencereler "
+"oynatıldığında arkalarındaki nesnelerin görünmesine yol açabilir. Seçmek için paylaşa basın."
+
+msgid "Share"
+msgstr "Paylaş"
+
+msgid "OK"
+msgstr "Tamam"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Your name"
+msgstr "Adınız"
+
+msgid "Your picture"
+msgstr "Resminiz"
+
+msgid "Status message"
+msgstr "Durum bildirimi"
+
+msgid "What's on your mind?"
+msgstr "Aklınızdan neler geçiyor?"
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats "
+"and rooms."
+msgstr "Resminiz, adınız ve durum bildiriminiz arama ve odalarda sizi tanıtır."
+
+msgid "Your ID"
+msgstr "Kullanıcı adınız"
+
+msgid ""
+"Authenticated by certificate. To log out you have to remove your "
+"certificate from the browser."
+msgstr "Sertıfıka ile doğrulama yapıldı. Hesabınızdan çıkmak istediğinizde sertifikayı taraıcınızdan kaldırmalısınız."
+
+msgid "Sign in"
+msgstr "Gir"
+
+msgid "Create an account"
+msgstr "Hesap oluştur"
+
+msgid "Sign out"
+msgstr "Güvenli çıkış"
+
+msgid "Manage account"
+msgstr "Hesabım"
+
+msgid "Media"
+msgstr "Media"
+
+msgid "Microphone"
+msgstr "Mikrofon"
+
+msgid "Camera"
+msgstr "Kamera"
+
+msgid "Video quality"
+msgstr "Görüntü kalitesi"
+
+msgid "Low"
+msgstr "Düşük"
+
+msgid "High"
+msgstr "Yüksek"
+
+msgid "HD"
+msgstr "HD"
+
+msgid "Full HD"
+msgstr "Full HD"
+
+msgid "General"
+msgstr "Genel"
+
+msgid "Language"
+msgstr "Dil"
+
+msgid "Language changes become active on reload."
+msgstr "Dil değişiklikleri sayfa yeniden yüklendiğinde yürülüğe girer."
+
+msgid "Default room"
+msgstr "Temel oda"
+
+msgid "Set alternative room to join at start."
+msgstr "Başlangıçta girilecek başka bir oda seçin."
+
+msgid "Notifications"
+msgstr "Bilgilendirmeler"
+
+msgid "Desktop notification"
+msgstr "Masaüstü bilgilendirmeleri"
+
+msgid "Enable"
+msgstr "Aktifle"
+
+msgid "Denied - check your browser settings"
+msgstr "Reddedildi - tarayıcı ayarlarınızı kontrol edin."
+
+msgid "Allowed"
+msgstr "Onaylandı"
+
+msgid "Sounds for incoming messages"
+msgstr "Gelen mesajlar için ses"
+
+msgid "Ring on incoming calls"
+msgstr "Gelen arama olursa sesli uyar"
+
+msgid "Sounds for users in current room"
+msgstr "Odadaki mevcut kullanıcılar için sesli uyarılar"
+
+msgid "Advanced settings"
+msgstr "Gelişmiş ayarlar"
+
+msgid "Play audio on same device as selected microphone"
+msgstr "Mikrofonla aynı cihazdaki hoparlörü kullan"
+
+msgid "Experimental AEC"
+msgstr "Deneysel AEC"
+
+msgid "Experimental AGC"
+msgstr "Deneysel AGC"
+
+msgid "Experimental noise suppression"
+msgstr "Deneysel gürültü filtresi"
+
+msgid "Max video frame rate"
+msgstr "Maks. çerçeve hızı"
+
+msgid "auto"
+msgstr "Otomatik"
+
+msgid "Send stereo audio"
+msgstr "Stereo ses gönder"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr "Stereo ses gönderimi yankı baskılamayı kaldırır. Sadece stereo ses alıcınız varsa kullanınız."
+
+msgid "Detect CPU over use"
+msgstr "İşlemci aşırı kullanımını tespit et"
+
+msgid "Automatically reduces video quality as needed."
+msgstr "Gerektiğinde görüntü kalitesini otomatik olarak düşür."
+
+msgid "Optimize for high resolution video"
+msgstr "Yüksek çözünürlüklü görüntü için en iyi hale getir"
+
+msgid "Reduce video noise"
+msgstr "Görüntüdeki gürültüyü azalt"
+
+msgid "Prefer VP9 video codec"
+msgstr "VP9 codec tercih et"
+
+msgid "Enable experiments"
+msgstr "Deneysel fonksiyonları kullan"
+
+msgid "Show advanced settings"
+msgstr "Gelişmiş seçenekleri göster"
+
+msgid "Hide advanced settings"
+msgstr "Gelişmiş seçenekleri sakla"
+
+msgid "Remember settings"
+msgstr "Ayarları hatırla"
+
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the"
+" ID."
+msgstr "Kullanıcı adınız saklanacak - silmek için yukarıdaki çıkış tuşuna basın"
+
+msgid "Room PIN"
+msgstr "Oda anahtarı"
+
+msgid "Room link"
+msgstr "Oda bağlantısı"
+
+msgid "Invite by Email"
+msgstr "E-posta ile çağır"
+
+msgid "Invite with Facebook"
+msgstr "Facebook ile çağır"
+
+msgid "Invite with Twitter"
+msgstr "Twıtter ile çağır"
+
+msgid "Invite with Google Plus"
+msgstr "Google Plus ile çağıt"
+
+msgid "Invite with XING"
+msgstr "XING ile çağır"
+
+msgid "Initializing"
+msgstr "Başlatılıyor"
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Calling"
+msgstr "Arıyor"
+
+msgid "Hangup"
+msgstr "Sonlandır"
+
+msgid "In call with"
+msgstr "Konuştuğu kişi"
+
+msgid "Conference with"
+msgstr "Görüştüğü kişi"
+
+msgid "Your are offline"
+msgstr "Çevrimdışısınız"
+
+msgid "Go online"
+msgstr "Bağlan"
+
+msgid "Connection interrupted"
+msgstr "Bağlantı koptu"
+
+msgid "An error occured"
+msgstr "Bir hata oluştu"
+
+msgid "Incoming call"
+msgstr "Gelen arama"
+
+msgid "from"
+msgstr "arayan"
+
+msgid "Accept call"
+msgstr "Aç"
+
+msgid "Waiting for camera/microphone access"
+msgstr "Kamera/mikrofon bekleniyor"
+
+msgid "Your audio level"
+msgstr "Ses seviyeniz"
+
+msgid "Checking camera and microphone access."
+msgstr "Kamera ve mikrofon bağlantısı deneniyor"
+
+msgid "Please allow access to your camera and microphone."
+msgstr "Lütfen kamera ve mikrofon bağlantısına izin verin."
+
+msgid "Camera / microphone access required."
+msgstr "Kamera / mikrofon erişimi gerekli."
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access"
+" for this site."
+msgstr "Tarayıcı ayarlarınızı konrol ederek kamera ve mikrofona bu site"
+" için erişim izni verin"
+
+msgid "Skip check"
+msgstr "Kontrolü atla"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "Yardım için buraya tıklayın (Google Chrome)."
+
+msgid "Please set your user details and settings."
+msgstr "Kullanıcı bilgi ve ayarlarınızı yapın."
+
+msgid "Enter a room name"
+msgstr "Oda adı girin"
+
+msgid "Random room name"
+msgstr "Rastgele bir oda adı"
+
+msgid "Enter room"
+msgstr "Odaya gir"
+
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are"
+" signed in."
+msgstr "Mevcut odalardan birinin adını yazın. Yeni bir odayı ancak giriş"
+" yaptıktan sonra oluşturabilirsiniz."
+
+msgid "Room history"
+msgstr "Oda geçmişi"
+
+msgid "Please sign in."
+msgstr "Lütfen giriş yapın."
+
+msgid "Videos play simultaneously for everyone in this call."
+msgstr "Videolar bu aramadaki herkese eşzamanlı gösterilir."
+
+msgid "YouTube URL"
+msgstr "YouTube URL"
+
+msgid ""
+"Could not load YouTube player API, please check your network / firewall "
+"settings."
+msgstr ""
+"YouTube-çalar yükelenemedi, lütfen bağlantı ve firewall ayarlarınızı kontrol edin."
+
+msgid "Currently playing"
+msgstr "Şu an çalan"
+
+msgid "YouTube controls"
+msgstr "YouTube ayarları"
+
+msgid "YouTube video to share"
+msgstr "Paylaşılacak YouTube videosu"
+
+msgid "Peer to peer chat active."
+msgstr "Peer to peer chat aktif."
+
+msgid "Peer to peer chat is now off."
+msgstr "Peer to peer chat inaktif."
+
+msgid " is now offline."
+msgstr " şu anda çevrim dışı."
+
+msgid " is now online."
+msgstr " şimdi online."
+
+msgid "You share file:"
+msgstr "Şu dosyayı paylaşıyorsunuz:"
+
+msgid "Incoming file:"
+msgstr "Gelen dosya:"
+
+msgid "You shared your location:"
+msgstr "Konumunuzu paylaştınız:"
+
+msgid "Location received:"
+msgstr "Konum alındı:"
+
+msgid "You accepted the contact request."
+msgstr "Tanışma isteğini kabul ettiniz."
+
+msgid "You rejected the contact request."
+msgstr "Tanışma isteğini reddettiniz."
+
+msgid "You sent a contact request."
+msgstr "Tanışma isteği gönderdiniz."
+
+msgid "Your contact request was accepted."
+msgstr "Tanışma isteğiniz kabul edildi."
+
+msgid "Incoming contact request."
+msgstr "Sizinle tanışmak isteyen biri var."
+
+msgid "Your contact request was rejected."
+msgstr "Tanışma isteğiniz reddedildi."
+
+msgid "Edit Contact"
+msgstr "Tanıdığı değiştir"
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "Tarayıcınızın WebRTC desteği yok. Hiçbir arama yapılamaz."
+
+msgid "Close this window and disconnect?"
+msgstr "Pencereyi kapat ve çık?"
+
+msgid "Contacts Manager"
+msgstr "Tanıdık yöneticisi"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr "Güncellemeler için yeniden başlatmanız gerekli. Şimdi yeniden "
+"başlatmak için tamama basın."
+
+msgid "Failed to access camera/microphone."
+msgstr "Kamera/mikrofon bağlantısı başarısız."
+
+msgid "Failed to establish peer connection."
+msgstr "Kişiye bağlantı başarısız."
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "Üzgünüz ama bir terslik oldu. Yuuuuuh."
+
+msgid "Oops"
+msgstr "Eyvah"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "Kişiye bağlantı başarısız. Ayarlarınızı kontrol edin."
+
+msgid "User hung up because of error."
+msgstr "Bir hata sebebiyle kullanıcı bağlantıyı sonlandırdı"
+
+msgid " is busy. Try again later."
+msgstr " şu an meşgul. Daha sonra tekrar deneyin."
+
+msgid " rejected your call."
+msgstr " aramanızı reddetti."
+
+msgid " does not pick up."
+msgstr " telefonu açmıyor."
+
+msgid " tried to call you"
+msgstr " sizi aramaya çalıştı"
+
+msgid " called you"
+msgstr " sizi aradı"
+
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr "Tarayıcınız uyumsuz. Lütfen güncelleyin. "
+
+msgid "Chat with"
+msgstr "Chat arkadaşınız"
+
+msgid "Message from "
+msgstr "Mesaj gönderen "
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "Şimdi %s odadasındasınız..."
+
+msgid "Your browser does not support file transfer."
+msgstr "Tarayıcınız dosya alışverişine uyumlu değil."
+
+msgid "Could not load PDF: Please make sure to select a PDF document."
+msgstr "PDF yüklenemedi: lütfen bir PDF dosyası seçtiğinizden emin olun."
+
+msgid "Could not load PDF: Missing PDF file."
+msgstr "PDF yüklenemedi: dosya bulunamadı."
+
+#, python-format
+msgid "An error occurred while loading the PDF (%s)."
+msgstr "PDFyi yüklerken bir hata oluştu (%s)"
+
+msgid "An unknown error occurred while loading the PDF."
+msgstr "PDFyi yüklerken bilinmeyen bir hata oluştu."
+
+#, python-format
+msgid "An error occurred while loading the PDF page (%s)."
+msgstr "PDF sayfasını yüklerken bir hata oluştu (%s)"
+
+msgid "An unknown error occurred while loading the PDF page."
+msgstr "PDF sayfasını yüklerken bilinmeyen bir hata oluştu."
+
+#, python-format
+msgid "An error occurred while rendering the PDF page (%s)."
+msgstr "PDF sayfasını işlerken bir hata oluştu (%s)"
+
+msgid "An unknown error occurred while rendering the PDF page."
+msgstr "PDF sayfasını işlerken bilinmeyen bir hata oluştu."
+
+msgid "Only PDF documents and OpenDocument files can be shared at this time."
+msgstr "Şu anda sadece PDF ve OpenDocument dosyaları paylaşılabilmektedir."
+
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr "Ekran paylaşımı başarısız (%s)."
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the "
+"flag on top. Then restart the browser and you are ready to go."
+msgstr "Ekran paylaşma izni reddedildi. Tarayıcınızın ekran paylaşımına "
+"izin verdiğinden emin olun. chrome://flags/#enable-usermedia-screen-capture"
+" adresini tarayıcınızda açin ve en üstteki kutucuğu seçin. Tarayıcınızı tekrar"
+" başlattıktan sonra her şey hazır."
+
+msgid "Permission to start screen sharing was denied."
+msgstr "Ekran paylaşımı denemesi engellendi."
+
+msgid "Use browser language"
+msgstr "Tarayıcının dilini kullan"
+
+msgid "Meet with me here:"
+msgstr "Şurada buluşalım:"
+
+msgid "Please enter a new Room PIN to lock the room"
+msgstr "Odayı kilitlemek için bir şifre verin"
+
+msgid "Do you want to unlock the room?"
+msgstr "Odayı herkese açmak istiyor musunuz?"
+
+msgid "Room name"
+msgstr "Oda adı"
+
+msgid ""
+"The request contains an invalid parameter value. Please check the URL of "
+"the video you want to share and try again."
+msgstr ""
+"İsteminiz geçersiz bir parametre içeriyor. Video URLsini kontrol ettikten "
+"sonra tekrar deneyin."
+
+msgid ""
+"The requested content cannot be played in an HTML5 player or another "
+"error related to the HTML5 player has occurred. Please try again later."
+msgstr ""
+"İstediğiniz obje HTML5-çalar ile gösterime uygun değil veya başka bir"
+" HTML5-çalar hatası oluştı. Daha sonra tekrar deneyin."
+
+msgid ""
+"The video requested was not found. Please check the URL of the video you "
+"want to share and try again."
+msgstr ""
+"İstediğiniz video bulunamadı. Paylaşmak istediğiniz videonun URLsini"
+" kontrol edip tekrar deneyin."
+
+msgid ""
+"The owner of the requested video does not allow it to be played in "
+"embedded players."
+msgstr ""
+"İstediğiniz videonun sahibi gömülü programlar ile gösterilmesine"
+" izin vermiyor."
+
+#, python-format
+msgid ""
+"An unknown error occurred while playing back the video (%s). Please try "
+"again later."
+msgstr ""
+"Video gösterimi sırasında bilinmeyen bir hata oluştu (%s). Lütfen daha"
+" sonra tekrar deneyin."
+
+msgid ""
+"An unknown error occurred while playing back the video. Please try again "
+"later."
+msgstr ""
+"Video gösterimi sırasında bilinmeyen bir hata oluştu. Lütfen daha"
+" sonra tekrar deneyin."
+
+msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
+msgstr "Bilinmeyen URL formatı. geçerli bir YouTube linki girdiğinizi kontrol edin."
+
+msgid "Error"
+msgstr "Hata"
+
+msgid "Hint"
+msgstr "İpucu"
+
+msgid "Please confirm"
+msgstr "Teyit ediniz"
+
+msgid "More information required"
+msgstr "Daha fazla bilgi gerekli"
+
+msgid "Ok"
+msgstr "Tamam"
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+" screen sharing extension to Chrome and try again."
+msgstr ""
+"Ekran paylaşımı bir tarayıcı eklentisi gerektiriyor. Spreed WebRTC"
+" eklentisini Chrome'a ekledikten sonra tekrar deneyin."
+
+msgid "Access code required"
+msgstr "Şifre gerekli"
+
+msgid "Access denied"
+msgstr "Erişim reddedildi"
+
+msgid "Please provide a valid access code."
+msgstr "Lütfen geçerli bir şifre girin."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try "
+"again."
+msgstr ""
+"Şifre doğrulanamadı. İnternet bağlantınızı kontrol edip tekrar deneyin."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "%s odasının şifresi artık '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "%s odasının şifre koruması kaldırıldı."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "%s odasının şifresini girin"
+
+msgid "Please sign in to create rooms."
+msgstr "Yeni bir oda oluşturabilmek için giriş yapın."
+
+#, python-format
+msgid "and %s"
+msgstr "ve %s"
+
+#, python-format
+msgid "and %d others"
+msgstr "ve diğer %d kişi"
+
+msgid "User"
+msgstr "Kullanıcı"
+
+msgid "Someone"
+msgstr "Birisi"
+
+msgid "Me"
+msgstr "Ben"

@@ -267,6 +267,7 @@ define([
 
 		}());
 		console.info("Selected language: "+lang);
+		app.constant("translationLanguage", {lang: lang});
 
 		// Set language and load default translations.
 		launcher.translationData.lang = lang;

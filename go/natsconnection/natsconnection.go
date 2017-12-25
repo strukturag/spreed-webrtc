@@ -8,11 +8,14 @@ import (
 	"github.com/nats-io/nats"
 )
 
-// DefaultNatsEstablishTimeout is the default timeout for
+// DefaultEstablishTimeout is the default timeout for
 // calls to EstablishNatsConnection.
 var DefaultEstablishTimeout = 60 * time.Second
 
-// DefaultNatsURL is the default NATS server URL used for
+// DefaultRequestTimeout is the default timeout for Request() calls.
+var DefaultRequestTimeout = 5 * time.Second
+
+// DefaultURL is the default NATS server URL used for
 // calls to NewConnection and EstablishConnection.
 var DefaultURL = nats.DefaultURL
 
@@ -137,4 +140,59 @@ func EstablishJSONEncodedConnection(timeout *time.Duration) (*EncodedConnection,
 		return nil, err
 	}
 	return &EncodedConnection{ec}, nil
+}
+
+// CallFuncWithRetry retries the given func when it does not return nil
+// and the timeout duration has not been reached. It sleeps 1 second between
+// each call. If the timeout is 0, the function will be retried forever.
+func CallFuncWithRetry(f func() error, timeout time.Duration) error {
+	errch := make(chan error, 1)
+	quitch := make(chan bool)
+	var lastErr error
+
+	// Start our worker loop.
+	go func() {
+		for {
+			select {
+			case <-quitch:
+				// Quit requested.
+				return
+			default:
+				// Call our target function.
+				err := f()
+				switch err {
+				case nil:
+					// No error, success.
+					errch <- err
+					return
+				default:
+					// Remember last error.
+					lastErr = err
+				}
+				time.Sleep(1 * time.Second)
+			}
+		}
+	}()
+
+	// Create our wait channel. It either is an empty channel or
+	// it is filled when the timeout gets reached.
+	var waitch <-chan time.Time
+	if timeout == 0 {
+		// Create empty channel to wait forever.
+		waitch = make(<-chan time.Time)
+	} else {
+		waitch = time.After(timeout)
+	}
+
+	// Wait until something happens, either nil result or timeout.
+	select {
+	case err := <-errch:
+		return err
+	case <-waitch:
+		quitch <- true
+		if lastErr != nil {
+			return lastErr
+		}
+		return errors.New("Call with retry: timeout")
+	}
 }
