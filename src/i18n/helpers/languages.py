@@ -3,16 +3,17 @@
 # Generate simple languages JSON module.
 
 LANGUAGES = {
-	"en": "English",
 	"de": "Deutsch",
+	"en": "English",
+	"es": "Español",
 	"fr": "Français",
+	"it": "Italiano",	
+	"ja": "日本語",
+	"ko": "한국어",
+	"ru": "Русский",
+	"tr": "Türkçe",
 	"zh-cn": "中文（简体）",
 	"zh-tw": "繁體中文",
-	"ko": "한국어",
-	"ja": "日本語",
-	"ru": "Русский",
-	"es": "Español",
-	"it": "Italiano",
 }
 
 import json
