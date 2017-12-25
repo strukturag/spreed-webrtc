@@ -74,7 +74,7 @@ msgstr "Bu bir resim dosyası değil."
 
 #, python-format
 msgid "The file is too large. Max. %d MB."
-msgstr "Dosya çok büyükç Maksç %d MB"
+msgstr "Dosya çok büyük. Maks. %d MB."
 
 msgid "Select file"
 msgstr "Dosya seç"
@@ -119,12 +119,12 @@ msgid "Reject"
 msgstr "Reddet"
 
 msgid "You have no contacts."
-msgstr "Hiç tanıdığınız yok"
+msgstr "Henüz kimseyle tanışmadınız."
 
 msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
-msgstr "Yeni tanıdıklar eklemek için bir odaya girin ve kullanıcının girdisinin yanındaki yıldıza basarak tanışma istemi gönderin. "
+msgstr "Yeni tanıdıklar eklemek için bir odaya girin ve kullanıcının girdisinin yanındaki yıldıza basarak tanışma istemi gönderin."
 
 msgid "Edit contact"
 msgstr "Tanıdığı değiştir"
@@ -237,7 +237,7 @@ msgid "Screen sharing options"
 msgstr "Ekran paylaşım seçenekleri"
 
 msgid "Fit screen."
-msgstr "Ekrana sığdır"
+msgstr "Ekrana sığdır."
 
 msgid "Share screen"
 msgstr "Ekranı paylaş"
@@ -298,7 +298,7 @@ msgstr "Kullanıcı adınız"
 msgid ""
 "Authenticated by certificate. To log out you have to remove your "
 "certificate from the browser."
-msgstr "Sertıfıka ile doğrulama yapıldı. Hesabınızdan çıkmak istediğinizde sertifikayı taraıcınızdan kaldırmalısınız."
+msgstr "Sertifika ile doğrulama yapıldı. Hesabınızdan çıkmak istediğinizde sertifikayı taraıcınızdan kaldırmalısınız."
 
 msgid "Sign in"
 msgstr "Gir"
@@ -434,7 +434,7 @@ msgstr "Ayarları hatırla"
 msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
-msgstr "Kullanıcı adınız saklanacak - silmek için yukarıdaki çıkış tuşuna basın"
+msgstr "Kullanıcı adınız saklanacak - silmek için yukarıdaki çıkış tuşuna basın."
 
 msgid "Room PIN"
 msgstr "Oda anahtarı"
@@ -503,7 +503,7 @@ msgid "Your audio level"
 msgstr "Ses seviyeniz"
 
 msgid "Checking camera and microphone access."
-msgstr "Kamera ve mikrofon bağlantısı deneniyor"
+msgstr "Kamera ve mikrofon bağlantısı deneniyor."
 
 msgid "Please allow access to your camera and microphone."
 msgstr "Lütfen kamera ve mikrofon bağlantısına izin verin."
@@ -515,7 +515,7 @@ msgid ""
 "Please check your browser settings and allow camera and microphone access"
 " for this site."
 msgstr "Tarayıcı ayarlarınızı konrol ederek kamera ve mikrofona bu site"
-" için erişim izni verin"
+" için erişim izni verin."
 
 msgid "Skip check"
 msgstr "Kontrolü atla"
@@ -642,7 +642,7 @@ msgid "Peer connection failed. Check your settings."
 msgstr "Kişiye bağlantı başarısız. Ayarlarınızı kontrol edin."
 
 msgid "User hung up because of error."
-msgstr "Bir hata sebebiyle kullanıcı bağlantıyı sonlandırdı"
+msgstr "Bir hata sebebiyle kullanıcı aramayı sonlandırdı."
 
 msgid " is busy. Try again later."
 msgstr " şu an meşgul. Daha sonra tekrar deneyin."
@@ -660,7 +660,7 @@ msgid " called you"
 msgstr " sizi aradı"
 
 msgid "Your browser is not supported. Please upgrade to a current version."
-msgstr "Tarayıcınız uyumsuz. Lütfen güncelleyin. "
+msgstr "Tarayıcınız uyumsuz. Lütfen güncelleyin."
 
 msgid "Chat with"
 msgstr "Chat arkadaşınız"
@@ -683,21 +683,21 @@ msgstr "PDF yüklenemedi: dosya bulunamadı."
 
 #, python-format
 msgid "An error occurred while loading the PDF (%s)."
-msgstr "PDFyi yüklerken bir hata oluştu (%s)"
+msgstr "PDFyi yüklerken bir hata oluştu (%s)."
 
 msgid "An unknown error occurred while loading the PDF."
 msgstr "PDFyi yüklerken bilinmeyen bir hata oluştu."
 
 #, python-format
 msgid "An error occurred while loading the PDF page (%s)."
-msgstr "PDF sayfasını yüklerken bir hata oluştu (%s)"
+msgstr "PDF sayfasını yüklerken bir hata oluştu (%s)."
 
 msgid "An unknown error occurred while loading the PDF page."
 msgstr "PDF sayfasını yüklerken bilinmeyen bir hata oluştu."
 
 #, python-format
 msgid "An error occurred while rendering the PDF page (%s)."
-msgstr "PDF sayfasını işlerken bir hata oluştu (%s)"
+msgstr "PDF sayfasını işlerken bir hata oluştu (%s)."
 
 msgid "An unknown error occurred while rendering the PDF page."
 msgstr "PDF sayfasını işlerken bilinmeyen bir hata oluştu."
