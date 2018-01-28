@@ -4,7 +4,7 @@ Rebuild pot file from source (only do that on template or JavaScript changes)
 Merge po files with pot file (always do this before translating)
 	``make update``
 
-Create JavaScript translation fiels from po files (do this when finished translating)
+Create JavaScript translation files from po files (do this when finished translating)
 	``make build``
 
 Create a new translation (obvious)
