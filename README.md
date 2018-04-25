@@ -1,10 +1,10 @@
-Spreed WebRTC
+BlockMD Telehealth
 ===================
 
-Spreed WebRTC implements a WebRTC audio/video call and conferencing server
+BlockMD Telehealth implements a WebRTC audio/video call and conferencing server
 and web client.
 
-The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/strukturag/spreed-webrtc). If you are a user, just wanting a secure and private alternative for online communication make sure to check out the [Spreedbox](http://spreedbox.com), providing a ready to use hardware with Spreed WebRTC included.
+The latest source of BlockMD Telehealth can be found on [GitHub](https://github.com/strukturag/spreed-webrtc). If you are a user, just wanting a secure and private alternative for online communication make sure to check out the [Spreedbox](http://spreedbox.com), providing a ready to use hardware with BlockMD Telehealth included.
 
 
 ## Build prerequisites
@@ -17,7 +17,7 @@ The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/s
 
 ## Runtime dependencies
 
-Spreed WebRTC compiles directly to native code and has no
+BlockMD Telehealth compiles directly to native code and has no
 external runtime dependencies. See [here](http://golang.org/doc/faq#How_is_the_run_time_support_implemented)
 for details.
 
@@ -121,7 +121,7 @@ and CSS reload directly.
 
 ## Running for production
 
-Spreed WebRTC should be run through a SSL frontend proxy with
+BlockMD Telehealth should be run through a SSL frontend proxy with
 support for Websockets. Example configuration for Nginx can be
 found in `doc/NGINX.txt`.
 
@@ -144,8 +144,8 @@ We provide official Docker images at https://hub.docker.com/r/spreed/webrtc/. Of
 course you can build the Docker image yourself as well. Check the Dockerfiles in
 this repository for details and instructions.
 
-Use the following command to run a Spreed WebRTC Docker container with the
-default settings from our official Spreed WebRTC Docker image.
+Use the following command to run a BlockMD Telehealth Docker container with the
+default settings from our official BlockMD Telehealth Docker image.
 
 ```
 docker run --rm --name my-spreed-webrtc -p 8080:8080 -p 8443:8443 \
@@ -180,4 +180,4 @@ or reload in order for it to take affect.
 
 ## License
 
-`Spreed WebRTC` uses the AGPL license, see our `LICENSE` file.
+`BlockMD Telehealth` uses the AGPL license, see our `LICENSE` file.

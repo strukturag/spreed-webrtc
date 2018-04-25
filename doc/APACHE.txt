@@ -1,4 +1,4 @@
-## Apache HTTP Server configuration for Spreed WebRTC
+## Apache HTTP Server configuration for BlockMD Telehealth
 
 Apache supports websocket proxy starting with 2.4.5.
 

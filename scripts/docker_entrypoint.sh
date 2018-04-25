@@ -42,5 +42,5 @@ fi
 echo "Server secrets:"
 cat /srv/secrets.conf
 
-echo "Staring Spreed WebRTC server ..."
+echo "Staring BlockMD Telehealth server ..."
 exec /srv/spreed-webrtc/spreed-webrtc-server "$@"

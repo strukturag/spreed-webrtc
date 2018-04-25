@@ -1,5 +1,5 @@
 
-                   Spreed WebRTC REST API v1.0.0
+                   BlockMD Telehealth REST API v1.0.0
             ===============================================
                         (c)2016 struktur AG
 
@@ -22,8 +22,8 @@ Available end points with request methods and content-type:
   /.well-known/spreed-configuration
 
     The well-known end points can be used to discover the base addresses for
-    other end points. Spreed WebRTC provides this for compatibility with
-    larger setups so clients using this can find the Spreed WebRTC end point.
+    other end points. BlockMD Telehealth provides this for compatibility with
+    larger setups so clients using this can find the BlockMD Telehealth end point.
 
     GET application/x-www-form-urlencoded
     No parameters.
@@ -42,7 +42,7 @@ Available end points with request methods and content-type:
       No parameters.
       Response 200:
         {
-          "Title": "Spreed WebRTC",
+          "Title": "BlockMD Telehealth",
           "S": "static/ver=1399302670",
           "B": "/",
           "Token": "i-did-not-change-the-public-token-boo",
@@ -186,7 +186,7 @@ Available end points with request methods and content-type:
 
 End of REST API.
 
-For latest version of Spreed WebRTC check
+For latest version of BlockMD Telehealth check
 https://github.com/strukturag/spreed-webrtc
 
 For questions, contact mailto:opensource@struktur.de.

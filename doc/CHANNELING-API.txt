@@ -1,5 +1,5 @@
 
-                 Spreed WebRTC Channeling API v1.4.0
+                 BlockMD Telehealth Channeling API v1.4.0
             =================================================
                           (c)2015 struktur AG
 
@@ -1037,7 +1037,7 @@ File sharing data channel protocol
 
 End of Channeling API.
 
-For latest version of Spreed WebRTC check
+For latest version of BlockMD Telehealth check
 https://github.com/strukturag/spreed-webrtc
 
 For questions, contact mailto:opensource@struktur.de.

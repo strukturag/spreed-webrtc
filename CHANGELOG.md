@@ -593,7 +593,7 @@
 
 ## 0.18.0
 
-  * The project is now named Spreed WebRTC. All reference to the old
+  * The project is now named BlockMD Telehealth. All reference to the old
     name Spreed Speak Freely have been replaced.
   * Cleanup of Javascript code to match coding guide lines.
   * Added various new targets to make to check javascript and scss code.
