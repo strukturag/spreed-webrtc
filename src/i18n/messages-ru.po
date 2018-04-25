@@ -1,13 +1,13 @@
-# Russian translations for Spreed WebRTC.
+# Russian translations for BlockMD Telehealth.
 # Copyright (C) 2016 struktur AG
-# This file is distributed under the same license as the Spreed WebRTC
+# This file is distributed under the same license as the BlockMD Telehealth
 # project.
 # Irek Zaripov <iazaripov@gmail.com> , 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Spreed WebRTC 1.0\n"
+"Project-Id-Version: BlockMD Telehealth 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
 "POT-Creation-Date: 2016-02-17 14:15+0100\n"
 "PO-Revision-Date: 2016-02-18 16:03+0500\n"
@@ -823,11 +823,11 @@ msgid "Ok"
 msgstr "Ok"
 
 msgid ""
-"Screen sharing requires a browser extension. Please add the Spreed WebRTC"
+"Screen sharing requires a browser extension. Please add the BlockMD Telehealth"
 " screen sharing extension to Chrome and try again."
 msgstr ""
 "Совместное использование экрана требует расширение для браузера. "
-"Пожалуйста, добавьте расширение Spreed WebRTC в Chrome и повторите "
+"Пожалуйста, добавьте расширение BlockMD Telehealth в Chrome и повторите "
 "попытку."
 
 msgid "Access code required"

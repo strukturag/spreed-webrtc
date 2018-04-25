@@ -1,4 +1,4 @@
-; Spreed WebRTC server example configuration
+; BlockMD Telehealth server example configuration
 
 [http]
 ; HTTP listener in format ip:port.
@@ -35,7 +35,7 @@ listen = 127.0.0.1:8080
 
 [app]
 ; HTML page title
-;title = Spreed WebRTC
+;title = BlockMD Telehealth
 ; Version string to use for static resources. This defaults to the server
 ; version and should only be changed when you use your own way to invalidate
 ; long cached static resources.
@@ -117,7 +117,7 @@ serverRealm = local
 ;extra.d = /usr/share/spreed-webrtc-server/extra.d
 ;plugin = extra/static/myplugin.js
 ; Content-Security-Policy HTTP response header value.
-; Spreed WebRTC requires inline styles, WebSocket connection to itself and
+; BlockMD Telehealth requires inline styles, WebSocket connection to itself and
 ; data: URL for images.
 ; The currently recommended CSP is:
 ;   default-src 'self';

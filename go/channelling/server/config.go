@@ -1,8 +1,8 @@
 /*
- * Spreed WebRTC.
+ * BlockMD Telehealth.
  * Copyright (C) 2013-2015 struktur AG
  *
- * This file is part of Spreed WebRTC.
+ * This file is part of BlockMD Telehealth.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -119,7 +119,7 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 	}
 
 	return &channelling.Config{
-		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
+		Title:                           container.GetStringDefault("app", "title", "BlockMD Telehealth"),
 		Ver:                             ver,
 		S:                               fmt.Sprintf("static/ver=%s", ver),
 		B:                               basePath,

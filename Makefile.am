@@ -1,8 +1,8 @@
 #
-# Spreed WebRTC.
+# BlockMD Telehealth.
 # Copyright (C) 2013-2014 struktur AG
 #
-# This file is part of Spreed WebRTC.
+# This file is part of BlockMD Telehealth.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by

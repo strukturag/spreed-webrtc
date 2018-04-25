@@ -1,4 +1,4 @@
-## Nginx HTTP server configuration for Spreed WebRTC
+## Nginx HTTP server configuration for BlockMD Telehealth
 
 In general Nginx with websocket support is required (Nginx >= 1.3).
 
