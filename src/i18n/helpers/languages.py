@@ -13,6 +13,7 @@ LANGUAGES = {
 	"ru": "Русский",
 	"es": "Español",
 	"it": "Italiano",
+	"pt": "Português"
 }
 
 import json

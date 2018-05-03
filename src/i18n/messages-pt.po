@@ -1,0 +1,884 @@
+# Translations template for Spreed WebRTC.
+# Copyright (C) 2016 struktur AG
+# This file is distributed under the same license as the Spreed WebRTC
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Spreed WebRTC 1.0\n"
+"Report-Msgid-Bugs-To: simon@struktur.de\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
+"PO-Revision-Date: 2018-05-03 13:05+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+"X-Generator: Poedit 2.0.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Standard view"
+msgstr "Vista normal"
+
+msgid "Large view"
+msgstr "Vista alargada"
+
+msgid "Kiosk view"
+msgstr "Vista de Quisoque"
+
+msgid "Auditorium"
+msgstr "Auditório"
+
+msgid "Start chat"
+msgstr "Iniciar conversa"
+
+msgid "Start video call"
+msgstr "Iniciar chamada de vídeo"
+
+msgid "Start audio conference"
+msgstr "Inciar conferência de voz"
+
+msgid "No one else here"
+msgstr "Mais ninguém aqui"
+
+msgid "Take"
+msgstr "Tomar"
+
+msgid "Retake"
+msgstr "Retomar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Set as Profile Picture"
+msgstr "Definir como imagem de perfil"
+
+msgid "Take picture"
+msgstr "Tirar fotografia"
+
+msgid "Upload picture"
+msgstr "Enviar imagem"
+
+msgid "Waiting for camera"
+msgstr "Á espera da câmera"
+
+msgid "Picture"
+msgstr "Imagem"
+
+msgid "The file couldn't be read."
+msgstr "Não foi possível ler o ficheiro."
+
+msgid "The file is not an image."
+msgstr "O ficheiro não é uma imagem."
+
+#, python-format
+msgid "The file is too large. Max. %d MB."
+msgstr "O ficheiro é demasiado grande. Máx. %d MB."
+
+msgid "Select file"
+msgstr "Selecionar ficheiro"
+
+msgid "Chat sessions"
+msgstr "Sessões de conversa"
+
+msgid "Room chat"
+msgstr "Sala de conversa"
+
+msgid "Peer to peer"
+msgstr "Ponto a ponto"
+
+msgid "Close chat"
+msgstr "Fechar conversa"
+
+msgid "Upload files"
+msgstr "Enviar ficheiros"
+
+msgid "Share my location"
+msgstr "Partilhar a minha localização"
+
+msgid "Clear chat"
+msgstr "Limpar conversa"
+
+msgid "is typing..."
+msgstr "está a escrever..."
+
+msgid "has stopped typing..."
+msgstr "parou de escrever..."
+
+msgid "Type here to chat..."
+msgstr "Escreva aqui para conversar..."
+
+msgid "Send"
+msgstr "Enviar"
+
+msgid "Accept"
+msgstr "Aceitar"
+
+msgid "Reject"
+msgstr "Rejeitar"
+
+msgid "You have no contacts."
+msgstr "Não tem contatos."
+
+msgid ""
+"To add new contacts, join a room and create a contact add request by "
+"clicking on the star icon next to a user entry."
+msgstr ""
+"Para adicionar novos contatos, entre numa sala e crie um pedido de contato "
+"carregando no icone da estrela ao lado do utilizador."
+
+msgid "Edit contact"
+msgstr "Editar contato"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Refresh"
+msgstr "Atualizar"
+
+msgid "Save"
+msgstr "Gravar"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "File sharing"
+msgstr "Partilha de ficheiro"
+
+msgid "File is no longer available"
+msgstr "Ficheiro já não está disponível"
+
+msgid "Download"
+msgstr "Transferir"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Unshare"
+msgstr "Remover partilha"
+
+msgid "Retry"
+msgstr "Tentar novamente"
+
+msgid "Download failed."
+msgstr "Falhou ao descarregar."
+
+msgid "Share a YouTube video"
+msgstr "Partilhar vídeo do Youtube"
+
+msgid "Share a file as presentation"
+msgstr "Partilhar ficheiro como apresentação"
+
+msgid "Share your screen"
+msgstr "Partilhar o ecrã"
+
+msgid "Chat"
+msgstr "Conversa"
+
+msgid "Contacts"
+msgstr "Contatos"
+
+msgid "Mute microphone"
+msgstr "Microfone mudo"
+
+msgid "Turn camera off"
+msgstr "Desligar câmara"
+
+msgid "Settings"
+msgstr "Definições"
+
+msgid "Loading presentation ..."
+msgstr "A carregar apresentação ..."
+
+msgid "Please upload a document"
+msgstr "Por favor carregue um documento"
+
+msgid ""
+"Documents are shared with everyone in this call. The supported file types "
+"are PDF and OpenDocument files."
+msgstr ""
+"Os documentos são partilhados com todos os presentes nesta chamada. Os "
+"ficheiros suportados são PDF e ficheiros OpenDocument."
+
+msgid "Upload"
+msgstr "Enviar"
+
+msgid "You can drag files here too."
+msgstr "Pode arrastar ficheiros aqui também."
+
+msgid "Presentation controls"
+msgstr "Controlos da apresentação"
+
+msgid "Prev"
+msgstr "Ant."
+
+msgid "Next"
+msgstr "Seg."
+
+msgid "Change room"
+msgstr "Mudar sala"
+
+msgid "Room"
+msgstr "Sala"
+
+msgid "Leave room"
+msgstr "Sair da sala"
+
+msgid "Main"
+msgstr "Principal"
+
+msgid "Current room"
+msgstr "Sala atual"
+
+msgid "Screen sharing options"
+msgstr "Opções de partilha de ecrã"
+
+msgid "Fit screen."
+msgstr "Ajustar ao ecrã."
+
+msgid "Share screen"
+msgstr "Partilhar ecrã"
+
+msgid "Please select what to share."
+msgstr "Por favor escolha o que partilhar."
+
+msgid "Screen"
+msgstr "Ecrã"
+
+msgid "Window"
+msgstr "Janela"
+
+msgid "Application"
+msgstr "Aplicação"
+
+msgid "Share the whole screen. Click share to select the screen."
+msgstr "Partilhar ecrã inteiro. Selecione partilhar para escolher o ecrã."
+
+msgid "Share a single window. Click share to select the window."
+msgstr ""
+"Partilhar apenas uma janela. Selecione partilhar para escolher a janela."
+
+msgid ""
+"Share all windows of a application. This can leak content behind windows "
+"when windows get moved. Click share to select the application."
+msgstr ""
+"Partilhar todas as janelas de uma aplicação. Isto pode mostar conteúdos "
+"atrás das janelas quando estas são movidas. Selecione partilhar para "
+"escolher a aplicação."
+
+msgid "Share"
+msgstr "Partilhar"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Your name"
+msgstr "O teu nome"
+
+msgid "Your picture"
+msgstr "A tua imagem"
+
+msgid "Status message"
+msgstr "Mensagem de estado"
+
+msgid "What's on your mind?"
+msgstr "Em que pensas?"
+
+msgid ""
+"Your picture, name and status message identify yourself in calls, chats and "
+"rooms."
+msgstr ""
+"A tua imagem, nome e estado identificam-te nas chamadas, conversas e salas."
+
+msgid "Your ID"
+msgstr "O teu ID"
+
+msgid ""
+"Authenticated by certificate. To log out you have to remove your certificate "
+"from the browser."
+msgstr ""
+"Autenticado através de certificado. Para terminar a sessão tem que remover o "
+"certificato do browser."
+
+msgid "Sign in"
+msgstr "Iniciar sessão"
+
+msgid "Create an account"
+msgstr "Criar uma conta"
+
+msgid "Sign out"
+msgstr "Terminar sessão"
+
+msgid "Manage account"
+msgstr "Gerir conta"
+
+msgid "Media"
+msgstr "Multimédia"
+
+msgid "Microphone"
+msgstr "Microfone"
+
+msgid "Camera"
+msgstr "Câmara"
+
+msgid "Video quality"
+msgstr "Qualidade do vídeo"
+
+msgid "Low"
+msgstr "Baixa"
+
+msgid "High"
+msgstr "Alta"
+
+msgid "HD"
+msgstr "HD"
+
+msgid "Full HD"
+msgstr "Full HD"
+
+msgid "General"
+msgstr "Geral"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Language changes become active on reload."
+msgstr "Alterações de idioma ficam ativas ao recarregar."
+
+msgid "Default room"
+msgstr "Sala por defeito"
+
+msgid "Set alternative room to join at start."
+msgstr "Definir sala alternativa para entrar ao iniciar."
+
+msgid "Notifications"
+msgstr "Notificações"
+
+msgid "Desktop notification"
+msgstr "Notificações de desktop"
+
+msgid "Enable"
+msgstr "Ativar"
+
+msgid "Denied - check your browser settings"
+msgstr "Recusado - Verifique as definições do browser"
+
+msgid "Allowed"
+msgstr "Permitido"
+
+msgid "Sounds for incoming messages"
+msgstr "Sons para mensagens recebidas"
+
+msgid "Ring on incoming calls"
+msgstr "Tocar ao receber chamadas"
+
+msgid "Sounds for users in current room"
+msgstr "Sons para os utilizadores na sala atual"
+
+msgid "Advanced settings"
+msgstr "Definições avançadas"
+
+msgid "Play audio on same device as selected microphone"
+msgstr "Reproduzir som no mesmo dispositivo"
+
+msgid "Experimental AEC"
+msgstr "AEC experimental"
+
+msgid "Experimental AGC"
+msgstr "AGC experimental"
+
+msgid "Experimental noise suppression"
+msgstr "Supressão de ruído experimental"
+
+msgid "Max video frame rate"
+msgstr "Taxa de resfrescamento Max de vídeo"
+
+msgid "auto"
+msgstr "auto"
+
+msgid "Send stereo audio"
+msgstr "Enviar som estéreo"
+
+msgid ""
+"Sending stereo audio disables echo cancellation. Enable only if you have "
+"stereo input."
+msgstr ""
+"Enviar som estéreo desativa o cancelamento de eco. Ative só se tiver suporte "
+"para estéreo na entrada."
+
+msgid "Detect CPU over use"
+msgstr "Detetar sobre uso do CPU"
+
+msgid "Automatically reduces video quality as needed."
+msgstr "Reduzir automáticamente a qualidade do vídeo conforme necessário."
+
+msgid "Optimize for high resolution video"
+msgstr "Optimizar para vídeo de alta resolução"
+
+msgid "Reduce video noise"
+msgstr "Reduzir ruído do vídeo"
+
+msgid "Prefer VP9 video codec"
+msgstr "Preferir o codec de vídeo VP9"
+
+msgid "Enable experiments"
+msgstr "Ativar experiências"
+
+msgid "Show advanced settings"
+msgstr "Mostar opções avançadas"
+
+msgid "Hide advanced settings"
+msgstr "Esconder opções avançadas"
+
+msgid "Remember settings"
+msgstr "Lembrar definições"
+
+msgid ""
+"Your ID will still be kept - press the log out button above to delete the ID."
+msgstr ""
+"O seu ID será mantido - selecione o botão acima de terminar sessão para "
+"apagar o ID."
+
+msgid "Room PIN"
+msgstr "PIN da sala"
+
+msgid "Room link"
+msgstr "Link da sala"
+
+msgid "Invite by Email"
+msgstr "Convidar por Email"
+
+msgid "Invite with Facebook"
+msgstr "Convidar com Facebook"
+
+msgid "Invite with Twitter"
+msgstr "Convidar com Twitter"
+
+msgid "Invite with Google Plus"
+msgstr "Convidar com Google Plus"
+
+msgid "Invite with XING"
+msgstr "Convidar com XING"
+
+msgid "Initializing"
+msgstr "A inicializar"
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Calling"
+msgstr "A chamar"
+
+msgid "Hangup"
+msgstr "Desligar"
+
+msgid "In call with"
+msgstr "Numa chamada com"
+
+msgid "Conference with"
+msgstr "Conferência com"
+
+msgid "Your are offline"
+msgstr "Está desligado"
+
+msgid "Go online"
+msgstr "Ficar conectado"
+
+msgid "Connection interrupted"
+msgstr "Ligação interrumpida"
+
+msgid "An error occured"
+msgstr "Ocorreu um erro"
+
+msgid "Incoming call"
+msgstr "A receber chamada"
+
+msgid "from"
+msgstr "de"
+
+msgid "Accept call"
+msgstr "Aceitar chamada"
+
+msgid "Waiting for camera/microphone access"
+msgstr "Á espera de acesso à câmara/microfone"
+
+msgid "Your audio level"
+msgstr "O seu nível de áudio"
+
+msgid "Checking camera and microphone access."
+msgstr "A verificar acesso à câmara e ao microfone."
+
+msgid "Please allow access to your camera and microphone."
+msgstr "Por favor permita acesso à sua câmara e microfone."
+
+msgid "Camera / microphone access required."
+msgstr "Acesso à câmara/microfone necessário."
+
+msgid ""
+"Please check your browser settings and allow camera and microphone access "
+"for this site."
+msgstr ""
+"Por favor verifique as definições do browser e permita acesso a este site à "
+"câmara e ao microfone."
+
+msgid "Skip check"
+msgstr "Saltar verificação"
+
+msgid "Click here for help (Google Chrome)."
+msgstr "Carregue aqui para ajuda (Google Chrome)."
+
+msgid "Please set your user details and settings."
+msgstr "Por favor configure o seus detalhes de utilizador e definições."
+
+msgid "Enter a room name"
+msgstr "Insira o nome de uma sala"
+
+msgid "Random room name"
+msgstr "Nome de sala aleatório"
+
+msgid "Enter room"
+msgstr "Entrar na sala"
+
+msgid ""
+"Enter the name of an existing room. You can create new rooms when you are "
+"signed in."
+msgstr ""
+"Insira o nome de uma sala existente. Pode criar uma sala nova quando iniciar "
+"sessão."
+
+msgid "Room history"
+msgstr "Histórico da sala"
+
+msgid "Please sign in."
+msgstr "Por favor inicie sessão."
+
+msgid "Videos play simultaneously for everyone in this call."
+msgstr ""
+"Os vídeos são reproduzidos em simultâneo para todos os participantes nesta "
+"chamada."
+
+msgid "YouTube URL"
+msgstr "URL YouTube"
+
+msgid ""
+"Could not load YouTube player API, please check your network / firewall "
+"settings."
+msgstr ""
+"Não foi possível carregar a API do leitor YouTube. Por favor verifique as "
+"definições da rede / firewall."
+
+msgid "Currently playing"
+msgstr "A reproduzir agora"
+
+msgid "YouTube controls"
+msgstr "Controlos YouTube"
+
+msgid "YouTube video to share"
+msgstr "Vídeo YouTube para partilhar"
+
+msgid "Peer to peer chat active."
+msgstr "Conversa ponto a ponto ativa."
+
+msgid "Peer to peer chat is now off."
+msgstr "Conversa ponto a ponto está agora desligada."
+
+msgid " is now offline."
+msgstr " está agora desligado."
+
+msgid " is now online."
+msgstr " está agora conectado."
+
+msgid "You share file:"
+msgstr "Partilhou o ficheiro:"
+
+msgid "Incoming file:"
+msgstr "A receber ficheiro:"
+
+msgid "You shared your location:"
+msgstr "Partilhou a sua localização:"
+
+msgid "Location received:"
+msgstr "Localização recebida:"
+
+msgid "You accepted the contact request."
+msgstr "Aceitou o pedido de contato."
+
+msgid "You rejected the contact request."
+msgstr "Rejeitou o pedido de contato."
+
+msgid "You sent a contact request."
+msgstr "Enviou um pedido de contato."
+
+msgid "Your contact request was accepted."
+msgstr "O seu pedido de contato foi aceite."
+
+msgid "Incoming contact request."
+msgstr "A receber pedido de contato."
+
+msgid "Your contact request was rejected."
+msgstr "O seu pedido de contato foi recusado."
+
+msgid "Edit Contact"
+msgstr "Edita contato"
+
+msgid "Your browser does not support WebRTC. No calls possible."
+msgstr "O se browser não suporta WebRTC. Chamadas não são possíveis."
+
+msgid "Close this window and disconnect?"
+msgstr "Fechar esta janela e desligar?"
+
+msgid "Contacts Manager"
+msgstr "Gestor de contatos"
+
+msgid "Restart required to apply updates. Click ok to restart now."
+msgstr ""
+"É necesário reiniciar para aplicar alterações. Selecionar ok para reiniciar "
+"agora."
+
+msgid "Failed to access camera/microphone."
+msgstr "Falhou acesso à câmara/microfone."
+
+msgid "Failed to establish peer connection."
+msgstr "Falhou a estabelecer ligação ao parceiro."
+
+msgid "We are sorry but something went wrong. Boo boo."
+msgstr "Pedimos desculpa, mas algo correu mal. Boo boo."
+
+msgid "Oops"
+msgstr "Oops"
+
+msgid "Peer connection failed. Check your settings."
+msgstr "Ligação ao parceiro falhou. Verifique a suas definições."
+
+msgid "User hung up because of error."
+msgstr "Uilizador desligou devido a um erro."
+
+msgid " is busy. Try again later."
+msgstr " está ocupado. Tente novamente mais tarde."
+
+msgid " rejected your call."
+msgstr " rejeitou a chamada."
+
+msgid " does not pick up."
+msgstr " não atende."
+
+msgid " tried to call you"
+msgstr " tentou ligar"
+
+msgid " called you"
+msgstr " ligou"
+
+msgid "Your browser is not supported. Please upgrade to a current version."
+msgstr ""
+"O seu browser não é suportado. Por favor atualize para uma versão recente."
+
+msgid "Chat with"
+msgstr "Conversar com"
+
+msgid "Message from "
+msgstr "Mensagem de "
+
+#, python-format
+msgid "You are now in room %s ..."
+msgstr "Está agora na sala %s ..."
+
+msgid "Your browser does not support file transfer."
+msgstr "O seu browser não suporta tranferência de ficheiros."
+
+msgid "Could not load PDF: Please make sure to select a PDF document."
+msgstr ""
+"Não foi possível carregar o PDF: Por favor certifique-se que seleciona um "
+"ficheiro do tipo PDF."
+
+msgid "Could not load PDF: Missing PDF file."
+msgstr "Não foi possível carregar o PDF: Ficheiro PDF não encontrado."
+
+#, python-format
+msgid "An error occurred while loading the PDF (%s)."
+msgstr "Ocorreu um erro ao carregar o PDF (%s)."
+
+msgid "An unknown error occurred while loading the PDF."
+msgstr "Ocorreu um erro desconhecido ao carregar o PDF."
+
+#, python-format
+msgid "An error occurred while loading the PDF page (%s)."
+msgstr "Ocorreu um erro ao carregar a página do PDF (%s)."
+
+msgid "An unknown error occurred while loading the PDF page."
+msgstr "Ocorreu um erro desconhecido ao carregar a página do PDF."
+
+#, python-format
+msgid "An error occurred while rendering the PDF page (%s)."
+msgstr "Ocorreu um erro ao representar a página do PDF (%s)."
+
+msgid "An unknown error occurred while rendering the PDF page."
+msgstr "Ocorreu um erro desconhecido ao representar a página do PDF."
+
+msgid "Only PDF documents and OpenDocument files can be shared at this time."
+msgstr ""
+"De momento só é possível partilhar documentos PDF e ficheiros OpenDocument."
+
+#, python-format
+msgid "Failed to start screen sharing (%s)."
+msgstr "Falhou ao iniciar partilha de ecrã (%s)."
+
+msgid ""
+"Permission to start screen sharing was denied. Make sure to have enabled "
+"screen sharing access for your browser. Copy chrome://flags/#enable-"
+"usermedia-screen-capture and open it with your browser and enable the flag "
+"on top. Then restart the browser and you are ready to go."
+msgstr ""
+"Permissão para iniciar a partilha de ecrã foi negada. Certifique-se que "
+"permitiu a partilha de ecrã no browser. Copie chrome://flags/#enable-"
+"usermedia-screen-capture e abra-o no seu browser e ative a opção no topo. De "
+"seguida reinicie o browser e está pronto para seguir."
+
+msgid "Permission to start screen sharing was denied."
+msgstr "Permissão para iniciar a partilha de ecrã foi negada."
+
+msgid "Use browser language"
+msgstr "Utilizar idioma do browser"
+
+msgid "Meet with me here:"
+msgstr "Reúne comigo aqui:"
+
+msgid "Please enter a new Room PIN to lock the room"
+msgstr "Por favor insira um novo PIN para fechar a sala"
+
+msgid "Do you want to unlock the room?"
+msgstr "Deseja abrir a sala?"
+
+msgid "Room name"
+msgstr "Nome da sala"
+
+msgid ""
+"The request contains an invalid parameter value. Please check the URL of the "
+"video you want to share and try again."
+msgstr ""
+"O pedido contém uma parámetro com um valor errado. Por favor verifique o URL "
+"do vídeo que quer partilhar e tente novamente."
+
+msgid ""
+"The requested content cannot be played in an HTML5 player or another error "
+"related to the HTML5 player has occurred. Please try again later."
+msgstr ""
+"O conteúdo pedido não pode ser reproduzido num leitor HTML5 ou ocorreu outro "
+"erro relacionado com o leitor HTML5. Por favor tente mais tarde."
+
+msgid ""
+"The video requested was not found. Please check the URL of the video you "
+"want to share and try again."
+msgstr ""
+"O vídeo pedido não foi encontrado. Por favor verifique o URL do vídeo que "
+"quer partilhar e tente novamente."
+
+msgid ""
+"The owner of the requested video does not allow it to be played in embedded "
+"players."
+msgstr ""
+"O proprietário do vídeo não permite que mesmo seja reproduzido em leitores "
+"embebidos."
+
+#, python-format
+msgid ""
+"An unknown error occurred while playing back the video (%s). Please try "
+"again later."
+msgstr ""
+"Ocorreu um erro desconhecido ao reproduzir o vídeo (%s). Por favor tente "
+"mais tarde."
+
+msgid ""
+"An unknown error occurred while playing back the video. Please try again "
+"later."
+msgstr ""
+"Ocorreu um erro desconhecido ao reproduzir o vídeo. Por favor tente mais "
+"tarde."
+
+msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
+msgstr ""
+"Formato URL desconhecido. Por certifique-se que introduz um URL do YouTube "
+"válido."
+
+msgid "Error"
+msgstr "Erro"
+
+msgid "Hint"
+msgstr "Dica"
+
+msgid "Please confirm"
+msgstr "Por favor confirme"
+
+msgid "More information required"
+msgstr "Necessária mais informação"
+
+msgid "Ok"
+msgstr "OK"
+
+msgid ""
+"Screen sharing requires a browser extension. Please add the Spreed WebRTC "
+"screen sharing extension to Chrome and try again."
+msgstr ""
+"A partilha de ecrã requer uma extensão do browser. Por favor adicione a "
+"extensão Spreed WebRTC para o Chrome e tente novamente."
+
+msgid "Access code required"
+msgstr "Código de acesso necessário"
+
+msgid "Access denied"
+msgstr "Acesso negado"
+
+msgid "Please provide a valid access code."
+msgstr "Por favor forneça um código de acesso válido."
+
+msgid ""
+"Failed to verify access code. Check your Internet connection and try again."
+msgstr ""
+"Falhou na verificação do código de acesso. Verifique o acesso à Internet e "
+"tente novamente."
+
+#, python-format
+msgid "PIN for room %s is now '%s'."
+msgstr "O PIN da sala %s agora é '%s'."
+
+#, python-format
+msgid "PIN lock has been removed from room %s."
+msgstr "Foi removido o PIN para a sala %s."
+
+#, python-format
+msgid "Enter the PIN for room %s"
+msgstr "Insira o PIN da sala %s"
+
+msgid "Please sign in to create rooms."
+msgstr "Por favor inicie sessão para criar salas."
+
+#, python-format
+msgid "and %s"
+msgstr "e %s"
+
+#, python-format
+msgid "and %d others"
+msgstr "e %d outros"
+
+msgid "User"
+msgstr "Utilizador"
+
+msgid "Someone"
+msgstr "Alguém"
+
+msgid "Me"
+msgstr "Eu"
+
+#~ msgid "Register"
+#~ msgstr "Registar"
