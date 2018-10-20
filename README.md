@@ -13,6 +13,7 @@ The latest source of Spreed WebRTC can be found on [GitHub](https://github.com/s
   - [NodeJS](http://nodejs.org/) >= 0.6.0
   - [autoconf](http://www.gnu.org/software/autoconf/)
   - [automake](http://www.gnu.org/software/automake/)
+  - [git](https://git-scm.com/)
 
 
 ## Runtime dependencies
@@ -38,6 +39,9 @@ parameters to the ./configure call.
 $ ./configure
 $ make
   ```
+
+On FreeBSD, the default `make` has a different syntax, so `gmake` must be used
+there.
 
 
 ## Build separately
@@ -155,13 +159,16 @@ docker run --rm --name my-spreed-webrtc -p 8080:8080 -p 8443:8443 \
 ## Setup Screensharing
 
 ### Chrome
-Chrome should work out of the box.
+
+Chromium-based browsers (e.g. Google Chrome) require the [Spreed.ME screen sharing
+extension](https://www.spreed.me/extension/).
 
 ### Firefox
 
-As of Firefox >= 36 you must append the domain being used to the allowed domains
-to access your screen. You do this by navigating to `about:config`, search for
-'media.getusermedia.screensharing.allowed_domains', and append the domain
+Screensharing with Firefox >= 52 should work out of the box.
+When using Firefox 36 – 51 you must append the domain being used to the allowed
+domains to access your screen. You do this by navigating to `about:config`, search
+for 'media.getusermedia.screensharing.allowed_domains', and append the domain
 to the list of strings. You can edit the field simply by double clicking on it.
 Ensure that you follow the syntax rules of the field. If you are using an `ip:port`
 url, simply append `ip` to the list. Also ensure that you are using `https`,

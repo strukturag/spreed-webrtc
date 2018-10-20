@@ -122,11 +122,11 @@ Special purpose documents for channling
           "username": "turn-username",
           "password": "turn-password",
           "ttl": 3600
-          "urls": {
+          "urls": [
             "turn:213.203.211.154:3478?transport=udp",
             "turn:213.203.211.154:3479?transport=tcp",
             "turns:213.203.211.154:443?transport=tcp"
-          }
+          ]
         },
         "Stun": [
           "stun:213.203.211.154:443"
@@ -150,12 +150,8 @@ Special purpose documents for channling
         Version    : Server version number. Use this to detect server upgrades.
         ApiVersion : Server channeling API base version. Use this version to select
                      client side compatibility with the connected server.
-        Turn       : Mapping (interface{}) to contain TURN server details, like
-                     urls, password and username. See
-                     http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
-                     and TURN REST API section in
-                     https://code.google.com/p/rfc5766-turn-server/wiki/turnserver
-                     for details.
+        Turn       : Mapping (interface{}) to contain TURN server details. See
+                     TURN credentials and URNs section below for specification.
         Stun       : Array with STUN server URLs.
 
     You can also send an empty Self document to the server to make the server
@@ -523,6 +519,19 @@ Additional types for session listing and notifications
     while.
 
     The Alive value is a timestamp integer in milliseconds (unix time).
+
+  TurnUpdate
+
+    {
+        "Type": "TurnUpdate",
+        "TurnUpdate": {
+            "Turn": {...}
+        }
+    }
+
+    The server might send a TurnUpdate document at any time. If received by the
+    client, the Turn details from the Self document have changed and the client
+    should use the updated data as received in the TurnUpdate document.
 
 
 User authorization and session authentication
@@ -1035,6 +1044,58 @@ File sharing data channel protocol
         message was received.
 
 
+TURN cedentials and URNs document
+
+  TURN example data
+
+    {
+        "username": "turn-username",
+        "password": "turn-password",
+        "ttl": 3600
+        "urls": [
+            "turn:213.203.211.154:3478?transport=udp",
+            "turn:213.203.211.154:3479?transport=tcp",
+            "turns:213.203.211.154:443?transport=tcp"
+        ]
+    }
+
+  TURN data is provided as a mapping of key value pairs like `urls`, `password`
+  and `username`. See http://tools.ietf.org/html/draft-uberti-behave-turn-rest-00
+  and the TURN REST API section in https://github.com/coturn/coturn for details.
+
+  In addition, if the service is configured to use a TURN service to provide
+  credentials for TURN, it can can contain `geo_uri` and `servers` as returned
+  by the TURN service client. See https://github.com/strukturag/spreed-turnservicecli
+  for documentation.
+
+  TURN example data with TURN service
+
+    {
+      "geo_uri": "https://turnservice.spreed.me/api/v1/turn/geo",
+      "servers": [
+        {
+          "prio": 10,
+          "urns": [
+            "turn:213.203.211.154:3478?transport=udp",
+            "turn:213.203.211.154:3479?transport=tcp",
+            "turns:213.203.211.154:443?transport=tcp"
+          ],
+          "id": "zone-id"
+        }
+      ],
+      "ttl": 3600,
+      "username": "turn-username",
+      "password": "turn-password"
+    }
+
+  The TURN credentials data does expire after a while and needs to be refreshed
+  before the `ttl` is reached. The `ttl` is the number of seconds from now until
+  the data expires. To refresh the TURN data, a `Self` document with empty data
+  should be sent.
+
+  All values in the TURN data except the `ttl` are optional.
+
+
 End of Channeling API.
 
 For latest version of Spreed WebRTC check
@@ -1043,4 +1104,4 @@ https://github.com/strukturag/spreed-webrtc
 For questions, contact mailto:opensource@struktur.de.
 
 
-(c)2014 struktur AG
+(c)2016 struktur AG

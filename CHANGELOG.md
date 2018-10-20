@@ -1,3 +1,55 @@
+## 0.29.4
+
+  * Fixed regression introduced in 0.29.3 that could trigger a ring timeout in conference rooms.
+  * Handle getUserMedia failures on FF 49 and newer when no audio or video device is available (#394).
+  * Update spreed-turnservercli to return credentials that are about to expire (but not expired yet).
+  * Update Italian translation.
+  * Improve support for building on FreeBSD.
+
+
+## 0.29.3
+
+  * Added Italian translation (#382)
+  * Fix XSS in room PIN dialog (#386)
+  * Reduce volume of "end1" sound by 50% (#379)
+  * Fix missing ringing sound / timeout on outgoing calls (#377/#378)
+
+
+## 0.29.2
+
+  * Honor case insensitive config for auto generated room names
+  * Do not encode the body of a desktop notification
+  * Make room names case insensitive by default
+  * Update dependencies to phoenix with Update support
+  * Implement config loading via NATS
+  * Don`t run target binary before get is run
+  * Docker: Use /dev/urandom instead of /dev/random
+
+
+## 0.29.1
+
+  * Filter rtx support from remote SDP for Chrone <= 38
+  * Fix Go 1.4 detection for minor versions
+
+
+## 0.29.0
+
+  * Add Spanish translation (#307)
+  * Add minimal TURN refresh interval
+  * Add script to block UDP for TURN testing
+  * Implement TURN service client
+  * Add french translation (#325)
+  * Make room locking configurable
+  * Add UI to lock/unlock a room (#239)
+  * Fix syntax error in example
+  * Bump minimal Go version
+  * Fix Go 1.4 release target
+  * Check if system GOPATH exists
+  * Allow dist_gopath to fail
+  * Add make tarball to travis
+  * Allow specifying docker secrets with enviroment variables
+
+
 ## 0.28.1
 
   * Filter rtx support from remote SDP for Chrome <= 38

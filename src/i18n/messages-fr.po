@@ -2,14 +2,14 @@
 # Copyright (C) 2016 struktur AG
 # This file is distributed under the same license as the Spreed WebRTC
 # project.
+# Florent BEAUCHAMP <fbeauchamp@sdis71.fr>, 2013.
 # Mathieu Brunot <mb.mathieu.brunot@gmail.com> , 2018.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-02-17 14:15+0100\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
 "PO-Revision-Date: 2018-01-28 20:38+0200\n"
 "Last-Translator: Mathieu Brunot <mb.mathieu.brunot@gmail.com>\n"
 "Language-Team: fr <>\n"
@@ -20,65 +20,65 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 
 msgid "Standard view"
-msgstr "Vue standard"
+msgstr "Mode standard"
 
 msgid "Large view"
-msgstr "Vue large"
+msgstr "Mode large"
 
 msgid "Kiosk view"
-msgstr "Kiosque"
+msgstr "Mode kiosque"
 
 msgid "Auditorium"
-msgstr "Salle"
+msgstr "Mode auditorium"
 
 msgid "Start chat"
-msgstr "Commencer une discussion"
+msgstr "Démarrer la discussion"
 
 msgid "Start video call"
-msgstr "Commencer un appel vidéo"
+msgstr "Appel vidéo"
 
 msgid "Start audio conference"
-msgstr "Commencer une conférence audio"
+msgstr "Appel audio"
 
 msgid "No one else here"
-msgstr "Personne d'autre ici"
+msgstr "Personne n'est connecté"
 
 msgid "Take"
-msgstr "Prendre"
+msgstr "Répondre"
 
 msgid "Retake"
-msgstr "Reprendre"
+msgstr "Refaire"
 
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Set as Profile Picture"
-msgstr "Définir comme photo de profil"
+msgstr "Définir comme avatar"
 
 msgid "Take picture"
 msgstr "Prendre une photo"
 
 msgid "Upload picture"
-msgstr "Charger une photo"
+msgstr "Envoyer une photo"
 
 msgid "Waiting for camera"
 msgstr "En attente de la caméra"
 
 msgid "Picture"
-msgstr "Photo"
+msgstr "Avatar"
 
 msgid "The file couldn't be read."
-msgstr "Le fichier n'a pas pu être lu."
+msgstr "Le fichier ne peux pas être lu."
 
 msgid "The file is not an image."
 msgstr "Le fichier n'est pas une image."
 
 #, python-format
 msgid "The file is too large. Max. %d MB."
-msgstr "Le fichier est trop volumineux. Max. %d Mo."
+msgstr "Le fichier est trop gros. Max. %d Mo."
 
 msgid "Select file"
-msgstr "Sélectionner un fichier"
+msgstr "Choisir un fichier"
 
 msgid "Chat sessions"
 msgstr "Discussions"
@@ -90,16 +90,16 @@ msgid "Peer to peer"
 msgstr "Peer-to-peer"
 
 msgid "Close chat"
-msgstr "Fermer discussion"
+msgstr "Fermer la discussion"
 
 msgid "Upload files"
-msgstr "Charger des fichiers"
+msgstr "Envoyer les fichiers"
 
 msgid "Share my location"
 msgstr "Partager ma position"
 
 msgid "Clear chat"
-msgstr "Vider la discussion"
+msgstr "Effacer la discussion"
 
 msgid "is typing..."
 msgstr "est en train d'écrire..."
@@ -117,21 +117,21 @@ msgid "Accept"
 msgstr "Accepter"
 
 msgid "Reject"
-msgstr "Rejeter"
+msgstr "Refuser"
 
 msgid "You have no contacts."
-msgstr "Vous n'avez aucun contact."
+msgstr "Vous n'avez pas de contact."
 
 msgid ""
 "To add new contacts, join a room and create a contact add request by "
 "clicking on the star icon next to a user entry."
 msgstr ""
-"Pour ajouter de nouveaux contacts, rejoignez un salon et créez une "
-"demande de contact en cliquant sur l'icône en forme d'étoile à côté "
-"d'un utilisateur."
+"Pour ajouter des contacts, rejoignez un salon et faites une requête "
+"d'ajout de contact en cliquant sur l'étoile à côté de la fiche d'un "
+"utilisateur."
 
 msgid "Edit contact"
-msgstr "Éditer contact"
+msgstr "Éditer le contact"
 
 msgid "Edit"
 msgstr "Éditer"
@@ -143,7 +143,7 @@ msgid "Remove"
 msgstr "Supprimer"
 
 msgid "Refresh"
-msgstr "Rafraîchir"
+msgstr "Actualiser"
 
 msgid "Save"
 msgstr "Sauvegarder"
@@ -155,7 +155,7 @@ msgid "File sharing"
 msgstr "Partage de fichier"
 
 msgid "File is no longer available"
-msgstr "Le fichier n'est plus disponible"
+msgstr "Ce fichier n'est plus disponible"
 
 msgid "Download"
 msgstr "Télécharger"
@@ -164,19 +164,19 @@ msgid "Open"
 msgstr "Ouvrir"
 
 msgid "Unshare"
-msgstr "Retirer du partage"
+msgstr "Ne plus partager"
 
 msgid "Retry"
 msgstr "Réessayer"
 
 msgid "Download failed."
-msgstr "Téléchargement échoué."
+msgstr "Echec du téléchargement."
 
 msgid "Share a YouTube video"
-msgstr "Partager une vidéo YouTube"
+msgstr "Partager une vidéo Youtube"
 
 msgid "Share a file as presentation"
-msgstr "Partager un fichier présentation"
+msgstr "Partager une présentation"
 
 msgid "Share your screen"
 msgstr "Partager votre écran"
@@ -188,29 +188,29 @@ msgid "Contacts"
 msgstr "Contacts"
 
 msgid "Mute microphone"
-msgstr "Désactiver le microphone"
+msgstr "Couper le microphone"
 
 msgid "Turn camera off"
-msgstr "Désactiver la caméra"
+msgstr "Couper la caméra"
 
 msgid "Settings"
 msgstr "Paramètres"
 
 msgid "Loading presentation ..."
-msgstr "Chargement de la présentation ..."
+msgstr "Chargement de la présentation..."
 
 msgid "Please upload a document"
-msgstr "Veuillez charger un document"
+msgstr "Veuillez d'envoyer un document"
 
 msgid ""
 "Documents are shared with everyone in this call. The supported file types"
 " are PDF and OpenDocument files."
 msgstr ""
-Les documents sont partagés avec tous les membres de cet appel. Les types "
-"de fichiers pris en charge sont les fichiers PDF et OpenDocument."
+"Les documents sont partagés avec tous les participants de cet appel.  Les "
+"documents PDF et OpenDocument sont supportés."
 
 msgid "Upload"
-msgstr "Charger"
+msgstr "Sélectionner un fichier"
 
 msgid "You can drag files here too."
 msgstr "Vous pouvez également faire glisser des fichiers ici."
@@ -219,7 +219,7 @@ msgid "Presentation controls"
 msgstr "Contrôles de la présentation"
 
 msgid "Prev"
-msgstr "Prec."
+msgstr "Préc."
 
 msgid "Next"
 msgstr "Suiv."
@@ -231,7 +231,7 @@ msgid "Room"
 msgstr "Salon"
 
 msgid "Leave room"
-msgstr "Quitter salon"
+msgstr "Quitter le salon"
 
 msgid "Main"
 msgstr "Principal"
@@ -243,13 +243,13 @@ msgid "Screen sharing options"
 msgstr "Options de partage d'écran"
 
 msgid "Fit screen."
-msgstr "Ajuster à l'écran."
+msgstr "Adapter à l'écran."
 
 msgid "Share screen"
 msgstr "Partager l'écran"
 
 msgid "Please select what to share."
-msgstr "Veuillez sélectionner quoi partager."
+msgstr "Veuillez sélectionner l'écran à partager."
 
 msgid "Screen"
 msgstr "Écran"
@@ -261,18 +261,18 @@ msgid "Application"
 msgstr "Application"
 
 msgid "Share the whole screen. Click share to select the screen."
-msgstr "Partager l'intégralité de l'écran. Cliquez sur partager pour sélectionner un écran."
+msgstr "Partager l'intégralité de l'écran. Cliquez pour choisir un écran."
 
 msgid "Share a single window. Click share to select the window."
-msgstr "Partager une fenêtre. Cliquez sur partager pour sélectionner une fenêtre."
+msgstr "Partager une fenêtre. Cliquez pour choisir une fenêtre."
 
 msgid ""
 "Share all windows of a application. This can leak content behind windows "
 "when windows get moved. Click share to select the application."
 msgstr ""
-"Partager toutes les fenêtres d'une application. Cela peut entraîner une "
-"fuite d'informations lorsque les fenêtres sont déplacées. "
-"Cliquez sur partager pour sélectionner l'application."
+"Partager toutes les fenêtres d'une application. Ceci peux amener à "
+"montrer du contenu situé derrière une fenêtre lorsqu'elle est déplacée. "
+"Cliquez pour sélectionner l'application."
 
 msgid "Share"
 msgstr "Partager"
@@ -287,10 +287,10 @@ msgid "Your name"
 msgstr "Votre nom"
 
 msgid "Your picture"
-msgstr "Votre photo"
+msgstr "Votre avatar"
 
 msgid "Status message"
-msgstr "Message de status"
+msgstr "Message de statut"
 
 msgid "What's on your mind?"
 msgstr "A quoi pensez-vous?"
@@ -299,7 +299,7 @@ msgid ""
 "Your picture, name and status message identify yourself in calls, chats "
 "and rooms."
 msgstr ""
-"Votre photo, votre nom et votre message de status vous identifient dans "
+"Votre photo, votre nom et votre message de statut vous identifient dans "
 "les appels, les discussions et les salons."
 
 msgid "Your ID"
@@ -312,23 +312,23 @@ msgid ""
 "Authenticated by certificate. To log out you have to remove your "
 "certificate from the browser."
 msgstr ""
-"Authentifié par certificat. Pour vous déconnecter, vous devez retirer "
-"votre certificat du navigateur."
+"Authentifié par certificat. Vous devrez effacer le certificat de votre "
+"navigateur pour vous déconnecter."
 
 msgid "Sign in"
-msgstr "Se connecter"
+msgstr "Connnexion"
 
 msgid "Create an account"
 msgstr "Créer un compte"
 
 msgid "Sign out"
-msgstr "Se déconnecter"
+msgstr "Déconnexion"
 
 msgid "Manage account"
-msgstr "Gérer votre compte"
+msgstr "Gestion du compte"
 
 msgid "Media"
-msgstr "Media"
+msgstr "Webcam / Micro"
 
 msgid "Microphone"
 msgstr "Microphone"
@@ -340,7 +340,7 @@ msgid "Video quality"
 msgstr "Qualité vidéo"
 
 msgid "Low"
-msgstr "Faible"
+msgstr "Basse"
 
 msgid "High"
 msgstr "Haute"
@@ -358,16 +358,16 @@ msgid "Language"
 msgstr "Langue"
 
 msgid "Language changes become active on reload."
-msgstr "Les changements de langue prennent effet au redémarrage."
+msgstr "Rechargez la page pour prendre en compte le changement de langue."
 
 msgid "Default room"
 msgstr "Salon par défaut"
 
 msgid "Set alternative room to join at start."
-msgstr "éfinissez un autre salon à rejoindre au début."
+msgstr "Nom du salon à rejoindre à la connexion."
 
 msgid "Notifications"
-msgstr "Уведомления"
+msgstr "Notifications"
 
 msgid "Desktop notification"
 msgstr "Notification de bureau"
@@ -376,37 +376,37 @@ msgid "Enable"
 msgstr "Activer"
 
 msgid "Denied - check your browser settings"
-msgstr "Non autorisé - vérifiez les paramètres de votre navigateur"
+msgstr "Interdit - vérifier les paramètres de votre navigateur"
 
 msgid "Allowed"
 msgstr "Autorisé"
 
 msgid "Sounds for incoming messages"
-msgstr "Sons pour les messages entrants"
+msgstr "Son pour les messages entrants"
 
 msgid "Ring on incoming calls"
 msgstr "Sonnerie pour les appels entrants"
 
 msgid "Sounds for users in current room"
-msgstr "Sons pour les utilisateurs dans le salon courant"
+msgstr "Son pour les participants de le salon courant"
 
 msgid "Advanced settings"
-msgstr "Paramètres avancés"
+msgstr "Réglages avancés"
 
 msgid "Play audio on same device as selected microphone"
 msgstr "Jouer l'audio sur le même appareil que le microphone sélectionné"
 
 msgid "Experimental AEC"
-msgstr "AEC expérimental"
+msgstr "AEC (expérimental)"
 
 msgid "Experimental AGC"
-msgstr "AGC expérimental"
+msgstr "AGC (expérimental)"
 
 msgid "Experimental noise suppression"
-msgstr "Suppression de bruit expérimentale"
+msgstr "Suppression de bruit (expérimental)"
 
 msgid "Max video frame rate"
-msgstr "Taux de trame maximal de la vidéo"
+msgstr "Image par seconde max"
 
 msgid "auto"
 msgstr "auto"
@@ -418,42 +418,46 @@ msgid ""
 "Sending stereo audio disables echo cancellation. Enable only if you have "
 "stereo input."
 msgstr ""
-"L'utilisation du son stéréo désactive l'annulation d'écho. Activer "
-"uniquement si vous avez une entrée stéréo."
+"Utiliser du son stéréo désactive la suppression de l'écho. Activez "
+"uniquement si vous avez un microphone stéréo."
 
 msgid "Detect CPU over use"
-msgstr "Détection de surcharge du processeur"
+msgstr "Détecter un usage processeur excessif"
 
 msgid "Automatically reduces video quality as needed."
-msgstr "Réduit automatiquement la qualité de la vidéo si nécessaire."
+msgstr "Réduire automatiquement la qualité vidéo si nécessaire."
 
 msgid "Optimize for high resolution video"
-msgstr "Optimiser pour la vidéo haute définition"
+msgstr "Optimiser la vidéo pour la haute résolution"
 
 msgid "Reduce video noise"
 msgstr "Réduire le bruit vidéo"
 
 msgid "Prefer VP9 video codec"
-msgstr "Préférer le codec vidéo VP9"
+msgstr "Utiliser le codec VP9 en priorité"
 
 msgid "Enable experiments"
-msgstr "Autoriser les expériences"
+msgstr "Activer les réglages expérimentaux"
 
 msgid "Show advanced settings"
-msgstr "Afficher les paramètres avancés"
+msgstr "Afficher les réglages avancés"
 
 msgid "Hide advanced settings"
-msgstr "Masquer les paramètres avancées"
+msgstr "Masquer les réglages avancées"
 
 msgid "Remember settings"
-msgstr "Se souvenir des paramètres"
+msgstr "Se souvenir des réglages"
 
 msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
 msgstr ""
-"Votre identifiant sera stocké - cliquez sur le bouton de déconnexion"
-" ci-dessus pour supprimer l'identifiant."
+"Votre identifiant sera conservé - appuyez sur le bouton de déconnexion"
+" ci-dessus pour l'effacer."
+
+#, fuzzy
+msgid "Room PIN"
+msgstr "Code PIN du salon"
 
 msgid "Room link"
 msgstr "Lien du salon"
@@ -474,19 +478,19 @@ msgid "Invite with XING"
 msgstr "Inviter via XING"
 
 msgid "Initializing"
-msgstr "Initialisation"
+msgstr "Initialisation en cours"
 
 msgid "Online"
 msgstr "En ligne"
 
 msgid "Calling"
-msgstr "Appel"
+msgstr "Appel en cours"
 
 msgid "Hangup"
 msgstr "Raccrocher"
 
 msgid "In call with"
-msgstr "En conversation avec"
+msgstr "En communication avec"
 
 msgid "Conference with"
 msgstr "En conférence avec"
@@ -513,7 +517,7 @@ msgid "Accept call"
 msgstr "Accepter l'appel"
 
 msgid "Waiting for camera/microphone access"
-msgstr "En attente d'accés à caméra / microphone"
+msgstr "En attente d'accés à caméra et au microphone"
 
 msgid "Your audio level"
 msgstr "Votre niveau sonore"
@@ -525,7 +529,7 @@ msgid "Please allow access to your camera and microphone."
 msgstr "Veuillez autoriser l'accès à votre caméra et à votre microphone."
 
 msgid "Camera / microphone access required."
-msgstr "Accès caméra / microphone requis."
+msgstr "Accès caméra et microphone requis."
 
 msgid ""
 "Please check your browser settings and allow camera and microphone access"
@@ -541,32 +545,34 @@ msgid "Click here for help (Google Chrome)."
 msgstr "Cliquez ici pour de l'aide (Google Chrome)."
 
 msgid "Please set your user details and settings."
-msgstr "Veuillez définir vos détails et paramètres utilisateur."
+msgstr "Veuillez mettre à jour votre profil et vos paramètres."
 
 msgid "Enter a room name"
 msgstr "Entrez un nom de salon"
 
 msgid "Random room name"
-msgstr "Nom de salon aléatoire"
+msgstr "Nom aléatoire"
 
 msgid "Enter room"
-msgstr "Entrez dans le salon"
+msgstr "Rejoindre le salon"
 
 msgid ""
 "Enter the name of an existing room. You can create new rooms when you are"
 " signed in."
 msgstr ""
-"Entrez le nom du salon existant. Vous pouvez créer de nouveaux salons"
+"Entrez le nom d'un salon existant. Vous pouvez créer de nouveaux salons"
 " lorsque vous êtes connecté."
 
 msgid "Room history"
-msgstr "Historique de salon"
+msgstr "Historique du salon"
 
 msgid "Please sign in."
 msgstr "Veuillez vous connecter."
 
 msgid "Videos play simultaneously for everyone in this call."
-msgstr "Les vidéos sont jouées simultanément pour tout le monde dans cet appel."
+msgstr ""
+"Les vidéos sont jouées simultanément entre tous les participants de"
+" cet appel."
 
 msgid "YouTube URL"
 msgstr "URL YouTube"
@@ -575,23 +581,23 @@ msgid ""
 "Could not load YouTube player API, please check your network / firewall "
 "settings."
 msgstr ""
-"Impossible de charger l'API du lecteur YouTube. Veuillez vérifier les "
-"paramètres de votre réseau / pare-feu."
+"Impossible de charger le lecteur de video Youtube. Veuillez vérifier vos "
+"paramètres de réseau et pare-feu."
 
 msgid "Currently playing"
-msgstr "En cours de lecture"
+msgstr "Lecture en cours"
 
 msgid "YouTube controls"
 msgstr "Contrôles YouTube"
 
 msgid "YouTube video to share"
-msgstr "Vidéos YouTube à partager"
+msgstr "Vidéo YouTube à partager"
 
 msgid "Peer to peer chat active."
-msgstr "Chat peer-to-peer actif."
+msgstr "Les discussions de pair a pair sont actives."
 
 msgid "Peer to peer chat is now off."
-msgstr "Le chat peer-to-peer est maintenant désactivé."
+msgstr "Les discussions de pair a pair sont maintenant désactivées."
 
 msgid " is now offline."
 msgstr " est maintenant hors ligne."
@@ -606,28 +612,28 @@ msgid "Incoming file:"
 msgstr "Fichier entrant:"
 
 msgid "You shared your location:"
-msgstr "Vous avez partagé votre position:"
+msgstr "Vous partagez votre position :"
 
 msgid "Location received:"
-msgstr "Position reçue:"
+msgstr "Position reçue :"
 
 msgid "You accepted the contact request."
-msgstr "Vous avez accepté la demande de contact."
+msgstr "Vous avez accepté la demande de mise en relation."
 
 msgid "You rejected the contact request."
-msgstr "Vous avez refusé la demande de contact."
+msgstr "Vous avez refusé la demande de mise en relation."
 
 msgid "You sent a contact request."
-msgstr "Vous avez envoyé une demande de contact."
+msgstr "Vous avez envoyé une demande de mise en relation."
 
 msgid "Your contact request was accepted."
-msgstr "Votre demande de contact a été acceptée."
+msgstr "Votre requête de mise en relation a été acceptée."
 
 msgid "Incoming contact request."
-msgstr "Demande de contact entrante."
+msgstr "Arrivée d'une demande de mise en relation."
 
 msgid "Your contact request was rejected."
-msgstr "Votre demande de contact a été refusée."
+msgstr "Votre requête de mise en relation a été refusée."
 
 msgid "Edit Contact"
 msgstr "Modifier le contact"
@@ -638,53 +644,53 @@ msgstr ""
 "sont pas possibles."
 
 msgid "Close this window and disconnect?"
-msgstr "Fermez cette fenêtre et vous déconnecter?"
+msgstr "Voulez-vous fermer cette fenêtre et vous déconnecter ?"
 
 msgid "Contacts Manager"
 msgstr "Gestionnaire de contacts"
 
 msgid "Restart required to apply updates. Click ok to restart now."
 msgstr ""
-"Redémarrez nécessaire pour appliquer les mises à jour. Cliquez sur "
-"OK pour redémarrer maintenant."
+"Un redémarrage est requis pour appliquer les mises à jour. Cliquez sur OK"
+" pour redémarrer maintenant."
 
 msgid "Failed to access camera/microphone."
-msgstr "Impossible d'accéder à la caméra / au microphone."
+msgstr "Impossible d'accéder à la caméra et au microphone."
 
 msgid "Failed to establish peer connection."
-msgstr "Impossible d'établir une connexion peer-to-peer."
+msgstr "Impossible d'établir la connexion de pair a pair."
 
 msgid "We are sorry but something went wrong. Boo boo."
-msgstr "Désolé, mais quelque chose s'est mal passé. Aïe Aïe."
+msgstr "Nous sommes désolé, mais quelque chose c'est mal passé. Aïe Aïe."
 
 msgid "Oops"
 msgstr "Oups"
 
 msgid "Peer connection failed. Check your settings."
-msgstr "La connexion peer-to-peer a échoué. Vérifier les paramètres."
+msgstr "La connection avec le pair à échoué. Vérifiez vos réglages."
 
 msgid "User hung up because of error."
-msgstr "L'utilisateur a raccroché à cause d'une erreur."
+msgstr "Le participant à raccroché suite à une erreur."
 
 msgid " is busy. Try again later."
 msgstr " est occupé. Réessayez plus tard."
 
 msgid " rejected your call."
-msgstr " a rejeté l'appel."
+msgstr " à refuser votre appel."
 
 msgid " does not pick up."
-msgstr " ne réponds pas."
+msgstr " n'a pas répondu."
 
 msgid " tried to call you"
-msgstr " a essayé de vous appeler"
+msgstr " a essayé de vous appeler."
 
 msgid " called you"
 msgstr " vous a appelé"
 
 msgid "Your browser is not supported. Please upgrade to a current version."
 msgstr ""
-"Votre navigateur n'est pas supporté. Veuillez mettre à jour vers la "
-"version actuelle."
+"Votre navigateur n'est pas supporté. Veuillez le mettre à jour vers une "
+"version plus récente."
 
 msgid "Chat with"
 msgstr "Discuter avec"
@@ -694,39 +700,39 @@ msgstr "Message de "
 
 #, python-format
 msgid "You are now in room %s ..."
-msgstr "Vous êtes maintenant dans le salon %s ..."
+msgstr "Vous êtes maintenant dans le salon %s..."
 
 msgid "Your browser does not support file transfer."
 msgstr "Votre navigateur ne supporte pas le transfert de fichiers."
 
 msgid "Could not load PDF: Please make sure to select a PDF document."
 msgstr ""
-"Impossible de charger le PDF: assurez-vous de sélectionner un "
-"document PDF."
+"Impossible de charger le PDF: assurez-vous que vous avez sélectionné "
+"un document PDF."
 
 msgid "Could not load PDF: Missing PDF file."
 msgstr "Impossible de charger le fichier PDF: fichier PDF manquant."
 
 #, python-format
 msgid "An error occurred while loading the PDF (%s)."
-msgstr "Une erreur s'est produite lors du chargement du PDF (%s)."
+msgstr "Une erreur est survenue lors du chargement du PDF (%s)."
 
 msgid "An unknown error occurred while loading the PDF."
-msgstr "Une erreur inconnue s'est produite lors du chargement du PDF."
+msgstr "Une erreur inconnue est survenue lors du chargement du PDF."
 
 #, python-format
 msgid "An error occurred while loading the PDF page (%s)."
 msgstr "Une erreur est survenue lors du chargement de la page PDF (%s)."
 
 msgid "An unknown error occurred while loading the PDF page."
-msgstr "Une erreur inconnue s'est produite lors du chargement de la page PDF."
+msgstr "Une erreur inconnue est survenue lors du chargement de la page PDF."
 
 #, python-format
 msgid "An error occurred while rendering the PDF page (%s)."
-msgstr "Une erreur s'est produite lors du traitement de la page PDF (%s)."
+msgstr "Une erreur est survenue lors du traitement de la page PDF (%s)."
 
 msgid "An unknown error occurred while rendering the PDF page."
-msgstr "Une erreur inconnue s'est produite lors du traitement de la page PDF."
+msgstr "Une erreur inconnue est survenue lors du traitement du PDF."
 
 msgid "Only PDF documents and OpenDocument files can be shared at this time."
 msgstr ""
@@ -745,8 +751,7 @@ msgstr ""
 "Le partage d'écran a été refusé. Assurez-vous d'avoir activé l'accès"
 " au partage d'écran pour votre navigateur. Copiez le lien "
 "chrome://flags/#enable-usermedia-screen-capture et ouvrez-le dans votre "
-"navigateur et activez le drapeau en haut. Redémarrez ensuite le navigateur "
-"et vous êtes prêt à partir."
+"navigateur et activez le drapeau en haut. Redémarrez ensuite le navigateur."
 
 msgid "Permission to start screen sharing was denied."
 msgstr "Le partage d'écran a été refusé."
@@ -755,7 +760,13 @@ msgid "Use browser language"
 msgstr "Utiliser la langue du navigateur"
 
 msgid "Meet with me here:"
-msgstr "Rencontre-moi ici:"
+msgstr "Rejoins moi là :"
+
+msgid "Please enter a new Room PIN to lock the room"
+msgstr "Veuillez entrer un nouveau code PIN pour verrouiller le salon."
+
+msgid "Do you want to unlock the room?"
+msgstr "Voulez-vous déverrouiller le salon ?"
 
 msgid "Room name"
 msgstr "Nom du salon"
@@ -764,55 +775,56 @@ msgid ""
 "The request contains an invalid parameter value. Please check the URL of "
 "the video you want to share and try again."
 msgstr ""
-"La requête contient une valeur de paramètre non valide. Veuillez vérifier "
-"l'URL de la vidéo que vous souhaitez partager et réessayer."
+"La requête contient des paramètres invalides. Veuillez vérifier l'URL de "
+"la vidéo que vous souhaitez partager et réessayer."
 
 msgid ""
 "The requested content cannot be played in an HTML5 player or another "
 "error related to the HTML5 player has occurred. Please try again later."
 msgstr ""
-"Le contenu demandé ne peut pas être lu dans le lecteur HTML5 ou une "
-"erreur s'est produite avec le lecteur HTML5. Veuillez réessayer plus tard."
+"Le contenu requis ne peux pas être pas lu par le lecteur HTML5, ou une "
+"autre erreur en relation avec le lecteur HTML5 est survenu. Veuillez "
+"réessayer plus tard."
 
 msgid ""
 "The video requested was not found. Please check the URL of the video you "
 "want to share and try again."
 msgstr ""
-"La vidéo demandée n'a pas été trouvée. Veuillez vérifier l'URL de la vidéo "
-"que vous souhaitez partager et réessayer."
+"Cette vidéo n'a pas été trouvée. Veuillez vérifier l'URL de la vidéo que "
+"vous souhaitez partager et réessayez."
 
 msgid ""
 "The owner of the requested video does not allow it to be played in "
 "embedded players."
 msgstr ""
-"Le propriétaire de la vidéo demandée ne vous permet pas de le lire dans le "
-"lecteur intégré."
+"Le propriétaire de la vidéo ne vous permet pas de la lire dans un lecteur"
+" vidéo embarqué."
 
 #, python-format
 msgid ""
 "An unknown error occurred while playing back the video (%s). Please try "
 "again later."
 msgstr ""
-"Une erreur inconnue s'est produite lors de la lecture de la vidéo (%s). "
+"Une erreur inconnue est survenue lors de la lecture de la vidéo (%s). "
 "Veuillez réessayer plus tard."
 
 msgid ""
 "An unknown error occurred while playing back the video. Please try again "
 "later."
 msgstr ""
-"Une erreur inconnue s'est produite lors de la lecture de la vidéo. Veuillez"
+"Une erreur inconnue est survenue lors de la lecture de la vidéo. Veuillez"
 " réessayer plus tard."
 
 msgid "Unknown URL format. Please make sure to enter a valid YouTube URL."
 msgstr ""
-"Format d'URL inconnu. Veuillez vous assurer que vous avez effectivement entré"
-" une URL YouTube."
+"Format d'URL inconnu. Veuillez vérifier qu'il s'agit d'une URL Youtube "
+"valide."
 
 msgid "Error"
 msgstr "Erreur"
 
 msgid "Hint"
-msgstr "Indice"
+msgstr "Information"
 
 msgid "Please confirm"
 msgstr "Veuillez confirmer"
@@ -821,14 +833,14 @@ msgid "More information required"
 msgstr "Besoin de plus d'informations"
 
 msgid "Ok"
-msgstr "Ok"
+msgstr "OK"
 
-msgid ""
+msgid 
 "Screen sharing requires a browser extension. Please add the Spreed WebRTC"
 " screen sharing extension to Chrome and try again."
 msgstr ""
-"Le partage de l'écran nécessite une extension pour le navigateur. Veuillez "
-"ajouter l'extension Spreed WebRTC à Chrome et réessayer."
+"Le partage d'écran nécessite une extension pour le navigateur. Veuillez "
+"ajouter l'extension \"Spreed WebRTC screen sharing\" et réessayer."
 
 msgid "Access code required"
 msgstr "Code d'accès requis"
@@ -843,16 +855,16 @@ msgid ""
 "Failed to verify access code. Check your Internet connection and try "
 "again."
 msgstr ""
-"Le code d'accès n'a pas pu être vérifié. Vérifiez votre connexion Internet "
-"et réessayez."
+"Impossible de vérifier votre code d'accès. Vérifiez votre connexion "
+"Internet et réessayez."
 
 #, python-format
 msgid "PIN for room %s is now '%s'."
-msgstr "PIN pour le salon %s est maintenant '%s'."
+msgstr "Le code PIN pour le salon %s est maintenant '%s'."
 
 #, python-format
 msgid "PIN lock has been removed from room %s."
-msgstr "Le verrouillage par code PIN a été retiré du salon %s."
+msgstr "Le salon %s n'est plus protéger par un code PIN."
 
 #, python-format
 msgid "Enter the PIN for room %s"
@@ -870,11 +882,14 @@ msgid "and %d others"
 msgstr "et %d autres"
 
 msgid "User"
-msgstr "Utilisateur"
+msgstr "Participant"
 
 msgid "Someone"
 msgstr "Quelqu'un"
 
 msgid "Me"
 msgstr "Moi"
+
+#~ msgid "Register"
+#~ msgstr "S'enregistrer"
 

@@ -21,11 +21,16 @@
 
 "use strict";
 define([
-], function() {
+	"moment"
+], function(moment) {
 
-	return ["$window", "$q", "alertify", "translation", function($window, $q, alertify, translation) {
+	return ["$window", "$q", "globalContext", "alertify", "toastr", "translation", "safeMessage", "randomGen", "localStorage", function($window, $q, context, alertify, toastr, translation, safeMessage, randomGen, localStorage) {
 
 		var pinCache = {};
+		var getLocalStoragePINIDForRoom = function(roomName) {
+			return "room-pin-" + roomName;
+		};
+		var lockedRoomsJoinable = !!context.Cfg.LockedRoomJoinableWithPIN;
 		var roompin = {
 			get: function(roomName) {
 				var cachedPIN = pinCache[roomName];
@@ -33,30 +38,84 @@ define([
 			},
 			clear: function(roomName) {
 				delete pinCache[roomName];
+				localStorage.removeItem(getLocalStoragePINIDForRoom(roomName));
 				console.log("Cleared PIN for", roomName);
 			},
-			update: function(roomName, pin) {
+			update: function(roomName, pin, noAlert) {
 				if (pin) {
 					pinCache[roomName] = pin;
-					alertify.dialog.alert(translation._("PIN for room %s is now '%s'.", roomName, pin));
+					localStorage.setItem(getLocalStoragePINIDForRoom(roomName), pin);
+					if (!noAlert && lockedRoomsJoinable) {
+						alertify.dialog.alert(translation._("PIN for room %s is now '%s'.", safeMessage(roomName), safeMessage(pin)));
+					}
 				} else {
 					roompin.clear(roomName);
-					alertify.dialog.alert(translation._("PIN lock has been removed from room %s.", roomName));
+					if (!noAlert && lockedRoomsJoinable) {
+						toastr.info(moment().format("lll"), translation._("PIN lock has been removed from room '%s'", safeMessage(roomName)));
+					}
 				}
 			},
 			requestInteractively: function(roomName) {
 				var deferred = $q.defer();
-				alertify.dialog.prompt(translation._("Enter the PIN for room %s", roomName), function(pin) {
+				var tryJoinWithStoredPIN = function() {
+					var pin = localStorage.getItem(getLocalStoragePINIDForRoom(roomName));
 					if (pin) {
-						pinCache[roomName] = pin;
+						roompin.update(roomName, pin, true);
 						deferred.resolve();
-					} else {
+						return true;
+					}
+					return false;
+				};
+				if (lockedRoomsJoinable) {
+					if (!tryJoinWithStoredPIN()) {
+						alertify.dialog.prompt(translation._("Enter the PIN for room %s", safeMessage(roomName)), function(pin) {
+							if (pin) {
+								roompin.update(roomName, pin);
+								deferred.resolve();
+							} else {
+								deferred.reject();
+							}
+						}, function() {
+							deferred.reject();
+						});
+					}
+				} else {
+					if (!tryJoinWithStoredPIN()) {
+						alertify.dialog.error(
+							translation._("Can't join locked room '%s'.", safeMessage(roomName)),
+							translation._("Room '%s' is locked. This server is configured to not let anyone join locked rooms.", safeMessage(roomName))
+						);
 						deferred.reject();
 					}
-				}, function() {
-					deferred.reject();
-				});
+				}
 				return deferred.promise;
+			},
+			// Passing in "rooms" is a bit of a hack to prevent circular dependencies
+			toggleCurrentRoomState: function(rooms) {
+				if (!rooms.isLocked()) {
+					// Lock
+					if (lockedRoomsJoinable) {
+						alertify.dialog.prompt(translation._("Please enter a new Room PIN to lock the room"), function(pin) {
+							rooms.setPIN(pin);
+						}, function() {
+							// Do nothing
+						});
+					} else {
+						alertify.dialog.confirm(translation._("Do you want to lock the room?"), function() {
+							var pin = randomGen.random({hex: true});
+							rooms.setPIN(pin);
+						}, function() {
+							// Do nothing
+						});
+					}
+					return;
+				}
+				// Unlock
+				alertify.dialog.confirm(translation._("Do you want to unlock the room?"), function() {
+					rooms.setPIN("");
+				}, function() {
+					// Do nothing
+				});
 			}
 		};
 

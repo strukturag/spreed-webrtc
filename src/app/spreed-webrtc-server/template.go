@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2015 struktur AG
+ * Copyright (C) 2013-2016 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,32 +19,21 @@
  *
  */
 
-package server
+package main
 
 import (
-	"fmt"
-	"net/http"
-	"strings"
-
-	"github.com/strukturag/spreed-webrtc/go/randomstring"
+	"encoding/json"
+	"html/template"
 )
 
-type Room struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
-}
-
-type Rooms struct {
-	CaseSensitive bool
-}
-
-func (rooms *Rooms) Post(request *http.Request) (int, interface{}, http.Header) {
-
-	name := randomstring.NewRandomString(11)
-	if !rooms.CaseSensitive {
-		name = strings.ToLower(name)
+func templateFuncMap() template.FuncMap {
+	return template.FuncMap{
+		"json": func(obj interface{}) (template.JS, error) {
+			data, err := json.Marshal(obj)
+			if err != nil {
+				return "", err
+			}
+			return template.JS(data), nil
+		},
 	}
-
-	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
-
 }

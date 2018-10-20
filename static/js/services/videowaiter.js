@@ -24,39 +24,61 @@ define(["underscore"], function(_) {
 
 	return ["$window", function($window) {
 
-		var Waiter = function() {
+		var Waiter = function(video, stream, cb, err_cb) {
 			this.stop = false;
+			this.triggered = false;
 			this.count = 0;
 			this.retries = 100;
+
+			this.video = video;
+			this.stream = stream;
+			this.cb = cb;
+			this.err_cb = err_cb;
 		};
-		Waiter.prototype.start = function(video, stream, cb, err_cb) {
+		Waiter.prototype.trigger = function() {
+			var oldTriggered = this.triggered;
+			this.triggered = true;
+			return oldTriggered;
+		};
+		Waiter.prototype.error = function() {
+			var triggered = this.trigger();
+			if (this.err_cb) {
+				this.err_cb(this.video, this.stream, triggered);
+			}
+		};
+		Waiter.prototype.found = function(withvideo) {
+			var triggered = this.trigger();
+			this.cb(withvideo, triggered);
+		};
+		Waiter.prototype.start = function() {
 			if (this.stop) {
-				if (err_cb) {
-					err_cb(video, stream);
-				}
+				this.error();
 				return;
 			}
-			var videoTracks = stream && stream.getVideoTracks() || [];
+			var recheck = _.bind(this.start, this);
+			var videoTracks = this.stream && this.stream.getVideoTracks() || [];
 			//console.log("wait for video", videoTracks.length, video.currentTime, video.videoHeight, video);
 			if (videoTracks.length === 0 && this.count >= 10) {
-				cb(false, video, stream);
-			} else if (video.currentTime > 0 && video.videoHeight > 0) {
-				cb(true, video, stream);
+				this.found(false);
+			} else if (this.video.currentTime > 0 && this.video.videoHeight > 0) {
+				this.found(true);
 			} else {
 				if (videoTracks.length > 0 && this.count >= 10) {
 					var videoTrack = videoTracks[0];
 					if (videoTrack.enabled === true && videoTrack.muted === true) {
-						cb(false, video, stream);
+						videoTrack.onunmute = function() {
+							videoTrack.onunmute = undefined;
+							_.defer(recheck);
+						};
+						this.found(false);
 						return;
 					}
 				}
 				this.count++;
 				if (this.count < this.retries) {
-					$window.setTimeout(_.bind(this.start, this, video, stream, cb, err_cb), 100);
+					$window.setTimeout(recheck, 100);
 				} else {
-					if (err_cb) {
-						err_cb(video, stream);
-					}
+					this.error();
 				}
 			}
 		};
@@ -67,15 +89,16 @@ define(["underscore"], function(_) {
 		// videoWaiter wait
 		return {
 			wait: function(video, stream, cb, err_cb) {
-				var waiter = new Waiter();
+				var waiter = new Waiter(video, stream, cb, err_cb);
 				_.defer(function() {
-					waiter.start(video, stream, cb, err_cb);
+					waiter.start();
 				});
-				return waiter;
+				return {
+					stop: waiter.stop,
+				};
 			}
 		}
 
 	}]
-
 
 });

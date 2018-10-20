@@ -347,7 +347,7 @@ define(['jquery', 'underscore', 'webrtc.adapter'], function($, _) {
 		if (!this.pc) {
 			return [];
 		}
-		return this.pc.getRemoteStreams.apply(this.pc, arguments);
+		return this.pc.getLocalStreams.apply(this.pc, arguments);
 
 	};
 

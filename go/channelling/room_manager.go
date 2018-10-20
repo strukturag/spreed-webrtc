@@ -24,6 +24,7 @@ package channelling
 import (
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/nats-io/nats"
@@ -63,6 +64,7 @@ type roomManager struct {
 	roomTypes            map[string]string
 	globalRoomID         string
 	defaultRoomID        string
+	caseSensitive        bool
 }
 
 type roomTypeMessage struct {
@@ -77,6 +79,7 @@ func NewRoomManager(config *Config, encoder OutgoingEncoder) RoomManager {
 		OutgoingEncoder: encoder,
 		roomTable:       make(map[string]RoomWorker),
 		roomTypes:       make(map[string]string),
+		caseSensitive:   config.RoomNameCaseSensitive,
 	}
 	if config.GlobalRoomID != "" {
 		rm.globalRoomID = rm.MakeRoomID(config.GlobalRoomID, "")
@@ -106,6 +109,9 @@ func (rooms *roomManager) setNatsRoomType(msg *roomTypeMessage) {
 		return
 	}
 
+	// TODO(fancycode): Should we use a separate mutex for this?
+	rooms.Lock()
+	defer rooms.Unlock()
 	if msg.Type != "" {
 		log.Printf("Setting room type for %s to %s\n", msg.Path, msg.Type)
 		rooms.roomTypes[msg.Path] = msg.Type
@@ -203,9 +209,17 @@ func (rooms *roomManager) Get(roomID string) (room RoomWorker, ok bool) {
 	return
 }
 
+func (rooms *roomManager) isPublicRoom(roomName string) bool {
+	return rooms.PublicRoomNames != nil &&
+		rooms.PublicRoomNames.MatchString(roomName)
+}
+
 func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credentials *DataRoomCredentials, sessionAuthenticated bool) (RoomWorker, error) {
+	isPublic := false
 	if rooms.AuthorizeRoomJoin && rooms.UsersEnabled && !sessionAuthenticated {
-		return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+		if isPublic = rooms.isPublicRoom(roomName); !isPublic {
+			return nil, NewDataError("room_join_requires_account", "Room join requires a user account")
+		}
 	}
 
 	if room, ok := rooms.Get(roomID); ok {
@@ -225,8 +239,13 @@ func (rooms *roomManager) GetOrCreate(roomID, roomName, roomType string, credent
 	}
 
 	if rooms.UsersEnabled && rooms.AuthorizeRoomCreation && !sessionAuthenticated {
-		rooms.Unlock()
-		return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
+		// Only need to check for public room if not checked above.
+		if !isPublic {
+			if isPublic = rooms.isPublicRoom(roomName); !isPublic {
+				rooms.Unlock()
+				return nil, NewDataError("room_join_requires_account", "Room creation requires a user account")
+			}
+		}
 	}
 
 	room := NewRoomWorker(rooms, roomID, roomName, roomType, credentials)
@@ -264,11 +283,18 @@ func (rooms *roomManager) MakeRoomID(roomName, roomType string) string {
 		roomType = rooms.getConfiguredRoomType(roomName)
 	}
 
+	if !rooms.caseSensitive {
+		roomName = strings.ToLower(roomName)
+	}
 	return fmt.Sprintf("%s:%s", roomType, roomName)
 }
 
 func (rooms *roomManager) getConfiguredRoomType(roomName string) string {
-	if roomType, found := rooms.roomTypes[roomName]; found {
+	// TODO(fancycode): Should we use a separate mutex for this?
+	rooms.RLock()
+	roomType, found := rooms.roomTypes[roomName]
+	rooms.RUnlock()
+	if found {
 		// Type of this room was overwritten through NATS.
 		return roomType
 	}

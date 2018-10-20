@@ -146,7 +146,7 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 							var video = clonedElement.find("video")[0];
 							$window.attachMediaStream(video, stream);
 							// Waiter callbacks also count as connected, as browser support (FireFox 25) is not setting state changes properly.
-							videoWaiter.wait(video, stream, function(withvideo) {
+							videoWaiter.wait(video, stream, function(withvideo, retriggered) {
 								if (scope.destroyed) {
 									console.log("Abort wait for video on destroyed scope.");
 									return;
@@ -163,7 +163,9 @@ define(['jquery', 'underscore', 'text!partials/audiovideo.html', 'text!partials/
 										$scope.onlyaudio = true;
 									});
 								}
-								scope.$emit("active", currentcall);
+								if (!retriggered) {
+									scope.$emit("active", currentcall);
+								}
 								$scope.redraw();
 							}, function() {
 								if (scope.destroyed) {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Spreed WebRTC 1.0\n"
 "Report-Msgid-Bugs-To: simon@struktur.de\n"
-"POT-Creation-Date: 2016-02-17 14:15+0100\n"
+"POT-Creation-Date: 2016-08-18 18:21+0200\n"
 "PO-Revision-Date: 2014-04-13 20:30+0900\n"
 "Last-Translator: Curt Frisemo <curt.frisemo@spreed.com>\n"
 "Language-Team: Curt Frisemo <curt.frisemo@spreed.com>\n"
@@ -301,9 +301,6 @@ msgstr ""
 msgid "Your ID"
 msgstr ""
 
-msgid "Register"
-msgstr ""
-
 msgid ""
 "Authenticated by certificate. To log out you have to remove your "
 "certificate from the browser."
@@ -446,6 +443,9 @@ msgstr "설정 기억"
 msgid ""
 "Your ID will still be kept - press the log out button above to delete the"
 " ID."
+msgstr ""
+
+msgid "Room PIN"
 msgstr ""
 
 msgid "Room link"
@@ -738,6 +738,12 @@ msgstr "브라우저 언어 사용"
 msgid "Meet with me here:"
 msgstr "나를 여기서 만납니다:"
 
+msgid "Please enter a new Room PIN to lock the room"
+msgstr ""
+
+msgid "Do you want to unlock the room?"
+msgstr ""
+
 #, fuzzy
 msgid "Room name"
 msgstr "사용자 이름"
@@ -841,4 +847,7 @@ msgstr "어떤 사람"
 
 msgid "Me"
 msgstr "나"
+
+#~ msgid "Register"
+#~ msgstr ""
 

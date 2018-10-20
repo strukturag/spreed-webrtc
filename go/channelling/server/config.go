@@ -83,6 +83,7 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		"youtube":       true,
 		"presentation":  true,
 		"contacts":      true,
+		"roomlocking":   true,
 	}
 	modules := []string{}
 	for module := range modulesTable {
@@ -118,6 +119,16 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		}
 	}
 
+	publicRoomNamesString := container.GetStringDefault("app", "publicRooms", "")
+	var publicRoomNames *regexp.Regexp
+	if publicRoomNamesString != "" {
+		var err error
+		if publicRoomNames, err = regexp.Compile(publicRoomNamesString); err != nil {
+			return nil, fmt.Errorf("Invalid regular expression '%s': %s", publicRoomNamesString, err)
+		}
+		log.Printf("Allowed public rooms: %s\n", publicRoomNamesString)
+	}
+
 	return &channelling.Config{
 		Title:                           container.GetStringDefault("app", "title", "Spreed WebRTC"),
 		Ver:                             ver,
@@ -127,6 +138,8 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		Renegotiation:                   container.GetBoolDefault("app", "renegotiation", false),
 		StunURIs:                        stunURIs,
 		TurnURIs:                        turnURIs,
+		TurnUsername:                    container.GetStringDefault("app", "turnUsername", ""),
+		TurnPassword:                    container.GetStringDefault("app", "turnPassword", ""),
 		Tokens:                          tokens,
 		Version:                         version,
 		UsersEnabled:                    container.GetBoolDefault("users", "enabled", false),
@@ -143,6 +156,9 @@ func NewConfig(container phoenix.Container, tokens bool) (*channelling.Config, e
 		ContentSecurityPolicyReportOnly: container.GetStringDefault("app", "contentSecurityPolicyReportOnly", ""),
 		RoomTypeDefault:                 defaultRoomType,
 		RoomTypes:                       roomTypes,
+		RoomNameCaseSensitive:           container.GetBoolDefault("app", "caseSensitiveRooms", false),
+		LockedRoomJoinableWithPIN:       container.GetBoolDefault("app", "lockedRoomJoinableWithPIN", true),
+		PublicRoomNames:                 publicRoomNames,
 	}, nil
 }
 

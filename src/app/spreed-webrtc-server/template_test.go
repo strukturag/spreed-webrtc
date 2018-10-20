@@ -1,6 +1,6 @@
 /*
  * Spreed WebRTC.
- * Copyright (C) 2013-2015 struktur AG
+ * Copyright (C) 2013-2016 struktur AG
  *
  * This file is part of Spreed WebRTC.
  *
@@ -19,32 +19,32 @@
  *
  */
 
-package server
+package main
 
 import (
-	"fmt"
-	"net/http"
-	"strings"
-
-	"github.com/strukturag/spreed-webrtc/go/randomstring"
+	"bytes"
+	"html/template"
+	"testing"
 )
 
-type Room struct {
+const (
+	templateString = `<script type="application/json">{{json .}}</script>`
+	expectedString = `<script type="application/json">{"name":"Peter"}</script>`
+)
+
+type testPerson struct {
 	Name string `json:"name"`
-	Url  string `json:"url"`
 }
 
-type Rooms struct {
-	CaseSensitive bool
-}
-
-func (rooms *Rooms) Post(request *http.Request) (int, interface{}, http.Header) {
-
-	name := randomstring.NewRandomString(11)
-	if !rooms.CaseSensitive {
-		name = strings.ToLower(name)
+func TestHTMLTemplateWithJSON(t *testing.T) {
+	tmpl := template.New("").Funcs(templateFuncMap())
+	if _, err := tmpl.Parse(templateString); err != nil {
+		t.Fatalf("Could not parse template '%s': %s", templateString, err.Error())
 	}
-
-	return 200, &Room{name, fmt.Sprintf("/%s", name)}, http.Header{"Content-Type": {"application/json"}}
-
+	buf := bytes.NewBuffer(nil)
+	tmpl.Execute(buf, testPerson{Name: "Peter"})
+	out := buf.String()
+	if out != expectedString {
+		t.Fatalf("Strings do not match: got '%s', want '%s'", out, expectedString)
+	}
 }

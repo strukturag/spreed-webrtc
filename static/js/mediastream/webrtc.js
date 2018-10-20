@@ -461,8 +461,8 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 
 	};
 
-	WebRTC.prototype.createCall = function(id, from, to) {
-		var call = new PeerCall(this, id, from, to);
+	WebRTC.prototype.createCall = function(id, from, to, outgoing) {
+		var call = new PeerCall(this, id, from, to, outgoing);
 		call.e.on("connectionStateChange", _.bind(function(event, iceConnectionState, currentcall) {
 			this.onConnectionStateChange(iceConnectionState, currentcall);
 		}, this));
@@ -577,7 +577,7 @@ function($, _, PeerCall, PeerConference, PeerXfer, PeerScreenshare, UserMedia, u
 	};
 
 	WebRTC.prototype.doCall = function(id, autocall) {
-		var call = this.createCall(id, null, id);
+		var call = this.createCall(id, null, id, true);
 		call.setInitiate(true);
 		var count = this.conference.getCallsCount();
 		if (!this.conference.addOutgoing(id, call)) {

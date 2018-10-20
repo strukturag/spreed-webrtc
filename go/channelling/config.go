@@ -14,6 +14,8 @@ type Config struct {
 	Renegotiation                   bool                      // Renegotiation flag
 	StunURIs                        []string                  // STUN server URIs
 	TurnURIs                        []string                  // TURN server URIs
+	TurnUsername                    string                    // Username for TURN server
+	TurnPassword                    string                    // Password for TURN server
 	Tokens                          bool                      // True when we got a tokens file
 	Version                         string                    // Server version number
 	UsersEnabled                    bool                      // Flag if users are enabled
@@ -30,6 +32,9 @@ type Config struct {
 	ContentSecurityPolicyReportOnly string                    `json:"-"` // HTML content security policy in report only mode
 	RoomTypeDefault                 string                    `json:"-"` // New rooms default to this type
 	RoomTypes                       map[*regexp.Regexp]string `json:"-"` // Map of regular expression -> room type
+	RoomNameCaseSensitive           bool                      // Whether the room names are case sensitive.
+	LockedRoomJoinableWithPIN       bool                      // Whether locked rooms should be joinable by providing the PIN the room was locked with
+	PublicRoomNames                 *regexp.Regexp            `json:"-"` // Regular expression that specifies room paths that may be created/joined without a user account.
 }
 
 func (config *Config) WithModule(m string) bool {
